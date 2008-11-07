@@ -1,0 +1,9 @@
+2008-11-07  Wakaba  <wakaba@suika.fam.cx>
+
+	* doc/: New directory.
+
+	* cvscommit.sh: New file (copied from Harusame's repository).
+
+	* ChangeLog: New file.
+
+	* lib/: New directory.
