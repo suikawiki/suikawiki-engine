@@ -21,6 +21,11 @@ my $dom = Message::DOM::DOMImplementation->new;
 my $path = $cgi->path_info;
 $path = '' unless defined $path;
 
+my $comma;
+if ($path =~ s[;([^/]*)\z][]) {
+  $comma = percent_decode ($1);
+}
+
 my @path = map { s/\+/%2F/g; percent_decode ($_) } split m#/#, $path, -1;
 shift @path;
 
@@ -28,6 +33,10 @@ require SWE::DB::SuikaWiki3;
 
 my $db = SWE::DB::SuikaWiki3->new;
 $db->{root_directory_name} = q[/home/wakaba/public_html/-temp/wiki/wikidata/page/];
+
+require SWE::DB::SuikaWiki3Props;
+my $prop_db = SWE::DB::SuikaWiki3Props->new;
+$prop_db->{root_directory_name} = $db->{root_directory_name};
 
 require SWE::DB::DOM;
 
@@ -42,10 +51,46 @@ if ($path[0] eq 'pages' and @path > 1) {
 
   if (defined $page) {
     my $format = $cgi->get_parameter ('format');
-
+    
     binmode STDOUT, ':encoding(utf-8)';
 
-    if ($format eq 'text') {
+    if (defined $comma) {
+      if ($comma eq 'metadata') {
+        print qq[Content-Type: text/plain; charset=utf-8\n\n];
+        
+        print qq[Last-modified: ];
+        
+        require SWE::DB::SuikaWiki3LastModified;
+        my $meta = SWE::DB::SuikaWiki3LastModified->new;
+        $meta->{file_name} = $db->{root_directory_name} .
+            'mt--6C6173745F6D6F646966696564.dat';
+        $meta->load_data;
+        
+        my $lm = $meta->get_data ($key);
+        
+        if (defined $lm) {
+          print scalar gmtime $lm, "\n";
+        } else {
+          print "N/A\n";
+        }
+
+        print "\n";
+
+        my $props = $prop_db->get_data ($key) || {}; 
+        for (keys %$props) {
+          print "{$_}: ";
+          if (ref $props->{$_} eq 'HASH') {
+            print "\n";
+            print "\t{$_}\n" for keys %{$props->{$_}};
+          } else {
+            print "{$props->{$_}}\n";
+          }
+        }
+        
+        exit;
+      } else {
+      }
+    } elsif ($format eq 'text') {
       print qq[Content-Type: text/x-suikawiki; charset=utf-8\n\n];
       print $page;
       exit;
