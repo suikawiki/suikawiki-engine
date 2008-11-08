@@ -4,4 +4,12 @@
 	* mkcommitfeed.pl: New file (copied from ../www/harusame/).
 	Forgetten to copy this file.
 
+</content></entry><entry xml:id="entry-1226136715"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226136715</id><title>2008-11-08 Wakaba</title><updated>2008-11-08T09:31:53Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/doc/ChangeLog	8 Nov 2008 09:31:49 -0000
+2008-11-08  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* .htaccess: New file.
+
+	* ChangeLog: New file.
+
+
 </content></entry></feed>
