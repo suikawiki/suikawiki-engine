@@ -1,5 +1,11 @@
 2008-11-08  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Fix support for "/" in path.  Support for XML cache.
+	Tentative support for XML dump removed (code is moved to
+	SWE::DB::DOM).
+
+2008-11-08  Wakaba  <wakaba@suika.fam.cx>
+
 	* .htaccess: New file.
 
 2008-11-08  Wakaba  <wakaba@suika.fam.cx>
