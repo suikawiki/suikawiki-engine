@@ -1,5 +1,9 @@
 2008-11-08  Wakaba  <wakaba@suika.fam.cx>
 
+	* SuikaWiki3LastModified.pm, SuikaWiki3Props.pm: New module files.
+	
+2008-11-08  Wakaba  <wakaba@suika.fam.cx>
+
 	* DOM.pm: New module (some code moved from
 	/webroot/gate/2008/sw.cgi).
 

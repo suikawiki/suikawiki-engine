@@ -12,4 +12,9 @@
 	* ChangeLog: New file.
 
 
+</content></entry><entry xml:id="entry-1226147491"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226147491</id><title>2008-11-08 Wakaba</title><updated>2008-11-08T12:31:27Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/DB/ChangeLog	8 Nov 2008 12:31:14 -0000
+	* SuikaWiki3LastModified.pm, SuikaWiki3Props.pm: New module files.
+	
+2008-11-08  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
 </content></entry></feed>
