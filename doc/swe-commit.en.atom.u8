@@ -1,0 +1,7 @@
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1226136651"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226136651</id><title>2008-11-08 Wakaba</title><updated>2008-11-08T09:30:50Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ ChangeLog	8 Nov 2008 09:30:47 -0000
+2008-11-08  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* mkcommitfeed.pl: New file (copied from ../www/harusame/).
+	Forgetten to copy this file.
+
+</content></entry></feed>
