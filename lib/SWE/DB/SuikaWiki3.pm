@@ -29,8 +29,8 @@ my $get_file_name = sub {
 }; # $get_file_name
 
 sub get_data ($$) {
-  my $self = shift;
-  my $file_name = $get_file_name->($self, $_[0]);
+  my $self = $_[0];
+  my $file_name = $get_file_name->($self, [@{$_[1]}]);
 
   return undef unless -f $file_name;
 

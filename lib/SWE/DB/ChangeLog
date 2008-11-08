@@ -1,5 +1,13 @@
 2008-11-08  Wakaba  <wakaba@suika.fam.cx>
 
+	* DOM.pm: New module (some code moved from
+	/webroot/gate/2008/sw.cgi).
+
+	* SuikaWiki3.pm: Make a copy of key argument such that the
+	original value will not be modified in the method code.
+	
+2008-11-08  Wakaba  <wakaba@suika.fam.cx>
+
 	* SuikaWiki3.pm: Use euc-jp-sw encoding for compatibility with old
 	data.
 
