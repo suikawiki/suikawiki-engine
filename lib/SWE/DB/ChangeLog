@@ -1,3 +1,8 @@
+2008-11-08  Wakaba  <wakaba@suika.fam.cx>
+
+	* SuikaWiki3.pm: Use euc-jp-sw encoding for compatibility with old
+	data.
+
 2008-11-07  Wakaba  <wakaba@suika.fam.cx>
 
 	* SuikaWiki3.pm: New module.

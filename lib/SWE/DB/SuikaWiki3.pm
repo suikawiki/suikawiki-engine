@@ -1,7 +1,7 @@
 package SWE::DB::SuikaWiki3;
 use strict;
 
-require Encode::EUCJP1997;
+require Encode::EUCJPSW;
 
 sub new ($) {
   my $self = bless {
@@ -22,7 +22,7 @@ my $get_file_name = sub {
   my $file_name = $self->{root_directory_name};
   $file_name .= join '/',
       map { s/(.)/sprintf '%02X', ord $1/sge; $_ . $self->{ns_suffix} } 
-      map { Encode::encode ('euc-jp-1997', $_) } @$key;
+      map { Encode::encode ('euc-jp-sw', $_) } @$key;
   $file_name =~ s/\Q$self->{ns_suffix}\E$/$self->{leaf_suffix}/;
   
   return $file_name;
@@ -34,7 +34,7 @@ sub get_data ($$) {
 
   return undef unless -f $file_name;
 
-  open my $file, '<:encoding(euc-jp-1997)', $file_name
+  open my $file, '<:encoding(euc-jp-sw)', $file_name
       or die "$0: $file_name: $!";
   local $/ = undef;
   return scalar <$file>;
