@@ -15,9 +15,6 @@ $cgi->{decoder}->{'#default'} = sub {
   return Encode::decode ('utf-8', $_[1]);
 };
 
-our $Lang = 'ja'
-    if $cgi->get_meta_variable ('HTTP_ACCEPT_LANGUAGE') =~ /\bja\b/; ## TODO: ...
-
 require Message::DOM::DOMImplementation;
 my $dom = Message::DOM::DOMImplementation->new;
 
@@ -25,10 +22,8 @@ my $path = $cgi->path_info;
 $path = '' unless defined $path;
 $path =~ s/\+/%2F/g;
 
-$path =~ s/([\x80-\xFF])/sprintf '%%%02X', ord $1/ge;
 my @path = split m#/#, percent_decode ($path), -1;
 shift @path;
-$path[1] =~ s/%([2-7][0-9A-Fa-f])/chr hex $1/ge;
 
 require SWE::DB::SuikaWiki3;
 
@@ -63,6 +58,18 @@ if ($path[0] eq 'pages' and @path > 1) {
       }
  
       print $doc->inner_html;
+      exit;
+    } elsif ($format eq 'xmldump') {
+      print qq[Content-Type: text/plain; charset=utf-8\n\n];
+      
+      require Whatpm::SWML::Parser;
+      my $p = Whatpm::SWML::Parser->new;
+      
+      my $doc = $dom->create_document;
+      $p->parse_char_string ($page => $doc);
+
+      store_dom (*STDOUT, $doc);
+
       exit;
     } else {
       require Whatpm::SWML::Parser;
@@ -360,9 +367,6 @@ $templates->{(SW10_NS)}->{title} = sub {
   unless ($item->{parent}->has_attribute ('title')) {
     $item->{parent}->set_attribute (title => $item->{node}->text_content);
   }
-
-  unshift @$items, map {{%$item, node => $_}}
-      @{$item->{node}->child_nodes};
 };
 
 $templates->{(SW10_NS)}->{nsuri} = sub {
@@ -372,9 +376,6 @@ $templates->{(SW10_NS)}->{nsuri} = sub {
     $item->{parent}->set_attribute
         (title => '<' . $item->{node}->text_content . '>');
   }
-
-  unshift @$items, map {{%$item, node => $_}}
-      @{$item->{node}->child_nodes};
 };
 
 $templates->{(HTML_NS)}->{q} = sub {
@@ -546,10 +547,10 @@ sub percent_encode ($) {
   return $s;
 } # percent_encode
 
-sub percent_decode ($) {
-  return $dom->create_uri_reference ($_[0])
-      ->get_iri_reference
-      ->uri_reference;
+sub percent_decode ($) { # input should be a byte string.
+  my $s = shift;
+  $s =~ s/%([0-9A-Fa-f]{2})/pack 'C', hex $1/ge;
+  return Encode::decode ('utf-8', $s); # non-UTF-8 octet converted to \xHH
 } # percent_decode
 
 sub get_absolute_url ($) {
@@ -558,3 +559,52 @@ sub get_absolute_url ($) {
       ->get_uri_reference 
       ->uri_reference;
 } # get_absolute_url
+
+sub store_dom ($$) {
+  my $handle = shift;
+  my @item = ([0, shift]);
+
+  my $escape = sub {
+    my $v = $_[0];
+    $v =~ s/([;\\\x0D\x0A])/sprintf '\\%02X', ord $1/ge;
+    return $v;
+  }; # $escape
+
+  my $ns;
+  my $next_id = 1;
+  while (@item) {
+    my ($parent_id, $node) = @{shift @item};
+    if ($node->node_type == $node->ELEMENT_NODE) {
+      my $nsuri = $node->namespace_uri // '';
+      my $nsid = $ns->{$nsuri};
+      unless (defined $nsid) {
+        $nsid = $next_id++;
+        $ns->{$nsuri} = $nsid;
+        print $handle "n", $nsid, ';', $escape->($nsuri), "\n";
+      }
+      print $handle "e", $next_id, ';', $parent_id, ';', $nsid, ';',
+          $escape->($node->manakai_local_name), "\n";
+      for my $attr (@{$node->attributes}) {
+        my $nsuri = $attr->namespace_uri // '';
+        my $nsid = $ns->{$nsuri};
+        unless (defined $nsid) {
+          $nsid = $next_id++;
+          $ns->{$nsuri} = $nsid;
+          print $handle "n", $nsid, ';', $escape->($nsuri), "\n";
+        }
+        print $handle "a", $next_id, ';', $nsid, ';', 
+            $escape->($attr->manakai_local_name), ';',
+            $escape->($attr->value), "\n";
+      }
+      unshift @item, map {[$next_id, $_]} @{$node->child_nodes}; 
+      $next_id++;
+    } elsif ($node->node_type == $node->TEXT_NODE or
+             $node->node_type == $node->CDATA_SECTION_NODE) {
+      print $handle "t", $parent_id, ';', $escape->($node->data), "\n";
+    } elsif ($node->node_type == $node->DOCUMENT_NODE or
+             $node->node_type == $node->DOCUMENT_FRAGMENT_NODE) {
+      print $handle "d0\n";
+      unshift @item, map {[0, $_]} @{$node->child_nodes}; 
+    }
+  }
+} # store_dom
