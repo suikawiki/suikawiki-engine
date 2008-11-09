@@ -1,5 +1,10 @@
 2008-11-09  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw3.cgi (convert_sw3_page): Set the |hash| property of the
+	id-prop.
+
+2008-11-09  Wakaba  <wakaba@suika.fam.cx>
+
 	* mksw3list.pl: Append index to duplicate keywords to remove
 	duplication such that migration process in sw.cgi is simplified.
 

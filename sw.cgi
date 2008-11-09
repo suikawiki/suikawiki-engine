@@ -959,6 +959,7 @@ sub convert_sw3_page ($$) {
     $id_props->{modified} = $lm if defined $lm;
     $id_props->{'converted-from-sw3'} = time;
     $id_props->{'sw3-key'} = $page_key;
+    $id_props->{hash} = get_hash (\$content);
     $id_prop_db->set_data ($id => $id_props);
 
     $vc->commit_changes ("converted from SuikaWiki3 <http://suika.fam.cx/gate/cvs/suikawiki/wikidata/page/$page_key.txt>");
