@@ -1,5 +1,14 @@
 2008-11-09  Wakaba  <wakaba@suika.fam.cx>
 
+	* mksw3list: Don't replace namespace separator '//' by a space,
+	for compatibility with existing WikiNames that contains '//' as
+	part of semantic name, e.g. 'http://www.w3.org/1999/xhtml';
+
+	* sw.cgi (get_page_url): No longer split name by '//'.  Normalize
+	white space in the name.
+
+2008-11-09  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Changed to name-id indirection mode for page/data
 	identification and implemented
 	(most part of) incremental convertion from SuikaWiki3 data to new

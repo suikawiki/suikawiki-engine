@@ -578,12 +578,14 @@ sub convert_swml_to_html ($$) {
   return $html;
 } # convert_swml_to_html
 
+## A source anchor label in SWML -> URL
 sub get_page_url ($$) {
   my ($wiki_name, $base_name) = @_;
-  my $path = '';
-  my @key = $wiki_name eq '//' ? () : (split m'//', $wiki_name);
-  $path .= join '/', map {s/%2F/+/; $_} map {percent_encode ($_)} @key;
-  return $path;
+  $wiki_name =~ s/\s+/ /g;
+  $wiki_name =~ s/^ //;
+  $wiki_name =~ s/ $//;
+  $wiki_name = 'HomePage' unless length $wiki_name;
+  return percent_encode ($wiki_name);
 } # get_page_url
 
 sub htescape ($) {
