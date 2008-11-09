@@ -1,5 +1,23 @@
 2008-11-09  Wakaba  <wakaba@suika.fam.cx>
 
+	* mksw3list.pl: Append index to duplicate keywords to remove
+	duplication such that migration process in sw.cgi is simplified.
+
+	* sw.cgi: "n/name$index" syntax introduced.  Lock & unlock is now
+	done outside of |convert_sw3_page| function.  Generate list of
+	same-name pages.  Remove ";metadata" parameter support for
+	debugging.  Commit changes to CVS repository after modification of
+	a content.  Generate names form, too, in ";edit" page.  Support
+	for name changing.  Property name for identifiers in the name-prop
+	changed from "ids" to "id" for consistency.
+	(get_page_url): Support for "$index" suffix.
+	(convert_sw3_page): Don't lock in thie function.  Commit changes
+	to CVS repository.
+	(get_xml_data): Don't update id-prop, since the database might not
+	be locked in the context where this function is invoked.
+
+2008-11-09  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: The code to generate HTML headers and body element
 	container itself is moved from |convert_swml_to_html| to the main
 	code.  Insert an "edit" link to the HTML document.  Page-edit

@@ -9,6 +9,9 @@ chdir $root_dir_name;
 
 binmode STDOUT, ':encoding(utf8)';
 
+my $has_keyword;
+my $index = 0;
+
 open my $file, "find -name '*.txt' |"
     or die "$0: $!";
 while (<$file>) {
@@ -24,5 +27,9 @@ while (<$file>) {
   $keyword =~ s/^ //;
   $keyword =~ s/ $//;
   $keyword = 'SandBox' unless length $keyword;
+  if ($has_keyword->{$keyword}) {
+    $keyword .= ' #' . ++$index;
+  }
+  $has_keyword->{$keyword} = 1;
   print "$file_name $keyword\n";
 }

@@ -40,6 +40,10 @@ my $param;
 if ($path =~ s[;([^/]*)\z][]) {
   $param = percent_decode ($1);
 }
+my $dollar;
+if ($path =~ s[\$([^/]*)\z][]) {
+  $dollar = percent_decode ($1);
+}
 
 my @path = map { s/\+/%2F/g; percent_decode ($_) } split m#/#, $path, -1;
 shift @path;
@@ -109,17 +113,36 @@ if ($path[0] eq 'n' and @path == 2) {
   unless (defined $param) {
     my $ids = get_ids_by_name ($name);
     unless (ref $ids) {
+      $names_lock->lock;
+      $sw3_pages->reset;
+
       $ids = convert_sw3_page ($ids => $name);
+      $names_lock->unlock;
     }
 
-    if (@$ids > 1) {
-      ## TODO: ...
-    } elsif (@$ids == 0) {
+    if (@$ids == 0) {
       ## TODO: ...
       exit;
     }
-    
-    my $id = shift @$ids;
+
+    my $id;
+    if (defined $dollar) {
+      $dollar += 0;
+      for (0..$#$ids) {
+        if ($ids->[$_] == $dollar) {
+          $id = $dollar;
+          splice @$ids, $_, 1, ();
+          last;
+        }
+      }
+      unless (defined $id) {
+        ## TODO: 404
+        exit;
+      }
+    } else {
+      $id = shift @$ids;
+    }
+
     my $format = $cgi->get_parameter ('format') // 'html';
 
     if ($format eq 'text') {
@@ -161,6 +184,19 @@ if ($path[0] eq 'n' and @path == 2) {
       my $h1_el = $html_doc->create_element_ns (HTML_NS, 'h1');
       $h1_el->text_content ($name);
       $body_el->append_child ($h1_el);
+      
+      if (@$ids) {
+        my $ul_el = $html_doc->create_element_ns (HTML_NS, 'ul');
+        for my $id (@$ids) {
+          my $li_el = $html_doc->create_element_ns (HTML_NS, 'li');
+          $li_el->inner_html (q[<a></a>]);
+          my $a_el = $li_el->first_child;
+          $a_el->text_content ($id);
+          $a_el->set_attribute (href => get_page_url ($name, $name, $id));
+          $ul_el->append_child ($li_el);
+        }
+        $body_el->append_child ($ul_el);
+      }
 
       my $nav_el = $html_doc->create_element_ns (HTML_NS, 'div');
       $nav_el->set_attribute (class => 'nav');
@@ -177,18 +213,8 @@ if ($path[0] eq 'n' and @path == 2) {
     }
 
     exit;
-  } elsif ($param eq 'metadata') {
-    binmode STDOUT, ':encoding(utf-8)';
-    print qq[Content-Type: text/plain; charset=utf-8\n\n];
-    
-    print qq[Content ids:\n];
-    
-    my $ids = get_ids_by_name ($path[1]);
-    print qq[\t$_\n] for @{$ids};
-
-    exit;
   }
-} elsif ($path[0] eq 'i' and @path == 2) {
+} elsif ($path[0] eq 'i' and @path == 2 and not defined $dollar) {
   unless (defined $param) {
     if ($cgi->request_method eq 'POST' or
         $cgi->request_method eq 'PUT') {
@@ -226,8 +252,16 @@ if ($path[0] eq 'n' and @path == 2) {
         $id_prop->{modified} = time;
         $id_prop->{hash} = get_hash ($textref);
 
+        require SWE::DB::VersionControl;
+        my $vc = SWE::DB::VersionControl->new;
+        local $content_db->{version_control} = $vc;
+        local $id_prop_db->{version_control} = $vc;
+        
         $content_db->set_data ($id => $textref);
         $id_prop_db->set_data ($id => $id_prop);
+
+        my $user = $cgi->remote_user // '(anon)';
+        $vc->commit_changes ("updated by $user");
 
         print qq[Status: 204 Saved\n\n];
         
@@ -258,7 +292,17 @@ if ($path[0] eq 'n' and @path == 2) {
 <p><button type=submit>Save</button>
 <input type=hidden name=hash>
 <select name=content-type></select>
-</form>]);
+</form>
+
+<div class=section>
+<h2>Names</h2>
+
+<form method=post accept-charset=utf-8>
+<p><textarea name=names></textarea>
+<p><button type=submit>Save</button>
+</form>
+</div>
+]);
       my $form_el = $html_doc->get_elements_by_tag_name ('form')->[0];
       $form_el->set_attribute (action => $id);
       my $ta_el = $form_el->get_elements_by_tag_name ('textarea')->[0];
@@ -291,9 +335,84 @@ if ($path[0] eq 'n' and @path == 2) {
         $option_el->set_attribute (selected => '');
         $select_el->append_child ($option_el);
       }
+
+      $form_el = $html_doc->get_elements_by_tag_name ('form')->[1];
+      $form_el->set_attribute (action => $id . ';names');
+
+      my $names = $id_prop->{name} || {};
+      $ta_el = $form_el->get_elements_by_tag_name ('textarea')->[0];
+      $ta_el->text_content (join "\x0A", keys %$names);
       
       print $html_doc->inner_html;
       exit;
+    }
+  } elsif ($param eq 'names') {
+    if ($cgi->request_method eq 'POST' or
+        $cgi->request_method eq 'PUT') {
+      my $id = $path[1] + 0;
+
+      require SWE::DB::VersionControl;
+      my $vc = SWE::DB::VersionControl->new;
+      local $name_prop_db->{version_control} = $vc;
+      local $id_prop_db->{version_control} = $vc;
+      
+      $names_lock->lock;
+      
+      my $id_prop = $id_prop_db->get_data ($id);
+      my $old_names = $id_prop->{name} || {};
+      
+      my $new_names = {};
+      for (split /\x0D\x0A?|\x0A/, $cgi->get_parameter ('names')) {
+        ## TODO: normalize 
+        $new_names->{$_} = 1;
+      }
+
+      my $added_names = {};
+      my $removed_names = {%$old_names};
+      for (keys %$new_names) {
+        if ($old_names->{$_}) {
+          delete $removed_names->{$_};
+        } else {
+          $added_names->{$_} = 1;
+        }
+      }
+      
+      for my $new_name (keys %$added_names) {
+        my $new_name_prop = $name_prop_db->get_data ($new_name);
+        unless (defined $new_name_prop) {
+          my $sw3id = $sw3_pages->get_data ($new_name);
+          convert_sw3_page ($sw3id => $new_name);                    
+          $new_name_prop = $name_prop_db->get_data ($new_name);
+        }
+        $new_name_prop->{name} = $new_name;
+        push @{$new_name_prop->{id} ||= []}, $id;
+        $name_prop_db->set_data ($new_name => $new_name_prop);
+      }
+
+      for my $removed_name (keys %$removed_names) {
+        my $removed_name_prop = $name_prop_db->get_data ($removed_name);
+        for (0..$#{$removed_name_prop->{id} or []}) {
+          if ($removed_name_prop->{id}->[$_] eq $id) {
+            splice @{$removed_name_prop->{id}}, $_, 1, ();
+            last;
+          }
+        }
+        $name_prop_db->set_data ($removed_name => $removed_name_prop);
+      }
+
+      $id_prop->{name} = $new_names;
+      $id_prop_db->set_data ($id => $id_prop);
+
+      my $user = $cgi->remote_user // '(anon)';
+      $vc->commit_changes ("id-name association changed by $user");
+
+      $names_lock->unlock;
+
+      print "Status: 204 Changed\n\n";
+
+      exit;
+    } else {
+      ## TODO: mnethod not allowed
     }
   }
 }
@@ -701,14 +820,17 @@ sub convert_swml_to_html ($$$) {
 } # convert_swml_to_html
 
 ## A source anchor label in SWML -> URL
-sub get_page_url ($$) {
-  my ($wiki_name, $base_name) = @_;
+sub get_page_url ($$;$) {
+  my ($wiki_name, $base_name, $id) = @_;
   $wiki_name =~ s/\s+/ /g;
   $wiki_name =~ s/^ //;
   $wiki_name =~ s/ $//;
   $wiki_name = 'HomePage' unless length $wiki_name;
   $wiki_name = percent_encode ($wiki_name);
   $wiki_name =~ s/%2F/+/g;
+  if (defined $id) {
+    $wiki_name .= '$' . (0 + $id);
+  }
   return $wiki_name;
 } # get_page_url
 
@@ -772,11 +894,7 @@ sub get_xml_data ($) {
       
       $content_cache_db->set_data ($id => $doc);
 
-      $id_prop ||= $id_prop_db->get_data ($id) || {};      
-      $id_prop->{hash} = get_hash ($textref);
-      $id_prop_db->set_data ($id => $id_prop);
-
-      $cache_prop->{'cached-hash'} = $id_prop->{hash};
+      $cache_prop->{'cached-hash'} = get_hash ($textref);
       $cache_prop_db->set_data ($id => $cache_prop);
     } else {
       ## Content not found.
@@ -799,8 +917,8 @@ sub get_ids_by_name ($) {
 
   my $name_prop = $name_prop_db->get_data ($name);
   
-  if ($name_prop->{ids}) {
-    return $name_prop->{ids};
+  if ($name_prop->{id}) {
+    return $name_prop->{id};
   } else {
     my $sw3id = $sw3_pages->get_data ($name);
 
@@ -815,9 +933,6 @@ sub get_ids_by_name ($) {
 sub convert_sw3_page ($$) {
   my ($sw3key => $name) = @_;
   
-  $names_lock->lock;
-  
-  $sw3_pages->reset;
   my $page_key = $sw3_pages->get_data ($name);
       ## NOTE: $page_key is undef if the page has been converted
       ## between the first (in get_ids_by_name) and the second (the
@@ -828,29 +943,47 @@ sub convert_sw3_page ($$) {
     my $id = $idgen->get_next_id;
     my $id_lock = $id_locks->get_lock ($id);
     $id_lock->lock;
+
+    require SWE::DB::VersionControl;
+    my $vc = SWE::DB::VersionControl->new;
+    local $content_db->{version_control} = $vc;
+    local $id_prop_db->{version_control} = $vc;
+    $vc->add_file ($idgen->{file_name});
     
     my $content = $sw3_content_db->get_data ($page_key);
     $content_db->set_data ($id => \$content);
     
     my $id_props = $sw3_prop_db->get_data ($page_key);
     my $lm = $sw3_lm_db->get_data ($name);
+    $id_props->{name}->{$name} = 1;
     $id_props->{modified} = $lm if defined $lm;
     $id_props->{'converted-from-sw3'} = time;
     $id_props->{'sw3-key'} = $page_key;
     $id_prop_db->set_data ($id => $id_props);
 
+    $vc->commit_changes ("converted from SuikaWiki3 <http://suika.fam.cx/gate/cvs/suikawiki/wikidata/page/$page_key.txt>");
+
     $id_lock->unlock;
+
+    $vc = SWE::DB::VersionControl->new;
+    local $name_prop_db->{version_control} = $vc;
     
     my $name_props = $name_prop_db->get_data ($name);
-    push @{$name_props->{ids} ||= []}, $id;
-    $ids = $name_props->{ids};
+    push @{$name_props->{id} ||= []}, $id;
+    $ids = $name_props->{id};
+    $name_props->{name}->{$name} = 1;
     $name_prop_db->set_data ($name => $name_props);
+
+    $sw3_pages->delete_data ($name);
+    $sw3_pages->save_data;
+
+    $vc->add_file ($sw3_pages->{file_name});
+    
+    $vc->commit_changes ("converted from SuikaWiki3 <http://suika.fam.cx/gate/cvs/suikawiki/wikidata/page/$page_key.txt>");
   } else {
     my $name_props = $name_prop_db->get_data ($name);
-    $ids = $name_props->{ids};
+    $ids = $name_props->{id};
   }
-
-  $names_lock->unlock;
 
   return $ids;
 } # convert_sw3_page
