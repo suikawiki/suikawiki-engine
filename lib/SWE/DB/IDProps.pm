@@ -25,9 +25,7 @@ sub _get_file_name ($$$) {
     mkdir $dir or die "$0: $dir: $!";
   }
 
-  unless (-d $dir . '/CVS') {
-    ## TODO: ...
-  }
+  $self->{version_control}->add_directory ($dir) if $self->{version_control};
 
   return $file_name;
 } # _get_file_name
@@ -63,8 +61,6 @@ sub set_data ($$$) {
   my $self = shift;
   my $file_name = $self->_get_file_name ($_[0], 1);
   my $prop = $_[1];
-  
-  my $has_file = -f $file_name;
 
   open my $file, '>:encoding(utf8)', $file_name or die "$0: $file_name: $!";
   for my $prop_name (sort {$a cmp $b} keys %$prop) {
@@ -95,8 +91,7 @@ sub set_data ($$$) {
   }
   close $file;
 
-## TODO:
-#  system_ ('cvs', 'add', $file_name) unless $has_file;
+  $self->{version_control}->add_file ($file_name) if $self->{version_control};
 } # set_data
 
 1;

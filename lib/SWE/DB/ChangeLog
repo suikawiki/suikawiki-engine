@@ -1,5 +1,16 @@
 2008-11-09  Wakaba  <wakaba@suika.fam.cx>
 
+	* VersionControl.pm: New module.
+
+	* HashedProps.pm, IDText.pm: Support for |version_control|
+	property is added.
+
+	* SuikaWiki3PageList.pm (_save_data): Renamed as |save_data|.  Do
+	nothing if the data has not been loaded from the file.
+	(delete_data): New method.
+
+2008-11-09  Wakaba  <wakaba@suika.fam.cx>
+
 	* IDProps.pm (_get_file_name): Return |undef| if the file is not
 	found.
 

@@ -26,16 +26,13 @@ sub _get_file_name ($$$) {
     mkdir $dir1 or die "$0: $dir1: $!";
   }
 
-  unless (-d $dir1 . '/CVS') {
-    ## TODO: ...
-  }
-
   unless (-d $dir2) {
     mkdir $dir2 or die "$0: $dir2: $!";
   }
 
-  unless (-d $dir2 . '/CVS') {
-    ## TODO: ...
+  if ($self->{version_control}) {
+    $self->{version_control}->add_directory ($dir1);
+    $self->{version_control}->add_directory ($dir2);
   }
 
   return $file_name;

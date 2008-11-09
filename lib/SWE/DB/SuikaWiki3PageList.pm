@@ -22,18 +22,18 @@ sub _load_data ($) {
   $self->{data_loaded} = 1;
 } # _load_data
 
-sub _save_data ($) {
+sub save_data ($) {
   my $self = shift;
+  
+  return unless $self->{data_loaded};
   
   open my $file, '>:encoding(utf8)', $self->{file_name}
       or die "$0: $self->{file_name}: $!";
-  for (keys %{$self->{data}}) {
-    print "$self->{data}->{$_} $_\n";
+  for (keys %{$self->{data} or {}}) {
+    print $file "$self->{data}->{$_} $_\n";
   }
   close $file;
-  
-  ## TODO: cvs
-} # _save_data
+} # save_data
 
 sub get_data ($$) {
   my ($self, $key) = @_;
@@ -42,6 +42,14 @@ sub get_data ($$) {
 
   return $self->{data}->{$key};
 } # get_data
+
+sub delete_data ($$) {
+  my ($self, $key) = @_;
+  
+  $self->_load_data unless $self->{data_loaded};
+  
+  delete $self->{data}->{$key};
+} # delete_data
 
 sub reset ($) {
   my $self = shift;

@@ -28,12 +28,11 @@ sub set_data ($$$) {
   my $file_name = $self->_get_file_name ($_[0], 1);
   my $textref = $_[1];
   
-  my $has_file = -f $file_name;
-  
   open my $file, '>:encoding(utf8)', $file_name or die "$0: $file_name: $!";
   print $file $$textref;
+  close $file;
 
-## TODO: cvs
+  $self->{version_control}->add_file ($file_name) if $self->{version_control};
 } # set_data
 
 1;
