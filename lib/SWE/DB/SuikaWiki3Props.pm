@@ -42,16 +42,17 @@ q<http://suika.fam.cx/~wakaba/archive/2004/8/11/sw-bt#priority> => 'bug-priority
 q<http://suika.fam.cx/~wakaba/archive/2004/7/20/sw-propedit#seq> => 'prop-revision',
   };
   my $last_prop = '';
+  my $last_prop_name = '';
   my $r = {};
   for (split /\x0D\x0A?|\x0A/, $data) {
     if (s/^\s+//) {
       s/^\\//;
       if ($last_prop =~ /^%/) {
-        $r->{$last_prop}->{$_} = 1;
-      } elsif (defined $r->{$last_prop}) {
-        $r->{$last_prop} = "\x0A" . $_;
+        $r->{$last_prop_name}->{$_} = 1;
+      } elsif (defined $r->{$last_prop_name}) {
+        $r->{$last_prop_name} = "\x0A" . $_;
       } else {
-        $r->{$last_prop} = $_;
+        $r->{$last_prop_name} = $_;
       }
     } else {
       my $prop = $_;
@@ -69,14 +70,17 @@ q<http://suika.fam.cx/~wakaba/archive/2004/7/20/sw-propedit#seq> => 'prop-revisi
       $last_prop = $pn;
 
       if (defined $value) {
-        if ($pn =~ /^%/) {
+        if ($pn =~ s/^%//) {
           $r->{$pn}->{$value} = 1;
         } elsif (defined $r->{$pn}) {
           $r->{$pn} .= "\x0A" . $value;
         } else {
           $r->{$pn} = $value;
         }
+      } else {
+        $pn =~ s/^%//;
       }
+      $last_prop_name = $pn;
     }
   }
 

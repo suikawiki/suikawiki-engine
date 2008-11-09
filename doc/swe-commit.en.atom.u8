@@ -17,4 +17,20 @@
 	
 2008-11-08  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
+</content></entry><entry xml:id="entry-1226213206"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226213206</id><title>2008-11-09 Wakaba</title><updated>2008-11-09T06:46:44Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/DB/ChangeLog	9 Nov 2008 06:46:33 -0000
+2008-11-09  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* Lock.pm, HashedProps.pm, IDDOM.pm, IDGenerator.pm, IDProps.pm,
+	IDText.pm, SuikaWiki3PageList.pm: New modules.
+
+	* SuikaWiki3.pm, SuikaWiki3LastModified.pm: Changed to use plain
+	base 16 encoded file name string as key, rather than array
+	reference as in SuikaWiki3.
+
+	* SuikaWiki3LastModified.pm (save_data, set_data): Removed.
+	(load_data): Renamed as |_load_data|.
+	(get_data): Invoke |_load_data| if and only if necessary.
+
+	* SuikaWiki3Props.pm: Don't treat &quot;%&quot; as a part of hash key.
+
 </content></entry></feed>

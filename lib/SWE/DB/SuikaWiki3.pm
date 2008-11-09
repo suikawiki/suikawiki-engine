@@ -5,32 +5,21 @@ require Encode::EUCJPSW;
 
 sub new ($) {
   my $self = bless {
-    ns_suffix => '.ns',
     leaf_suffix => '.txt',
-    root_key => ['HomePage'],
     root_directory_name => ',/',
   }, shift;
-
   return $self;
 } # new
 
-my $get_file_name = sub {
-  my $self = shift;
-  my $key = shift;
-  $key = $self->{root_key} if @$key == 0;
-
-  my $file_name = $self->{root_directory_name};
-  $file_name .= join '/',
-      map { s/(.)/sprintf '%02X', ord $1/sge; $_ . $self->{ns_suffix} } 
-      map { Encode::encode ('euc-jp-sw', $_) } @$key;
-  $file_name =~ s/\Q$self->{ns_suffix}\E$/$self->{leaf_suffix}/;
+sub _get_file_name ($$) {
+  my ($self, $key) = @_;
   
-  return $file_name;
-}; # $get_file_name
+  return $self->{root_directory_name} . $key . $self->{leaf_suffix};
+} # _get_file_name
 
 sub get_data ($$) {
   my $self = $_[0];
-  my $file_name = $get_file_name->($self, [@{$_[1]}]);
+  my $file_name = $self->_get_file_name ($_[1]);
 
   return undef unless -f $file_name;
 
@@ -39,11 +28,5 @@ sub get_data ($$) {
   local $/ = undef;
   return scalar <$file>;
 } # get_data
-
-sub set_data ($$$) {
-
-## not implemented yet.
-
-} # set_data
 
 1;

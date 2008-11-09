@@ -1,3 +1,18 @@
+2008-11-09  Wakaba  <wakaba@suika.fam.cx>
+
+	* Lock.pm, HashedProps.pm, IDDOM.pm, IDGenerator.pm, IDProps.pm,
+	IDText.pm, SuikaWiki3PageList.pm: New modules.
+
+	* SuikaWiki3.pm, SuikaWiki3LastModified.pm: Changed to use plain
+	base 16 encoded file name string as key, rather than array
+	reference as in SuikaWiki3.
+
+	* SuikaWiki3LastModified.pm (save_data, set_data): Removed.
+	(load_data): Renamed as |_load_data|.
+	(get_data): Invoke |_load_data| if and only if necessary.
+
+	* SuikaWiki3Props.pm: Don't treat "%" as a part of hash key.
+
 2008-11-08  Wakaba  <wakaba@suika.fam.cx>
 
 	* SuikaWiki3LastModified.pm, SuikaWiki3Props.pm: New module files.
