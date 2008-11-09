@@ -37,7 +37,7 @@ sub get_data ($$) {
   my $file_name = $self->_get_file_name ($_[0]);
   
   unless (-f $file_name) {
-    return {};
+    return undef;
   }
   
   my $r = {};

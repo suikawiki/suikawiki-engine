@@ -1,5 +1,12 @@
 2008-11-09  Wakaba  <wakaba@suika.fam.cx>
 
+	* IDProps.pm (_get_file_name): Return |undef| if the file is not
+	found.
+
+	* IDLocks.pm: New module.
+
+2008-11-09  Wakaba  <wakaba@suika.fam.cx>
+
 	* Lock.pm, HashedProps.pm, IDDOM.pm, IDGenerator.pm, IDProps.pm,
 	IDText.pm, SuikaWiki3PageList.pm: New modules.
 
