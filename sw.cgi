@@ -15,6 +15,21 @@ $cgi->{decoder}->{'#default'} = sub {
   return Encode::decode ('utf-8', $_[1]);
 };
 
+my @content_type =
+(
+ {type => 'text/x-suikawiki', label => 'SWML'},
+ {type => 'text/x.suikawiki.image'},
+ {type => 'application/x.suikawiki.config'},
+ {type => 'text/plain', label => 'Plain text'},
+ {type => 'text/css', label => 'CSS'},
+);
+
+sub AA_NS () { q<http://pc5.2ch.net/test/read.cgi/hp/1096723178/aavocab#> }
+sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
+sub SW09_NS () { q<urn:x-suika-fam-cx:markup:suikawiki:0:9:> }
+sub SW10_NS () { q<urn:x-suika-fam-cx:markup:suikawiki:0:10:> }
+sub XML_NS () { q<http://www.w3.org/XML/1998/namespace> }
+
 require Message::DOM::DOMImplementation;
 my $dom = Message::DOM::DOMImplementation->new;
 
@@ -48,8 +63,8 @@ my $sw3_pages = SWE::DB::SuikaWiki3PageList->new;
 $sw3_pages->{file_name} = 'data/sw3pages.txt';
 
 require SWE::DB::Lock;
-my $id_lock = SWE::DB::Lock->new;
-$id_lock->{file_name} = 'data/ids.lock';
+my $names_lock = SWE::DB::Lock->new;
+$names_lock->{file_name} = 'data/ids.lock';
     ## NOTE: This lock MUST be used when $sw3pages or $name_prop_db is updated.
 
 require SWE::DB::IDGenerator;
@@ -60,17 +75,28 @@ $idgen->{lock_file_name} = 'data/nextid.lock';
 require SWE::DB::IDProps;
 my $id_prop_db = SWE::DB::IDProps->new;
 $id_prop_db->{root_directory_name} = q[data/ids/];
+$id_prop_db->{leaf_suffix} = '.props';
+
+require SWE::DB::IDLocks;
+my $id_locks = SWE::DB::IDLocks->new;
+$id_locks->{root_directory_name} = $id_prop_db->{root_directory_name};
+$id_locks->{leaf_suffix} = '.lock';
 
 require SWE::DB::HashedProps;
 
 my $name_prop_db = SWE::DB::HashedProps->new;
 $name_prop_db->{root_directory_name} = q[data/names/];
+$name_prop_db->{leaf_suffix} = '.props';
 
 require SWE::DB::IDDOM;
 
 my $content_cache_db = SWE::DB::IDDOM->new;
 $content_cache_db->{root_directory_name} = $id_prop_db->{root_directory_name};
 $content_cache_db->{leaf_suffix} = '.domcache';
+
+my $cache_prop_db = SWE::DB::IDProps->new;
+$cache_prop_db->{root_directory_name} = $content_cache_db->{root_directory_name};
+$cache_prop_db->{leaf_suffix} = '.cacheprops';
 
 require SWE::DB::IDText;
 my $content_db = SWE::DB::IDText->new;
@@ -117,12 +143,36 @@ if ($path[0] eq 'n' and @path == 2) {
       require Whatpm::SWML::Parser;
       my $p = Whatpm::SWML::Parser->new;
       
-      my $doc = get_xml_data ($id);
+      my $xml_doc = get_xml_data ($id);
 
-      my $html = convert_swml_to_html ($name, $doc);
+      my $html_doc = $dom->create_document;
+      $html_doc->manakai_is_html (1);
+      $html_doc->inner_html ('<!DOCTYPE HTML><title></title>');
       
+      $html_doc->get_elements_by_tag_name ('title')->[0]->text_content ($name);
+      my $head_el = $html_doc->last_child->first_child;
+      my $link_el = $html_doc->create_element_ns (HTML_NS, 'link');
+      $link_el->set_attribute (rel => 'stylesheet');
+      $link_el->set_attribute (href => '/www/style/html/xhtml');
+      $head_el->append_child ($link_el);
+      
+      my $body_el = $html_doc->last_child->last_child;
+
+      my $h1_el = $html_doc->create_element_ns (HTML_NS, 'h1');
+      $h1_el->text_content ($name);
+      $body_el->append_child ($h1_el);
+
+      my $nav_el = $html_doc->create_element_ns (HTML_NS, 'div');
+      $nav_el->set_attribute (class => 'nav');
+      $nav_el->inner_html (q[<a rel=edit>Edit</a>]);
+      $nav_el->first_child->set_attribute (href => '../i/' . $id . ';edit');
+      $body_el->append_child ($nav_el);
+      
+      my $article_el = convert_swml_to_html ($name, $xml_doc => $html_doc);
+      $body_el->append_child ($article_el);
+
       print qq[Content-Type: text/html; charset=utf-8\n\n];
-      print $html->inner_html;
+      print $html_doc->inner_html;
       exit;
     }
 
@@ -137,6 +187,114 @@ if ($path[0] eq 'n' and @path == 2) {
     print qq[\t$_\n] for @{$ids};
 
     exit;
+  }
+} elsif ($path[0] eq 'i' and @path == 2) {
+  unless (defined $param) {
+    if ($cgi->request_method eq 'POST' or
+        $cgi->request_method eq 'PUT') {
+      my $id = $path[1] + 0;
+      
+      my $id_lock = $id_locks->get_lock ($id);
+      $id_lock->lock;
+      
+      my $id_prop = $id_prop_db->get_data ($id);
+      if ($id_prop) {
+        my $ct = $cgi->get_parameter ('content-type') // 'text/x-suikawiki';
+        my $valid_ct;
+        for (@content_type) {
+          if ($_->{type} eq $ct) {
+            $valid_ct = 1;
+            last;
+          }
+        }
+        unless ($valid_ct) {
+          ## TODO: 400
+          exit;
+        }
+
+        my $prev_hash = $cgi->get_parameter ('hash') // '';
+        my $current_hash = $id_prop->{hash} //
+            get_hash ($content_db->get_data ($id) // '');
+        unless ($prev_hash eq $current_hash) {
+          ## TODO: conflict
+          exit;
+        }
+
+        my $textref = \ ($cgi->get_parameter ('text') // '');
+
+        $id_prop->{'content-type'} = $ct;
+        $id_prop->{modified} = time;
+        $id_prop->{hash} = get_hash ($textref);
+
+        $content_db->set_data ($id => $textref);
+        $id_prop_db->set_data ($id => $id_prop);
+
+        print qq[Status: 204 Saved\n\n];
+        
+        exit;
+      } else {
+        ## NOTE: 404
+        #
+      }
+    } else {
+      ## TODO: method not allowed
+    }
+  } elsif ($param eq 'edit') {
+    my $id = $path[1] + 0;
+    
+    my $textref = $content_db->get_data ($id);
+    if (defined $textref) {
+      binmode STDOUT, ':encoding(utf-8)';
+      print qq[Content-Type: text/html; charset=utf-8\n\n];
+      
+      my $html_doc = $dom->create_document;
+      $html_doc->manakai_is_html (1);
+      $html_doc->inner_html (q[<!DOCTYPE HTML><title>Edit</title>
+<link rel=stylesheet href="/www/style/html/xhtml">
+<h1>Edit</h1>
+<form method=post accept-charset=utf-8>
+<p><button type=submit>Save</button>
+<p><textarea name=text></textarea>
+<p><button type=submit>Save</button>
+<input type=hidden name=hash>
+<select name=content-type></select>
+</form>]);
+      my $form_el = $html_doc->get_elements_by_tag_name ('form')->[0];
+      $form_el->set_attribute (action => $id);
+      my $ta_el = $form_el->get_elements_by_tag_name ('textarea')->[0];
+      $ta_el->text_content ($$textref);
+
+      my $id_prop = $id_prop_db->get_data ($id);
+
+      my $hash = $id_prop->{hash} // get_hash ($textref);
+      my $hash_field = $form_el->get_elements_by_tag_name ('input')->[0];
+      $hash_field->set_attribute (value => $hash);
+
+      my $ct = $id_prop->{'content-type'} // 'text/x-suikawiki';
+      my $has_ct;
+      my $select_el = $form_el->get_elements_by_tag_name ('select')->[0];
+      for (@content_type) {
+        next unless defined $_->{label};
+        my $option_el = $html_doc->create_element_ns (HTML_NS, 'option');
+        $option_el->set_attribute (value => $_->{type});
+        $option_el->text_content ($_->{label});
+        if ($_->{type} eq $ct) {
+          $option_el->set_attribute (selected => '');
+          $has_ct = 1;
+        }
+        $select_el->append_child ($option_el);
+      }
+      unless ($has_ct) {
+        my $option_el = $html_doc->create_element_ns (HTML_NS, 'option');
+        $option_el->set_attribute (value => $ct);
+        $option_el->text_content ($ct);
+        $option_el->set_attribute (selected => '');
+        $select_el->append_child ($option_el);
+      }
+      
+      print $html_doc->inner_html;
+      exit;
+    }
   }
 }
 
@@ -164,32 +322,7 @@ $templates->{''}->{''} = sub {
   }
 };
 
-sub AA_NS () { q<http://pc5.2ch.net/test/read.cgi/hp/1096723178/aavocab#> }
-sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
-sub SW09_NS () { q<urn:x-suika-fam-cx:markup:suikawiki:0:9:> }
-sub SW10_NS () { q<urn:x-suika-fam-cx:markup:suikawiki:0:10:> }
-sub XML_NS () { q<http://www.w3.org/XML/1998/namespace> }
-
 $templates->{(HTML_NS)}->{head} = sub { };
-
-$templates->{(HTML_NS)}->{body} = sub {
-  my ($items, $item) = @_;
-
-  my $article_el = $item->{doc}->create_element_ns (HTML_NS, 'div');
-  $article_el->set_attribute (class => 'section sw-document');
-  $item->{parent}->append_child ($article_el);
-
-  my $h1_el = $item->{doc}->create_element_ns
-      (HTML_NS,
-       'h' . ($item->{heading_level} > 6 ? '6' : $item->{heading_level}));
-  $h1_el->text_content ($item->{doc_title});
-  $article_el->append_child ($h1_el);
-
-  unshift @$items,
-      map {{%$item, node => $_, parent => $article_el,
-            heading_level => $item->{heading_level} + 1}}
-      @{$item->{node}->child_nodes};
-};
 
 $templates->{(HTML_NS)}->{section} = sub {
   my ($items, $item) = @_;
@@ -545,28 +678,17 @@ $templates->{(SW09_NS)}->{'anchor-external'} = sub {
 
 }
 
-sub convert_swml_to_html ($$) {
+sub convert_swml_to_html ($$$) {
   my $name = shift;
   my $swml = shift;
-  my $html = $dom->create_document;
-  
-  $html->manakai_is_html (1);
-  $html->inner_html ('<!DOCTYPE HTML><title></title>');
-  
-  $html->get_elements_by_tag_name ('title')->[0]->text_content
-      (my $doc_title = $name);
+  my $doc = shift;
 
-  my $head_el = $html->last_child->first_child;
-  my $link_el = $html->create_element_ns (HTML_NS, 'link');
-  $link_el->set_attribute (rel => 'stylesheet');
-  $link_el->set_attribute (href => '/www/style/html/xhtml');
-  $head_el->append_child ($link_el);
+  my $article_el = $doc->create_element_ns (HTML_NS, 'div');
+  $article_el->set_attribute (class => 'article');
 
-  my $body_el = $html->last_child->last_child;
-
-  my @items = map {{doc => $html, doc_title => $doc_title,
+  my @items = map {{doc => $doc,
                     heading_level => 1, name => $name,
-                    node => $_, parent => $body_el}} @{$swml->child_nodes};
+                    node => $_, parent => $article_el}} @{$swml->child_nodes};
   while (@items) {
     my $item = shift @items;
     my $nsuri = $item->{node}->namespace_uri // '';
@@ -575,7 +697,7 @@ sub convert_swml_to_html ($$) {
     $template->(\@items, $item);
   }
 
-  return $html;
+  return $article_el;
 } # convert_swml_to_html
 
 ## A source anchor label in SWML -> URL
@@ -585,7 +707,9 @@ sub get_page_url ($$) {
   $wiki_name =~ s/^ //;
   $wiki_name =~ s/ $//;
   $wiki_name = 'HomePage' unless length $wiki_name;
-  return percent_encode ($wiki_name);
+  $wiki_name = percent_encode ($wiki_name);
+  $wiki_name =~ s/%2F/+/g;
+  return $wiki_name;
 } # get_page_url
 
 sub htescape ($) {
@@ -618,24 +742,57 @@ sub get_absolute_url ($) {
 sub get_xml_data ($) {
   my $id = shift;
 
-  my $doc = $content_cache_db->get_data ($id);
-  
-  unless ($doc) {
-    require Whatpm::SWML::Parser;
-    my $p = Whatpm::SWML::Parser->new;
+  my $id_lock = $id_locks->get_lock ($id);
+  $id_lock->lock;
+
+  my $cache_prop = $cache_prop_db->get_data ($id);
+  my $cached_hash = $cache_prop->{'cached-hash'};
+
+  my $id_prop;
+  if ($cached_hash) {
+    $id_prop = $id_prop_db->get_data ($id);
+    my $content_hash = $id_prop->{hash} || '';
     
-    ## TODO: lock
-    
-    my $textref = $content_db->get_data ($id);
-    
-    $doc = $dom->create_document;
-    $p->parse_char_string ($$textref => $doc);
-    
-    $content_cache_db->set_data ($id => $doc);
+    if ($cached_hash ne $content_hash) {
+      undef $cached_hash;
+    }
   }
+
+  my $doc;
+  if ($cached_hash) {
+    $doc = $content_cache_db->get_data ($id);
+  } else {
+    my $textref = $content_db->get_data ($id);
+    if ($textref) {
+      require Whatpm::SWML::Parser;
+      my $p = Whatpm::SWML::Parser->new;
+      
+      $doc = $dom->create_document;
+      $p->parse_char_string ($$textref => $doc);
+      
+      $content_cache_db->set_data ($id => $doc);
+
+      $id_prop ||= $id_prop_db->get_data ($id) || {};      
+      $id_prop->{hash} = get_hash ($textref);
+      $id_prop_db->set_data ($id => $id_prop);
+
+      $cache_prop->{'cached-hash'} = $id_prop->{hash};
+      $cache_prop_db->set_data ($id => $cache_prop);
+    } else {
+      ## Content not found.
+      $doc = $dom->create_document;
+    }
+  }
+
+  $id_lock->unlock;
 
   return $doc;
 } # get_xml_data
+
+sub get_hash ($) {
+  require Digest::MD5;
+  return Digest::MD5::md5_hex (Encode::encode ('utf8', ${$_[0]}));
+} # get_hash
 
 sub get_ids_by_name ($) {
   my $name = shift;
@@ -658,7 +815,7 @@ sub get_ids_by_name ($) {
 sub convert_sw3_page ($$) {
   my ($sw3key => $name) = @_;
   
-  $id_lock->lock;
+  $names_lock->lock;
   
   $sw3_pages->reset;
   my $page_key = $sw3_pages->get_data ($name);
@@ -669,6 +826,8 @@ sub convert_sw3_page ($$) {
   my $ids;
   if (defined $page_key) {
     my $id = $idgen->get_next_id;
+    my $id_lock = $id_locks->get_lock ($id);
+    $id_lock->lock;
     
     my $content = $sw3_content_db->get_data ($page_key);
     $content_db->set_data ($id => \$content);
@@ -679,6 +838,8 @@ sub convert_sw3_page ($$) {
     $id_props->{'converted-from-sw3'} = time;
     $id_props->{'sw3-key'} = $page_key;
     $id_prop_db->set_data ($id => $id_props);
+
+    $id_lock->unlock;
     
     my $name_props = $name_prop_db->get_data ($name);
     push @{$name_props->{ids} ||= []}, $id;
@@ -689,7 +850,7 @@ sub convert_sw3_page ($$) {
     $ids = $name_props->{ids};
   }
 
-  $id_lock->unlock;
+  $names_lock->unlock;
 
   return $ids;
 } # convert_sw3_page

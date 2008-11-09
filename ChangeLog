@@ -1,5 +1,19 @@
 2008-11-09  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: The code to generate HTML headers and body element
+	container itself is moved from |convert_swml_to_html| to the main
+	code.  Insert an "edit" link to the HTML document.  Page-edit
+	feature implemented.
+	(get_page_url): "/" was not converted to "+".
+	(get_xml_data): Lock before accessing to the cache.  Save the hash
+	of the cached copy of the source text and check whether the cache
+	is up to date before returning a cached copy.
+	(get_hash): New function.
+	(convert_sw3_page): Lock the id before new copy is stored, to
+	avoid race condition (access by id before the end of convertion).
+
+2008-11-09  Wakaba  <wakaba@suika.fam.cx>
+
 	* mksw3list: Don't replace namespace separator '//' by a space,
 	for compatibility with existing WikiNames that contains '//' as
 	part of semantic name, e.g. 'http://www.w3.org/1999/xhtml';
