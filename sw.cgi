@@ -21,9 +21,9 @@ my $dom = Message::DOM::DOMImplementation->new;
 my $path = $cgi->path_info;
 $path = '' unless defined $path;
 
-my $comma;
+my $param;
 if ($path =~ s[;([^/]*)\z][]) {
-  $comma = percent_decode ($1);
+  $param = percent_decode ($1);
 }
 
 my @path = map { s/\+/%2F/g; percent_decode ($_) } split m#/#, $path, -1;
@@ -31,73 +31,81 @@ shift @path;
 
 require SWE::DB::SuikaWiki3;
 
-my $db = SWE::DB::SuikaWiki3->new;
-$db->{root_directory_name} = q[/home/wakaba/public_html/-temp/wiki/wikidata/page/];
+my $sw3_content_db = SWE::DB::SuikaWiki3->new;
+$sw3_content_db->{root_directory_name} = q[/home/wakaba/public_html/-temp/wiki/wikidata/page/];
 
 require SWE::DB::SuikaWiki3Props;
-my $prop_db = SWE::DB::SuikaWiki3Props->new;
-$prop_db->{root_directory_name} = $db->{root_directory_name};
+my $sw3_prop_db = SWE::DB::SuikaWiki3Props->new;
+$sw3_prop_db->{root_directory_name} = $sw3_content_db->{root_directory_name};
 
-require SWE::DB::DOM;
+require SWE::DB::SuikaWiki3LastModified;
+my $sw3_lm_db = SWE::DB::SuikaWiki3LastModified->new;
+$sw3_lm_db->{file_name} = $sw3_content_db->{root_directory_name} .
+    'mt--6C6173745F6D6F646966696564.dat';
 
-my $content_cache_db = SWE::DB::DOM->new;
-$content_cache_db->{root_directory_name} = 'data/';
-$content_cache_db->{leaf_suffix} = '.content';
+require SWE::DB::SuikaWiki3PageList;
+my $sw3_pages = SWE::DB::SuikaWiki3PageList->new;
+$sw3_pages->{file_name} = 'data/sw3pages.txt';
 
-if ($path[0] eq 'pages' and @path > 1) {
-  my $key = [@path[1..$#path]];
-  
-  my $page = $db->get_data ($key);
+require SWE::DB::Lock;
+my $id_lock = SWE::DB::Lock->new;
+$id_lock->{file_name} = 'data/ids.lock';
+    ## NOTE: This lock MUST be used when $sw3pages or $name_prop_db is updated.
 
-  if (defined $page) {
-    my $format = $cgi->get_parameter ('format');
+require SWE::DB::IDGenerator;
+my $idgen = SWE::DB::IDGenerator->new;
+$idgen->{file_name} = 'data/nextid.dat';
+$idgen->{lock_file_name} = 'data/nextid.lock';
+
+require SWE::DB::IDProps;
+my $id_prop_db = SWE::DB::IDProps->new;
+$id_prop_db->{root_directory_name} = q[data/ids/];
+
+require SWE::DB::HashedProps;
+
+my $name_prop_db = SWE::DB::HashedProps->new;
+$name_prop_db->{root_directory_name} = q[data/names/];
+
+require SWE::DB::IDDOM;
+
+my $content_cache_db = SWE::DB::IDDOM->new;
+$content_cache_db->{root_directory_name} = $id_prop_db->{root_directory_name};
+$content_cache_db->{leaf_suffix} = '.domcache';
+
+require SWE::DB::IDText;
+my $content_db = SWE::DB::IDText->new;
+$content_db->{root_directory_name} = $id_prop_db->{root_directory_name};
+$content_db->{leaf_suffix} = '.txt';
+
+if ($path[0] eq 'n' and @path == 2) {
+  my $name = $path[1];
+
+  unless (defined $param) {
+    my $ids = get_ids_by_name ($name);
+    unless (ref $ids) {
+      $ids = convert_sw3_page ($ids => $name);
+    }
+
+    if (@$ids > 1) {
+      ## TODO: ...
+    } elsif (@$ids == 0) {
+      ## TODO: ...
+      exit;
+    }
     
-    binmode STDOUT, ':encoding(utf-8)';
+    my $id = shift @$ids;
+    my $format = $cgi->get_parameter ('format') // 'html';
 
-    if (defined $comma) {
-      if ($comma eq 'metadata') {
-        print qq[Content-Type: text/plain; charset=utf-8\n\n];
-        
-        print qq[Last-modified: ];
-        
-        require SWE::DB::SuikaWiki3LastModified;
-        my $meta = SWE::DB::SuikaWiki3LastModified->new;
-        $meta->{file_name} = $db->{root_directory_name} .
-            'mt--6C6173745F6D6F646966696564.dat';
-        $meta->load_data;
-        
-        my $lm = $meta->get_data ($key);
-        
-        if (defined $lm) {
-          print scalar gmtime $lm, "\n";
-        } else {
-          print "N/A\n";
-        }
+    if ($format eq 'text') {
+      my $content = $content_db->get_data ($id);
 
-        print "\n";
-
-        my $props = $prop_db->get_data ($key) || {}; 
-        for (keys %$props) {
-          print "{$_}: ";
-          if (ref $props->{$_} eq 'HASH') {
-            print "\n";
-            print "\t{$_}\n" for keys %{$props->{$_}};
-          } else {
-            print "{$props->{$_}}\n";
-          }
-        }
-        
-        exit;
-      } else {
-      }
-    } elsif ($format eq 'text') {
       print qq[Content-Type: text/x-suikawiki; charset=utf-8\n\n];
-      print $page;
+      print $$content;
       exit;
     } elsif ($format eq 'xml') {
-      print qq[Content-Type: application/xml; charset=utf-8\n\n];
+      my $doc = get_xml_data ($id);
 
-      my $doc = get_xml_data ($key);
+      print qq[Content-Type: application/xml; charset=utf-8\n\n];
 
       if (scalar $cgi->get_parameter ('styled')) {
         print q[<?xml-stylesheet href="http://suika.fam.cx/www/style/swml/structure"?>];
@@ -109,14 +117,26 @@ if ($path[0] eq 'pages' and @path > 1) {
       require Whatpm::SWML::Parser;
       my $p = Whatpm::SWML::Parser->new;
       
-      my $doc = get_xml_data ($key);
+      my $doc = get_xml_data ($id);
 
-      my $html = convert_swml_to_html ($key, $doc);
+      my $html = convert_swml_to_html ($name, $doc);
       
       print qq[Content-Type: text/html; charset=utf-8\n\n];
       print $html->inner_html;
       exit;
     }
+
+    exit;
+  } elsif ($param eq 'metadata') {
+    binmode STDOUT, ':encoding(utf-8)';
+    print qq[Content-Type: text/plain; charset=utf-8\n\n];
+    
+    print qq[Content ids:\n];
+    
+    my $ids = get_ids_by_name ($path[1]);
+    print qq[\t$_\n] for @{$ids};
+
+    exit;
   }
 }
 
@@ -461,7 +481,7 @@ $templates->{(SW09_NS)}->{anchor} = sub {
   $item->{parent}->append_child ($el);
   $el->set_attribute (class => 'sw-anchor');
 
-  my $url = get_page_url ($item->{node}->text_content, $item->{key});
+  my $url = get_page_url ($item->{node}->text_content, $item->{name});
   $el->set_attribute (href => $url);
 
   unshift @$items,
@@ -526,7 +546,7 @@ $templates->{(SW09_NS)}->{'anchor-external'} = sub {
 }
 
 sub convert_swml_to_html ($$) {
-  my $key = shift;
+  my $name = shift;
   my $swml = shift;
   my $html = $dom->create_document;
   
@@ -534,7 +554,7 @@ sub convert_swml_to_html ($$) {
   $html->inner_html ('<!DOCTYPE HTML><title></title>');
   
   $html->get_elements_by_tag_name ('title')->[0]->text_content
-      (my $doc_title = @$key ? join ' ', @$key : '/');
+      (my $doc_title = $name);
 
   my $head_el = $html->last_child->first_child;
   my $link_el = $html->create_element_ns (HTML_NS, 'link');
@@ -545,7 +565,7 @@ sub convert_swml_to_html ($$) {
   my $body_el = $html->last_child->last_child;
 
   my @items = map {{doc => $html, doc_title => $doc_title,
-                    heading_level => 1, key => $key,
+                    heading_level => 1, name => $name,
                     node => $_, parent => $body_el}} @{$swml->child_nodes};
   while (@items) {
     my $item = shift @items;
@@ -559,8 +579,8 @@ sub convert_swml_to_html ($$) {
 } # convert_swml_to_html
 
 sub get_page_url ($$) {
-  my ($wiki_name, $base_key) = @_;
-  my $path = '../' x (@$base_key - 1);
+  my ($wiki_name, $base_name) = @_;
+  my $path = '';
   my @key = $wiki_name eq '//' ? () : (split m'//', $wiki_name);
   $path .= join '/', map {s/%2F/+/; $_} map {percent_encode ($_)} @key;
   return $path;
@@ -594,21 +614,80 @@ sub get_absolute_url ($) {
 } # get_absolute_url
 
 sub get_xml_data ($) {
-  my $key = shift;
+  my $id = shift;
 
-  my $doc = $content_cache_db->get_data ($key);
+  my $doc = $content_cache_db->get_data ($id);
   
   unless ($doc) {
     require Whatpm::SWML::Parser;
     my $p = Whatpm::SWML::Parser->new;
     
-    my $page = $db->get_data ($key);
+    ## TODO: lock
+    
+    my $textref = $content_db->get_data ($id);
     
     $doc = $dom->create_document;
-    $p->parse_char_string ($page => $doc);
+    $p->parse_char_string ($$textref => $doc);
     
-    $content_cache_db->set_data ($key => $doc);
+    $content_cache_db->set_data ($id => $doc);
   }
 
   return $doc;
 } # get_xml_data
+
+sub get_ids_by_name ($) {
+  my $name = shift;
+
+  my $name_prop = $name_prop_db->get_data ($name);
+  
+  if ($name_prop->{ids}) {
+    return $name_prop->{ids};
+  } else {
+    my $sw3id = $sw3_pages->get_data ($name);
+
+    if (defined $sw3id) {
+      return $sw3id; # not an arrayref
+    } else {
+      return [];
+    }
+  }
+} # get_ids_by_name
+
+sub convert_sw3_page ($$) {
+  my ($sw3key => $name) = @_;
+  
+  $id_lock->lock;
+  
+  $sw3_pages->reset;
+  my $page_key = $sw3_pages->get_data ($name);
+      ## NOTE: $page_key is undef if the page has been converted
+      ## between the first (in get_ids_by_name) and the second (the
+      ## line above) $sw3_pages->get_data calls.
+
+  my $ids;
+  if (defined $page_key) {
+    my $id = $idgen->get_next_id;
+    
+    my $content = $sw3_content_db->get_data ($page_key);
+    $content_db->set_data ($id => \$content);
+    
+    my $id_props = $sw3_prop_db->get_data ($page_key);
+    my $lm = $sw3_lm_db->get_data ($name);
+    $id_props->{modified} = $lm if defined $lm;
+    $id_props->{'converted-from-sw3'} = time;
+    $id_props->{'sw3-key'} = $page_key;
+    $id_prop_db->set_data ($id => $id_props);
+    
+    my $name_props = $name_prop_db->get_data ($name);
+    push @{$name_props->{ids} ||= []}, $id;
+    $ids = $name_props->{ids};
+    $name_prop_db->set_data ($name => $name_props);
+  } else {
+    my $name_props = $name_prop_db->get_data ($name);
+    $ids = $name_props->{ids};
+  }
+
+  $id_lock->unlock;
+
+  return $ids;
+} # convert_sw3_page

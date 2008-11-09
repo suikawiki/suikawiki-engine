@@ -1,3 +1,12 @@
+2008-11-09  Wakaba  <wakaba@suika.fam.cx>
+
+	* sw.cgi: Changed to name-id indirection mode for page/data
+	identification and implemented
+	(most part of) incremental convertion from SuikaWiki3 data to new
+	database structure.
+
+	* mksw3list.pl: New script.
+
 2008-11-08  Wakaba  <wakaba@suika.fam.cx>
 
 	* sw.cgi: Support for metadata view.
