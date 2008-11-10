@@ -1,5 +1,17 @@
 2008-11-10  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Don't use PATH_INFO but use our own PATH_INFO created
+	from REQUEST_URI since it turns out that PATH_INFO is
+	percent-decoded such that '$' or ';' can't be distinguished in
+	percent-encoded and non-encode forms.  Error pages and
+	redirections are implemented.
+	(sw:anchor): Support for './', '../', and '//' links for backward
+	compatibility.  Normalize spaces in names.
+	(get_page_url): Don't normalize spaces here.
+	(percent_encode_na): New function.
+
+2008-11-10  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: The STDOUT was not set to UTF-8 in some mode.  Fact out
 	<link rel=stylesheet> code and add <link rel=license>.  Add link
 	to the license page for all edit and content pages.

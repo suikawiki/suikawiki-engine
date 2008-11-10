@@ -15,6 +15,7 @@ $cgi->{decoder}->{'#default'} = sub {
   return Encode::decode ('utf-8', $_[1]);
 };
 
+my $homepage_name = 'HomePage';
 my $license_name = 'Wiki//Page//License';
 
 my @content_type =
@@ -35,8 +36,19 @@ sub XML_NS () { q<http://www.w3.org/XML/1998/namespace> }
 require Message::DOM::DOMImplementation;
 my $dom = Message::DOM::DOMImplementation->new;
 
-my $path = $cgi->path_info;
-$path = '' unless defined $path;
+## NOTE: This script requires the server set REQUEST_URI and
+## SCRIPT_NAME which is the part of the REQUEST_URI that identifies
+## the script.
+
+my $rurl = $dom->create_uri_reference ($cgi->request_uri)
+    ->get_uri_reference;
+my $sname = $dom->create_uri_reference
+    (percent_encode_na ($cgi->get_meta_variable ('SCRIPT_NAME')))
+    ->get_absolute_reference ($rurl)
+    ->get_uri_reference;
+my $path = $rurl->get_relative_reference ($sname);
+$path->uri_query (undef);
+$path->uri_fragment (undef);
 
 my $param;
 if ($path =~ s[;([^/]*)\z][]) {
@@ -48,7 +60,7 @@ if ($path =~ s[\$([^/]*)\z][]) {
 }
 
 my @path = map { s/\+/%2F/g; percent_decode ($_) } split m#/#, $path, -1;
-shift @path;
+shift @path; # script's name
 
 require SWE::DB::SuikaWiki3;
 
@@ -112,6 +124,10 @@ $content_db->{leaf_suffix} = '.txt';
 if ($path[0] eq 'n' and @path == 2) {
   my $name = $path[1];
 
+  unless (length $name) {
+    http_redirect (303, 'See other', get_page_url ($homepage_name, undef));
+  }
+
   unless (defined $param) {
     my $ids = get_ids_by_name ($name);
     unless (ref $ids) {
@@ -133,8 +149,7 @@ if ($path[0] eq 'n' and @path == 2) {
         }
       }
       unless (defined $id) {
-        ## TODO: 404
-        exit;
+        http_redirect (301, 'Not found', get_page_url ($name, undef));
       }
     } else {
       $id = shift @$ids;
@@ -195,7 +210,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $nav_el = $html_doc->create_element_ns (HTML_NS, 'div');
       $nav_el->set_attribute (class => 'nav');
-      $nav_el->inner_html (q[<a rel=edit>Edit</a>]);
+      $nav_el->inner_html (q[<a rel=edit>Edit</a> <a href="../new-page">New</a>]);
       if (defined $id) {
         $nav_el->first_child->set_attribute (href => '../i/' . $id . ';edit');
       } else {
@@ -224,6 +239,10 @@ if ($path[0] eq 'n' and @path == 2) {
     }
 
     exit;
+  } else {
+    $name .= '$' . $dollar if defined $dollar;
+    $name .= ';' . $param;
+    http_redirect (301, 'Not found', get_page_url ($name, undef));
   }
 } elsif ($path[0] eq 'i' and @path == 2 and not defined $dollar) {
   unless (defined $param) {
@@ -267,11 +286,10 @@ if ($path[0] eq 'n' and @path == 2) {
         
         exit;
       } else {
-        ## NOTE: 404
-        #
+        http_error (404, 'Not found');
       }
     } else {
-      ## TODO: method not allowed
+      http_error (405, 'Method not allowed', 'PUT');
     }
   } elsif ($param eq 'edit') {
     my $id = $path[1] + 0;
@@ -400,7 +418,7 @@ See <a rel=license>License</a> page.
 
       exit;
     } else {
-      ## TODO: mnethod not allowed
+      http_error (405, 'Method not allowed', 'PUT');
     }
   }
 } elsif ($path[0] eq 'new-page' and @path == 1) {
@@ -497,14 +515,16 @@ See <a rel=license>License</a> page.
     print $doc->inner_html;
     exit;
   }
+} elsif (@path == 1 and
+         {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
+  http_redirect (303, 'See other', get_page_url ($homepage_name, undef));
+} elsif (@path == 0) {
+  my $rurl = $cgi->request_uri;
+  $rurl =~ s!\.[^/]*$!!g;
+  http_redirect (303, 'See other', $rurl . '/');
 }
 
-print q[Content-Type: text/plain; charset=us-ascii
-Status: 404 Not found
-
-404];
-
-exit;
+http_error (404, 'Not found');
 
 sub get_content_type_parameter () {
   my $ct = $cgi->get_parameter ('content-type') // 'text/x-suikawiki';
@@ -517,8 +537,8 @@ sub get_content_type_parameter () {
     }
   }
   unless ($valid_ct) {
-    ## TODO: 400
-    exit;
+    http_error (400, 'content-type parameter not allowed');
+    ## TODO: 406?
   }
 
   return $ct;
@@ -548,6 +568,19 @@ sub set_content_type_options ($$;$) {
     $select_el->append_child ($option_el);
   }
 } # set_content_type_options
+
+sub http_error ($$;$) {
+  my ($code, $text, $allowed) = @_;
+  binmode STDOUT, ":encoding(utf-8)";
+  print qq[Status: $code $text\n];
+  print qq[Allow: $allowed\n] if defined $allowed;
+  print qq[Content-Type: text/html; charset=utf-8\n\n];
+  print qq[<!DOCTYPE HTML>
+<html lang=en><title>$code @{[htescape ($text)]}</title>
+<link rel=stylesheet href="/www/style/html/xhtml">
+<h1>@{[htescape ($text)]}</h1>];
+  exit;
+} # http_error
 
 sub http_redirect ($$$) {
   my ($code, $text, $url) = @_;
@@ -874,8 +907,24 @@ $templates->{(SW09_NS)}->{anchor} = sub {
   my $el = $item->{doc}->create_element_ns (HTML_NS, 'a');
   $item->{parent}->append_child ($el);
   $el->set_attribute (class => 'sw-anchor');
+  
+  my $name = $item->{node}->text_content;
+  if ($name eq '//') {
+    $name = 'HomePage'; ## Don't use $homepage_name - this is not configurable
+  } elsif ($name =~ s!^\.//!!) {
+    $name = $item->{name} . '//' . $name;
+  } elsif ($name =~ s!^\.\.//!!) {
+    my $pname = $item->{name};
+    $pname =~ s<//(?:(?!//).)+$><>;
+    $name = $pname . '//' . $name;
+  }
 
-  my $url = get_page_url ($item->{node}->text_content, $item->{name});
+  $name =~ s/\s+/ /g;
+  $name =~ s/^ //;
+  $name =~ s/ $//;
+  $name = 'HomePage' unless length $name;
+  
+  my $url = get_page_url ($name, $item->{name});
   $el->set_attribute (href => $url);
 
   unshift @$items,
@@ -964,10 +1013,6 @@ sub convert_swml_to_html ($$$) {
 ## A source anchor label in SWML -> URL
 sub get_page_url ($$;$) {
   my ($wiki_name, $base_name, $id) = @_;
-  $wiki_name =~ s/\s+/ /g;
-  $wiki_name =~ s/^ //;
-  $wiki_name =~ s/ $//;
-  $wiki_name = 'HomePage' unless length $wiki_name;
   $wiki_name = percent_encode ($wiki_name);
   $wiki_name =~ s/%2F/+/g;
   if (defined $id) {
@@ -990,6 +1035,12 @@ sub percent_encode ($) {
   $s =~ s/([^A-Za-z0-9_~-])/sprintf '%%%02X', ord $1/ges;
   return $s;
 } # percent_encode
+
+sub percent_encode_na ($) {
+  my $s = Encode::encode ('utf8', $_[0]);
+  $s =~ s/([^\x00-\x7F])/sprintf '%%%02X', ord $1/ges;
+  return $s;
+} # percent_encode_na
 
 sub percent_decode ($) { # input should be a byte string.
   my $s = shift;
