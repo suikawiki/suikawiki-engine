@@ -1,5 +1,11 @@
 2008-11-10  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Normalize white space characters and fullwidth/halfwidth
+	characters in names and contents.  Add links to the content page
+	in the edit page.  Typo fixed.
+
+2008-11-10  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Don't use PATH_INFO but use our own PATH_INFO created
 	from REQUEST_URI since it turns out that PATH_INFO is
 	percent-decoded such that '$' or ';' can't be distinguished in

@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 use strict;
 
+use utf8;
+
 use lib qw[/home/httpd/html/www/markup/html/whatpm
            /home/wakaba/work/manakai2/lib
            /home/httpd/html/swe/lib/];
@@ -122,8 +124,8 @@ $content_db->{root_directory_name} = $id_prop_db->{root_directory_name};
 $content_db->{leaf_suffix} = '.txt';
 
 if ($path[0] eq 'n' and @path == 2) {
-  my $name = $path[1];
-
+  my $name = normalize_name ($path[1]);
+  
   unless (length $name) {
     http_redirect (303, 'See other', get_page_url ($homepage_name, undef));
   }
@@ -266,6 +268,7 @@ if ($path[0] eq 'n' and @path == 2) {
         }
 
         my $textref = \ ($cgi->get_parameter ('text') // '');
+        normalize_content ($textref);
 
         $id_prop->{'content-type'} = $ct;
         $id_prop->{modified} = time;
@@ -303,6 +306,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $html_doc->manakai_is_html (1);
       $html_doc->inner_html (q[<!DOCTYPE HTML><title>Edit</title>
 <h1>Edit</h1>
+<div class=nav></div>
 <form method=post accept-charset=utf-8>
 <p><button type=submit>Save</button>
 <p><textarea name=text></textarea>
@@ -347,7 +351,16 @@ See <a rel=license>License</a> page.
       my $names = $id_prop->{name} || {};
       $ta_el = $form_el->get_elements_by_tag_name ('textarea')->[0];
       $ta_el->text_content (join "\x0A", keys %$names);
-      
+
+      my $nav_el = $html_doc->get_elements_by_tag_name ('div')->[0];
+      for (keys %$names) {
+        my $a_el = $html_doc->create_element_ns (HTML_NS, 'a');
+        $a_el->set_attribute (href => get_page_url ($_, undef, $id));
+        $a_el->text_content ($_);
+        $nav_el->append_child ($a_el);
+        $nav_el->manakai_append_text (' ');
+      }
+     
       print $html_doc->inner_html;
       exit;
     }
@@ -368,8 +381,7 @@ See <a rel=license>License</a> page.
       
       my $new_names = {};
       for (split /\x0D\x0A?|\x0A/, $cgi->get_parameter ('names')) {
-        ## TODO: normalize 
-        $new_names->{$_} = 1;
+        $new_names->{normalize_name ($_)} = 1;
       }
       $new_names->{'(no title)'} = 1 unless keys %$new_names;
 
@@ -427,14 +439,15 @@ See <a rel=license>License</a> page.
 
     my $new_names = {};
     for (split /\x0D\x0A?|\x0A/, $cgi->get_parameter ('names')) {
-      ## TODO: normalize 
-      $new_names->{$_} = 1;
+      $new_names->{normalize_name ($_)} = 1;
     }
     $new_names->{'(no title)'} = 1 unless keys %$new_names;
 
     my $user = $cgi->remote_user // '(anon)';
-    my $content = $cgi->get_parameter ('text') // '';
     my $ct = get_content_type_parameter ();
+
+    my $content = $cgi->get_parameter ('text') // '';
+    normalize_content (\$content);
 
     $names_lock->lock;
     my $id = $idgen->get_next_id;
@@ -474,7 +487,7 @@ See <a rel=license>License</a> page.
       }
 
       push @{$name_props->{id} ||= []}, $id;
-      $name_props->{name}->{$name} = 1;
+      $name_props->{name} = $name;
       $name_prop_db->set_data ($name => $name_props);
     }
 
@@ -599,6 +612,22 @@ Content-Type: text/html; charset=utf-8
 <p>See <a href="@{[htescape ($url)]}">other page</a>.];
   exit;
 } # http_redirect
+
+sub normalize_name ($) {
+  my $s = shift;
+  $s =~ tr{\x{3000}\x{FF01}-\x{FF5E}\x{FF61}-\x{FF9F}\x{FFE0}-\x{FFE6}}
+          { !-~。「」、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン\x{3099}\x{309A}\xA2\xA3\xAC\xAF\xA6\xA5\x{20A9}};
+  $s =~ s/\s+/ /g;
+  $s =~ s/^ //;
+  $s =~ s/ $//;
+  return $s;
+} # normalize_name
+
+sub normalize_content ($) {
+  my $sref = shift;
+  $$sref =~ tr{\x{3000}\x{FF01}-\x{FF5E}\x{FF61}-\x{FF9F}\x{FFE0}-\x{FFE6}}
+          { !-~。「」、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン\x{3099}\x{309A}\xA2\xA3\xAC\xAF\xA6\xA5\x{20A9}};
+} # normalize_content
 
 my $templates = {};
 
@@ -1166,7 +1195,7 @@ sub convert_sw3_page ($$) {
     my $name_props = $name_prop_db->get_data ($name);
     push @{$name_props->{id} ||= []}, $id;
     $ids = $name_props->{id};
-    $name_props->{name}->{$name} = 1;
+    $name_props->{name} = $name;
     $name_prop_db->set_data ($name => $name_props);
 
     $sw3_pages->delete_data ($name);
