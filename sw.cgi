@@ -15,6 +15,8 @@ $cgi->{decoder}->{'#default'} = sub {
   return Encode::decode ('utf-8', $_[1]);
 };
 
+my $license_name = 'Wiki//Page//License';
+
 my @content_type =
 (
  {type => 'text/x-suikawiki', label => 'SWML'},
@@ -146,12 +148,14 @@ if ($path[0] eq 'n' and @path == 2) {
     if ($format eq 'text' and defined $id) {
       my $content = $content_db->get_data ($id);
 
+      binmode STDOUT, ':encoding(utf-8)';
       print qq[Content-Type: text/x-suikawiki; charset=utf-8\n\n];
       print $$content;
       exit;
     } elsif ($format eq 'xml' and defined $id) {
       my $doc = get_xml_data ($id);
 
+      binmode STDOUT, ':encoding(utf-8)';
       print qq[Content-Type: application/xml; charset=utf-8\n\n];
 
       if (scalar $cgi->get_parameter ('styled')) {
@@ -168,11 +172,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $html_doc->inner_html ('<!DOCTYPE HTML><title></title>');
       
       $html_doc->get_elements_by_tag_name ('title')->[0]->text_content ($name);
-      my $head_el = $html_doc->last_child->first_child;
-      my $link_el = $html_doc->create_element_ns (HTML_NS, 'link');
-      $link_el->set_attribute (rel => 'stylesheet');
-      $link_el->set_attribute (href => '/www/style/html/xhtml');
-      $head_el->append_child ($link_el);
+      set_head_content ($html_doc);
       
       my $body_el = $html_doc->last_child->last_child;
 
@@ -208,7 +208,16 @@ if ($path[0] eq 'n' and @path == 2) {
         my $article_el = convert_swml_to_html ($name, $xml_doc => $html_doc);
         $body_el->append_child ($article_el);
       }
+
+      my $footer_el = $html_doc->create_element_ns (HTML_NS, 'footer');
+      $footer_el->set_attribute (class => 'footer');
+      $footer_el->inner_html (q[<p class=copyright><small>&copy; Authors.  See <a rel=license>license</a>.  There might also be additional terms applied for this page.</small>]);
+      $body_el->append_child ($footer_el);
       
+      my $a_el = $footer_el->get_elements_by_tag_name ('a')->[0];
+      $a_el->set_attribute (href => get_page_url ($license_name));
+      
+      binmode STDOUT, ':encoding(utf-8)';
       print qq[Content-Type: text/html; charset=utf-8\n\n];
       print $html_doc->inner_html;
       exit;
@@ -275,7 +284,6 @@ if ($path[0] eq 'n' and @path == 2) {
       my $html_doc = $dom->create_document;
       $html_doc->manakai_is_html (1);
       $html_doc->inner_html (q[<!DOCTYPE HTML><title>Edit</title>
-<link rel=stylesheet href="/www/style/html/xhtml">
 <h1>Edit</h1>
 <form method=post accept-charset=utf-8>
 <p><button type=submit>Save</button>
@@ -283,6 +291,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <p><button type=submit>Save</button>
 <input type=hidden name=hash>
 <select name=content-type></select>
+See <a rel=license>License</a> page.
 </form>
 
 <div class=section>
@@ -294,6 +303,7 @@ if ($path[0] eq 'n' and @path == 2) {
 </form>
 </div>
 ]);
+      set_head_content ($html_doc);
       my $form_el = $html_doc->get_elements_by_tag_name ('form')->[0];
       $form_el->set_attribute (action => $id);
       my $ta_el = $form_el->get_elements_by_tag_name ('textarea')->[0];
@@ -310,9 +320,12 @@ if ($path[0] eq 'n' and @path == 2) {
           ($html_doc,
            $form_el->get_elements_by_tag_name ('select')->[0] => $ct);
 
+      my $a_el = $form_el->get_elements_by_tag_name ('a')->[0];
+      $a_el->set_attribute (href => get_page_url ($license_name));
+
       $form_el = $html_doc->get_elements_by_tag_name ('form')->[1];
       $form_el->set_attribute (action => $id . ';names');
-
+      
       my $names = $id_prop->{name} || {};
       $ta_el = $form_el->get_elements_by_tag_name ('textarea')->[0];
       $ta_el->text_content (join "\x0A", keys %$names);
@@ -449,7 +462,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
     $vc->commit_changes ("id=$id created by $user");
     
-    my $url = 'n/' . get_page_url ([keys %$new_names]->[0], undef, 0 + $id);
+    my $url = get_page_url ([keys %$new_names]->[0], undef, 0 + $id);
     http_redirect (301, 'Created', $url);
   } else {
     binmode STDOUT, ':encoding(utf8)';
@@ -458,7 +471,6 @@ if ($path[0] eq 'n' and @path == 2) {
     my $doc = $dom->create_document;
     $doc->manakai_is_html (1);
     $doc->inner_html (q[<!DOCTYPE HTML><title>Edit</title>
-<link rel=stylesheet href="/www/style/html/xhtml">
 <h1>Edit</h1>
 <form action="" method=post accept-charset=utf-8>
 <p><button type=submit>Save</button>
@@ -466,8 +478,10 @@ if ($path[0] eq 'n' and @path == 2) {
 <p><textarea name=text></textarea>
 <p><button type=submit>Save</button>
 <select name=content-type></select>
+See <a rel=license>License</a> page.
 </form>
 ]);
+    set_head_content ($doc);
 
     my $form_el = $doc->get_elements_by_tag_name ('form')->[0];
     set_content_type_options
@@ -477,6 +491,9 @@ if ($path[0] eq 'n' and @path == 2) {
     $form_el->get_elements_by_tag_name ('textarea')->[0]
         ->text_content ($names);
 
+    my $a_el = $form_el->get_elements_by_tag_name ('a')->[0];
+    $a_el->set_attribute (href => get_page_url ($license_name));
+    
     print $doc->inner_html;
     exit;
   }
@@ -956,6 +973,7 @@ sub get_page_url ($$;$) {
   if (defined $id) {
     $wiki_name .= '$' . (0 + $id);
   }
+  $wiki_name = ('../' x (@path - 1)) . 'n/' . $wiki_name;
   return $wiki_name;
 } # get_page_url
 
@@ -1113,3 +1131,18 @@ sub convert_sw3_page ($$) {
 
   return $ids;
 } # convert_sw3_page
+
+sub set_head_content ($) {
+  my $doc = shift;
+  my $head_el = $doc->manakai_head;
+  
+  my $link_el = $doc->create_element_ns (HTML_NS, 'link');
+  $link_el->set_attribute (rel => 'stylesheet');
+  $link_el->set_attribute (href => '/www/style/html/xhtml');
+  $head_el->append_child ($link_el);
+  
+  $link_el = $doc->create_element_ns (HTML_NS, 'link');
+  $link_el->set_attribute (rel => 'license');
+  $link_el->set_attribute (href => get_page_url ($license_name, undef));
+  $head_el->append_child ($link_el);
+} # set_head_content

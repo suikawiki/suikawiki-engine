@@ -1,5 +1,12 @@
 2008-11-10  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: The STDOUT was not set to UTF-8 in some mode.  Fact out
+	<link rel=stylesheet> code and add <link rel=license>.  Add link
+	to the license page for all edit and content pages.
+	(get_page_url): Support link from another hierarchy.
+
+2008-11-10  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Show a link to page creation page if there is no
 	associated page for a name.  Fact out |get_content_type_parameter|
 	and |set_content_type_options| functions.  Use "(no title)" for
