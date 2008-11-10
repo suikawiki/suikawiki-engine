@@ -1,0 +1,386 @@
+html {
+  padding: 0.5em;
+}
+
+html, td {
+  line-height: 2.2;
+}
+
+.nav {
+  display: block;
+  text-align: right;
+}
+
+.nav.swe-names {
+  margin-left: 0.5em;
+  font-size: 150%;
+  font-weight: bolder;
+  font-family: sans-serif;
+  text-align: left;
+}
+
+.footer {
+  display: block;
+  margin-top: 1em;
+  border-top: gray thin solid;
+  padding-top: 0.3em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 0.5em 0;
+  padding: 0;
+  color: #004000;
+  background-color: transparent;
+  font-weight: bolder;
+  font-family; sans-serif;
+}
+
+h1 {
+  background-image: url(http://suika.fam.cx/~wakaba/-temp/2004/sw) /* 107x59 */;
+  background-position: middle left;
+  background-repeat: no-repeat;
+  padding-left: 120px;
+  min-height: 59px;
+  font-size: 150%;
+}
+
+h2 {
+  font-size: 150%;
+}
+
+h3 {
+  font-size: 120%;
+  text-decoration: underline;
+}
+
+h4 {
+  font-size: 120%;
+}
+
+h5, h6 {
+  font-size: 100%;
+}
+
+.article, .section {
+  display: block;
+  margin: 0 0 2em 0;
+  padding: 0 1em 0 2em;
+}
+
+p + .article, p + .section,
+ul + .article, ul + .section,
+ol + .article, ol + .section,
+dl + .article, dl + .section,
+table + .article, table + .section,
+ins + .article, ins + .section,
+del + .article, del + .section {
+  margin-top: 2em;
+}
+
+.article > h1, .section > h1,
+.article > h2, .section > h2,
+.article > h3, .section > h3,
+.article > h4, .section > h4,
+.article > h5, .section > h5,
+.article > h6, .section > h6,
+.article > .article, .article > .section,
+.section > .article, .section > .section {
+  margin-left: -1em;
+}
+
+blockquote {
+  margin: 0.5em 0 0.5em 2em;
+  border-left: #004000 double 0.3em;
+  padding: 0.2em 0.5em;
+  background-color: #f7fff7;
+  color: black;
+}
+
+/* Paragraph-level blocks */
+
+.sw-comment-p {
+  display: block;
+  padding-left: 1em;
+  color: #004000;
+  background-color: transparent;
+  text-indent: -1em;
+}
+
+.sw-comment-p:before {
+  content: ";; ";
+}
+
+.sw-ed {
+  display: block;
+  margin: 1em 0;
+  border: medium solid;
+  padding: 0.5em 1em 0.5em 2em;
+  color: rgb(229, 0, 0);
+  background-color: transparent;
+  text-indent: -1em;
+}
+
+.sw-ed:before {
+  content: "@@ ";
+}
+
+p {
+  margin: 0;
+  text-indent: 1em;
+}
+
+pre {
+  margin: 0;
+}
+
+/* Lists */
+
+ul, ol, dl {
+  margin: 0;
+  text-indent: 0;
+}
+
+/* Tables */
+
+table {
+  margin: 0 0.5em;
+  border: 1px solid gray;
+  border-spacing: 0;
+}
+
+thead, tfoot, th {
+  font-weight: bolder;
+  font-family: sans-serif;
+}
+
+td, th {
+  padding: 0.2em 0.4em;
+  border: 1px solid #E0E0E0;
+  empty-cells: show;
+  text-indent: 0;
+}
+
+th[scope="row"], th[scope="rowgroup"] {
+  text-align: left;
+  border-right: 1px solid #C0C0C0;
+}
+th[scope="col"], th[scope="colgroup"] {
+  text-align: center;
+  border-bottom: 1px solid #C0C0C0;
+}
+
+/* Edits */
+
+ins {
+  background-color: rgb(255, 255, 153);
+  color: black;
+  text-decoration: underline;
+}
+
+del {
+  background-color: #FFBBBB;
+  color: black;
+  font-size: 80%;
+  text-decoration: line-through;
+}
+
+.section > ins,
+.section > del,
+blockquote > ins,
+blockquote > del {
+  display: block;
+  margin: 0.5em 0;
+  padding: 0.2em 0.5em;
+}
+
+/* Anchors */
+
+.sw-anchor:link, .sw-anchor:visited {
+  border-bottom: solid thin blue;
+  padding-bottom: 0.1em;
+  color: inherit;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+.sw-anchor:visisted {
+  border-bottom-color: purple;
+}
+
+.sw-anchor-internal {
+/*  color: inherit;
+  background-color: transparent; */
+  text-decoration: none;
+}
+
+.sw-anchor-end {
+  display: block;
+  position: absolute;
+  left: 0.4em;
+  top: auto;
+  color: gray;
+  text-indent: 0;
+  font-size: smaller;
+}
+
+a:hover {
+  background-color: #FFA;
+  color: #000080;
+}
+
+/* Code fragments */
+
+code, samp, pre.code {
+  color: #800000;
+  font-family: "Courier New", monospace;
+}
+
+pre.example:before {
+  display: block;
+  content: "例: ";
+  font-weight: bolder;
+  font-family: sans-serif;
+}
+
+pre.bad.example:before {
+  content: "悪い例: ";
+}
+
+pre.invalid.example:before {
+  content: "非妥当な例: ";
+}
+
+pre.illegal.example:before {
+  content: "非妥当な例: ";
+}
+
+/* Citations */
+
+cite {
+  font-style: normal;
+}
+
+cite:before {
+  content: "『";
+}
+
+cite:after {
+  content: "』";
+}
+
+.sw-csection {
+
+}
+
+.sw-csection:before {
+  content: "「";
+}
+
+.sw-csection:after {
+  content: "」";
+}
+
+.sw-src {
+  font-style: normal;
+  color: gray;
+}
+
+.sw-src:before {
+  content: " [";
+}
+
+.sw-src:after {
+  content: "] ";
+}
+
+/* Inline quotations */
+
+q:before {
+  content: " 「";
+}
+
+q:after {
+  content: "」 ";
+}
+
+q q:before {
+  content: " 『";
+}
+
+q q:after {
+  content: "』 ";
+}
+
+/* Emphases and important words */
+
+strong {
+
+}
+
+em {
+  font-style: normal;
+  text-decoration: underline;
+}
+
+.sw-weak {
+  font-size: smaller;
+  color: gray;
+  background-color: transparent;
+}
+
+/* Ruby annotations */
+
+ruby {
+  display: inline;
+  ruby-position: inline;
+  position: relative;
+}
+
+rp {
+  display: none;
+}
+
+rt {
+  display: block;
+  position: absolute;
+  bottom: 1.7em;
+  left: 0;
+  right: 0;
+  font-size: 70%;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+  text-indent: 0;
+}
+
+rt + rt, .sw-rubyb > rt {
+  top: 1.7em;
+  bottom: auto;    
+}
+
+/* Other inlines */
+
+dfn {
+  font-style: normal;
+  font-weight: bolder;
+  font-family: sans-serif;
+}
+
+/* Edit forms */
+
+form p {
+  text-indent: 0;
+}
+
+textarea {
+  width: 100%;
+  height: 10em;
+}
+
+textarea[name=text] {
+  height: 30em;
+}
+
+textarea[name=names] {
+  height: 4em;
+}

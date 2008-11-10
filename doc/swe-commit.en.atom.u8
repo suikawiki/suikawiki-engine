@@ -60,4 +60,17 @@
 	add&quot; command to avoid keyword substition and newline
 	normalization.
 
+</content></entry><entry xml:id="entry-1226311097"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226311097</id><title>2008-11-10 Wakaba</title><updated>2008-11-10T09:58:15Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ ChangeLog	10 Nov 2008 09:58:00 -0000
+2008-11-10  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* styles/: New directory.
+
+++ swe/styles/ChangeLog	10 Nov 2008 09:57:53 -0000
+2008-11-10  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw.css: New style sheet.
+
+	* ChangeLog: New file.
+
+
 </content></entry></feed>
