@@ -120,11 +120,6 @@ if ($path[0] eq 'n' and @path == 2) {
       $names_lock->unlock;
     }
 
-    if (@$ids == 0) {
-      ## TODO: ...
-      exit;
-    }
-
     my $id;
     if (defined $dollar) {
       $dollar += 0;
@@ -145,13 +140,16 @@ if ($path[0] eq 'n' and @path == 2) {
 
     my $format = $cgi->get_parameter ('format') // 'html';
 
-    if ($format eq 'text') {
+    ## TODO: Is it semantically valid that there is path?format=html
+    ## (200) but no path?format=xml (404)?
+
+    if ($format eq 'text' and defined $id) {
       my $content = $content_db->get_data ($id);
 
       print qq[Content-Type: text/x-suikawiki; charset=utf-8\n\n];
       print $$content;
       exit;
-    } elsif ($format eq 'xml') {
+    } elsif ($format eq 'xml' and defined $id) {
       my $doc = get_xml_data ($id);
 
       print qq[Content-Type: application/xml; charset=utf-8\n\n];
@@ -162,10 +160,7 @@ if ($path[0] eq 'n' and @path == 2) {
  
       print $doc->inner_html;
       exit;
-    } else {
-      require Whatpm::SWML::Parser;
-      my $p = Whatpm::SWML::Parser->new;
-      
+    } elsif ($format eq 'html') {
       my $xml_doc = get_xml_data ($id);
 
       my $html_doc = $dom->create_document;
@@ -201,12 +196,19 @@ if ($path[0] eq 'n' and @path == 2) {
       my $nav_el = $html_doc->create_element_ns (HTML_NS, 'div');
       $nav_el->set_attribute (class => 'nav');
       $nav_el->inner_html (q[<a rel=edit>Edit</a>]);
-      $nav_el->first_child->set_attribute (href => '../i/' . $id . ';edit');
+      if (defined $id) {
+        $nav_el->first_child->set_attribute (href => '../i/' . $id . ';edit');
+      } else {
+        $nav_el->first_child->set_attribute
+            (href => '../new-page?names=' . percent_encode ($name));
+      }
       $body_el->append_child ($nav_el);
-      
-      my $article_el = convert_swml_to_html ($name, $xml_doc => $html_doc);
-      $body_el->append_child ($article_el);
 
+      if (defined $id) {
+        my $article_el = convert_swml_to_html ($name, $xml_doc => $html_doc);
+        $body_el->append_child ($article_el);
+      }
+      
       print qq[Content-Type: text/html; charset=utf-8\n\n];
       print $html_doc->inner_html;
       exit;
@@ -225,18 +227,7 @@ if ($path[0] eq 'n' and @path == 2) {
       
       my $id_prop = $id_prop_db->get_data ($id);
       if ($id_prop) {
-        my $ct = $cgi->get_parameter ('content-type') // 'text/x-suikawiki';
-        my $valid_ct;
-        for (@content_type) {
-          if ($_->{type} eq $ct) {
-            $valid_ct = 1;
-            last;
-          }
-        }
-        unless ($valid_ct) {
-          ## TODO: 400
-          exit;
-        }
+        my $ct = get_content_type_parameter ();
 
         my $prev_hash = $cgi->get_parameter ('hash') // '';
         my $current_hash = $id_prop->{hash} //
@@ -295,7 +286,7 @@ if ($path[0] eq 'n' and @path == 2) {
 </form>
 
 <div class=section>
-<h2>Names</h2>
+<h2>Page name(s)</h2>
 
 <form method=post accept-charset=utf-8>
 <p><textarea name=names></textarea>
@@ -315,26 +306,9 @@ if ($path[0] eq 'n' and @path == 2) {
       $hash_field->set_attribute (value => $hash);
 
       my $ct = $id_prop->{'content-type'} // 'text/x-suikawiki';
-      my $has_ct;
-      my $select_el = $form_el->get_elements_by_tag_name ('select')->[0];
-      for (@content_type) {
-        next unless defined $_->{label};
-        my $option_el = $html_doc->create_element_ns (HTML_NS, 'option');
-        $option_el->set_attribute (value => $_->{type});
-        $option_el->text_content ($_->{label});
-        if ($_->{type} eq $ct) {
-          $option_el->set_attribute (selected => '');
-          $has_ct = 1;
-        }
-        $select_el->append_child ($option_el);
-      }
-      unless ($has_ct) {
-        my $option_el = $html_doc->create_element_ns (HTML_NS, 'option');
-        $option_el->set_attribute (value => $ct);
-        $option_el->text_content ($ct);
-        $option_el->set_attribute (selected => '');
-        $select_el->append_child ($option_el);
-      }
+      set_content_type_options
+          ($html_doc,
+           $form_el->get_elements_by_tag_name ('select')->[0] => $ct);
 
       $form_el = $html_doc->get_elements_by_tag_name ('form')->[1];
       $form_el->set_attribute (action => $id . ';names');
@@ -366,6 +340,7 @@ if ($path[0] eq 'n' and @path == 2) {
         ## TODO: normalize 
         $new_names->{$_} = 1;
       }
+      $new_names->{'(no title)'} = 1 unless keys %$new_names;
 
       my $added_names = {};
       my $removed_names = {%$old_names};
@@ -415,6 +390,96 @@ if ($path[0] eq 'n' and @path == 2) {
       ## TODO: mnethod not allowed
     }
   }
+} elsif ($path[0] eq 'new-page' and @path == 1) {
+  if ($cgi->request_method eq 'POST') {
+    require SWE::DB::VersionControl;
+
+    my $new_names = {};
+    for (split /\x0D\x0A?|\x0A/, $cgi->get_parameter ('names')) {
+      ## TODO: normalize 
+      $new_names->{$_} = 1;
+    }
+    $new_names->{'(no title)'} = 1 unless keys %$new_names;
+
+    my $user = $cgi->remote_user // '(anon)';
+    my $content = $cgi->get_parameter ('text') // '';
+    my $ct = get_content_type_parameter ();
+
+    $names_lock->lock;
+    my $id = $idgen->get_next_id;
+
+    {
+      my $id_lock = $id_locks->get_lock ($id);
+      $id_lock->lock;
+      
+      my $vc = SWE::DB::VersionControl->new;
+      local $content_db->{version_control} = $vc;
+      local $id_prop_db->{version_control} = $vc;
+      $vc->add_file ($idgen->{file_name});
+      
+      $content_db->set_data ($id => \$content);
+      
+      my $id_props = {};
+      $id_props->{name}->{$_} = 1 for keys %$new_names;
+      $id_props->{'content-type'} = $ct;
+      $id_props->{modified} = time;
+      $id_props->{hash} = get_hash (\$content);
+      $id_prop_db->set_data ($id => $id_props);
+
+      $vc->commit_changes ("created by $user");
+
+      $id_lock->unlock;
+    }
+
+    my $vc = SWE::DB::VersionControl->new;
+    local $name_prop_db->{version_control} = $vc;
+
+    for my $name (keys %$new_names) {
+      my $name_props = $name_prop_db->get_data ($name);
+      unless (defined $name_props) {
+        my $sw3id = $sw3_pages->get_data ($name);
+        convert_sw3_page ($sw3id => $name);                    
+        $name_props = $name_prop_db->get_data ($name);
+      }
+
+      push @{$name_props->{id} ||= []}, $id;
+      $name_props->{name}->{$name} = 1;
+      $name_prop_db->set_data ($name => $name_props);
+    }
+
+    $vc->commit_changes ("id=$id created by $user");
+    
+    my $url = 'n/' . get_page_url ([keys %$new_names]->[0], undef, 0 + $id);
+    http_redirect (301, 'Created', $url);
+  } else {
+    binmode STDOUT, ':encoding(utf8)';
+    print "Content-Type: text/html; charset=utf-8\n\n";
+
+    my $doc = $dom->create_document;
+    $doc->manakai_is_html (1);
+    $doc->inner_html (q[<!DOCTYPE HTML><title>Edit</title>
+<link rel=stylesheet href="/www/style/html/xhtml">
+<h1>Edit</h1>
+<form action="" method=post accept-charset=utf-8>
+<p><button type=submit>Save</button>
+<p><label>Page name(s):<br> <textarea name=names></textarea></label>
+<p><textarea name=text></textarea>
+<p><button type=submit>Save</button>
+<select name=content-type></select>
+</form>
+]);
+
+    my $form_el = $doc->get_elements_by_tag_name ('form')->[0];
+    set_content_type_options
+        ($doc, $form_el->get_elements_by_tag_name ('select')->[0]);
+
+    my $names = $cgi->get_parameter ('names') // '';
+    $form_el->get_elements_by_tag_name ('textarea')->[0]
+        ->text_content ($names);
+
+    print $doc->inner_html;
+    exit;
+  }
 }
 
 print q[Content-Type: text/plain; charset=us-ascii
@@ -424,6 +489,66 @@ Status: 404 Not found
 
 exit;
 
+sub get_content_type_parameter () {
+  my $ct = $cgi->get_parameter ('content-type') // 'text/x-suikawiki';
+  
+  my $valid_ct;
+  for (@content_type) {
+    if ($_->{type} eq $ct) {
+      $valid_ct = 1;
+      last;
+    }
+  }
+  unless ($valid_ct) {
+    ## TODO: 400
+    exit;
+  }
+
+  return $ct;
+} # get_content_type_parameter
+
+sub set_content_type_options ($$;$) {
+  my ($doc, $select_el, $ct) = @_;
+  $ct //= 'text/x-suikawiki';
+  
+  my $has_ct;
+  for (@content_type) {
+    next unless defined $_->{label};
+    my $option_el = $doc->create_element_ns (HTML_NS, 'option');
+    $option_el->set_attribute (value => $_->{type});
+    $option_el->text_content ($_->{label});
+    if ($_->{type} eq $ct) {
+      $option_el->set_attribute (selected => '');
+      $has_ct = 1;
+    }
+    $select_el->append_child ($option_el);
+  }
+  unless ($has_ct) {
+    my $option_el = $doc->create_element_ns (HTML_NS, 'option');
+    $option_el->set_attribute (value => $ct);
+    $option_el->text_content ($ct);
+    $option_el->set_attribute (selected => '');
+    $select_el->append_child ($option_el);
+  }
+} # set_content_type_options
+
+sub http_redirect ($$$) {
+  my ($code, $text, $url) = @_;
+  
+  my $abs_url = get_absolute_url ($url);
+
+  binmode STDOUT, ':encoding(utf-8)';
+  print qq[Status: $code $text
+Location: $abs_url
+Content-Type: text/html; charset=utf-8
+
+<!DOCTYPE HTML>
+<html lang=en>
+<title>$code @{[htescape ($text)]}</title>
+<h1>@{[htescape ($text)]}</h1>
+<p>See <a href="@{[htescape ($url)]}">other page</a>.];
+  exit;
+} # http_redirect
 
 my $templates = {};
 

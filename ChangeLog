@@ -1,3 +1,12 @@
+2008-11-10  Wakaba  <wakaba@suika.fam.cx>
+
+	* sw.cgi: Show a link to page creation page if there is no
+	associated page for a name.  Fact out |get_content_type_parameter|
+	and |set_content_type_options| functions.  Use "(no title)" for
+	the name for an anonymous page so that no page turns into really
+	no title.  'new-page' implemented.
+	(http_redirect): New.
+
 2008-11-09  Wakaba  <wakaba@suika.fam.cx>
 
 	* sw3.cgi (convert_sw3_page): Set the |hash| property of the
