@@ -38,7 +38,7 @@ sub commit_changes ($$) {
   }
 
   for (keys %{$self->{added_files}}) {
-    _system ('cvs', 'add', $_);
+    _system ('cvs', 'add', '-kb', $_);
   }
   
   my @changed;

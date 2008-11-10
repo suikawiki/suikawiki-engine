@@ -53,4 +53,11 @@
 
 2008-11-09  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
+</content></entry><entry xml:id="entry-1226287582"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226287582</id><title>2008-11-10 Wakaba</title><updated>2008-11-10T03:26:18Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/DB/ChangeLog	10 Nov 2008 03:26:13 -0000
+2008-11-10  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* VersionControl.pm (commit_changes): Set &quot;-kb&quot; option to the &quot;cvs
+	add&quot; command to avoid keyword substition and newline
+	normalization.
+
 </content></entry></feed>

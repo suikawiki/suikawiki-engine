@@ -1,3 +1,9 @@
+2008-11-10  Wakaba  <wakaba@suika.fam.cx>
+
+	* VersionControl.pm (commit_changes): Set "-kb" option to the "cvs
+	add" command to avoid keyword substition and newline
+	normalization.
+
 2008-11-09  Wakaba  <wakaba@suika.fam.cx>
 
 	* VersionControl.pm: New module.
