@@ -19,6 +19,7 @@ $cgi->{decoder}->{'#default'} = sub {
 
 my $homepage_name = 'HomePage';
 my $license_name = 'Wiki//Page//License';
+my $style_url = q<http://suika.fam.cx/swe/styles/sw>;
 
 my @content_type =
 (
@@ -306,7 +307,11 @@ if ($path[0] eq 'n' and @path == 2) {
       $html_doc->manakai_is_html (1);
       $html_doc->inner_html (q[<!DOCTYPE HTML><title>Edit</title>
 <h1>Edit</h1>
-<div class=nav></div>
+<div class="nav swe-names"></div>
+
+<div class=section>
+<h2>Page body</h2>
+
 <form method=post accept-charset=utf-8>
 <p><button type=submit>Save</button>
 <p><textarea name=text></textarea>
@@ -315,6 +320,8 @@ if ($path[0] eq 'n' and @path == 2) {
 <select name=content-type></select>
 See <a rel=license>License</a> page.
 </form>
+
+</div>
 
 <div class=section>
 <h2>Page name(s)</h2>
@@ -501,12 +508,14 @@ See <a rel=license>License</a> page.
 
     my $doc = $dom->create_document;
     $doc->manakai_is_html (1);
-    $doc->inner_html (q[<!DOCTYPE HTML><title>Edit</title>
-<h1>Edit</h1>
+    $doc->inner_html (q[<!DOCTYPE HTML><title>New page</title>
+<h1>New page</h1>
 <form action="" method=post accept-charset=utf-8>
 <p><button type=submit>Save</button>
-<p><label>Page name(s):<br> <textarea name=names></textarea></label>
-<p><textarea name=text></textarea>
+<p><label><strong>Page name(s)</strong>:<br>
+<textarea name=names></textarea></label>
+<p><label><strong>Page body</strong>:<br>
+<textarea name=text></textarea></label>
 <p><button type=submit>Save</button>
 <select name=content-type></select>
 See <a rel=license>License</a> page.
@@ -590,7 +599,7 @@ sub http_error ($$;$) {
   print qq[Content-Type: text/html; charset=utf-8\n\n];
   print qq[<!DOCTYPE HTML>
 <html lang=en><title>$code @{[htescape ($text)]}</title>
-<link rel=stylesheet href="/www/style/html/xhtml">
+<link rel=stylesheet href="@{[htescape ($style_url)]}">
 <h1>@{[htescape ($text)]}</h1>];
   exit;
 } # http_error
@@ -734,7 +743,7 @@ $templates->{(SW09_NS)}->{delete} = sub {
 $templates->{(SW10_NS)}->{'comment-p'} = sub {
   my ($items, $item) = @_;
 
-  my $el = $item->{doc}->create_element_ns (HTML_NS, 'p');
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'div');
   $item->{parent}->append_child ($el);
   $el->set_attribute (class => 'sw-comment-p');
 
@@ -746,7 +755,7 @@ $templates->{(SW10_NS)}->{'comment-p'} = sub {
 $templates->{(SW10_NS)}->{ed} = sub {
   my ($items, $item) = @_;
 
-  my $el = $item->{doc}->create_element_ns (HTML_NS, 'p');
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'div');
   $item->{parent}->append_child ($el);
   $el->set_attribute (class => 'sw-ed');
 
@@ -1218,7 +1227,7 @@ sub set_head_content ($) {
   
   my $link_el = $doc->create_element_ns (HTML_NS, 'link');
   $link_el->set_attribute (rel => 'stylesheet');
-  $link_el->set_attribute (href => '/www/style/html/xhtml');
+  $link_el->set_attribute (href => $style_url);
   $head_el->append_child ($link_el);
   
   $link_el = $doc->create_element_ns (HTML_NS, 'link');
