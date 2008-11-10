@@ -20,6 +20,7 @@ $cgi->{decoder}->{'#default'} = sub {
 my $homepage_name = 'HomePage';
 my $license_name = 'Wiki//Page//License';
 my $style_url = q<http://suika.fam.cx/swe/styles/sw>;
+my $cvs_archives_url = q</gate/cvs/suikawiki/sw4data/>;
 
 my @content_type =
 (
@@ -190,7 +191,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $html_doc->inner_html ('<!DOCTYPE HTML><title></title>');
       
       $html_doc->get_elements_by_tag_name ('title')->[0]->text_content ($name);
-      set_head_content ($html_doc);
+      set_head_content ($html_doc, $id);
       
       my $body_el = $html_doc->last_child->last_child;
 
@@ -332,7 +333,7 @@ See <a rel=license>License</a> page.
 </form>
 </div>
 ]);
-      set_head_content ($html_doc);
+      set_head_content ($html_doc, $id);
       my $form_el = $html_doc->get_elements_by_tag_name ('form')->[0];
       $form_el->set_attribute (action => $id);
       my $ta_el = $form_el->get_elements_by_tag_name ('textarea')->[0];
@@ -1221,8 +1222,8 @@ sub convert_sw3_page ($$) {
   return $ids;
 } # convert_sw3_page
 
-sub set_head_content ($) {
-  my $doc = shift;
+sub set_head_content ($;$) {
+  my ($doc, $id) = @_;
   my $head_el = $doc->manakai_head;
   
   my $link_el = $doc->create_element_ns (HTML_NS, 'link');
@@ -1234,4 +1235,12 @@ sub set_head_content ($) {
   $link_el->set_attribute (rel => 'license');
   $link_el->set_attribute (href => get_page_url ($license_name, undef));
   $head_el->append_child ($link_el);
+
+  if (defined $id) {
+    my $link_el = $doc->create_element_ns (HTML_NS, 'link');
+    $link_el->set_attribute (rel => 'archives');
+    $link_el->set_attribute (href => $cvs_archives_url . 'ids/' .
+                             int ($id / 1000) . '/' . ($id % 1000) . '.txt');
+    $head_el->append_child ($link_el);
+  }
 } # set_head_content

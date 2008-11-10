@@ -1,5 +1,9 @@
 2008-11-10  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: <link rel=archives> added.
+
+2008-11-10  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Put edit-body-content form into a section element.  Use
 	new style sheet URL.  Use |div| instead of |p| for
 	|sw10:comment-p| and |sw10:ed| elements for compatibility with
