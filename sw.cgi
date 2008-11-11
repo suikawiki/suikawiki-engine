@@ -116,6 +116,10 @@ my $content_cache_db = SWE::DB::IDDOM->new;
 $content_cache_db->{root_directory_name} = $id_prop_db->{root_directory_name};
 $content_cache_db->{leaf_suffix} = '.domcache';
 
+my $html_cache_db = SWE::DB::IDDOM->new;
+$html_cache_db->{root_directory_name} = $id_prop_db->{root_directory_name};
+$html_cache_db->{leaf_suffix} = '.htmlcache';
+
 my $cache_prop_db = SWE::DB::IDProps->new;
 $cache_prop_db->{root_directory_name} = $content_cache_db->{root_directory_name};
 $cache_prop_db->{leaf_suffix} = '.cacheprops';
@@ -175,8 +179,9 @@ if ($path[0] eq 'n' and @path == 2) {
       my $id_lock = $id_locks->get_lock ($id);
       $id_lock->lock;
 
+      my $id_prop = $id_prop_db->get_data ($id);
       my $cache_prop = $cache_prop_db->get_data ($id);
-      my $doc = get_xml_data ($id);
+      my $doc = get_xml_data ($id, $id_prop, $cache_prop);
       
       $id_lock->unlock;
 
@@ -190,16 +195,51 @@ if ($path[0] eq 'n' and @path == 2) {
       print $doc->inner_html;
       exit;
     } elsif ($format eq 'html') {
-      my $id_lock = $id_locks->get_lock ($id);
-      $id_lock->lock;
+      my $html_doc;
+      my $article_el;
+      if (defined $id) {
+        my $id_lock = $id_locks->get_lock ($id);
+        $id_lock->lock;
+        
+        my $html_converter_version = 1;
+        
+        my $id_prop = $id_prop_db->get_data ($id);
+        my $cache_prop = $cache_prop_db->get_data ($id);
+        
+        my $html_cache_version = $cache_prop->{'html-cache-version'};
+        if (defined $html_cache_version and
+            $html_cache_version >= $html_converter_version) {
+          my $html_cached_hash = $cache_prop->{'html-cached-hash'} // 'x';
+          my $current_hash = $id_prop->{hash} // '';
+          if ($html_cached_hash eq $current_hash) {
+            $html_doc = $html_cache_db->get_data ($id);
+          }
+        }
+        unless ($html_doc) {
+          my $xml_doc = get_xml_data ($id, $id_prop, $cache_prop);
+          
+          $html_doc = $dom->create_document;
+          $html_doc->strict_error_checking (0);
+          $html_doc->dom_config->set_parameter
+              ('http://suika.fam.cx/www/2006/dom-config/strict-document-children' => 0);
+          $html_doc->manakai_is_html (1);
+          
+          $article_el = convert_swml_to_html ($name, $xml_doc => $html_doc);
+          $html_doc->text_content ('');
+          $html_doc->append_child ($article_el);
+          
+          $html_cache_db->set_data ($id => $html_doc);
+          $cache_prop->{'html-cached-hash'} = $id_prop->{hash};
+          $cache_prop->{'html-cache-version'} = $html_converter_version;
+          $cache_prop_db->set_data ($id => $cache_prop);
+        } else {
+          $html_doc->manakai_is_html (1);
+          $article_el = $html_doc->document_element;
+        }
+        
+        $id_lock->unlock;
+      }
 
-      my $cache_prop = $cache_prop_db->get_data ($id);
-      my $xml_doc = get_xml_data ($id);
-
-      $id_lock->unlock;
-      
-      my $html_doc = $dom->create_document;
-      $html_doc->manakai_is_html (1);
       $html_doc->inner_html ('<!DOCTYPE HTML><title></title>');
       
       $html_doc->get_elements_by_tag_name ('title')->[0]->text_content ($name);
@@ -235,10 +275,7 @@ if ($path[0] eq 'n' and @path == 2) {
       }
       $body_el->append_child ($nav_el);
 
-      if (defined $id) {
-        my $article_el = convert_swml_to_html ($name, $xml_doc => $html_doc);
-        $body_el->append_child ($article_el);
-      }
+      $body_el->append_child ($article_el) if $article_el;
 
       my $footer_el = $html_doc->create_element_ns (HTML_NS, 'footer');
       $footer_el->set_attribute (class => 'footer');
@@ -1106,14 +1143,12 @@ sub get_absolute_url ($) {
       ->uri_reference;
 } # get_absolute_url
 
-sub get_xml_data ($$) {
-  my ($id, $cache_prop) = @_;
+sub get_xml_data ($$$) {
+  my ($id, $id_prop, $cache_prop) = @_;
 
   my $cached_hash = $cache_prop->{'cached-hash'};
 
-  my $id_prop;
   if ($cached_hash) {
-    $id_prop = $id_prop_db->get_data ($id);
     my $content_hash = $id_prop->{hash} || '';
     
     if ($cached_hash ne $content_hash) {

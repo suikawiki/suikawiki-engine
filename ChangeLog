@@ -1,5 +1,9 @@
 2008-11-11  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Caching of generated HTML articles implemented.
+
+2008-11-11  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi (get_xml_data): Get the cache-prop object outside of the
 	function, too.
 
