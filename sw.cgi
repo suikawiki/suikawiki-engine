@@ -175,6 +175,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $id_lock = $id_locks->get_lock ($id);
       $id_lock->lock;
 
+      my $cache_prop = $cache_prop_db->get_data ($id);
       my $doc = get_xml_data ($id);
       
       $id_lock->unlock;
@@ -192,6 +193,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $id_lock = $id_locks->get_lock ($id);
       $id_lock->lock;
 
+      my $cache_prop = $cache_prop_db->get_data ($id);
       my $xml_doc = get_xml_data ($id);
 
       $id_lock->unlock;
@@ -1104,10 +1106,9 @@ sub get_absolute_url ($) {
       ->uri_reference;
 } # get_absolute_url
 
-sub get_xml_data ($) {
-  my $id = shift;
+sub get_xml_data ($$) {
+  my ($id, $cache_prop) = @_;
 
-  my $cache_prop = $cache_prop_db->get_data ($id);
   my $cached_hash = $cache_prop->{'cached-hash'};
 
   my $id_prop;

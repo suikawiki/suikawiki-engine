@@ -1,5 +1,10 @@
 2008-11-11  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi (get_xml_data): Get the cache-prop object outside of the
+	function, too.
+
+2008-11-11  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi (get_xml_data): Lock the id outside of the function.
 
 2008-11-10  Wakaba  <wakaba@suika.fam.cx>
