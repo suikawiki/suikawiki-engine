@@ -238,6 +238,12 @@ if ($path[0] eq 'n' and @path == 2) {
         }
         
         $id_lock->unlock;
+      } else {
+        $html_doc = $dom->create_document;
+        $html_doc->strict_error_checking (0);
+        $html_doc->dom_config->set_parameter
+            ('http://suika.fam.cx/www/2006/dom-config/strict-document-children' => 0);
+        $html_doc->manakai_is_html (1);
       }
 
       $html_doc->inner_html ('<!DOCTYPE HTML><title></title>');

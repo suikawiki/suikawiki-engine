@@ -1,5 +1,10 @@
 2008-11-11  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Oops, $html_doc was not set when the page is not created
+	yet.
+	
+2008-11-11  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Caching of generated HTML articles implemented.
 
 2008-11-11  Wakaba  <wakaba@suika.fam.cx>
