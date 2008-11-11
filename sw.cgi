@@ -172,7 +172,12 @@ if ($path[0] eq 'n' and @path == 2) {
       print $$content;
       exit;
     } elsif ($format eq 'xml' and defined $id) {
+      my $id_lock = $id_locks->get_lock ($id);
+      $id_lock->lock;
+
       my $doc = get_xml_data ($id);
+      
+      $id_lock->unlock;
 
       binmode STDOUT, ':encoding(utf-8)';
       print qq[Content-Type: application/xml; charset=utf-8\n\n];
@@ -184,8 +189,13 @@ if ($path[0] eq 'n' and @path == 2) {
       print $doc->inner_html;
       exit;
     } elsif ($format eq 'html') {
+      my $id_lock = $id_locks->get_lock ($id);
+      $id_lock->lock;
+
       my $xml_doc = get_xml_data ($id);
 
+      $id_lock->unlock;
+      
       my $html_doc = $dom->create_document;
       $html_doc->manakai_is_html (1);
       $html_doc->inner_html ('<!DOCTYPE HTML><title></title>');
@@ -1097,9 +1107,6 @@ sub get_absolute_url ($) {
 sub get_xml_data ($) {
   my $id = shift;
 
-  my $id_lock = $id_locks->get_lock ($id);
-  $id_lock->lock;
-
   my $cache_prop = $cache_prop_db->get_data ($id);
   my $cached_hash = $cache_prop->{'cached-hash'};
 
@@ -1134,8 +1141,6 @@ sub get_xml_data ($) {
       $doc = $dom->create_document;
     }
   }
-
-  $id_lock->unlock;
 
   return $doc;
 } # get_xml_data
