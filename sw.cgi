@@ -1258,7 +1258,7 @@ sub convert_sw3_page ($$) {
     $sw3_pages->delete_data ($name);
     $sw3_pages->save_data;
 
-    $vc->add_file ($sw3_pages->{file_name}) if rand < 0.01;
+    $vc->add_file ($sw3_pages->{file_name}) if rand () < 0.01;
     
     $vc->commit_changes ("converted from SuikaWiki3 <http://suika.fam.cx/gate/cvs/suikawiki/wikidata/page/$page_key.txt>");
   } else {
