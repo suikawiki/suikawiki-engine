@@ -260,7 +260,11 @@ if ($path[0] eq 'n' and @path == 2) {
       my $body_el = $html_doc->last_child->last_child;
 
       my $h1_el = $html_doc->create_element_ns (HTML_NS, 'h1');
-      $h1_el->text_content ($name);
+      my $a_el = $html_doc->create_element_ns (HTML_NS, 'a');
+      $a_el->set_attribute (href => get_page_url ($name, undef));
+      $a_el->set_attribute (rel => 'bookmark');
+      $a_el->text_content ($name);
+      $h1_el->append_child ($a_el);
       $body_el->append_child ($h1_el);
       
       if (@$ids) {

@@ -1,5 +1,9 @@
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Make the h1 element a permalink for the page name.
+
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: SWML/HTML convertion was moved to another Perl module
 	file (SWE::Lang::XML2HTML).
 
