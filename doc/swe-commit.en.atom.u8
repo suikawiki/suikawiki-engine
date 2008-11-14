@@ -125,4 +125,14 @@
 
 2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
+</content></entry><entry xml:id="entry-1226654685"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226654685</id><title>2008-11-14 Wakaba</title><updated>2008-11-14T09:24:40Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Lang/ChangeLog	14 Nov 2008 09:24:16 -0000
+	* XML2HTML.pm: Added sw:image element support.
+
+2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/styles/ChangeLog	14 Nov 2008 09:24:37 -0000
+	* sw.css: Added a style rule for permalinks.
+
+2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
 </content></entry></feed>

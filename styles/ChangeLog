@@ -1,5 +1,9 @@
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.css: Added a style rule for permalinks.
+
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.css: Margin for adjucent underlines are commented out,
 	otherwise stupid margin appears before second anchor element in a
 	paragraph (consider <a></a>text<a></a>).

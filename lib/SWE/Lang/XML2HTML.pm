@@ -426,6 +426,51 @@ $templates->{(SW09_NS)}->{'anchor-external'} = sub {
       @{$item->{node}->child_nodes};
 };
 
+$templates->{(SW09_NS)}->{image} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'div');
+  $el->set_attribute (class => 'article sw-image');
+  $item->{parent}->append_child ($el);
+
+  my $type;
+  my $alt;
+  my $head_el = $item->{node}->owner_document->manakai_head;
+  if ($head_el) {
+    for (@{$head_el->child_nodes}) {
+      next if $_->node_type != $_->ELEMENT_NODE;
+      next if ($_->namespace_uri // '') ne SW09_NS;
+      next if $_->manakai_local_name ne 'parameter';
+      my $name = $_->get_attribute ('name');
+      if ($name eq 'image-type' or $name eq 'image-alt') {
+        for (@{$_->child_nodes}) {
+          next if $_->node_type != $_->ELEMENT_NODE;
+          next if ($_->namespace_uri // '') ne SW09_NS;
+          next if $_->manakai_local_name ne 'value';
+          if ($name eq 'image-type') {
+            $type //= $_->text_content;
+          } elsif ($name eq 'image-alt') {
+            $alt //= $_->text_content;
+          }
+          last;
+        }
+        last if defined $type and defined $alt;
+      }
+    }
+  }
+  $type //= 'application/octet-stream';
+  $type =~ tr{a-zA-Z0-9.+-_/-}{}cd;
+      ## NOTE: '!', '#', '$', '&', '^' are also allowed according to RFC 4288.
+
+  my $data = $item->{node}->text_content;
+  $data =~ s/\s+//g;
+
+  my $img_el = $item->{doc}->create_element_ns (HTML_NS, 'img');
+  $img_el->set_attribute (alt => $alt // '');
+  $img_el->set_attribute (src => 'data:' . $type . ';base64,' . $data);
+  $el->append_child ($img_el);
+};
+
 sub convert ($$$$$) {
   shift;
   my $name = shift;

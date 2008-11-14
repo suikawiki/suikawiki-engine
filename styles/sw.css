@@ -44,6 +44,7 @@ h1 {
   background-repeat: no-repeat;
   padding-left: 120px;
   min-height: 59px;
+  line-height: 2.0;
   font-size: 150%;
 }
 
@@ -270,6 +271,12 @@ a:hover,
   background-color: #FFA;
   color: #000080;
   border-bottom-style: solid;
+}
+
+[rel~=bookmark] {
+  border-style: none !important;
+  color: inherit !important;
+  background-color: transparent !important;
 }
 
 /* Code fragments */
