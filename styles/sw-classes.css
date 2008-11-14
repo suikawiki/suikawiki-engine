@@ -1,0 +1,151 @@
+/* Character arts (AA) */
+
+/* span.aa: AA element */ /* Default: For 2ch style AAs */ span.aa, pre.aa {
+  font-family: "MS PGothic AA", "MS PGothic", "Mona";
+  font-size: 12pt;
+  white-space: normal;
+  line-height: 1.0;
+}
+
+pre.aafig {
+  font-family: monospace;
+  line-height: 1.0;
+  white-space: pre;
+}
+
+.hw {
+  -moz-binding: url(http://suika.fam.cx/www/style/text/width.xbl#halfwidth);
+}
+
+.fw {
+  -moz-binding: url(http://suika.fam.cx/www/style/text/width.xbl#fullwidth);
+}
+
+/* Code fragments */
+
+pre.code {
+  background-color: rgb(213, 222, 227);
+  color: black;
+  border: rgb(211, 211, 211) 4px double;
+  padding: 0.5em 1em;
+}
+
+/* ISO/IEC 10646 style character names */
+.charname {
+  background-color: transparent;
+  color: inherit;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.2em;
+}
+
+.charname var {
+  text-transform: none;
+  font-variant: normal;
+}
+
+.comment {
+  color: green;
+  background-color: transparent;
+}
+
+/* DOM attributes *?
+dfn .DOMa {
+  color: black;
+  background-color: #FFFFD2;
+}
+
+/* DOM constants */
+dfn .DOMc {
+  color: black;
+  background-color: #DDFFD2;
+}
+
+/* DOM methods */
+dfn .DOMm {
+  color: black;
+  background-color: #D9E6F8;
+}
+
+/* DOM parameters */
+dfn .DOMp {
+  background-color: #FEE6F8; 
+  color: black;
+}
+
+/* Infoset properties */
+.InfoProp, .infoprop {
+  font-family: sans-serif;
+  font-weight: bolder;
+}
+
+.InfoProp:before, .infoprop:before {
+  content: " [";
+}
+
+.InfoProp:after, .infoprop:after {
+  content: "] ";
+}
+
+/* Examples */
+
+pre.example:before {
+  display: block;
+  content: "例: ";
+  font-weight: bolder;
+  font-family: sans-serif;
+}
+
+pre.continue.example:before {
+  content: "例 (続き): ";
+}
+
+pre.bad.example:before {
+  content: "悪い例: ";
+}
+
+pre.continue.bad.example:before {
+  content: "悪い例 (続き): ";
+}
+
+pre.invalid.example:before {
+  content: "非妥当な例: ";
+}
+
+pre.continue.invalid.example:before {
+  content: "非妥当な例 (続き): ";
+}
+
+pre.illegal.example:before {
+  content: "違法な例: ";
+}
+
+pre.continue.illegal.example:before {
+  content: "違法な例 (続き): ";
+}
+
+pre.deprecated.example:before {
+  content: "非推奨の例: ";
+}
+
+
+pre.continue.deprecated.example:before {
+  content: "非推奨の例 (続き): ";
+}
+
+/*
+
+Partially taken from
+<http://suika.fam.cx/~wakaba/wiki/sw/n/Wiki++Style++SuikaWiki++HTML++Semantic>.
+
+Copyright 2002-2008 Authors.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.1 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and no Back-Cover
+Texts. A copy of the license is available from
+<http://suika.fam.cx/c/gnu/fdl>.
+
+*/

@@ -1,3 +1,16 @@
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
+	* sw-classes.css: New style sheet.
+
+	* sw.css: a:hover did not work because of specificity.  Typo
+	fixed.  Use dashed underline for wiki-internal links so that a
+	paragraph with a lot of links looks less ugly.  Set margin between
+	adjucent links.  sw:insert and sw:delete elements that are
+	children of the article element should be rendered as blocks.
+	Underlines replaced by borders to avoid ugly styling when an
+	underlined element is contained within a bordered element.  Set
+	border to form elements.
+
 2008-11-10  Wakaba  <wakaba@suika.fam.cx>
 
 	* sw.css: New style sheet.

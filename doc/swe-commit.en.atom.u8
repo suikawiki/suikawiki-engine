@@ -81,4 +81,18 @@
 
 	* SuikaWiki3PageList2.pm: New module.
 
+</content></entry><entry xml:id="entry-1226648578"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226648578</id><title>2008-11-14 Wakaba</title><updated>2008-11-14T07:42:57Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/styles/ChangeLog	14 Nov 2008 07:42:29 -0000
+2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw-classes.css: New style sheet.
+
+	* sw.css: a:hover did not work because of specificity.  Typo
+	fixed.  Use dashed underline for wiki-internal links so that a
+	paragraph with a lot of links looks less ugly.  Set margin between
+	adjucent links.  sw:insert and sw:delete elements that are
+	children of the article element should be rendered as blocks.
+	Underlines replaced by borders to avoid ugly styling when an
+	underlined element is contained within a bordered element.  Set
+	border to form elements.
+
 </content></entry></feed>
