@@ -1,5 +1,9 @@
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.css: Change background-color of cells when hovered.
+
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw-classes.css: New style sheet.
 
 	* sw.css: a:hover did not work because of specificity.  Typo

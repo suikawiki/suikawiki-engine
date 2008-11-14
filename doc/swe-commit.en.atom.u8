@@ -95,4 +95,9 @@
 	underlined element is contained within a bordered element.  Set
 	border to form elements.
 
+</content></entry><entry xml:id="entry-1226648842"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226648842</id><title>2008-11-14 Wakaba</title><updated>2008-11-14T07:47:18Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/styles/ChangeLog	14 Nov 2008 07:45:13 -0000
+	* sw.css: Change background-color of cells when hovered.
+
+2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
 </content></entry></feed>

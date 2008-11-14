@@ -176,6 +176,17 @@ th[scope="col"], th[scope="colgroup"] {
   border-bottom: 1px solid #C0C0C0;
 }
 
+tr:hover {
+  background-color: #ffecf5;
+  color: black;
+}
+
+td:hover {
+  background-color: #f4fffa;
+  color: black;
+}
+
+
 /* Edits */
 
 ins {
