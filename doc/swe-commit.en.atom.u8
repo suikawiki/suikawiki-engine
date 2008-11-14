@@ -105,4 +105,24 @@
 
 2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
+</content></entry><entry xml:id="entry-1226652550"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226652550</id><title>2008-11-14 Wakaba</title><updated>2008-11-14T08:49:08Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Lang/ChangeLog	14 Nov 2008 08:48:57 -0000
+2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* XML2HTML.pm: New module (code from sw.cgi).
+
+	* ChangeLog: New file.
+
+
+++ swe/lib/SWE/ChangeLog	14 Nov 2008 08:41:10 -0000
+2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* Lang/: New directory.
+
+++ swe/styles/ChangeLog	14 Nov 2008 08:40:01 -0000
+	* sw.css: Margin for adjucent underlines are commented out,
+	otherwise stupid margin appears before second anchor element in a
+	paragraph (consider &lt;a&gt;&lt;/a&gt;text&lt;a&gt;&lt;/a&gt;).
+
+2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
 </content></entry></feed>

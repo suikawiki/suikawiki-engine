@@ -229,6 +229,7 @@ blockquote > del {
   background-color: transparent;
 }
 
+/*
 .sw-anchor + .sw-anchor,
 .sw-anchor + em,
 .sw-anchor + ins,
@@ -238,9 +239,9 @@ em + ins,
 ins + .sw-anchor,
 ins + em,
 ins + ins {
-  /* Split border-bottoms */
   margin-left: 0.3em;
 }
+*//* Split border-bottoms */
 
 .sw-anchor:visited {
   border-bottom-color: purple;

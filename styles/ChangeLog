@@ -1,5 +1,11 @@
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.css: Margin for adjucent underlines are commented out,
+	otherwise stupid margin appears before second anchor element in a
+	paragraph (consider <a></a>text<a></a>).
+
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.css: "rt + rt" changed to "rt ~ rt" to support |rp| elements.
 
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
