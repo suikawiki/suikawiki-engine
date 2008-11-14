@@ -14,7 +14,7 @@ sub new ($) {
 
 sub get_lock ($$) {
   my $self = shift;
-  my $file_name = $self->_get_file_name ($_[0]);
+  my $file_name = $self->_get_file_name ($_[0], 1);
 
   my $lock = SWE::DB::Lock->new;
   $lock->{file_name} = $file_name;

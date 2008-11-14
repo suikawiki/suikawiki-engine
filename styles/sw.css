@@ -72,6 +72,9 @@ ul + .article, ul + .section,
 ol + .article, ol + .section,
 dl + .article, dl + .section,
 table + .article, table + .section,
+blockquote + .article, blockquote + .section,
+.comment-p + .article, .comment-p + .section,
+.ed + .article, .ed + .section,
 ins + .article, ins + .section,
 del + .article, del + .section {
   margin-top: 2em;

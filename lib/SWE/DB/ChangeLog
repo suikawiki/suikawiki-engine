@@ -1,3 +1,10 @@
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
+	* IDLocks.pm (get_lock): Directories should be created if it does
+	not exist.
+
+	* SuikaWiki3PageList2.pm: New module.
+
 2008-11-10  Wakaba  <wakaba@suika.fam.cx>
 
 	* VersionControl.pm (commit_changes): Set "-kb" option to the "cvs

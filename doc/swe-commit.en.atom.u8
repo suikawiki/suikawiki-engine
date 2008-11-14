@@ -73,4 +73,12 @@
 	* ChangeLog: New file.
 
 
+</content></entry><entry xml:id="entry-1226639976"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226639976</id><title>2008-11-14 Wakaba</title><updated>2008-11-14T05:19:29Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/DB/ChangeLog	14 Nov 2008 05:16:49 -0000
+2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* IDLocks.pm (get_lock): Directories should be created if it does
+	not exist.
+
+	* SuikaWiki3PageList2.pm: New module.
+
 </content></entry></feed>
