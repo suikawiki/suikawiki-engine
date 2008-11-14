@@ -249,7 +249,15 @@ if ($path[0] eq 'n' and @path == 2) {
       $html_doc->inner_html ('<!DOCTYPE HTML><title></title>');
       
       $html_doc->get_elements_by_tag_name ('title')->[0]->text_content ($name);
-      set_head_content ($html_doc, $id);
+      set_head_content ($html_doc, $id,
+                        [{rel => 'alternate',
+                          type => 'text/x-suikawiki',
+                          href => get_page_url ($name, undef, $id) .
+                              '?format=text'},
+                         {rel => 'alternate',
+                          type => 'application/xml', ## TODO: ok?
+                          href => get_page_url ($name, undef, $id) .
+                              '?format=xml'}]);
       
       my $body_el = $html_doc->last_child->last_child;
 
@@ -342,9 +350,11 @@ if ($path[0] eq 'n' and @path == 2) {
         my $user = $cgi->remote_user // '(anon)';
         $vc->commit_changes ("updated by $user");
 
-        print qq[Status: 204 Saved\n\n];
-        
-        exit;
+        my $url = get_page_url ([keys %{$id_prop->{name} or {}}]->[0],
+                                undef, 0 + $id);
+        http_redirect (301, 'Saved', $url);
+        #print qq[Status: 204 Saved\n\n];
+        #exit;
       } else {
         http_error (404, 'Not found');
       }
@@ -369,9 +379,9 @@ if ($path[0] eq 'n' and @path == 2) {
 <h2>Page body</h2>
 
 <form method=post accept-charset=utf-8>
-<p><button type=submit>Save</button>
+<p><button type=submit>Update</button>
 <p><textarea name=text></textarea>
-<p><button type=submit>Save</button>
+<p><button type=submit>Update</button>
 <input type=hidden name=hash>
 <select name=content-type></select>
 See <a rel=license>License</a> page.
@@ -751,6 +761,9 @@ $templates->{(HTML_NS)}->{p} = sub {
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
+  my $colspan = $item->{node}->get_attribute ('colspan');
+  $el->set_attribute (colspan => $colspan) if defined $colspan;
+
   unshift @$items,
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
@@ -758,9 +771,31 @@ $templates->{(HTML_NS)}->{p} = sub {
 $templates->{(HTML_NS)}->{$_} = $templates->{(HTML_NS)}->{p}
     for qw/
       ul ol dl li dt dd table tbody tr td blockquote pre
-      abbr cite code dfn kbd ruby samp span sub sup time var em strong rt
+      abbr cite code dfn kbd ruby samp span sub sup time var em strong
     /;
 
+$templates->{(HTML_NS)}->{rt} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'rp');
+  $el->text_content (' (');
+  $item->{parent}->append_child ($el);
+
+  $el = $item->{doc}->create_element_ns
+      (HTML_NS, $item->{node}->manakai_local_name);
+  $item->{parent}->append_child ($el);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+
+  $el = $item->{doc}->create_element_ns (HTML_NS, 'rp');
+  $el->text_content (') ');
+  $item->{parent}->append_child ($el);
+};
 
 $templates->{(SW09_NS)}->{insert} = sub {
   my ($items, $item) = @_;
@@ -1017,8 +1052,16 @@ $templates->{(SW09_NS)}->{anchor} = sub {
   $name =~ s/^ //;
   $name =~ s/ $//;
   $name = 'HomePage' unless length $name;
-  
+
   my $url = get_page_url ($name, $item->{name});
+
+  my $anchor = $item->{node}->get_attribute_ns (SW09_NS, 'anchor');
+  if (defined $anchor) {
+    $url .= '#anchor-' . $anchor;
+    my $t = $item->{doc}->create_text_node (' (>>' . $anchor . ')');
+    unshift @$items, {%$item, node => $t, parent => $el};
+  }
+  
   $el->set_attribute (href => $url);
 
   unshift @$items,
@@ -1268,25 +1311,24 @@ sub convert_sw3_page ($$) {
   return $ids;
 } # convert_sw3_page
 
-sub set_head_content ($;$) {
-  my ($doc, $id) = @_;
+sub set_head_content ($;$$) {
+  my ($doc, $id, $links) = @_;
   my $head_el = $doc->manakai_head;
-  
-  my $link_el = $doc->create_element_ns (HTML_NS, 'link');
-  $link_el->set_attribute (rel => 'stylesheet');
-  $link_el->set_attribute (href => $style_url);
-  $head_el->append_child ($link_el);
-  
-  $link_el = $doc->create_element_ns (HTML_NS, 'link');
-  $link_el->set_attribute (rel => 'license');
-  $link_el->set_attribute (href => get_page_url ($license_name, undef));
-  $head_el->append_child ($link_el);
 
+  push @{$links ||= []}, {rel => 'stylesheet', href => $style_url},
+      {rel => 'license', href => get_page_url ($license_name, undef)};
+  
   if (defined $id) {
+    push @$links, {rel => 'archives',
+                   href => $cvs_archives_url . 'ids/' .
+                             int ($id / 1000) . '/' . ($id % 1000) . '.txt'};
+  }
+  
+  for my $item (@$links) {
     my $link_el = $doc->create_element_ns (HTML_NS, 'link');
-    $link_el->set_attribute (rel => 'archives');
-    $link_el->set_attribute (href => $cvs_archives_url . 'ids/' .
-                             int ($id / 1000) . '/' . ($id % 1000) . '.txt');
+    for (keys %$item) {
+      $link_el->set_attribute ($_ => $item->{$_});
+    }
     $head_el->append_child ($link_el);
   }
 } # set_head_content
