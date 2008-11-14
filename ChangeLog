@@ -1,5 +1,10 @@
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: SWML/HTML convertion was moved to another Perl module
+	file (SWE::Lang::XML2HTML).
+
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: sw:anchor/@sw:anchor was not reflected to the HTML
 	output.  td/@colspan was not reflected to the HTML rendering.
 	Show the HTML-rendered page after saving the posted page (future
