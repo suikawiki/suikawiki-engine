@@ -1,5 +1,9 @@
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.css: Re-disabled underline for .sw-anchor-internal.
+
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.css: Added a style rule for permalinks.
 
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>

@@ -251,7 +251,7 @@ ins + ins {
 .sw-anchor-internal {
 /*  color: inherit;
   background-color: transparent; */
-  text-decoration: none;
+  border-bottom-style: none;
 }
 
 .sw-anchor-end {
