@@ -1,5 +1,9 @@
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.css: "rt + rt" changed to "rt ~ rt" to support |rp| elements.
+
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.css: Change background-color of cells when hovered.
 
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>

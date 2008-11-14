@@ -378,7 +378,7 @@ rt {
   text-indent: 0;
 }
 
-rt + rt, .sw-rubyb > rt {
+rt ~ rt, .sw-rubyb > rt {
   top: 1.7em;
   bottom: auto;    
 }
