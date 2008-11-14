@@ -140,4 +140,17 @@
 
 2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
+</content></entry><entry xml:id="entry-1226659854"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226659854</id><title>2008-11-14 Wakaba</title><updated>2008-11-14T10:50:48Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Lang/ChangeLog	14 Nov 2008 10:50:41 -0000
+	* XML2HTML.pm: Added sw:replace support.  (The &quot;support&quot; simply
+	insertes the |by| attribute value in place of sw:replace element,
+	this is the most backward compatible way for existing contents.)
+
+2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/styles/ChangeLog	14 Nov 2008 10:49:15 -0000
+	* sw.css: Old (SuikaWiki3) style rule was inherited
+	unintentionally for pre.code.
+
+2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
 </content></entry></feed>

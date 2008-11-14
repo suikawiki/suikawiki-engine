@@ -24,10 +24,7 @@ pre.aafig {
 /* Code fragments */
 
 pre.code {
-  background-color: rgb(213, 222, 227);
-  color: black;
-  border: rgb(211, 211, 211) 4px double;
-  padding: 0.5em 1em;
+  font-family: "Courier New", monospace;
 }
 
 /* ISO/IEC 10646 style character names */

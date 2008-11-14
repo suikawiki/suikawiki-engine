@@ -471,6 +471,15 @@ $templates->{(SW09_NS)}->{image} = sub {
   $el->append_child ($img_el);
 };
 
+$templates->{(SW09_NS)}->{replace} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'span');
+  $el->set_attribute (class => 'sw-replace');
+  $el->text_content ($item->{node}->get_attribute ('by') // '');
+  $item->{parent}->append_child ($el);
+};
+
 sub convert ($$$$$) {
   shift;
   my $name = shift;

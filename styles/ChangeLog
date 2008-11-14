@@ -1,5 +1,10 @@
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.css: Old (SuikaWiki3) style rule was inherited
+	unintentionally for pre.code.
+
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.css: Re-disabled underline for .sw-anchor-internal.
 
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>

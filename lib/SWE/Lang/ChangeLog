@@ -1,5 +1,11 @@
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* XML2HTML.pm: Added sw:replace support.  (The "support" simply
+	insertes the |by| attribute value in place of sw:replace element,
+	this is the most backward compatible way for existing contents.)
+
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* XML2HTML.pm: Added sw:image element support.
 
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
