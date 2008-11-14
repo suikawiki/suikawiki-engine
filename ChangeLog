@@ -1,3 +1,11 @@
+2008-11-14  Wakaba  <wakaba@suika.fam.cx>
+
+	* sw3listsplit.pl: New file.
+
+	* sw.cgi: Use SWE::DB::SuikaWiki3PageList2 instead of
+	SWE::DB::SuikaWiki3PageList, to avoid CVS's rcs file size (and
+	process load) problem caused by the monolisic file database.
+
 2008-11-12  Wakaba  <wakaba@suika.fam.cx>
 
 	* sw.cgi: Oops, syntax error.

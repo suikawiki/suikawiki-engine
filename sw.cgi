@@ -80,9 +80,9 @@ my $sw3_lm_db = SWE::DB::SuikaWiki3LastModified->new;
 $sw3_lm_db->{file_name} = $sw3_content_db->{root_directory_name} .
     'mt--6C6173745F6D6F646966696564.dat';
 
-require SWE::DB::SuikaWiki3PageList;
-my $sw3_pages = SWE::DB::SuikaWiki3PageList->new;
-$sw3_pages->{file_name} = 'data/sw3pages.txt';
+require SWE::DB::SuikaWiki3PageList2;
+my $sw3_pages = SWE::DB::SuikaWiki3PageList2->new;
+$sw3_pages->{root_directory_name} = 'data/sw3pages/';
 
 require SWE::DB::Lock;
 my $names_lock = SWE::DB::Lock->new;
@@ -285,7 +285,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $footer_el = $html_doc->create_element_ns (HTML_NS, 'footer');
       $footer_el->set_attribute (class => 'footer');
-      $footer_el->inner_html (q[<p class=copyright><small>&copy; Authors.  See <a rel=license>license</a>.  There might also be additional terms applied for this page.</small>]);
+      $footer_el->inner_html (q[<p class=copyright><small>&copy; Authors.  See <a rel=license>license terms</a>.  There might also be additional terms applied for this page.</small>]);
       $body_el->append_child ($footer_el);
       
       my $a_el = $footer_el->get_elements_by_tag_name ('a')->[0];
@@ -1248,6 +1248,7 @@ sub convert_sw3_page ($$) {
 
     $vc = SWE::DB::VersionControl->new;
     local $name_prop_db->{version_control} = $vc;
+    local $sw3_pages->{version_control} = $vc;
     
     my $name_props = $name_prop_db->get_data ($name);
     push @{$name_props->{id} ||= []}, $id;
@@ -1257,8 +1258,6 @@ sub convert_sw3_page ($$) {
 
     $sw3_pages->delete_data ($name);
     $sw3_pages->save_data;
-
-    $vc->add_file ($sw3_pages->{file_name}) if rand () < 0.01;
     
     $vc->commit_changes ("converted from SuikaWiki3 <http://suika.fam.cx/gate/cvs/suikawiki/wikidata/page/$page_key.txt>");
   } else {
