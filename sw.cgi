@@ -273,16 +273,25 @@ if ($path[0] eq 'n' and @path == 2) {
       $body_el->append_child ($h1_el);
       
       if (@$ids) {
+        my $nav_el = $html_doc->create_element_ns (HTML_NS, 'div');
+        $nav_el->set_attribute (class => 'nav swe-ids');
+        $nav_el->manakai_append_text
+            (@$ids == 1 ? 'There is another page with same name:'
+                 : 'There are other pages with same name:');
         my $ul_el = $html_doc->create_element_ns (HTML_NS, 'ul');
         for my $id (@$ids) {
           my $li_el = $html_doc->create_element_ns (HTML_NS, 'li');
           $li_el->inner_html (q[<a></a>]);
           my $a_el = $li_el->first_child;
-          $a_el->text_content ($id);
+          my $id_prop = $id_prop_db->get_data ($id);
+          $a_el->text_content
+              (length $id_prop->{title} ? $id_prop->{title}
+                 : $id_prop->{name} // $id); ## TODO: title-type
           $a_el->set_attribute (href => get_page_url ($name, $name, $id));
           $ul_el->append_child ($li_el);
         }
-        $body_el->append_child ($ul_el);
+        $nav_el->append_child ($ul_el);
+        $body_el->append_child ($nav_el);
       }
 
       my $nav_el = $html_doc->create_element_ns (HTML_NS, 'div');
