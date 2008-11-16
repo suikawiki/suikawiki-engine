@@ -1,3 +1,10 @@
+2008-11-16  Wakaba  <wakaba@suika.fam.cx>
+
+	* sw.cgi: Set <meta name=ROBOTS content=NOINDEX> for
+	non-page-content pages.  Insert article heading.  Added support
+	for page title.  Remove empty page name when new page names are
+	submitted.
+
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
 	* sw.cgi: Make the h1 element a permalink for the page name.

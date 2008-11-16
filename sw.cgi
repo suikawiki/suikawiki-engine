@@ -192,7 +192,8 @@ if ($path[0] eq 'n' and @path == 2) {
       exit;
     } elsif ($format eq 'html') {
       my $html_doc;
-      my $article_el;
+      my $html_container;
+      my $title_text;
       if (defined $id) {
         my $id_lock = $id_locks->get_lock ($id);
         $id_lock->lock;
@@ -221,19 +222,23 @@ if ($path[0] eq 'n' and @path == 2) {
               ('http://suika.fam.cx/www/2006/dom-config/strict-document-children' => 0);
           $html_doc->manakai_is_html (1);
           
-          $article_el = SWE::Lang::XML2HTML->convert
-              ($name, $xml_doc => $html_doc, \&get_page_url);
-          $html_doc->text_content ('');
-          $html_doc->append_child ($article_el);
+          $html_container = SWE::Lang::XML2HTML->convert
+              ($name, $xml_doc => $html_doc, \&get_page_url, 2);
           
-          $html_cache_db->set_data ($id => $html_doc);
+          $html_cache_db->set_data ($id => $html_container);
           $cache_prop->{'html-cached-hash'} = $id_prop->{hash};
           $cache_prop->{'html-cache-version'} = $html_converter_version;
           $cache_prop_db->set_data ($id => $cache_prop);
         } else {
           $html_doc->manakai_is_html (1);
-          $article_el = $html_doc->document_element;
+          $html_container = $html_doc->create_document_fragment;
+          for (@{$html_doc->child_nodes}) {
+            $html_container->append_child ($_);
+          }
         }
+
+        $title_text = $id_prop->{title};
+        ## TODO: $title_type
         
         $id_lock->unlock;
       } else {
@@ -291,7 +296,21 @@ if ($path[0] eq 'n' and @path == 2) {
       }
       $body_el->append_child ($nav_el);
 
-      $body_el->append_child ($article_el) if $article_el;
+      if ($html_container) {
+        my $article_el = $html_doc->create_element_ns (HTML_NS, 'div');
+        $article_el->set_attribute (class => 'article');
+
+        my $h2_el = $html_doc->create_element_ns (HTML_NS, 'h2');
+        $h2_el->text_content (length $title_text ? $title_text : $name);
+            ## TODO: {'title-type'};
+        $article_el->append_child ($h2_el);
+        
+        for (@{$html_container->child_nodes}) {
+          $article_el->append_child ($_);
+        }
+          
+        $body_el->append_child ($article_el);
+      }
 
       my $footer_el = $html_doc->create_element_ns (HTML_NS, 'footer');
       $footer_el->set_attribute (class => 'footer');
@@ -341,6 +360,11 @@ if ($path[0] eq 'n' and @path == 2) {
         $id_prop->{modified} = time;
         $id_prop->{hash} = get_hash ($textref);
 
+        my $title = $cgi->get_parameter ('title') // '';
+        normalize_content (\$title);
+        $id_prop->{title} = $title;
+        $id_prop->{'title-type'} = 'text/plain'; ## TODO: get_parameter
+
         require SWE::DB::VersionControl;
         my $vc = SWE::DB::VersionControl->new;
         local $content_db->{version_control} = $vc;
@@ -371,6 +395,7 @@ if ($path[0] eq 'n' and @path == 2) {
       binmode STDOUT, ':encoding(utf-8)';
       print qq[Content-Type: text/html; charset=utf-8\n\n];
       
+      ## TODO: <select name=title-type>
       my $html_doc = $dom->create_document;
       $html_doc->manakai_is_html (1);
       $html_doc->inner_html (q[<!DOCTYPE HTML><title>Edit</title>
@@ -378,11 +403,14 @@ if ($path[0] eq 'n' and @path == 2) {
 <div class="nav swe-names"></div>
 
 <div class=section>
-<h2>Page body</h2>
+<h2>Page</h2>
 
 <form method=post accept-charset=utf-8>
 <p><button type=submit>Update</button>
-<p><textarea name=text></textarea>
+<p><label><strong>Page title</strong>:<br>
+<input name=title></label>
+<p><label><strong>Page body</strong>:<br>
+<textarea name=text></textarea></label>
 <p><button type=submit>Update</button>
 <input type=hidden name=hash>
 <select name=content-type></select>
@@ -400,7 +428,8 @@ See <a rel=license>License</a> page.
 </form>
 </div>
 ]);
-      set_head_content ($html_doc, $id);
+      set_head_content ($html_doc, $id, [],
+                        [{name => 'ROBOTS', content => 'NOINDEX'}]);
       my $form_el = $html_doc->get_elements_by_tag_name ('form')->[0];
       $form_el->set_attribute (action => $id);
       my $ta_el = $form_el->get_elements_by_tag_name ('textarea')->[0];
@@ -408,8 +437,11 @@ See <a rel=license>License</a> page.
 
       my $id_prop = $id_prop_db->get_data ($id);
 
+      my $title_field = $form_el->get_elements_by_tag_name ('input')->[0];
+      $title_field->set_attribute (value => $id_prop->{title} // '');
+
       my $hash = $id_prop->{hash} // get_hash ($textref);
-      my $hash_field = $form_el->get_elements_by_tag_name ('input')->[0];
+      my $hash_field = $form_el->get_elements_by_tag_name ('input')->[1];
       $hash_field->set_attribute (value => $hash);
 
       my $ct = $id_prop->{'content-type'} // 'text/x-suikawiki';
@@ -458,6 +490,7 @@ See <a rel=license>License</a> page.
       for (split /\x0D\x0A?|\x0A/, $cgi->get_parameter ('names')) {
         $new_names->{normalize_name ($_)} = 1;
       }
+      delete $new_names->{''};
       $new_names->{'(no title)'} = 1 unless keys %$new_names;
 
       my $added_names = {};
@@ -513,9 +546,10 @@ See <a rel=license>License</a> page.
     require SWE::DB::VersionControl;
 
     my $new_names = {};
-    for (split /\x0D\x0A?|\x0A/, $cgi->get_parameter ('names')) {
+    for (split /\x0D\x0A?|\x0A/, scalar $cgi->get_parameter ('names')) {
       $new_names->{normalize_name ($_)} = 1;
     }
+    delete $new_names->{''};
     $new_names->{'(no title)'} = 1 unless keys %$new_names;
 
     my $user = $cgi->remote_user // '(anon)';
@@ -543,6 +577,9 @@ See <a rel=license>License</a> page.
       $id_props->{'content-type'} = $ct;
       $id_props->{modified} = time;
       $id_props->{hash} = get_hash (\$content);
+      $id_props->{title} = $cgi->get_parameter ('title') // '';
+      normalize_content (\($id_props->{title}));
+      $id_props->{'title-type'} = 'text/plain'; ## TODO: get_parameter
       $id_prop_db->set_data ($id => $id_props);
 
       $vc->commit_changes ("created by $user");
@@ -574,6 +611,7 @@ See <a rel=license>License</a> page.
     binmode STDOUT, ':encoding(utf8)';
     print "Content-Type: text/html; charset=utf-8\n\n";
 
+    ## TODO: select name=title-type
     my $doc = $dom->create_document;
     $doc->manakai_is_html (1);
     $doc->inner_html (q[<!DOCTYPE HTML><title>New page</title>
@@ -582,6 +620,8 @@ See <a rel=license>License</a> page.
 <p><button type=submit>Save</button>
 <p><label><strong>Page name(s)</strong>:<br>
 <textarea name=names></textarea></label>
+<p><label><strong>Page title</strong>:<br>
+<input name=title></label>
 <p><label><strong>Page body</strong>:<br>
 <textarea name=text></textarea></label>
 <p><button type=submit>Save</button>
@@ -589,7 +629,8 @@ See <a rel=license>License</a> page.
 See <a rel=license>License</a> page.
 </form>
 ]);
-    set_head_content ($doc);
+    set_head_content ($doc, undef, [],
+                      [{name => 'ROBOTS', content => 'NOINDEX'}]);
 
     my $form_el = $doc->get_elements_by_tag_name ('form')->[0];
     set_content_type_options
@@ -870,8 +911,8 @@ sub convert_sw3_page ($$) {
   return $ids;
 } # convert_sw3_page
 
-sub set_head_content ($;$$) {
-  my ($doc, $id, $links) = @_;
+sub set_head_content ($;$$$) {
+  my ($doc, $id, $links, $metas) = @_;
   my $head_el = $doc->manakai_head;
 
   push @{$links ||= []}, {rel => 'stylesheet', href => $style_url},
@@ -889,5 +930,12 @@ sub set_head_content ($;$$) {
       $link_el->set_attribute ($_ => $item->{$_});
     }
     $head_el->append_child ($link_el);
+  }
+
+  for my $item (@{$metas or []}) {
+    my $meta_el = $doc->create_element_ns (HTML_NS, 'meta');
+    $meta_el->set_attribute (name => $item->{name} // '');
+    $meta_el->set_attribute (content => $item->{content} // '');
+    $head_el->append_child ($meta_el);
   }
 } # set_head_content
