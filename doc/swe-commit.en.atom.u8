@@ -170,4 +170,17 @@
 
 2008-11-16  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
+</content></entry><entry xml:id="entry-1226827412"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226827412</id><title>2008-11-16 Wakaba</title><updated>2008-11-16T09:23:30Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ ChangeLog	16 Nov 2008 08:45:59 -0000
+2008-11-16  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* scripts/: New directory.
+
+++ swe/scripts/ChangeLog	16 Nov 2008 09:23:25 -0000
+2008-11-16  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw.js: New file.
+
+	* ChangeLog: New file.
+
+
 </content></entry></feed>
