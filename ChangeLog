@@ -1,5 +1,10 @@
 2008-11-16  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Insert placeholders for editor toolbars.  Insert a
+	script element for JavaScript codes.
+
+2008-11-16  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Bug fix: use a key from hash, not the hashref.
 
 2008-11-16  Wakaba  <wakaba@suika.fam.cx>

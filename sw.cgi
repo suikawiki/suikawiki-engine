@@ -20,6 +20,7 @@ $cgi->{decoder}->{'#default'} = sub {
 my $homepage_name = 'HomePage';
 my $license_name = 'Wiki//Page//License';
 my $style_url = q<http://suika.fam.cx/swe/styles/sw>;
+my $script_url = q<http://suika.fam.cx/swe/scripts/sw>;
 my $cvs_archives_url = q</gate/cvs/suikawiki/sw4data/>;
 
 my @content_type =
@@ -418,7 +419,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <p><button type=submit>Update</button>
 <p><label><strong>Page title</strong>:<br>
 <input name=title></label>
-<p><label><strong>Page body</strong>:<br>
+<p><label><strong>Page body</strong>: <span class=text-toolbar></span><br>
 <textarea name=text></textarea></label>
 <p><button type=submit>Update</button>
 <input type=hidden name=hash>
@@ -627,7 +628,7 @@ See <a rel=license>License</a> page.
 <h1>New page</h1>
 <form action="" method=post accept-charset=utf-8>
 <p><button type=submit>Save</button>
-<p><label><strong>Page name(s)</strong>:<br>
+<p><label><strong>Page name(s)</strong>: <span class=text-toolbar></span><br>
 <textarea name=names></textarea></label>
 <p><label><strong>Page title</strong>:<br>
 <input name=title></label>
@@ -947,4 +948,8 @@ sub set_head_content ($;$$$) {
     $meta_el->set_attribute (content => $item->{content} // '');
     $head_el->append_child ($meta_el);
   }
+
+  my $script_el = $doc->create_element_ns (HTML_NS, 'script');
+  $script_el->set_attribute (src => $script_url);
+  $head_el->append_child ($script_el);
 } # set_head_content
