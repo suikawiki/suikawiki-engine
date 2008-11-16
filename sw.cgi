@@ -232,8 +232,8 @@ if ($path[0] eq 'n' and @path == 2) {
         } else {
           $html_doc->manakai_is_html (1);
           $html_container = $html_doc->create_document_fragment;
-          for (@{$html_doc->child_nodes}) {
-            $html_container->append_child ($_);
+          while (@{$html_doc->child_nodes}) {
+            $html_container->append_child ($html_doc->first_child);
           }
         }
 
@@ -305,8 +305,8 @@ if ($path[0] eq 'n' and @path == 2) {
             ## TODO: {'title-type'};
         $article_el->append_child ($h2_el);
         
-        for (@{$html_container->child_nodes}) {
-          $article_el->append_child ($_);
+        while (@{$html_container->child_nodes}) {
+          $article_el->append_child ($html_container->first_child);
         }
           
         $body_el->append_child ($article_el);
