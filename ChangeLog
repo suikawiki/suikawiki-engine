@@ -1,5 +1,9 @@
 2008-11-16  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Bug fix: use a key from hash, not the hashref.
+
+2008-11-16  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Insert a nav element outside of same-id page list.
 
 2008-11-16  Wakaba  <wakaba@suika.fam.cx>

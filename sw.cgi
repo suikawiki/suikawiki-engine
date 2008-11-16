@@ -286,7 +286,7 @@ if ($path[0] eq 'n' and @path == 2) {
           my $id_prop = $id_prop_db->get_data ($id);
           $a_el->text_content
               (length $id_prop->{title} ? $id_prop->{title}
-                 : $id_prop->{name} // $id); ## TODO: title-type
+                 : [keys %{$id_prop->{name}}]->[0] // $id); ## TODO: title-type
           $a_el->set_attribute (href => get_page_url ($name, $name, $id));
           $ul_el->append_child ($li_el);
         }
