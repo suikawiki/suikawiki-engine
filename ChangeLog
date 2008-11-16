@@ -1,5 +1,9 @@
 2008-11-16  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Don't log user name for normal page edits.
+
+2008-11-16  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Bug fix: for (@{child_nodes}) {append_child} does not
 	work.
 

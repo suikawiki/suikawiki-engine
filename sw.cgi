@@ -373,7 +373,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $content_db->set_data ($id => $textref);
         $id_prop_db->set_data ($id => $id_prop);
 
-        my $user = $cgi->remote_user // '(anon)';
+        my $user = '(anon)'; #$cgi->remote_user // '(anon)';
         $vc->commit_changes ("updated by $user");
 
         my $url = get_page_url ([keys %{$id_prop->{name} or {}}]->[0],
@@ -552,7 +552,7 @@ See <a rel=license>License</a> page.
     delete $new_names->{''};
     $new_names->{'(no title)'} = 1 unless keys %$new_names;
 
-    my $user = $cgi->remote_user // '(anon)';
+    my $user = '(anon)'; #$cgi->remote_user // '(anon)';
     my $ct = get_content_type_parameter ();
 
     my $content = $cgi->get_parameter ('text') // '';
