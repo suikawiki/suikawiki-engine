@@ -165,4 +165,9 @@
 
 	* sw.css: Set the width of the title input field.
 
+</content></entry><entry xml:id="entry-1226815552"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226815552</id><title>2008-11-16 Wakaba</title><updated>2008-11-16T06:05:49Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/styles/ChangeLog	16 Nov 2008 06:05:44 -0000
+	* sw.css: Added style rules for same-id page list.
+
+2008-11-16  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
 </content></entry></feed>
