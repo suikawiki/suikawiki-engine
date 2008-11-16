@@ -419,8 +419,9 @@ if ($path[0] eq 'n' and @path == 2) {
 <p><button type=submit>Update</button>
 <p><label><strong>Page title</strong>:<br>
 <input name=title></label>
-<p><label><strong>Page body</strong>: <span class=text-toolbar></span><br>
-<textarea name=text></textarea></label>
+<p><label for=page-body-text><strong>Page body</strong></label>:
+<span class=text-toolbar></span><br>
+<textarea name=text id=page-body-text></textarea>
 <p><button type=submit>Update</button>
 <input type=hidden name=hash>
 <select name=content-type></select>
@@ -628,12 +629,13 @@ See <a rel=license>License</a> page.
 <h1>New page</h1>
 <form action="" method=post accept-charset=utf-8>
 <p><button type=submit>Save</button>
-<p><label><strong>Page name(s)</strong>: <span class=text-toolbar></span><br>
+<p><label><strong>Page name(s)</strong>:<br>
 <textarea name=names></textarea></label>
 <p><label><strong>Page title</strong>:<br>
 <input name=title></label>
-<p><label><strong>Page body</strong>:<br>
-<textarea name=text></textarea></label>
+<p><label for=page-body-text><strong>Page body</strong></label>:
+<span class=text-toolbar></span><br>
+<textarea name=text id=page-body-text></textarea>
 <p><button type=submit>Save</button>
 <select name=content-type></select>
 See <a rel=license>License</a> page.

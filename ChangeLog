@@ -1,5 +1,9 @@
 2008-11-16  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Don't put toolbar in the label.
+
+2008-11-16  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Insert placeholders for editor toolbars.  Insert a
 	script element for JavaScript codes.
 
