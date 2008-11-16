@@ -436,3 +436,7 @@ textarea[name=text] {
 textarea[name=names] {
   height: 4em;
 }
+
+input[name=title] {
+  width: 98%;
+}

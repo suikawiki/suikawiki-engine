@@ -153,4 +153,16 @@
 
 2008-11-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
+</content></entry><entry xml:id="entry-1226807151"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226807151</id><title>2008-11-16 Wakaba</title><updated>2008-11-16T03:45:50Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Lang/ChangeLog	16 Nov 2008 03:45:25 -0000
+2008-11-16  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* XML2HTML.pm (convert): Use a document fragment node as the
+	container instead of the article element.  Make the outermost
+	heading rank configurable.
+
+++ swe/styles/ChangeLog	16 Nov 2008 03:45:45 -0000
+2008-11-16  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw.css: Set the width of the title input field.
+
 </content></entry></feed>

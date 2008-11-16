@@ -1,3 +1,9 @@
+2008-11-16  Wakaba  <wakaba@suika.fam.cx>
+
+	* XML2HTML.pm (convert): Use a document fragment node as the
+	container instead of the article element.  Make the outermost
+	heading rank configurable.
+
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
 	* XML2HTML.pm: Added sw:replace support.  (The "support" simply

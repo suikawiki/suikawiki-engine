@@ -480,20 +480,20 @@ $templates->{(SW09_NS)}->{replace} = sub {
   $item->{parent}->append_child ($el);
 };
 
-sub convert ($$$$$) {
+sub convert ($$$$$$) {
   shift;
   my $name = shift;
   my $swml = shift;
   my $doc = shift;
   my $name_to_url = shift;
+  my $heading_level = shift;
 
-  my $article_el = $doc->create_element_ns (HTML_NS, 'div');
-  $article_el->set_attribute (class => 'article');
+  my $df = $doc->create_document_fragment;
 
   my @items = map {{doc => $doc,
                     name_to_url => $name_to_url,
-                    heading_level => 1, name => $name,
-                    node => $_, parent => $article_el}} @{$swml->child_nodes};
+                    heading_level => $heading_level, name => $name,
+                    node => $_, parent => $df}} @{$swml->child_nodes};
   while (@items) {
     my $item = shift @items;
     my $nsuri = $item->{node}->namespace_uri // '';
@@ -502,7 +502,7 @@ sub convert ($$$$$) {
     $template->(\@items, $item);
   }
 
-  return $article_el;
+  return $df;
 } # convert_swml_to_html
 
 1;
