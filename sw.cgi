@@ -23,6 +23,13 @@ my $style_url = q<http://suika.fam.cx/swe/styles/sw>;
 my $script_url = q<http://suika.fam.cx/swe/scripts/sw>;
 my $cvs_archives_url = q</gate/cvs/suikawiki/sw4data/>;
 
+my $sw3_db_dir_name = q[/home/wakaba/public_html/-temp/wiki/wikidata/page/];
+my $db_dir_name = 'data/';
+my $db_sw3_dir_name = $db_dir_name . 'sw3pages/';
+my $db_global_lock_dir_name = $db_dir_name;
+my $db_id_dir_name = $db_dir_name . q[ids/];
+my $db_name_dir_name = $db_dir_name . q[names/];
+
 my @content_type =
 (
  {type => 'text/x-suikawiki', label => 'SWML'},
@@ -65,65 +72,66 @@ shift @path; # script's name
 
 require SWE::DB::SuikaWiki3;
 
+
 my $sw3_content_db = SWE::DB::SuikaWiki3->new;
-$sw3_content_db->{root_directory_name} = q[/home/wakaba/public_html/-temp/wiki/wikidata/page/];
+$sw3_content_db->{root_directory_name} = $sw3_db_dir_name;
 
 require SWE::DB::SuikaWiki3Props;
 my $sw3_prop_db = SWE::DB::SuikaWiki3Props->new;
-$sw3_prop_db->{root_directory_name} = $sw3_content_db->{root_directory_name};
+$sw3_prop_db->{root_directory_name} = $sw3_db_dir_name;
 
 require SWE::DB::SuikaWiki3LastModified;
 my $sw3_lm_db = SWE::DB::SuikaWiki3LastModified->new;
-$sw3_lm_db->{file_name} = $sw3_content_db->{root_directory_name} .
+$sw3_lm_db->{file_name} = $sw3_db_dir_name .
     'mt--6C6173745F6D6F646966696564.dat';
 
 require SWE::DB::SuikaWiki3PageList2;
 my $sw3_pages = SWE::DB::SuikaWiki3PageList2->new;
-$sw3_pages->{root_directory_name} = 'data/sw3pages/';
+$sw3_pages->{root_directory_name} = $db_sw3_dir_name;
 
 require SWE::DB::Lock;
 my $names_lock = SWE::DB::Lock->new;
-$names_lock->{file_name} = 'data/ids.lock';
+$names_lock->{file_name} = $db_global_lock_dir_name . 'ids.lock';
     ## NOTE: This lock MUST be used when $sw3pages or $name_prop_db is updated.
 
 require SWE::DB::IDGenerator;
 my $idgen = SWE::DB::IDGenerator->new;
-$idgen->{file_name} = 'data/nextid.dat';
-$idgen->{lock_file_name} = 'data/nextid.lock';
+$idgen->{file_name} = $db_dir_name . 'nextid.dat';
+$idgen->{lock_file_name} = $db_global_lock_dir_name . 'nextid.lock';
 
 require SWE::DB::IDProps;
 my $id_prop_db = SWE::DB::IDProps->new;
-$id_prop_db->{root_directory_name} = q[data/ids/];
+$id_prop_db->{root_directory_name} = $db_id_dir_name;
 $id_prop_db->{leaf_suffix} = '.props';
 
 require SWE::DB::IDLocks;
 my $id_locks = SWE::DB::IDLocks->new;
-$id_locks->{root_directory_name} = $id_prop_db->{root_directory_name};
+$id_locks->{root_directory_name} = $db_id_dir_name;
 $id_locks->{leaf_suffix} = '.lock';
 
 require SWE::DB::HashedProps;
 
 my $name_prop_db = SWE::DB::HashedProps->new;
-$name_prop_db->{root_directory_name} = q[data/names/];
+$name_prop_db->{root_directory_name} = $db_name_dir_name;
 $name_prop_db->{leaf_suffix} = '.props';
 
 require SWE::DB::IDDOM;
 
 my $content_cache_db = SWE::DB::IDDOM->new;
-$content_cache_db->{root_directory_name} = $id_prop_db->{root_directory_name};
+$content_cache_db->{root_directory_name} = $db_id_dir_name;
 $content_cache_db->{leaf_suffix} = '.domcache';
 
 my $html_cache_db = SWE::DB::IDDOM->new;
-$html_cache_db->{root_directory_name} = $id_prop_db->{root_directory_name};
+$html_cache_db->{root_directory_name} = $db_id_dir_name;
 $html_cache_db->{leaf_suffix} = '.htmlcache';
 
 my $cache_prop_db = SWE::DB::IDProps->new;
-$cache_prop_db->{root_directory_name} = $content_cache_db->{root_directory_name};
+$cache_prop_db->{root_directory_name} = $db_id_dir_name;
 $cache_prop_db->{leaf_suffix} = '.cacheprops';
 
 require SWE::DB::IDText;
 my $content_db = SWE::DB::IDText->new;
-$content_db->{root_directory_name} = $id_prop_db->{root_directory_name};
+$content_db->{root_directory_name} = $db_id_dir_name;
 $content_db->{leaf_suffix} = '.txt';
 
 if ($path[0] eq 'n' and @path == 2) {

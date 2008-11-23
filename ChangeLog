@@ -1,5 +1,9 @@
 2008-11-23  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Facted out database path names.
+
+2008-11-23  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Bug fix: Set action="" of new-page form.
 
 2008-11-16  Wakaba  <wakaba@suika.fam.cx>
