@@ -1,5 +1,9 @@
 2008-11-23  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Load database modules as late as possible.
+
+2008-11-23  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Facted out database path names.
 
 2008-11-23  Wakaba  <wakaba@suika.fam.cx>

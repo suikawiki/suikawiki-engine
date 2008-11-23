@@ -2,6 +2,7 @@
 use strict;
 
 use utf8;
+use feature 'state';
 
 use lib qw[/home/httpd/html/www/markup/html/whatpm
            /home/wakaba/work/manakai2/lib
@@ -70,21 +71,6 @@ if ($path =~ s[\$([^/]*)\z][]) {
 my @path = map { s/\+/%2F/g; percent_decode ($_) } split m#/#, $path, -1;
 shift @path; # script's name
 
-require SWE::DB::SuikaWiki3;
-
-
-my $sw3_content_db = SWE::DB::SuikaWiki3->new;
-$sw3_content_db->{root_directory_name} = $sw3_db_dir_name;
-
-require SWE::DB::SuikaWiki3Props;
-my $sw3_prop_db = SWE::DB::SuikaWiki3Props->new;
-$sw3_prop_db->{root_directory_name} = $sw3_db_dir_name;
-
-require SWE::DB::SuikaWiki3LastModified;
-my $sw3_lm_db = SWE::DB::SuikaWiki3LastModified->new;
-$sw3_lm_db->{file_name} = $sw3_db_dir_name .
-    'mt--6C6173745F6D6F646966696564.dat';
-
 require SWE::DB::SuikaWiki3PageList2;
 my $sw3_pages = SWE::DB::SuikaWiki3PageList2->new;
 $sw3_pages->{root_directory_name} = $db_sw3_dir_name;
@@ -93,11 +79,6 @@ require SWE::DB::Lock;
 my $names_lock = SWE::DB::Lock->new;
 $names_lock->{file_name} = $db_global_lock_dir_name . 'ids.lock';
     ## NOTE: This lock MUST be used when $sw3pages or $name_prop_db is updated.
-
-require SWE::DB::IDGenerator;
-my $idgen = SWE::DB::IDGenerator->new;
-$idgen->{file_name} = $db_dir_name . 'nextid.dat';
-$idgen->{lock_file_name} = $db_global_lock_dir_name . 'nextid.lock';
 
 require SWE::DB::IDProps;
 my $id_prop_db = SWE::DB::IDProps->new;
@@ -110,20 +91,9 @@ $id_locks->{root_directory_name} = $db_id_dir_name;
 $id_locks->{leaf_suffix} = '.lock';
 
 require SWE::DB::HashedProps;
-
 my $name_prop_db = SWE::DB::HashedProps->new;
 $name_prop_db->{root_directory_name} = $db_name_dir_name;
 $name_prop_db->{leaf_suffix} = '.props';
-
-require SWE::DB::IDDOM;
-
-my $content_cache_db = SWE::DB::IDDOM->new;
-$content_cache_db->{root_directory_name} = $db_id_dir_name;
-$content_cache_db->{leaf_suffix} = '.domcache';
-
-my $html_cache_db = SWE::DB::IDDOM->new;
-$html_cache_db->{root_directory_name} = $db_id_dir_name;
-$html_cache_db->{leaf_suffix} = '.htmlcache';
 
 my $cache_prop_db = SWE::DB::IDProps->new;
 $cache_prop_db->{root_directory_name} = $db_id_dir_name;
@@ -200,6 +170,14 @@ if ($path[0] eq 'n' and @path == 2) {
       print $doc->inner_html;
       exit;
     } elsif ($format eq 'html') {
+      state $html_cache_db;
+      unless (defined $html_cache_db) {
+        require SWE::DB::IDDOM;
+        $html_cache_db = SWE::DB::IDDOM->new;
+        $html_cache_db->{root_directory_name} = $db_id_dir_name;
+        $html_cache_db->{leaf_suffix} = '.htmlcache';
+      }
+      
       my $html_doc;
       my $html_container;
       my $title_text;
@@ -577,6 +555,11 @@ See <a rel=license>License</a> page.
     my $content = $cgi->get_parameter ('text') // '';
     normalize_content (\$content);
 
+    require SWE::DB::IDGenerator;
+    our $idgen = SWE::DB::IDGenerator->new;
+    $idgen->{file_name} = $db_dir_name . 'nextid.dat';
+    $idgen->{lock_file_name} = $db_global_lock_dir_name . 'nextid.lock';
+
     $names_lock->lock;
     my $id = $idgen->get_next_id;
 
@@ -825,6 +808,14 @@ sub get_xml_data ($$$) {
     }
   }
 
+  state $content_cache_db;
+  unless (defined $content_cache_db) {
+    require SWE::DB::IDDOM;
+    $content_cache_db = SWE::DB::IDDOM->new;
+    $content_cache_db->{root_directory_name} = $db_id_dir_name;
+    $content_cache_db->{leaf_suffix} = '.domcache';
+  }
+  
   my $doc;
   if ($cached_hash) {
     $doc = $content_cache_db->get_data ($id);
@@ -883,6 +874,14 @@ sub convert_sw3_page ($$) {
 
   my $ids;
   if (defined $page_key) {
+    our $idgen;
+    unless (defined $idgen) {
+      require SWE::DB::IDGenerator;
+      $idgen = SWE::DB::IDGenerator->new;
+      $idgen->{file_name} = $db_dir_name . 'nextid.dat';
+      $idgen->{lock_file_name} = $db_global_lock_dir_name . 'nextid.lock';
+    }
+    
     my $id = $idgen->get_next_id;
     my $id_lock = $id_locks->get_lock ($id);
     $id_lock->lock;
@@ -893,6 +892,28 @@ sub convert_sw3_page ($$) {
     local $id_prop_db->{version_control} = $vc;
     $vc->add_file ($idgen->{file_name});
     
+    state $sw3_content_db;
+    unless (defined $sw3_content_db) {
+      require SWE::DB::SuikaWiki3;
+      $sw3_content_db = SWE::DB::SuikaWiki3->new;
+      $sw3_content_db->{root_directory_name} = $sw3_db_dir_name;
+    }
+    
+    state $sw3_prop_db;
+    unless (defined $sw3_prop_db) {
+      require SWE::DB::SuikaWiki3Props;
+      $sw3_prop_db = SWE::DB::SuikaWiki3Props->new;
+      $sw3_prop_db->{root_directory_name} = $sw3_db_dir_name;
+    }
+    
+    state $sw3_lm_db;
+    unless (defined $sw3_lm_db) {
+      require SWE::DB::SuikaWiki3LastModified;
+      $sw3_lm_db = SWE::DB::SuikaWiki3LastModified->new;
+      $sw3_lm_db->{file_name} = $sw3_db_dir_name .
+          'mt--6C6173745F6D6F646966696564.dat';
+    }
+
     my $content = $sw3_content_db->get_data ($page_key);
     $content_db->set_data ($id => \$content);
     
