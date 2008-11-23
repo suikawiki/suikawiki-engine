@@ -627,7 +627,7 @@ See <a rel=license>License</a> page.
     $doc->manakai_is_html (1);
     $doc->inner_html (q[<!DOCTYPE HTML><title>New page</title>
 <h1>New page</h1>
-<form action="" method=post accept-charset=utf-8>
+<form action=new-page method=post accept-charset=utf-8>
 <p><button type=submit>Save</button>
 <p><label><strong>Page name(s)</strong>:<br>
 <textarea name=names></textarea></label>
