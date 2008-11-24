@@ -1,5 +1,11 @@
 2008-11-24  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi (percent_encode, percent_encode_na, percent_decode,
+	htescape, get_absolute_url): Moved to manakai's Message::CGI::Util
+	module.
+
+2008-11-24  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi: Fullwidth/halfwidth normalization split into a separate
 	module.
 

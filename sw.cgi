@@ -42,6 +42,9 @@ my @content_type =
 
 sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
 
+use Message::CGI::Util qw/percent_encode percent_encode_na
+  percent_decode htescape get_absolute_url/;
+
 require Char::Normalize::FullwidthHalfwidth;
 
 require Message::DOM::DOMImplementation;
@@ -721,7 +724,7 @@ sub http_error ($$;$) {
 sub http_redirect ($$$) {
   my ($code, $text, $url) = @_;
   
-  my $abs_url = get_absolute_url ($url);
+  my $abs_url = get_absolute_url ($url, $cgi->request_uri);
 
   binmode STDOUT, ':encoding(utf-8)';
   print qq[Status: $code $text
@@ -761,39 +764,6 @@ sub get_page_url ($$;$) {
   $wiki_name = ('../' x (@path - 1)) . 'n/' . $wiki_name;
   return $wiki_name;
 } # get_page_url
-
-sub htescape ($) {
-  my $s = shift;
-  $s =~ s/&/&amp;/g;
-  $s =~ s/</&lt;/g;
-  $s =~ s/"/&quot;/g;
-  return $s;
-} # htescape
-
-sub percent_encode ($) {
-  my $s = Encode::encode ('utf8', $_[0]);
-  $s =~ s/([^A-Za-z0-9_~-])/sprintf '%%%02X', ord $1/ges;
-  return $s;
-} # percent_encode
-
-sub percent_encode_na ($) {
-  my $s = Encode::encode ('utf8', $_[0]);
-  $s =~ s/([^\x00-\x7F])/sprintf '%%%02X', ord $1/ges;
-  return $s;
-} # percent_encode_na
-
-sub percent_decode ($) { # input should be a byte string.
-  my $s = shift;
-  $s =~ s/%([0-9A-Fa-f]{2})/pack 'C', hex $1/ge;
-  return Encode::decode ('utf-8', $s); # non-UTF-8 octet converted to \xHH
-} # percent_decode
-
-sub get_absolute_url ($) {
-  return $dom->create_uri_reference ($_[0])
-      ->get_absolute_reference ($cgi->request_uri)
-      ->get_uri_reference 
-      ->uri_reference;
-} # get_absolute_url
 
 sub get_xml_data ($$$) {
   my ($id, $id_prop, $cache_prop) = @_;
