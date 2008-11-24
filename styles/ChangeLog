@@ -1,3 +1,7 @@
+2008-11-23  Wakaba  <wakaba@suika.fam.cx>
+
+	* sw.css: Oops, class names were wrong.
+
 2008-11-16  Wakaba  <wakaba@suika.fam.cx>
 
 	* sw.css: Added style rules for same-id page list.

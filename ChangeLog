@@ -1,3 +1,11 @@
+2008-11-24  Wakaba  <wakaba@suika.fam.cx>
+
+	* cvscommit.sh: Use |mkcommitfeed| command instead of
+	|mkcommitfeed.pl| in the same directory.
+
+	* mkcommitfeed.pl: Removed (See
+	<http://suika.fam.cx/commitfeed/readme>).
+	
 2008-11-16  Wakaba  <wakaba@suika.fam.cx>
 
 	* scripts/: New directory.

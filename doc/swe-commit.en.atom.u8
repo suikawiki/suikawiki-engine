@@ -1,4 +1,18 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1226136651"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226136651</id><title>2008-11-08 Wakaba</title><updated>2008-11-08T09:30:50Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ ChangeLog	8 Nov 2008 09:30:47 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1227511046"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1227511046</id><title>2008-11-24 Wakaba</title><updated>2008-11-24T07:17:24Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ ChangeLog	24 Nov 2008 07:17:06 -0000
+2008-11-24  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* cvscommit.sh: Use |mkcommitfeed| command instead of
+	|mkcommitfeed.pl| in the same directory.
+
+	* mkcommitfeed.pl: Removed (See
+	&lt;http://suika.fam.cx/commitfeed/readme&gt;).
+	
+++ swe/styles/ChangeLog	23 Nov 2008 08:21:28 -0000
+2008-11-23  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw.css: Oops, class names were wrong.
+
+</content></entry><entry xml:id="entry-1226136651"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1226136651</id><title>2008-11-08 Wakaba</title><updated>2008-11-08T09:30:50Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ ChangeLog	8 Nov 2008 09:30:47 -0000
 2008-11-08  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
 	* mkcommitfeed.pl: New file (copied from ../www/harusame/).
@@ -183,4 +197,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry></feed>
+</content></entry><updated>2008-11-24T07:17:24Z</updated></feed>
