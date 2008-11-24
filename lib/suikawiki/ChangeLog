@@ -1,5 +1,10 @@
 2008-11-24  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Implemented history modes.  Records creation of pages
+	and modifications to id/name associations as history.
+
+2008-11-24  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: New script (Code from sw.cgi
 	<http://suika.fam.cx/gate/cvs/webroot/gate/2008/sw.cgi>, with
 	minimum changes).

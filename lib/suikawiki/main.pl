@@ -239,15 +239,21 @@ if ($path[0] eq 'n' and @path == 2) {
       $html_doc->inner_html ('<!DOCTYPE HTML><title></title>');
       
       $html_doc->get_elements_by_tag_name ('title')->[0]->text_content ($name);
-      set_head_content ($html_doc, $id,
-                        [{rel => 'alternate',
-                          type => 'text/x-suikawiki',
-                          href => get_page_url ($name, undef, $id) .
-                              '?format=text'},
-                         {rel => 'alternate',
-                          type => 'application/xml', ## TODO: ok?
-                          href => get_page_url ($name, undef, $id) .
-                              '?format=xml'}]);
+      my @link = ({rel => 'alternate',
+                   type => 'text/x-suikawiki',
+                   href => get_page_url ($name, undef, $id) . '?format=text'},
+                  {rel => 'alternate',
+                   type => 'application/xml', ## TODO: ok?
+                   href => get_page_url ($name, undef, $id) . '?format=xml'},
+                  {rel => 'archives',
+                   href => get_page_url ($name, undef, undef) . ';history',
+                   title => 'History of the page name'});
+      if (defined $id) {
+        push @link, {rel => 'archives',
+                     href => '../i/' . $id . ';history',
+                     title => 'History of the page content'};
+      }
+      set_head_content ($html_doc, $id, \@link);
       
       my $body_el = $html_doc->last_child->last_child;
 
@@ -323,6 +329,81 @@ if ($path[0] eq 'n' and @path == 2) {
       exit;
     }
 
+    exit;
+  } elsif ($param eq 'history' and not defined $dollar) {
+    require SWE::DB::HashedHistory;
+    my $name_history_db = SWE::DB::HashedHistory->new;
+    $name_history_db->{root_directory_name} = $db_name_dir_name;
+    
+    my $history = $name_history_db->get_data ($name);
+
+    binmode STDOUT, ':encoding(utf-8)';
+    print "Content-Type: text/html; charset=utf-8\n\n";
+
+    my $doc = $dom->create_document;
+    $doc->manakai_is_html (1);
+    $doc->inner_html (q[<!DOCTYPE HTML><html lang=en><title></title><h1></h1>
+<div class=section><h2>History</h2><table>
+
+<thead>
+<tr><th scope=col>Time<th scope=col>Change
+
+<tbody>
+                        
+</table></div>]);
+    set_head_content ($doc, undef, [], []);
+
+    my $title_el = $doc->get_elements_by_tag_name ('title')->[0];
+    $title_el->inner_html ('History &mdash; ');
+    $title_el->manakai_append_text ($name);
+    
+    my $h1_el = $doc->get_elements_by_tag_name ('h1')->[0];
+    $h1_el->text_content ($name);
+    
+    my $table_el = $doc->get_elements_by_tag_name ('table')->[0];
+    if ($history) {
+      my $tbody_el = $table_el->last_child;
+
+      for my $entry (@$history) {
+        my $tr_el = $doc->create_element_ns (HTML_NS, 'tr');
+        
+        my $date_cell = $doc->create_element_ns (HTML_NS, 'td');
+        my $date = gmtime ($entry->[0] || 0); ## TODO: ...
+        $date_cell->inner_html ('<time>' . $date . '</time>');
+        $tr_el->append_child ($date_cell);
+
+        my $change_cell = $doc->create_element_ns (HTML_NS, 'td');
+        if ($entry->[1] eq 'c') {
+          $change_cell->manakai_append_text ('Created');
+        } elsif ($entry->[1] eq 'a') {
+          $change_cell->manakai_append_text ('Associated with ');
+          my $a_el = $doc->create_element_ns (HTML_NS, 'a');
+          $a_el->set_attribute (href => '../i/' . $entry->[2] . ';history');
+          $a_el->text_content ($entry->[2]);
+          $change_cell->append_child ($a_el);
+        } elsif ($entry->[1] eq 'r') {
+          $change_cell->manakai_append_text ('Disassociated from ');
+          my $a_el = $doc->create_element_ns (HTML_NS, 'a');
+          $a_el->set_attribute (href => '../i/' . $entry->[2] . ';history');
+          $a_el->text_content ($entry->[2]);
+          $change_cell->append_child ($a_el);
+        } elsif ($entry->[1] eq 't') {
+          $change_cell->manakai_append_text
+              ('Converted from SuikaWiki3 database');
+        } else {
+          $change_cell->manakai_append_text ($entry->[1]);
+        }
+        $tr_el->append_child ($change_cell);
+
+        $tbody_el->append_child ($tr_el);
+      }
+    } else {
+      my $p_el = $doc->create_element_ns (HTML_NS, 'p');
+      $p_el->text_content ('No history data.');
+      $table_el->parent_node->replace_child ($p_el, $table_el);
+    }
+
+    print $doc->inner_html;
     exit;
   } else {
     $name .= '$' . $dollar if defined $dollar;
@@ -480,6 +561,18 @@ See <a rel=license>License</a> page.
       local $name_prop_db->{version_control} = $vc;
       local $id_prop_db->{version_control} = $vc;
       
+      require SWE::DB::IDHistory;
+      my $id_history_db = SWE::DB::IDHistory->new;
+      $id_history_db->{root_directory_name} = $db_id_dir_name;
+      $id_history_db->{version_control} = $vc;
+
+      require SWE::DB::HashedHistory;
+      my $names_history_db = SWE::DB::HashedHistory->new;
+      $names_history_db->{root_directory_name} = $db_name_dir_name;
+      $names_history_db->{version_control} = $vc;
+
+      my $time = time;
+
       $names_lock->lock;
       
       my $id_prop = $id_prop_db->get_data ($id);
@@ -508,10 +601,16 @@ See <a rel=license>License</a> page.
           my $sw3id = $sw3_pages->get_data ($new_name);
           convert_sw3_page ($sw3id => $new_name);                    
           $new_name_prop = $name_prop_db->get_data ($new_name);
+          unless (defined $new_name_prop) {
+            $names_history_db->append_data ($new_name => [$time, 'c']);
+          }
         }
         $new_name_prop->{name} = $new_name;
         push @{$new_name_prop->{id} ||= []}, $id;
         $name_prop_db->set_data ($new_name => $new_name_prop);
+
+        $id_history_db->append_data ($id => [$time, 'a', $new_name]);
+        $names_history_db->append_data ($new_name => [$time, 'a', $id]);
       }
 
       for my $removed_name (keys %$removed_names) {
@@ -523,6 +622,9 @@ See <a rel=license>License</a> page.
           }
         }
         $name_prop_db->set_data ($removed_name => $removed_name_prop);
+
+        $id_history_db->append_data ($id => [$time, 'r', $removed_name]);
+        $names_history_db->append_data ($removed_name => [$time, 'r', $id]);
       }
 
       $id_prop->{name} = $new_names;
@@ -539,6 +641,85 @@ See <a rel=license>License</a> page.
     } else {
       http_error (405, 'Method not allowed', 'PUT');
     }
+  } elsif ($param eq 'history' and not defined $dollar) {
+    my $id = $path[1] + 0;
+
+    require SWE::DB::IDHistory;
+    my $id_history_db = SWE::DB::IDHistory->new;
+    $id_history_db->{root_directory_name} = $db_id_dir_name;
+    
+    my $history = $id_history_db->get_data ($id);
+
+    binmode STDOUT, ':encoding(utf-8)';
+    print "Content-Type: text/html; charset=utf-8\n\n";
+
+    my $doc = $dom->create_document;
+    $doc->manakai_is_html (1);
+    $doc->inner_html (q[<!DOCTYPE HTML><html lang=en><title></title><h1></h1>
+<div class=section><h2>History</h2><table>
+
+<thead>
+<tr><th scope=col>Time<th scope=col>Change
+
+<tbody>
+                        
+</table></div>]);
+    set_head_content ($doc, undef, [], []);
+
+    my $title_el = $doc->get_elements_by_tag_name ('title')->[0];
+    $title_el->inner_html ('History &mdash; #');
+    $title_el->manakai_append_text ($id);
+    
+    my $h1_el = $doc->get_elements_by_tag_name ('h1')->[0];
+    $h1_el->text_content ('#' . $id);
+    
+    my $table_el = $doc->get_elements_by_tag_name ('table')->[0];
+    if ($history) {
+      my $tbody_el = $table_el->last_child;
+
+      for my $entry (@$history) {
+        my $tr_el = $doc->create_element_ns (HTML_NS, 'tr');
+        
+        my $date_cell = $doc->create_element_ns (HTML_NS, 'td');
+        my $date = gmtime ($entry->[0] || 0); ## TODO: ...
+        $date_cell->inner_html ('<time>' . $date . '</time>');
+        $tr_el->append_child ($date_cell);
+
+        my $change_cell = $doc->create_element_ns (HTML_NS, 'td');
+        if ($entry->[1] eq 'c') {
+          $change_cell->manakai_append_text ('Created');
+        } elsif ($entry->[1] eq 'a') {
+          $change_cell->manakai_append_text ('Associated with ');
+          my $a_el = $doc->create_element_ns (HTML_NS, 'a');
+          $a_el->set_attribute (href => get_page_url ($entry->[2], undef)
+                                    . ';history');
+          $a_el->text_content ($entry->[2]);
+          $change_cell->append_child ($a_el);
+        } elsif ($entry->[1] eq 'r') {
+          $change_cell->manakai_append_text ('Disassociated from ');
+          my $a_el = $doc->create_element_ns (HTML_NS, 'a');
+          $a_el->set_attribute (href => get_page_url ($entry->[2], undef)
+                                    . ';history');
+          $a_el->text_content ($entry->[2]);
+          $change_cell->append_child ($a_el);
+        } elsif ($entry->[1] eq 't') {
+          $change_cell->manakai_append_text
+              ('Converted from SuikaWiki3 database');
+        } else {
+          $change_cell->manakai_append_text ($entry->[1]);
+        }
+        $tr_el->append_child ($change_cell);
+
+        $tbody_el->append_child ($tr_el);
+      }
+    } else {
+      my $p_el = $doc->create_element_ns (HTML_NS, 'p');
+      $p_el->text_content ('No history data.');
+      $table_el->parent_node->replace_child ($p_el, $table_el);
+    }
+
+    print $doc->inner_html;
+    exit;
   }
 } elsif ($path[0] eq 'new-page' and @path == 1) {
   if ($cgi->request_method eq 'POST') {
@@ -564,6 +745,7 @@ See <a rel=license>License</a> page.
 
     $names_lock->lock;
     my $id = $idgen->get_next_id;
+    my $time = time;
 
     {
       my $id_lock = $id_locks->get_lock ($id);
@@ -574,12 +756,24 @@ See <a rel=license>License</a> page.
       local $id_prop_db->{version_control} = $vc;
       $vc->add_file ($idgen->{file_name});
       
+      require SWE::DB::IDHistory;
+      my $id_history_db = SWE::DB::IDHistory->new;
+      $id_history_db->{root_directory_name} = $db_id_dir_name;
+      $id_history_db->{version_control} = $vc;
+
       $content_db->set_data ($id => \$content);
       
       my $id_props = {};
-      $id_props->{name}->{$_} = 1 for keys %$new_names;
+
+      $id_history_db->append_data ($id => [$time, 'c']);
+      $id_props->{modified} = $time;
+      
+      for (keys %$new_names) {
+        $id_props->{name}->{$_} = 1;
+        $id_history_db->append_data ($id => [$time, 'a', $_]);
+      }
+
       $id_props->{'content-type'} = $ct;
-      $id_props->{modified} = time;
       $id_props->{hash} = get_hash (\$content);
       $id_props->{title} = $cgi->get_parameter ('title') // '';
       normalize_content (\($id_props->{title}));
@@ -594,17 +788,27 @@ See <a rel=license>License</a> page.
     my $vc = SWE::DB::VersionControl->new;
     local $name_prop_db->{version_control} = $vc;
 
+    require SWE::DB::HashedHistory;
+    my $name_history_db = SWE::DB::HashedHistory->new;
+    $name_history_db->{root_directory_name} = $db_name_dir_name;
+    $name_history_db->{version_control} = $vc;
+
     for my $name (keys %$new_names) {
       my $name_props = $name_prop_db->get_data ($name);
       unless (defined $name_props) {
         my $sw3id = $sw3_pages->get_data ($name);
         convert_sw3_page ($sw3id => $name);                    
         $name_props = $name_prop_db->get_data ($name);
+        unless (defined $name_props) {
+          $name_history_db->append_data ($name => [$time, 'c']);
+        }
       }
 
       push @{$name_props->{id} ||= []}, $id;
       $name_props->{name} = $name;
       $name_prop_db->set_data ($name => $name_props);
+
+      $name_history_db->append_data ($name => [$time, 'a', $id]);
     }
 
     $vc->commit_changes ("id=$id created by $user");
@@ -853,6 +1057,8 @@ sub convert_sw3_page ($$) {
       $idgen->{file_name} = $db_dir_name . 'nextid.dat';
       $idgen->{lock_file_name} = $db_global_lock_dir_name . 'nextid.lock';
     }
+
+    my $time = time;
     
     my $id = $idgen->get_next_id;
     my $id_lock = $id_locks->get_lock ($id);
@@ -863,6 +1069,11 @@ sub convert_sw3_page ($$) {
     local $content_db->{version_control} = $vc;
     local $id_prop_db->{version_control} = $vc;
     $vc->add_file ($idgen->{file_name});
+
+    require SWE::DB::IDHistory;
+    my $id_history_db = SWE::DB::IDHistory->new;
+    $id_history_db->{root_directory_name} = $db_id_dir_name;
+    $id_history_db->{version_control} = $vc;
 
     our $sw3_db_dir_name;
     
@@ -900,6 +1111,9 @@ sub convert_sw3_page ($$) {
     $id_props->{hash} = get_hash (\$content);
     $id_prop_db->set_data ($id => $id_props);
 
+    $id_history_db->append_data ($id => [$time, 't']);
+    $id_history_db->append_data ($id => [$time, 'a', $name]);
+
     $vc->commit_changes ("converted from SuikaWiki3 <http://suika.fam.cx/gate/cvs/suikawiki/wikidata/page/$page_key.txt>");
 
     $id_lock->unlock;
@@ -908,11 +1122,19 @@ sub convert_sw3_page ($$) {
     local $name_prop_db->{version_control} = $vc;
     local $sw3_pages->{version_control} = $vc;
     
+    require SWE::DB::HashedHistory;
+    my $names_history_db = SWE::DB::HashedHistory->new;
+    $names_history_db->{root_directory_name} = $db_name_dir_name;
+    $names_history_db->{version_control} = $vc;
+    
     my $name_props = $name_prop_db->get_data ($name);
     push @{$name_props->{id} ||= []}, $id;
     $ids = $name_props->{id};
     $name_props->{name} = $name;
     $name_prop_db->set_data ($name => $name_props);
+
+    $names_history_db->append_data ($name => [$time, 't']);
+    $names_history_db->append_data ($name => [$time, 'a', $id]);
 
     $sw3_pages->delete_data ($name);
     $sw3_pages->save_data;
@@ -939,7 +1161,8 @@ sub set_head_content ($;$$$) {
     our $cvs_archives_url;
     push @$links, {rel => 'archives',
                    href => $cvs_archives_url . 'ids/' .
-                             int ($id / 1000) . '/' . ($id % 1000) . '.txt'};
+                             int ($id / 1000) . '/' . ($id % 1000) . '.txt',
+                   title => 'CVS log for the page content'};
   }
   
   for my $item (@$links) {
@@ -963,4 +1186,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2008/11/24 08:01:04 $
+1; ## $Date: 2008/11/24 11:45:53 $

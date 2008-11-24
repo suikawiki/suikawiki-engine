@@ -1,3 +1,7 @@
+2008-11-24  Wakaba  <wakaba@suika.fam.cx>
+
+	* IDHistory.pm, HashedHistory.pm: New modules.
+
 2008-11-14  Wakaba  <wakaba@suika.fam.cx>
 
 	* IDLocks.pm (get_lock): Directories should be created if it does
