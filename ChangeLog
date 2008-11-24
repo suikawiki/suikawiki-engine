@@ -1,5 +1,10 @@
 2008-11-24  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.cgi: Moved most parts to |lib/suikawiki/main.pl|
+	<http://suika.fam.cx/gate/cvs/webroot/swe/lib/suikawiki/main.pl>.
+
+2008-11-24  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.cgi (percent_encode, percent_encode_na, percent_decode,
 	htescape, get_absolute_url): Moved to manakai's Message::CGI::Util
 	module.
