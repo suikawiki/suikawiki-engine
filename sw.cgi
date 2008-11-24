@@ -1,11 +1,11 @@
 #!/usr/bin/perl
 use strict;
 
-use utf8;
 use feature 'state';
 
 use lib qw[/home/httpd/html/www/markup/html/whatpm
            /home/wakaba/work/manakai2/lib
+           /home/httpd/html/www/charclass/lib
            /home/httpd/html/swe/lib/];
 
 use CGI::Carp qw[fatalsToBrowser];
@@ -41,6 +41,8 @@ my @content_type =
 );
 
 sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
+
+require Char::Normalize::FullwidthHalfwidth;
 
 require Message::DOM::DOMImplementation;
 my $dom = Message::DOM::DOMImplementation->new;
@@ -736,8 +738,7 @@ Content-Type: text/html; charset=utf-8
 
 sub normalize_name ($) {
   my $s = shift;
-  $s =~ tr{\x{3000}\x{FF01}-\x{FF5E}\x{FF61}-\x{FF9F}\x{FFE0}-\x{FFE6}}
-          { !-~。「」、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン\x{3099}\x{309A}\xA2\xA3\xAC\xAF\xA6\xA5\x{20A9}};
+  Char::Normalize::FullwidthHalfwidth::normalize_width (\$s);
   $s =~ s/\s+/ /g;
   $s =~ s/^ //;
   $s =~ s/ $//;
@@ -746,8 +747,7 @@ sub normalize_name ($) {
 
 sub normalize_content ($) {
   my $sref = shift;
-  $$sref =~ tr{\x{3000}\x{FF01}-\x{FF5E}\x{FF61}-\x{FF9F}\x{FFE0}-\x{FFE6}}
-          { !-~。「」、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン\x{3099}\x{309A}\xA2\xA3\xAC\xAF\xA6\xA5\x{20A9}};
+  Char::Normalize::FullwidthHalfwidth::normalize_width ($sref);
 } # normalize_content
 
 ## A source anchor label in SWML -> URL
