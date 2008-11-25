@@ -26,7 +26,8 @@ require Message::DOM::DOMImplementation;
 my $dom = Message::DOM::DOMImplementation->new;
 
 use Message::CGI::Util qw/percent_encode percent_encode_na
-  percent_decode htescape get_absolute_url/;
+  percent_decode htescape get_absolute_url
+  datetime_in_content/;
 
 require Char::Normalize::FullwidthHalfwidth;
 
@@ -181,6 +182,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $html_doc;
       my $html_container;
       my $title_text;
+      my $id_prop;
       if (defined $id) {
         my $id_lock = $id_locks->get_lock ($id);
         $id_lock->lock;
@@ -188,7 +190,7 @@ if ($path[0] eq 'n' and @path == 2) {
         require SWE::Lang::XML2HTML;
         my $html_converter_version = $SWE::Lang::XML2HTML::ConverterVersion;
         
-        my $id_prop = $id_prop_db->get_data ($id);
+        $id_prop = $id_prop_db->get_data ($id);
         my $cache_prop = $cache_prop_db->get_data ($id);
         
         my $html_cache_version = $cache_prop->{'html-cache-version'};
@@ -309,6 +311,16 @@ if ($path[0] eq 'n' and @path == 2) {
         
         while (@{$html_container->child_nodes}) {
           $article_el->append_child ($html_container->first_child);
+        }
+
+        my $modified = $id_prop->{modified};
+        if (defined $modified) {
+          my $footer_el = $html_doc->create_element_ns (HTML_NS, 'div');
+          $footer_el->set_attribute (class => 'footer swe-updated');
+          $footer_el->inner_html ('Updated: <time></time>');
+          $footer_el->last_child->text_content
+              (datetime_in_content ($modified));
+          $article_el->append_child ($footer_el);
         }
           
         $body_el->append_child ($article_el);
@@ -493,7 +505,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <p><button type=submit>Update</button>
 <input type=hidden name=hash>
 <select name=content-type></select>
-See <a rel=license>License</a> page.
+[<a rel=help>Help</a> / <a rel=license>License</a>]
 </form>
 
 </div>
@@ -529,6 +541,10 @@ See <a rel=license>License</a> page.
            $form_el->get_elements_by_tag_name ('select')->[0] => $ct);
 
       my $a_el = $form_el->get_elements_by_tag_name ('a')->[0];
+      our $help_page_name;
+      $a_el->set_attribute (href => get_page_url ($help_page_name));
+
+      $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
       our $license_name;
       $a_el->set_attribute (href => get_page_url ($license_name));
 
@@ -835,7 +851,7 @@ See <a rel=license>License</a> page.
 <textarea name=text id=page-body-text></textarea>
 <p><button type=submit>Save</button>
 <select name=content-type></select>
-See <a rel=license>License</a> page.
+[<a rel=help>Help</a> / <a rel=license>License</a>]
 </form>
 ]);
     set_head_content ($doc, undef, [],
@@ -850,6 +866,10 @@ See <a rel=license>License</a> page.
         ->text_content ($names);
 
     my $a_el = $form_el->get_elements_by_tag_name ('a')->[0];
+    our $help_page_name;
+    $a_el->set_attribute (href => get_page_url ($help_page_name));
+
+    $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
     our $license_name;
     $a_el->set_attribute (href => get_page_url ($license_name));
     
@@ -1186,4 +1206,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2008/11/24 11:45:53 $
+1; ## $Date: 2008/11/25 05:01:49 $

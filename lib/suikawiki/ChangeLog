@@ -1,3 +1,12 @@
+2008-11-25  Wakaba  <wakaba@suika.fam.cx>
+
+	* main.pl: Adds link to help page after the page content form.
+
+2008-11-24  Wakaba  <wakaba@suika.fam.cx>
+
+	* main.pl: Output last-modified date at the end of HTML
+	representation of an article.
+	
 2008-11-24  Wakaba  <wakaba@suika.fam.cx>
 
 	* main.pl: Implemented history modes.  Records creation of pages

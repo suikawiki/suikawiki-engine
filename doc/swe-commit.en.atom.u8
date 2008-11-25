@@ -1,4 +1,14 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1227527153"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1227527153</id><title>2008-11-24 Wakaba</title><updated>2008-11-24T11:45:51Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/DB/ChangeLog	24 Nov 2008 11:43:31 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1227589308"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1227589308</id><title>2008-11-25 Wakaba</title><updated>2008-11-25T05:01:43Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	25 Nov 2008 05:01:39 -0000
+2008-11-25  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* main.pl: Adds link to help page after the page content form.
+
+2008-11-24  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* main.pl: Output last-modified date at the end of HTML
+	representation of an article.
+	
+</content></entry><entry xml:id="entry-1227527153"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1227527153</id><title>2008-11-24 Wakaba</title><updated>2008-11-24T11:45:51Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/DB/ChangeLog	24 Nov 2008 11:43:31 -0000
 2008-11-24  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
 	* IDHistory.pm, HashedHistory.pm: New modules.
@@ -223,4 +233,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2008-11-24T11:45:51Z</updated></feed>
+</content></entry><updated>2008-11-25T05:01:43Z</updated></feed>
