@@ -10,7 +10,9 @@ use CGI::Carp qw[fatalsToBrowser];
 require Message::CGI::Carp;
 
 our $homepage_name = 'HomePage';
-our $license_name = 'Wiki//Page//License';
+our $license_name = 'WikiPageLicense';
+our $help_page_name = 'HelpPage';
+
 our $style_url = q<http://suika.fam.cx/swe/styles/sw>;
 our $script_url = q<http://suika.fam.cx/swe/scripts/sw>;
 our $cvs_archives_url = q</gate/cvs/suikawiki/sw4data/>;
