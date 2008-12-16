@@ -290,7 +290,7 @@ if ($path[0] eq 'n' and @path == 2) {
       }
 
       my $nav_el = $html_doc->create_element_ns (HTML_NS, 'div');
-      $nav_el->set_attribute (class => 'nav');
+      $nav_el->set_attribute (class => 'nav tools');
       $nav_el->inner_html (q[<a rel=edit>Edit</a> <a href="../new-page">New</a>]);
       if (defined $id) {
         $nav_el->first_child->set_attribute (href => '../i/' . $id . ';edit');
@@ -1206,4 +1206,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2008/11/25 05:01:49 $
+1; ## $Date: 2008/12/16 04:50:54 $

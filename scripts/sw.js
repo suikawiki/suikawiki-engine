@@ -1,12 +1,13 @@
 window.onload = function () {
   createToolbar ();
+  initializeHatenaStar();
 }; // window.onload
 
 function getElementsByClassName (c) {
   if (document.getElementsByClassName) {
     return document.getElementsByClassName (c);
   } else {
-
+    return [];
   }
 } // getElementsByClassName
 
@@ -38,7 +39,7 @@ function createToolbar () {
     var container = containers[i];
     
     var button = document.createElement ('button');
-    button.type = 'button';
+    button.setAttribute ('type', 'button');
     button.innerHTML = '[#]';
     button.onclick = function () {
       var form = getAncestorElement (container, 'FORM');
@@ -65,3 +66,56 @@ function createToolbar () {
     container.appendChild (button);
   }
 } // createToolbar
+
+function initializeHatenaStar () {
+  if (!window.Hatena) {
+    window.Hatena = {};
+  }
+  if (!Hatena.Star) {
+    Hatena.Star = {};
+  }
+  if (!Hatena.Star.onLoadFunctions) {
+    Hatena.Star.onLoadFunctions = [];
+  }
+
+  Hatena.Star.onLoadFunctions.push (function () {
+    if (Ten.DOM.loaded) {
+      Ten.DOM.loaded = false;
+      Ten.DOM.addObserver ();
+    }
+
+    Hatena.Star.SiteConfig = {
+      entryNodes: {
+        'body': {
+          uri: 'h1 a',
+          title: 'h1',
+          container: '.tools' /* .nav.tools */
+        }
+      }
+    };
+
+    var realLoadNewEntries = Hatena.Star.EntryLoader.loadNewEntries;
+    Hatena.Star.EntryLoader.loadNewEntries = function (node) {
+      if (!node) {
+        node = document.documentElement;
+      }
+      realLoadNewEntries.apply (this, [node]);
+    };
+
+    setTimeout (function () {
+      Ten.DOM.dispatchEvent ('onload');
+    }, 1);
+  }); // Hatena.Star.onLoadFunctions.push'ed function
+
+  var hsScript = document.createElement ('script');
+  hsScript.defer = true;
+  hsScript.src = 'http://s.hatena.ne.jp/js/HatenaStar.js';
+  document.documentElement.lastChild.appendChild (hsScript);
+
+  /*
+    In SuikaWiki, a WikiName can be associated with multiple WikiPages, 
+    while a WikiPage can be associated with multiple WikiNames.  It would
+    be desired to associate Hatena Stars with WikiPages in theory.
+    However, WikiPages do not have permalinks at the moment.
+  */
+} // initializeHatenaStar

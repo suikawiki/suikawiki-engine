@@ -1,3 +1,9 @@
+2008-12-16  Wakaba  <wakaba@suika.fam.cx>
+
+	* sw.js: Added Hatena Star support.  Use method
+	|button.setAttribute ('type')| instead of attribute |button.type|
+	for WebKit/WinIE compatibility.
+
 2008-11-16  Wakaba  <wakaba@suika.fam.cx>
 
 	* sw.js: New file.

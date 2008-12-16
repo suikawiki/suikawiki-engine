@@ -1,3 +1,8 @@
+2008-12-16  Wakaba  <wakaba@suika.fam.cx>
+
+	* main.pl: Adds .tools class to the page navigation, to
+	distinguish with same-name pages navigation.
+
 2008-11-25  Wakaba  <wakaba@suika.fam.cx>
 
 	* main.pl: Adds link to help page after the page content form.
