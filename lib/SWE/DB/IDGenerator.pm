@@ -27,4 +27,14 @@ sub get_next_id ($) {
   return $nextid;
 } # get_next_id
 
+sub get_last_id ($) {
+  my $self = shift;
+  my $currentid = 0;
+  if (-f $self->{file_name}) {
+    open my $file, '<', $self->{file_name} or die "$0: $self->{file_name}: $!";
+    $currentid = <$file> - 1;
+  }
+  return $currentid;
+} # get_current_id
+
 1;

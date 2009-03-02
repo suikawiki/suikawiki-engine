@@ -1,4 +1,26 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1229403054"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1229403054</id><title>2008-12-16 Wakaba</title><updated>2008-12-16T04:50:50Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	16 Dec 2008 04:49:26 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1235979149"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1235979149</id><title>2009-03-02 Wakaba</title><updated>2009-03-02T07:32:24Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/DB/ChangeLog	2 Mar 2009 07:32:02 -0000
+2009-03-01  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* HashedIndex.pm: New module.
+
+	* IDGenerator.pm (get_last_id): New method.
+
+2009-01-12  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* SuikaWiki3LastModified.pm (get_data): Why this convertion was
+	necessary?
+
+++ swe/lib/suikawiki/ChangeLog	2 Mar 2009 07:31:08 -0000
+2009-03-02  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* main.pl (;search, ;terms): New modes.
+
+++ swe/styles/ChangeLog	3 Feb 2009 03:44:04 -0000
+2009-02-03  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw.css: Fixed a typo.
+
+</content></entry><entry xml:id="entry-1229403054"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1229403054</id><title>2008-12-16 Wakaba</title><updated>2008-12-16T04:50:50Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	16 Dec 2008 04:49:26 -0000
 2008-12-16  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
 	* main.pl: Adds .tools class to the page navigation, to
@@ -246,4 +268,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2008-12-16T04:50:50Z</updated></feed>
+</content></entry><updated>2009-03-02T07:32:24Z</updated></feed>

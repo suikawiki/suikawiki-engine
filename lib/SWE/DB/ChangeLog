@@ -1,3 +1,14 @@
+2009-03-01  Wakaba  <wakaba@suika.fam.cx>
+
+	* HashedIndex.pm: New module.
+
+	* IDGenerator.pm (get_last_id): New method.
+
+2009-01-12  Wakaba  <wakaba@suika.fam.cx>
+
+	* SuikaWiki3LastModified.pm (get_data): Why this convertion was
+	necessary?
+
 2008-11-24  Wakaba  <wakaba@suika.fam.cx>
 
 	* IDHistory.pm, HashedHistory.pm: New modules.

@@ -29,7 +29,7 @@ sub get_data ($$) {
   my ($self, $page_name) = @_;
   $self->_load_data unless $self->{data_loaded};
   
-  $page_name =~ s/ /\x2F\x2F/g;
+#  $page_name =~ s/ /\x2F\x2F/g;
   return $self->{data}->{$page_name};
 } # get_data
 

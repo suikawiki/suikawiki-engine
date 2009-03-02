@@ -1,6 +1,7 @@
 window.onload = function () {
   createToolbar ();
   initializeHatenaStar();
+  enableHTML5Support ();
 }; // window.onload
 
 function getElementsByClassName (c) {
@@ -79,14 +80,16 @@ function initializeHatenaStar () {
   }
 
   Hatena.Star.onLoadFunctions.push (function () {
+/*
     if (Ten.DOM.loaded) {
       Ten.DOM.loaded = false;
       Ten.DOM.addObserver ();
     }
+*/
 
     Hatena.Star.SiteConfig = {
       entryNodes: {
-        'body': {
+        '' /* body */: {
           uri: 'h1 a',
           title: 'h1',
           container: '.tools' /* .nav.tools */
@@ -94,6 +97,7 @@ function initializeHatenaStar () {
       }
     };
 
+/*
     var realLoadNewEntries = Hatena.Star.EntryLoader.loadNewEntries;
     Hatena.Star.EntryLoader.loadNewEntries = function (node) {
       if (!node) {
@@ -101,7 +105,7 @@ function initializeHatenaStar () {
       }
       realLoadNewEntries.apply (this, [node]);
     };
-
+*/
     setTimeout (function () {
       Ten.DOM.dispatchEvent ('onload');
     }, 1);
@@ -117,5 +121,22 @@ function initializeHatenaStar () {
     while a WikiPage can be associated with multiple WikiNames.  It would
     be desired to associate Hatena Stars with WikiPages in theory.
     However, WikiPages do not have permalinks at the moment.
+
+    See <http://suika.fam.cx/%7Ewakaba/wiki/sw/n/%E3%81%AF%E3%81%A6%E3%81%AA%E3%82%B9%E3%82%BF%E3%83%BC#anchor-2>.
   */
 } // initializeHatenaStar
+
+function enableHTML5Support () {
+  window.TEROnLoad = function () {
+    new TER.Delta (document.body);
+  }; // window.TEROnLoad
+
+  var timeScript = document.createElement ('script');
+  timeScript.defer = true;
+  timeScript.charset = 'utf-8';
+  timeScript.src = 'http://suika.fam.cx/www/style/ui/time.js';
+  document.documentElement.lastChild.appendChild (timeScript);
+} // enableHTML5Support
+
+/* Hack for IE */
+document.createElement ('time');

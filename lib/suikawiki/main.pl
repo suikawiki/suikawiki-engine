@@ -417,6 +417,49 @@ if ($path[0] eq 'n' and @path == 2) {
 
     print $doc->inner_html;
     exit;
+  } elsif ($param eq 'search' and not defined $dollar) {
+    require SWE::DB::HashedIndex;
+    my $names_index_db = SWE::DB::HashedIndex->new;
+    $names_index_db->{root_directory_name} = $db_name_dir_name;
+
+    my $names = [];
+    for_unique_words ($name => sub {
+      push @$names, shift;
+    });
+
+    my $index = {};
+    {
+      my $name = shift @$names;
+      last unless defined $name;
+      $index = $names_index_db->get_data ($name);
+    }
+
+    ## TOOD: "NOT" operation
+
+    for my $name (@$names) {
+      my $ids = $names_index_db->get_data ($name);
+      my @index = keys %$index;
+      for my $id (@index) {
+        delete $index->{$id} unless $ids->{$id};
+      }
+      for my $id (keys %$ids) {
+        if (defined $index->{$id}) {
+          $index->{$id} *= $ids->{$id};
+        }
+      }
+    }
+    
+    binmode STDOUT, ':encoding(utf-8)';
+    print "Content-Type: text/plain; charset=utf-8\n\n";
+    
+    for my $id (sort {$index->{$b} <=> $index->{$a}} keys %$index) {
+
+      my $id_prop = $id_prop_db->get_data ($id);
+      my $name = [keys %{$id_prop->{name}}]->[0] // $id;
+
+      print $index->{$id}, "\t", $id, "\t", $name, "\n";
+    }
+    exit;
   } else {
     $name .= '$' . $dollar if defined $dollar;
     $name .= ';' . $param;
@@ -736,6 +779,33 @@ if ($path[0] eq 'n' and @path == 2) {
 
     print $doc->inner_html;
     exit;
+  } elsif ($param eq 'terms' and not defined $dollar) {
+    my $id = $path[1] + 0;
+    
+    my $id_lock = $id_locks->get_lock ($id);
+    $id_lock->lock;
+    
+    my $id_prop = $id_prop_db->get_data ($id);
+    my $cache_prop = $cache_prop_db->get_data ($id);
+    my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
+
+    $id_lock->unlock;
+
+    if (defined $doc) {
+      update_tfidf ($id, $doc);
+      
+      require SWE::DB::IDText;
+      my $tfidf_db = SWE::DB::IDText->new;
+      $tfidf_db->{root_directory_name} = $db_id_dir_name;
+      $tfidf_db->{leaf_suffix} = '.tfidf';
+      
+      binmode STDOUT, ':encoding(utf-8)';
+      print "Content-Type: text/plain; charset=utf-8\n\n";
+      
+      print ${ $tfidf_db->get_data ($id) };
+      
+      exit;
+    }
   }
 } elsif ($path[0] eq 'new-page' and @path == 1) {
   if ($cgi->request_method eq 'POST') {
@@ -1060,6 +1130,93 @@ sub get_ids_by_name ($) {
   }
 } # get_ids_by_name
 
+sub for_unique_words ($*) {
+  #my ($string, $code) = @_;
+  
+  ## TODO: use mecab
+
+  require Text::Kakasi;
+  my $k = Text::Kakasi->new;
+  
+  ## TODO: support stop words
+  
+  my $all_terms = 0;
+  my $terms = {};
+  for my $term (split /\s+/, $k->set (qw/-iutf8 -outf8 -w/)->get ($_[0])) {
+
+    ## TODO: more normalization
+    $term = lc $term;
+
+    $terms->{$term}++;
+  }
+  
+  for my $term (keys %$terms) {
+    $_[1]->($term, $terms->{$term});
+  }
+} # for_unique_words
+
+sub update_tfidf ($$) {
+  my ($id, $doc) = @_;
+
+  require SWE::DB::IDText;
+  my $tfidf_db = SWE::DB::IDText->new;
+  $tfidf_db->{root_directory_name} = $db_id_dir_name;
+  $tfidf_db->{leaf_suffix} = '.tfidf';
+
+  my $deleted_terms = {
+      map { [split /\t/, $_, 2]->[0] => 1 }
+      split /[\x0D\x0A]+/,
+      ${ $tfidf_db->get_data ($id) || \'' }
+  };
+
+  my $tc = $doc->document_element->text_content;
+
+  ## TODO: use element semantics...
+
+  my $orig_tfs = {};
+  my $all_terms = 0;
+  for_unique_words ($tc => sub {
+    $orig_tfs->{$_[0]} = $_[1];
+    $all_terms += $_[1];
+  });
+
+  require SWE::DB::IDGenerator;
+  our $idgen;
+  unless (defined $idgen) {
+    $idgen = SWE::DB::IDGenerator->new;
+    $idgen->{file_name} = $db_dir_name . 'nextid.dat';
+    $idgen->{lock_file_name} = $db_global_lock_dir_name . 'nextid.lock';
+  }
+
+  my $doc_number = $idgen->get_last_id;
+
+  require SWE::DB::HashedIndex;
+  my $names_index_db = SWE::DB::HashedIndex->new;
+  $names_index_db->{root_directory_name} = $db_name_dir_name;
+  
+  my $terms = [];
+  for my $term (keys %$orig_tfs) {
+    my $n_tf = $orig_tfs->{$term} / $all_terms;
+    
+    my $df = $names_index_db->get_count ($term);
+    my $idf = log ($doc_number / ($df + 1));
+      
+    my $tfidf = $n_tf * $idf;
+      
+    push @$terms, [$term, $tfidf];
+    $names_index_db->add_data ($term => $id => $tfidf);
+
+    delete $deleted_terms->{$term};
+  }
+
+  for my $term (keys %$deleted_terms) {
+    $names_index_db->delete_data ($term, $id);
+  }
+    
+  $tfidf_db->set_data
+      ($id => \ join "\n", map { join "\t", @$_ } sort { $b->[1] <=> $a->[1] } @$terms);
+} # update_tfidf
+
 sub convert_sw3_page ($$) {
   my ($sw3key => $name) = @_;
   
@@ -1206,4 +1363,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2008/12/16 04:50:54 $
+1; ## $Date: 2009/03/02 07:32:30 $

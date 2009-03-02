@@ -23,6 +23,8 @@ sub add_file ($$) {
   $self->{modified_files}->{$file_name} = 1;
 } # add_file
 
+## TODO: remove_file
+
 sub write_file ($$) {
   my $self = shift;
   my $file_name = shift;
