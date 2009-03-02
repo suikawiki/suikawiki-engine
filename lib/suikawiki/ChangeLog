@@ -1,5 +1,10 @@
 2009-03-02  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl (update_tfidf): Use new module to support feature word
+	vectors.
+
+2009-03-02  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl (;search, ;terms): New modes.
 
 2008-12-16  Wakaba  <wakaba@suika.fam.cx>

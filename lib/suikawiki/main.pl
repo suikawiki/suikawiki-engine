@@ -1193,8 +1193,10 @@ sub update_tfidf ($$) {
   require SWE::DB::HashedIndex;
   my $names_index_db = SWE::DB::HashedIndex->new;
   $names_index_db->{root_directory_name} = $db_name_dir_name;
+
+  require SWE::Data::FeatureVector;
   
-  my $terms = [];
+  my $terms = SWE::Data::FeatureVector->new;
   for my $term (keys %$orig_tfs) {
     my $n_tf = $orig_tfs->{$term} / $all_terms;
     
@@ -1202,8 +1204,8 @@ sub update_tfidf ($$) {
     my $idf = log ($doc_number / ($df + 1));
       
     my $tfidf = $n_tf * $idf;
-      
-    push @$terms, [$term, $tfidf];
+    
+    $terms->set_tfidf ($term, $tfidf);
     $names_index_db->add_data ($term => $id => $tfidf);
 
     delete $deleted_terms->{$term};
@@ -1212,9 +1214,8 @@ sub update_tfidf ($$) {
   for my $term (keys %$deleted_terms) {
     $names_index_db->delete_data ($term, $id);
   }
-    
-  $tfidf_db->set_data
-      ($id => \ join "\n", map { join "\t", @$_ } sort { $b->[1] <=> $a->[1] } @$terms);
+  
+  $tfidf_db->set_data ($id => \( $terms->stringify ));
 } # update_tfidf
 
 sub convert_sw3_page ($$) {
@@ -1363,4 +1364,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/03/02 07:32:30 $
+1; ## $Date: 2009/03/02 11:45:11 $
