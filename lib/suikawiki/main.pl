@@ -33,6 +33,13 @@ require Char::Normalize::FullwidthHalfwidth;
 
 ## --- Prepares database access variables (commonly used ones)
 
+require SWE::DB;
+my $db = SWE::DB->new;
+$db->sw3db_dir_name = $db_sw3_dir_name;
+$db->global_lock_dir_name = $db_global_lock_dir_name;
+$db->id_dir_name = $db_id_dir_name;
+$db->name_dir_name = $db_name_dir_name;
+
 require SWE::DB::SuikaWiki3PageList2;
 my $sw3_pages = SWE::DB::SuikaWiki3PageList2->new;
 $sw3_pages->{root_directory_name} = $db_sw3_dir_name;
@@ -418,15 +425,12 @@ if ($path[0] eq 'n' and @path == 2) {
     print $doc->inner_html;
     exit;
   } elsif ($param eq 'search' and not defined $dollar) {
-    require SWE::DB::HashedIndex;
-    my $names_index_db = SWE::DB::HashedIndex->new;
-    $names_index_db->{root_directory_name} = $db_name_dir_name;
-
     my $names = [];
     for_unique_words ($name => sub {
       push @$names, shift;
     });
 
+    my $names_index_db = $db->name_inverted_index;
     my $index = {};
     {
       my $name = shift @$names;
@@ -794,15 +798,10 @@ if ($path[0] eq 'n' and @path == 2) {
     if (defined $doc) {
       update_tfidf ($id, $doc);
       
-      require SWE::DB::IDText;
-      my $tfidf_db = SWE::DB::IDText->new;
-      $tfidf_db->{root_directory_name} = $db_id_dir_name;
-      $tfidf_db->{leaf_suffix} = '.tfidf';
-      
       binmode STDOUT, ':encoding(utf-8)';
       print "Content-Type: text/plain; charset=utf-8\n\n";
       
-      print ${ $tfidf_db->get_data ($id) };
+      print ${ $db->id_tfidf->get_data ($id) };
       
       exit;
     }
@@ -1144,6 +1143,8 @@ sub for_unique_words ($*) {
   my $terms = {};
   for my $term (split /\s+/, $k->set (qw/-iutf8 -outf8 -w/)->get ($_[0])) {
 
+    ## TODO: provide a way to save original representation
+
     ## TODO: more normalization
     $term = lc $term;
 
@@ -1158,10 +1159,7 @@ sub for_unique_words ($*) {
 sub update_tfidf ($$) {
   my ($id, $doc) = @_;
 
-  require SWE::DB::IDText;
-  my $tfidf_db = SWE::DB::IDText->new;
-  $tfidf_db->{root_directory_name} = $db_id_dir_name;
-  $tfidf_db->{leaf_suffix} = '.tfidf';
+  my $tfidf_db = $db->id_tfidf;
 
   my $deleted_terms = {
       map { [split /\t/, $_, 2]->[0] => 1 }
@@ -1190,9 +1188,7 @@ sub update_tfidf ($$) {
 
   my $doc_number = $idgen->get_last_id;
 
-  require SWE::DB::HashedIndex;
-  my $names_index_db = SWE::DB::HashedIndex->new;
-  $names_index_db->{root_directory_name} = $db_name_dir_name;
+  my $names_index_db = $db->name_inverted_index;
 
   require SWE::Data::FeatureVector;
   
@@ -1364,4 +1360,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/03/02 11:45:11 $
+1; ## $Date: 2009/03/02 12:09:30 $

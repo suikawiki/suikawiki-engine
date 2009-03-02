@@ -1,4 +1,16 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1235994311"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1235994311</id><title>2009-03-02 Wakaba</title><updated>2009-03-02T11:45:09Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/ChangeLog	2 Mar 2009 11:44:31 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1235995769"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1235995769</id><title>2009-03-02 Wakaba</title><updated>2009-03-02T12:09:28Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/ChangeLog	2 Mar 2009 12:08:28 -0000
+	* DB.pm: New module.
+
+2009-03-02  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/lib/suikawiki/ChangeLog	2 Mar 2009 12:09:18 -0000
+	* main.pl: Create an instance of the new SWE::DB module and obtain
+	references to database objects via that object for newly added
+	modes.
+
+2009-03-02  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1235994311"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1235994311</id><title>2009-03-02 Wakaba</title><updated>2009-03-02T11:45:09Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/ChangeLog	2 Mar 2009 11:44:31 -0000
 2009-03-02  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
 	* Data/: New directory.
@@ -286,4 +298,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-03-02T11:45:09Z</updated></feed>
+</content></entry><updated>2009-03-02T12:09:28Z</updated></feed>

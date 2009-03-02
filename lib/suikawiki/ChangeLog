@@ -1,5 +1,11 @@
 2009-03-02  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Create an instance of the new SWE::DB module and obtain
+	references to database objects via that object for newly added
+	modes.
+
+2009-03-02  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl (update_tfidf): Use new module to support feature word
 	vectors.
 
