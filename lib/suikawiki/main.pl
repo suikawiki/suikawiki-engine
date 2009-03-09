@@ -805,6 +805,52 @@ if ($path[0] eq 'n' and @path == 2) {
       
       exit;
     }
+  } elsif ($param =~ /^(un)?related-([0-9]+)$/ and not defined $dollar) {
+    my $id1 = $path[1] + 0;
+    my $id2 = $2 + 0;
+    my $answer = $1 ? -1 : 1;
+
+    require SWE::Data::FeatureVector;
+
+    my $w;
+    my $weight_file_name = 'data/weight.txt';
+    if (-f $weight_file_name) {
+      local $/ = undef;
+      open my $file, '<:encoding(utf8)', $weight_file_name or die "$0: $weight_file_name: $!";
+      $w = SWE::Data::FeatureVector->parse_stringref (\<$file>);
+      close $file;
+    } else {
+      $w = SWE::Data::FeatureVector->new;
+    }
+
+    my $tfidf_db = $db->id_tfidf;
+
+    my $fv1 = SWE::Data::FeatureVector->parse_stringref
+        ($tfidf_db->get_data ($id1));
+    my $fv2 = SWE::Data::FeatureVector->parse_stringref
+        ($tfidf_db->get_data ($id2));
+
+    my $diff = $fv1->subtract ($fv2);
+    
+    my $wx = $diff->multiply ($w)->component_sum;
+    my $y = $wx >= 0 ? 1 : -1;
+
+    if ($y * $answer < 0) {
+      my $new_w = $y > 0 ? $w->subtract ($diff) : $w->add ($diff);
+      open my $file, '>:encoding(utf8)', $weight_file_name or die "$0: $weight_file_name: $!";
+      print $file $new_w->stringify;
+      close $file;
+    }
+    
+    binmode STDOUT, ':encoding(utf-8)';
+    print "Content-Type: text/plain; charset=utf-8\n\n";
+    
+    print "$y ($wx)\n\n";
+    print $diff->stringify, "\n\n";
+
+    print $fv1->stringify, "\n\n";
+    print $fv2->stringify, "\n\n";
+    exit;
   }
 } elsif ($path[0] eq 'new-page' and @path == 1) {
   if ($cgi->request_method eq 'POST') {
@@ -1161,11 +1207,10 @@ sub update_tfidf ($$) {
 
   my $tfidf_db = $db->id_tfidf;
 
-  my $deleted_terms = {
-      map { [split /\t/, $_, 2]->[0] => 1 }
-      split /[\x0D\x0A]+/,
-      ${ $tfidf_db->get_data ($id) || \'' }
-  };
+  require SWE::Data::FeatureVector;
+
+  my $deleted_terms = SWE::Data::FeatureVector->parse_stringref
+      ($tfidf_db->get_data ($id))->as_key_hashref;
 
   my $tc = $doc->document_element->text_content;
 
@@ -1189,8 +1234,6 @@ sub update_tfidf ($$) {
   my $doc_number = $idgen->get_last_id;
 
   my $names_index_db = $db->name_inverted_index;
-
-  require SWE::Data::FeatureVector;
   
   my $terms = SWE::Data::FeatureVector->new;
   for my $term (keys %$orig_tfs) {
@@ -1360,4 +1403,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/03/02 12:09:30 $
+1; ## $Date: 2009/03/09 08:25:22 $
