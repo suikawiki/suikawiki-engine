@@ -1,5 +1,9 @@
 2009-03-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw.js: Added |title|s to the buttons.
+
+2009-03-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw.js: Added a button to insert the current time.
 
 2008-12-16  Wakaba  <wakaba@suika.fam.cx>

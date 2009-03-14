@@ -69,20 +69,21 @@ function createToolbar () {
       ta.focus ();
     }; // insertText
     
-    var addButton = function (labelHTML, onclick) {
+    var addButton = function (labelHTML, title, onclick) {
       var button = document.createElement ('button');
       button.setAttribute ('type', 'button');
       button.innerHTML = labelHTML;
+      button.title = title;
       button.onclick = onclick;
       container.appendChild (button);
     }; // addButton
 
-    addButton ('[#]', function () {
+    addButton ('[#]', 'Insert a new anchor number', function () {
       var added = '[' + getNextAnchorNumber (ta.value) + '] ';
       insertText (added);
     });
 
-    addButton ('Now', function () {
+    addButton ('Now', 'Insert a timestamp', function () {
       var added = '[TIME[' + getGlobalDateAndTimeString (new Date) + ']]';
       insertText (added);
     });
