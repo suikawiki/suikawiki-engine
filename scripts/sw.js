@@ -23,6 +23,19 @@ function getAncestorElement (n, t) {
   return null;
 } // getAncestorElement
 
+function getGlobalDateAndTimeString (date) {
+  var r = '';
+  r = date.getUTCFullYear (); // JS does not support years 0001-0999
+  r += '-' + ('0' + (date.getUTCMonth () + 1)).slice (-2);
+  r += '-' + ('0' + date.getUTCDate ()).slice (-2);
+  r += 'T' + ('0' + date.getUTCHours ()).slice (-2);
+  r += ':' + ('0' + date.getUTCMinutes ()).slice (-2);
+  r += ':' + ('0' + date.getUTCSeconds ()).slice (-2);
+  r += '.' + (date.getUTCMilliseconds () + '00').slice (2);
+  r += 'Z';
+  return r;
+} // getGlobalDateAndTimeString
+
 function getNextAnchorNumber (s) {
   var lastId = 0;
   s.replace (/\[([0-9]+)\]/g, function (l, n) {
@@ -38,22 +51,13 @@ function createToolbar () {
   var containers = getElementsByClassName ('text-toolbar');
   for (var i = 0; i < containers.length; i++) {
     var container = containers[i];
-    
-    var button = document.createElement ('button');
-    button.setAttribute ('type', 'button');
-    button.innerHTML = '[#]';
-    button.onclick = function () {
-      var form = getAncestorElement (container, 'FORM');
-      var ta = form.elements.text;
+
+    var form = getAncestorElement (container, 'FORM');
+    var ta = form.elements.text;
+    var insertText = function (added) {
       var st = ta.scrollTop;
       var ss = ta.selectionStart;
       var se = (ss != ta.selectionEnd);
-      var added = '[' + getNextAnchorNumber (ta.value) + '] ';
-      /*
-      if (ss > 0 && ta.value.substring (ss - 1, ss) != "\n") {
-        added = "\n" + added;
-      }
-      */
       ta.value = ta.value.substring (0, ta.selectionStart)
           + added + ta.value.substring (ta.selectionEnd);
       if (se) {
@@ -63,8 +67,25 @@ function createToolbar () {
       }
       ta.scrollTop = st;
       ta.focus ();
-    }; // button.onclick
-    container.appendChild (button);
+    }; // insertText
+    
+    var addButton = function (labelHTML, onclick) {
+      var button = document.createElement ('button');
+      button.setAttribute ('type', 'button');
+      button.innerHTML = labelHTML;
+      button.onclick = onclick;
+      container.appendChild (button);
+    }; // addButton
+
+    addButton ('[#]', function () {
+      var added = '[' + getNextAnchorNumber (ta.value) + '] ';
+      insertText (added);
+    });
+
+    addButton ('Now', function () {
+      var added = '[TIME[' + getGlobalDateAndTimeString (new Date) + ']]';
+      insertText (added);
+    });
   }
 } // createToolbar
 

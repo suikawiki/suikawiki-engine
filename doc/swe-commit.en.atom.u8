@@ -1,4 +1,9 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1236587122"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1236587122</id><title>2009-03-09 Wakaba</title><updated>2009-03-09T08:25:19Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Data/ChangeLog	9 Mar 2009 08:24:27 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1236992515"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1236992515</id><title>2009-03-14 Wakaba</title><updated>2009-03-14T01:01:52Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/scripts/ChangeLog	14 Mar 2009 01:01:18 -0000
+2009-03-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw.js: Added a button to insert the current time.
+
+</content></entry><entry xml:id="entry-1236587122"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1236587122</id><title>2009-03-09 Wakaba</title><updated>2009-03-09T08:25:19Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Data/ChangeLog	9 Mar 2009 08:24:27 -0000
 	* FeatureVector.pm: Added support for parsing and operations.
 
 2009-03-02  Wakaba  &lt;wakaba@suika.fam.cx&gt;
@@ -309,4 +314,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-03-09T08:25:19Z</updated></feed>
+</content></entry><updated>2009-03-14T01:01:52Z</updated></feed>
