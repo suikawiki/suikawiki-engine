@@ -1,3 +1,9 @@
+2009-03-15  Wakaba  <wakaba@suika.fam.cx>
+
+	* main.pl: Moved the codes to get idgenerator object to SWE::DB
+	module.  Also, preparation for the experiments for the graph
+	generation implementation.
+
 2009-03-02  Wakaba  <wakaba@suika.fam.cx>
 
 	* main.pl: Added experimental support for learning of relatedness

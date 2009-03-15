@@ -35,10 +35,11 @@ require Char::Normalize::FullwidthHalfwidth;
 
 require SWE::DB;
 my $db = SWE::DB->new;
-$db->sw3db_dir_name = $db_sw3_dir_name;
+$db->db_dir_name = $db_dir_name;
 $db->global_lock_dir_name = $db_global_lock_dir_name;
 $db->id_dir_name = $db_id_dir_name;
 $db->name_dir_name = $db_name_dir_name;
+$db->sw3db_dir_name = $db_sw3_dir_name;
 
 require SWE::DB::SuikaWiki3PageList2;
 my $sw3_pages = SWE::DB::SuikaWiki3PageList2->new;
@@ -869,10 +870,7 @@ if ($path[0] eq 'n' and @path == 2) {
     my $content = $cgi->get_parameter ('text') // '';
     normalize_content (\$content);
 
-    require SWE::DB::IDGenerator;
-    our $idgen = SWE::DB::IDGenerator->new;
-    $idgen->{file_name} = $db_dir_name . 'nextid.dat';
-    $idgen->{lock_file_name} = $db_global_lock_dir_name . 'nextid.lock';
+    my $idgen = $db->id;
 
     $names_lock->lock;
     my $id = $idgen->get_next_id;
@@ -990,6 +988,13 @@ if ($path[0] eq 'n' and @path == 2) {
     
     print $doc->inner_html;
     exit;
+  }
+} elsif (@path == 2 and
+         $path[0] eq 'g' and
+         $path[1] =~ /\A([0-9]+)\z/ and
+         not defined $dollar) {
+  if (defined $param and $param eq 'generate') {
+    
   }
 } elsif (@path == 1 and
          {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
@@ -1223,14 +1228,7 @@ sub update_tfidf ($$) {
     $all_terms += $_[1];
   });
 
-  require SWE::DB::IDGenerator;
-  our $idgen;
-  unless (defined $idgen) {
-    $idgen = SWE::DB::IDGenerator->new;
-    $idgen->{file_name} = $db_dir_name . 'nextid.dat';
-    $idgen->{lock_file_name} = $db_global_lock_dir_name . 'nextid.lock';
-  }
-
+  my $idgen = $db->id;
   my $doc_number = $idgen->get_last_id;
 
   my $names_index_db = $db->name_inverted_index;
@@ -1267,14 +1265,7 @@ sub convert_sw3_page ($$) {
 
   my $ids;
   if (defined $page_key) {
-    our $idgen;
-    unless (defined $idgen) {
-      require SWE::DB::IDGenerator;
-      $idgen = SWE::DB::IDGenerator->new;
-      $idgen->{file_name} = $db_dir_name . 'nextid.dat';
-      $idgen->{lock_file_name} = $db_global_lock_dir_name . 'nextid.lock';
-    }
-
+    my $idgen = $db->id;
     my $time = time;
     
     my $id = $idgen->get_next_id;
@@ -1403,4 +1394,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/03/09 08:25:22 $
+1; ## $Date: 2009/03/15 08:07:22 $
