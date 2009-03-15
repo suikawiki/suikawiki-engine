@@ -1,3 +1,7 @@
+2009-03-15  Wakaba  <wakaba@suika.fam.cx>
+
+	* NamedText.pm: New module.
+
 2009-03-01  Wakaba  <wakaba@suika.fam.cx>
 
 	* HashedIndex.pm: New module.

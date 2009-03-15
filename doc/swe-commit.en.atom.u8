@@ -1,4 +1,14 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1237104442"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1237104442</id><title>2009-03-15 Wakaba</title><updated>2009-03-15T08:07:19Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/ChangeLog	15 Mar 2009 08:06:01 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1237110139"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1237110139</id><title>2009-03-15 Wakaba</title><updated>2009-03-15T09:42:17Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/DB/ChangeLog	15 Mar 2009 09:41:26 -0000
+2009-03-15  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* NamedText.pm: New module.
+
+++ swe/lib/suikawiki/ChangeLog	15 Mar 2009 09:42:14 -0000
+	* main.pl: Implemented the graph generate method.
+
+2009-03-15  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1237104442"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1237104442</id><title>2009-03-15 Wakaba</title><updated>2009-03-15T08:07:19Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/ChangeLog	15 Mar 2009 08:06:01 -0000
 2009-03-15  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
 	* DB.pm (id): New method.
@@ -331,4 +341,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-03-15T08:07:19Z</updated></feed>
+</content></entry><updated>2009-03-15T09:42:17Z</updated></feed>

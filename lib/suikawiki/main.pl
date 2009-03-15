@@ -993,9 +993,62 @@ if ($path[0] eq 'n' and @path == 2) {
          $path[0] eq 'g' and
          $path[1] =~ /\A([0-9]+)\z/ and
          not defined $dollar) {
+   my $db_global_dir_name = $db_dir_name . q[global/];
+   my $db_graph_dir_name = $db_dir_name . q[graph/];
+
+   my $graph_prop_db = SWE::DB::IDProps->new;
+   $graph_prop_db->{root_directory_name} = $db_graph_dir_name;
+   $graph_prop_db->{leaf_suffix} = '.node';
+
   if (defined $param and $param eq 'generate') {
+
+    my $empty_node_ratio = 0.2;
+    my $initial_degree = 5;
+
+    ## TODO: graph lock
+
+    require SWE::DB::NamedText;
+    my $global_prop_db = SWE::DB::NamedText->new;
+    $global_prop_db->{root_directory_name} = $db_global_dir_name;
+    $global_prop_db->{leaf_suffix} = '.dat';
     
+    my $last_node_index = $global_prop_db->get_data ('lastnodeindex') || 0;
+#    my $last_id = $db->id->get_last_id;
+    my $last_id = 0+$path[1];
+    my $max_node_index = int ($last_id / (1 - $empty_node_ratio)) + 1;
+    
+    if ($last_node_index < $max_node_index) {
+      my $new_edges = {};
+      
+      for my $index1 ($last_node_index + 1 .. $max_node_index) {
+        for (1 .. $initial_degree) {
+          my $index2 = int rand $index1;
+
+          $new_edges->{$index1}->{$index2} = 1;
+          $new_edges->{$index2}->{$index1} = 1;
+        }
+      }
+
+      for my $index1 (keys %$new_edges) {
+        my $node = $graph_prop_db->get_data ($index1);
+        my $edges = $node->{neighbors} ||= {};
+        for my $index2 (keys %{$new_edges->{$index1}}) {
+          $edges->{$index2} = 1;
+        }
+        $graph_prop_db->set_data ($index1 => $node);
+      }
+    }    
   }
+
+  use Data::Dumper;
+  binmode STDOUT, ':encoding(utf-8)';
+  print "Content-Type: text/plain; charset=UTF-8\n\n";
+
+  my $node = $graph_prop_db->get_data ($path[1]);
+
+  print Dumper $node;
+
+  exit;
 } elsif (@path == 1 and
          {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
   our $homepage_name;
@@ -1394,4 +1447,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/03/15 08:07:22 $
+1; ## $Date: 2009/03/15 09:42:20 $
