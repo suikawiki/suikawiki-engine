@@ -1008,7 +1008,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $graph = SWE::Object::Graph->new (db => $db);
       my $node = $graph->create_node ($docid, $id_prop_db);
 
-      $id = $node->{id}; ## TODO: $node->id
+      $id = $node->id;
 
       $id_prop->{node_id} = $id;
       $id_prop_db->set_data ($docid => $id_prop);
@@ -1022,6 +1022,14 @@ if ($path[0] eq 'n' and @path == 2) {
   my $node_prop = $db->graph_prop->get_data ($id);
 
   print Dumper $node_prop;
+
+  require SWE::Object::Graph;
+  my $graph = SWE::Object::Graph->new (db => $db);
+  my $node = $graph->get_node_by_id ($id);
+
+  my $neighbor_ids = $node->neighbor_ids;
+
+  print Dumper $neighbor_ids;
 
   exit;
 } elsif (@path == 1 and
@@ -1422,4 +1430,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/03/15 12:27:37 $
+1; ## $Date: 2009/03/15 12:50:04 $

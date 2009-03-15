@@ -1,5 +1,12 @@
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>
 
+	* Graph.pm (get_node_by_id): New method.
+	(create_node): Changed to instantiate SWE::Object::Node.
+
+	* Node.pm: New module.
+
+2009-03-15  Wakaba  <wakaba@suika.fam.cx>
+
 	* Graph.pm: New module.
 
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>

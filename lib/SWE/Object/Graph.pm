@@ -58,13 +58,26 @@ sub create_node ($$) {
   ## TODO: docid lock
   
   my ($node_id) = $self->add_nodes (1);
-  
-  my $graph_prop_db = $self->db->graph_prop;
-  my $node_prop = $graph_prop_db->get_data ($node_id);
-  $node_prop->{ids}->{$doc_id} = 1;
-  $graph_prop_db->set_data ($node_id => $node_prop);
 
-  return {id => $node_id}; ## TODO: SWE::Object::Node
+  require SWE::Object::Node;
+  my $node = SWE::Object::Node->new (db => $self->db);
+  $node->create (id => $node_id);
+  $node->prop->{ids}->{$doc_id} = 1;
+  $node->save_prop;
+
+  return $node;
 } # create_node
+
+sub get_node_by_id ($$) {
+  my ($self, $node_id) = @_;
+  
+  ## TODO: cache
+  
+  require SWE::Object::Node;
+  my $node = SWE::Object::Node->new (db => $self->db);
+  $node->load (id => $node_id);
+
+  return $node;
+} # get_node_by_id
 
 1;
