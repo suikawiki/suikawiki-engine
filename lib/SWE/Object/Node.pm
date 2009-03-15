@@ -51,4 +51,10 @@ sub neighbor_ids ($) {
   return $self->prop->{neighbors} || {};
 } # neighbor_ids
 
+sub document_id ($) {
+  my $self = shift;
+  
+  return [keys %{$self->prop->{ids} or {}}]->[0];
+} # document_id
+
 1;

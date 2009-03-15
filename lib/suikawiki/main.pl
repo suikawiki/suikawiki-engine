@@ -1027,9 +1027,28 @@ if ($path[0] eq 'n' and @path == 2) {
   my $graph = SWE::Object::Graph->new (db => $db);
   my $node = $graph->get_node_by_id ($id);
 
-  my $neighbor_ids = $node->neighbor_ids;
+  my $neighbors = [map {
+    my $o = $_;
+    $o->{doc_id} = $o->{node}->document_id;
+    $o;
+  } map {
+    {
+      node_id => $_,
+      node => $graph->get_node_by_id ($_),
+    }
+  } keys %{$node->neighbor_ids}];
 
-  print Dumper $neighbor_ids;
+  for my $n (@$neighbors) {
+    if ($n->{doc_id}) {
+      my $id_prop = $id_prop_db->get_data ($n->{doc_id});
+      print $n->{node_id}, "\t", $n->{doc_id}, "\t",
+              (length $id_prop->{title} ? $id_prop->{title}
+               : [keys %{$id_prop->{name}}]->[0] // ''); ## TODO: title-type
+      print "\n";
+    } else {
+      print $n->{node_id}, "\n";
+    }
+  }
 
   exit;
 } elsif (@path == 1 and
@@ -1430,4 +1449,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/03/15 12:50:04 $
+1; ## $Date: 2009/03/15 13:07:13 $

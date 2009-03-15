@@ -1,5 +1,9 @@
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Dump the name of neighbors.
+
+2009-03-15  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Dump the list of neighbors.
 
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>

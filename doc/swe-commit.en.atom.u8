@@ -1,4 +1,24 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1237121403"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1237121403</id><title>2009-03-15 Wakaba</title><updated>2009-03-15T12:50:01Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	15 Mar 2009 12:49:18 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1237122433"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1237122433</id><title>2009-03-15 Wakaba</title><updated>2009-03-15T13:07:11Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	15 Mar 2009 13:06:41 -0000
+	* Node.pm (document_id): New method.
+
+2009-03-15  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/lib/suikawiki/ChangeLog	15 Mar 2009 13:07:01 -0000
+	* main.pl: Dump the name of neighbors.
+
+2009-03-15  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1237122428"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1237122428</id><title>2009-03-15 Wakaba</title><updated>2009-03-15T13:07:06Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	15 Mar 2009 13:06:41 -0000
+	* Node.pm (document_id): New method.
+
+2009-03-15  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/lib/suikawiki/ChangeLog	15 Mar 2009 13:07:01 -0000
+	* main.pl: Dump the name of neighbors.
+
+2009-03-15  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1237121403"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1237121403</id><title>2009-03-15 Wakaba</title><updated>2009-03-15T12:50:01Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	15 Mar 2009 12:49:18 -0000
 	* Graph.pm (get_node_by_id): New method.
 	(create_node): Changed to instantiate SWE::Object::Node.
 
@@ -370,4 +390,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-03-15T12:50:01Z</updated></feed>
+</content></entry><updated>2009-03-15T13:07:11Z</updated></feed>
