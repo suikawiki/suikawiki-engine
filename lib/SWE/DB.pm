@@ -12,7 +12,29 @@ sub global_lock_dir_name : lvalue { $_[0]->{global_lock_dir_name} }
 sub id_dir_name : lvalue { $_[0]->{id_dir_name} }
 sub name_dir_name : lvalue { $_[0]->{name_dir_name} }
 
+sub graph_dir_name ($) {
+  my $self = shift;
+  return $self->db_dir_name . q[graph/];
+} # graph_dir_name
+
+sub global_dir_name ($) {
+  my $self = shift;
+  return $self->db_dir_name . q[global/];
+} # global_dir_name
+
 sub sw3db_dir_name : lvalue { $_[0]->{sw3db_dir_name} }
+
+sub global_prop ($) {
+  my $self = shift;
+
+  return $self->{global_prop} ||= do {
+    require SWE::DB::NamedText;
+    my $global_prop_db = SWE::DB::NamedText->new;
+    $global_prop_db->{root_directory_name} = $self->global_dir_name;
+    $global_prop_db->{leaf_suffix} = '.dat';
+    $global_prop_db;
+  };
+} # global_prop
 
 sub id ($) {
   my $self = shift;
@@ -48,5 +70,17 @@ sub id_tfidf ($) {
     $tfidf_db;
   };
 } # id_tfidf
+
+sub graph_prop ($) {
+  my $self = shift;
+
+  return $self->{graph_prop} ||= do {
+    require SWE::DB::IDProps;
+    my $graph_prop_db = SWE::DB::IDProps->new;
+    $graph_prop_db->{root_directory_name} = $self->graph_dir_name;
+    $graph_prop_db->{leaf_suffix} = '.node';
+    $graph_prop_db;
+  };
+} # graph_prop
 
 1;

@@ -989,64 +989,39 @@ if ($path[0] eq 'n' and @path == 2) {
     print $doc->inner_html;
     exit;
   }
-} elsif (@path == 2 and
-         $path[0] eq 'g' and
-         $path[1] =~ /\A([0-9]+)\z/ and
-         not defined $dollar) {
-   my $db_global_dir_name = $db_dir_name . q[global/];
-   my $db_graph_dir_name = $db_dir_name . q[graph/];
+} elsif (@path == 2 and $path[0] eq 'g') {
+  my $id = 0+$path[1];
 
-   my $graph_prop_db = SWE::DB::IDProps->new;
-   $graph_prop_db->{root_directory_name} = $db_graph_dir_name;
-   $graph_prop_db->{leaf_suffix} = '.node';
-
-  if (defined $param and $param eq 'generate') {
-
-    my $empty_node_ratio = 0.2;
-    my $initial_degree = 5;
-
-    ## TODO: graph lock
-
-    require SWE::DB::NamedText;
-    my $global_prop_db = SWE::DB::NamedText->new;
-    $global_prop_db->{root_directory_name} = $db_global_dir_name;
-    $global_prop_db->{leaf_suffix} = '.dat';
+  if ($path[1] =~ /\A([0-9]+)\z/ and not defined $dollar) {
+    #
+  } elsif ($path[1] =~ /^id([0-9]+)$/ and not defined $dollar) {
+    my $docid = 0+$1;
     
-    my $last_node_index = $global_prop_db->get_data ('lastnodeindex') || 0;
-#    my $last_id = $db->id->get_last_id;
-    my $last_id = 0+$path[1];
-    my $max_node_index = int ($last_id / (1 - $empty_node_ratio)) + 1;
+    ## TODO: ID lock
     
-    if ($last_node_index < $max_node_index) {
-      my $new_edges = {};
-      
-      for my $index1 ($last_node_index + 1 .. $max_node_index) {
-        for (1 .. $initial_degree) {
-          my $index2 = int rand $index1;
+    my $id_prop = $id_prop_db->get_data ($docid);
+    
+    $id = $id_prop->{node_id};
+    
+    unless (defined $id) {
+      require SWE::Object::Graph;
+      my $graph = SWE::Object::Graph->new (db => $db);
+      my $node = $graph->create_node ($docid, $id_prop_db);
 
-          $new_edges->{$index1}->{$index2} = 1;
-          $new_edges->{$index2}->{$index1} = 1;
-        }
-      }
+      $id = $node->{id}; ## TODO: $node->id
 
-      for my $index1 (keys %$new_edges) {
-        my $node = $graph_prop_db->get_data ($index1);
-        my $edges = $node->{neighbors} ||= {};
-        for my $index2 (keys %{$new_edges->{$index1}}) {
-          $edges->{$index2} = 1;
-        }
-        $graph_prop_db->set_data ($index1 => $node);
-      }
-    }    
+      $id_prop->{node_id} = $id;
+      $id_prop_db->set_data ($docid => $id_prop);
+    }
   }
-
+  
   use Data::Dumper;
   binmode STDOUT, ':encoding(utf-8)';
   print "Content-Type: text/plain; charset=UTF-8\n\n";
 
-  my $node = $graph_prop_db->get_data ($path[1]);
+  my $node_prop = $db->graph_prop->get_data ($id);
 
-  print Dumper $node;
+  print Dumper $node_prop;
 
   exit;
 } elsif (@path == 1 and
@@ -1447,4 +1422,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/03/15 09:42:20 $
+1; ## $Date: 2009/03/15 12:27:37 $

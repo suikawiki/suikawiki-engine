@@ -1,5 +1,9 @@
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>
 
+	* Graph.pm: New module.
+
+2009-03-15  Wakaba  <wakaba@suika.fam.cx>
+
 	* ChangeLog: New file.
 
 

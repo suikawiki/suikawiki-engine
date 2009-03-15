@@ -1,5 +1,10 @@
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Graph generation moved to another module.  Implemented
+	graph/document association.
+
+2009-03-15  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Implemented the graph generate method.
 
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>

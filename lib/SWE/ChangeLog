@@ -1,5 +1,9 @@
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>
 
+	* DB.pm: Added graph and global property databases.
+
+2009-03-15  Wakaba  <wakaba@suika.fam.cx>
+
 	* DB.pm (id): New method.
 
 2009-03-02  Wakaba  <wakaba@suika.fam.cx>
