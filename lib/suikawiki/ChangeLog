@@ -1,3 +1,7 @@
+2009-03-16  Wakaba  <wakaba@suika.fam.cx>
+
+	* main.pl: Moved relatedness detection method into its own module.
+
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>
 
 	* main.pl: Dump the name of neighbors.

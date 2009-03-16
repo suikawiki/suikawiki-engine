@@ -9,7 +9,7 @@ sub new ($%) {
   return $self;
 }
 
-sub db : lvalue { $_[0]->{db} }
+sub db { $_[0]->{db} }
 
 use constant EMPTY_NODE_RATIO => 0.2;
 use constant INITIAL_DEGREE => 5;

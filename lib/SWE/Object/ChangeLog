@@ -1,3 +1,7 @@
+2009-03-16  Wakaba  <wakaba@suika.fam.cx>
+
+	* Repository.pm: New module.
+
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>
 
 	* Node.pm (document_id): New method.

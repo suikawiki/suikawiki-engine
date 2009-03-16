@@ -811,46 +811,21 @@ if ($path[0] eq 'n' and @path == 2) {
     my $id2 = $2 + 0;
     my $answer = $1 ? -1 : 1;
 
-    require SWE::Data::FeatureVector;
+    require SWE::Object::Repository;
+    my $repo = SWE::Object::Repository->new (db => $db);
 
-    my $w;
-    my $weight_file_name = 'data/weight.txt';
-    if (-f $weight_file_name) {
-      local $/ = undef;
-      open my $file, '<:encoding(utf8)', $weight_file_name or die "$0: $weight_file_name: $!";
-      $w = SWE::Data::FeatureVector->parse_stringref (\<$file>);
-      close $file;
-    } else {
-      $w = SWE::Data::FeatureVector->new;
-    }
-
-    my $tfidf_db = $db->id_tfidf;
-
-    my $fv1 = SWE::Data::FeatureVector->parse_stringref
-        ($tfidf_db->get_data ($id1));
-    my $fv2 = SWE::Data::FeatureVector->parse_stringref
-        ($tfidf_db->get_data ($id2));
-
-    my $diff = $fv1->subtract ($fv2);
+    my $y = $repo->are_related_ids ($id1, $id2, $answer);
     
-    my $wx = $diff->multiply ($w)->component_sum;
-    my $y = $wx >= 0 ? 1 : -1;
-
-    if ($y * $answer < 0) {
-      my $new_w = $y > 0 ? $w->subtract ($diff) : $w->add ($diff);
-      open my $file, '>:encoding(utf8)', $weight_file_name or die "$0: $weight_file_name: $!";
-      print $file $new_w->stringify;
-      close $file;
-    }
+    $repo->save_term_weight_vector;
     
     binmode STDOUT, ':encoding(utf-8)';
     print "Content-Type: text/plain; charset=utf-8\n\n";
     
-    print "$y ($wx)\n\n";
-    print $diff->stringify, "\n\n";
-
-    print $fv1->stringify, "\n\n";
-    print $fv2->stringify, "\n\n";
+    print "$y\n\n";
+#    print $diff->stringify, "\n\n";
+#
+#    print $fv1->stringify, "\n\n";
+#    print $fv2->stringify, "\n\n";
     exit;
   }
 } elsif ($path[0] eq 'new-page' and @path == 1) {
@@ -1449,4 +1424,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/03/15 13:07:13 $
+1; ## $Date: 2009/03/16 07:40:04 $
