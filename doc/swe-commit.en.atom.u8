@@ -1,4 +1,10 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1237189495"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1237189495</id><title>2009-03-16 Wakaba</title><updated>2009-03-16T07:44:53Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	16 Mar 2009 07:44:50 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1237192113"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1237192113</id><title>2009-03-16 Wakaba</title><updated>2009-03-16T08:28:31Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	16 Mar 2009 08:28:29 -0000
+	* main.pl: Show the relatedness of pages in the list of neighbor
+	nodes.
+
+2009-03-16  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1237189495"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1237189495</id><title>2009-03-16 Wakaba</title><updated>2009-03-16T07:44:53Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	16 Mar 2009 07:44:50 -0000
 	* Repository.pm (are_related_ids): Repeat the relearning process
 	until the right answer is deduced.
 
@@ -406,4 +412,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-03-16T07:44:53Z</updated></feed>
+</content></entry><updated>2009-03-16T08:28:31Z</updated></feed>

@@ -1,5 +1,10 @@
 2009-03-16  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Show the relatedness of pages in the list of neighbor
+	nodes.
+
+2009-03-16  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Moved relatedness detection method into its own module.
 
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>

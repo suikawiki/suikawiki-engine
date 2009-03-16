@@ -1011,7 +1011,11 @@ if ($path[0] eq 'n' and @path == 2) {
       node_id => $_,
       node => $graph->get_node_by_id ($_),
     }
-  } keys %{$node->neighbor_ids}];
+  } $id, keys %{$node->neighbor_ids}];
+
+  require SWE::Object::Repository;
+  my $repo = SWE::Object::Repository->new (db => $db);
+  my $doc_id = $node->document_id;
 
   for my $n (@$neighbors) {
     if ($n->{doc_id}) {
@@ -1019,6 +1023,8 @@ if ($path[0] eq 'n' and @path == 2) {
       print $n->{node_id}, "\t", $n->{doc_id}, "\t",
               (length $id_prop->{title} ? $id_prop->{title}
                : [keys %{$id_prop->{name}}]->[0] // ''); ## TODO: title-type
+      print "\t", ($repo->are_related_ids ($doc_id, $n->{doc_id}) ? 't' : 'f')
+          if defined $doc_id;
       print "\n";
     } else {
       print $n->{node_id}, "\n";
@@ -1424,4 +1430,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/03/16 07:40:04 $
+1; ## $Date: 2009/03/16 08:28:33 $
