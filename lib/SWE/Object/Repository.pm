@@ -54,6 +54,8 @@ sub are_related_ids ($$$;$) {
   my $w = $self->term_weight_vector;
   
   my $tfidf_db = $self->db->id_tfidf;
+
+  ## TODO: cache
   
   require SWE::Data::FeatureVector;
   my $fv1 = SWE::Data::FeatureVector->parse_stringref
@@ -62,18 +64,22 @@ sub are_related_ids ($$$;$) {
       ($tfidf_db->get_data ($id2));
   
   my $diff = $fv1->subtract ($fv2);
-  
-  my $wx = $diff->multiply ($w)->component_sum;
-  my $y = $wx >= 0 ? 1 : -1;
-  
-  if (defined $answer and $y * $answer < 0) {
-    my $new_w = $y > 0 ? $w->subtract ($diff) : $w->add ($diff);
-    ## TODO: while
-    $self->{term_weight_vector} = $new_w;
-    $self->{term_weight_vector_modified} = 1;
-  }
 
-  return $y > 0;
+  my $i = 0;
+  A: {
+    my $wx = $diff->multiply ($w)->component_sum;
+    my $y = $wx >= 0 ? 1 : -1;
+    
+    if (defined $answer and $y * $answer < 0) {
+      $w = $y > 0 ? $w->subtract ($diff) : $w->add ($diff);
+      $self->{term_weight_vector} = $w;
+      $self->{term_weight_vector_modified} = 1;
+      $i++;
+      redo A unless $i > 20;
+    }
+    
+    return $y > 0;
+  }
 } # are_related_ids
 
 1;

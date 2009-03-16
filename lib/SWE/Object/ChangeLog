@@ -1,5 +1,10 @@
 2009-03-16  Wakaba  <wakaba@suika.fam.cx>
 
+	* Repository.pm (are_related_ids): Repeat the relearning process
+	until the right answer is deduced.
+
+2009-03-16  Wakaba  <wakaba@suika.fam.cx>
+
 	* Repository.pm: New module.
 
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>
