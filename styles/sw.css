@@ -21,6 +21,7 @@ html, td {
   text-align: left;
 }
 
+.nav.swe-info,
 .nav.swe-ids {
   margin: 0 auto;
   border: gray 0.3em ridge;

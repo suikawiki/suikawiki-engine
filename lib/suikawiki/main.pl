@@ -1023,7 +1023,7 @@ if ($path[0] eq 'n' and @path == 2) {
       print $n->{node_id}, "\t", $n->{doc_id}, "\t",
               (length $id_prop->{title} ? $id_prop->{title}
                : [keys %{$id_prop->{name}}]->[0] // ''); ## TODO: title-type
-      print "\t", ($repo->are_related_ids ($doc_id, $n->{doc_id}) ? 't' : 'f')
+      print "\t", ($repo->are_related_ids ($doc_id, $n->{doc_id}) // 'u' || '0')
           if defined $doc_id;
       print "\n";
     } else {
@@ -1430,4 +1430,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/03/16 08:28:33 $
+1; ## $Date: 2009/07/11 11:03:46 $

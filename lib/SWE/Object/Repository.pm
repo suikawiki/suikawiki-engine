@@ -59,9 +59,9 @@ sub are_related_ids ($$$;$) {
   
   require SWE::Data::FeatureVector;
   my $fv1 = SWE::Data::FeatureVector->parse_stringref
-      ($tfidf_db->get_data ($id1));
+      ($tfidf_db->get_data ($id1) // return undef);
   my $fv2 = SWE::Data::FeatureVector->parse_stringref
-      ($tfidf_db->get_data ($id2));
+      ($tfidf_db->get_data ($id2) // return undef);
   
   my $diff = $fv1->subtract ($fv2);
 
