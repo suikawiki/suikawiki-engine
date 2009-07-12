@@ -795,6 +795,9 @@ if ($path[0] eq 'n' and @path == 2) {
     exit;
   } elsif ($param eq 'terms' and not defined $dollar) {
     my $id = $path[1] + 0;
+
+    ## This must be done before the ID lock.
+    $db->name_inverted_index->lock;
     
     my $id_lock = $id_locks->get_lock ($id);
     $id_lock->lock;
@@ -803,10 +806,10 @@ if ($path[0] eq 'n' and @path == 2) {
     my $cache_prop = $cache_prop_db->get_data ($id);
     my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
 
-    $id_lock->unlock;
-
     if (defined $doc) {
       update_tfidf ($id, $doc);
+
+      $id_lock->unlock;
       
       binmode STDOUT, ':encoding(utf-8)';
       print "Content-Type: text/plain; charset=utf-8\n\n";
@@ -814,6 +817,8 @@ if ($path[0] eq 'n' and @path == 2) {
       print ${ $db->id_tfidf->get_data ($id) };
       
       exit;
+    } else {
+      $id_lock->unlock;
     }
   } elsif ($param =~ /^(un)?related-([0-9]+)$/ and not defined $dollar) {
     my $id1 = $path[1] + 0;
@@ -1451,4 +1456,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 06:22:09 $
+1; ## $Date: 2009/07/12 06:33:54 $

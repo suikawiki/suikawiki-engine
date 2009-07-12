@@ -1,4 +1,9 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1247379728"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247379728</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T06:22:06Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/DB/ChangeLog	12 Jul 2009 06:21:38 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1247380434"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247380434</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T06:33:49Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	12 Jul 2009 06:33:44 -0000
+	* main.pl Locks during the non-inverted index is updated.
+
+2009-07-12  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1247379728"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247379728</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T06:22:06Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/DB/ChangeLog	12 Jul 2009 06:21:38 -0000
 	* HashedIndex.pm (lock, lock_file_name): New methods.
 
 2009-07-12  Wakaba  &lt;wakaba@suika.fam.cx&gt;
@@ -465,4 +470,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-07-12T06:22:06Z</updated></feed>
+</content></entry><updated>2009-07-12T06:33:49Z</updated></feed>

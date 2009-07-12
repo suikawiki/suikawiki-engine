@@ -1,5 +1,9 @@
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl Locks during the non-inverted index is updated.
+
+2009-07-12  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Locks the index database before the modification.
 
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>
