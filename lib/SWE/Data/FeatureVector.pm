@@ -26,6 +26,13 @@ sub as_key_hashref ($) {
   return {map {$_ => 1} keys %{$self->{t}}};
 } # as_key_hashref
 
+sub as_sorted_key_hashref ($) {
+  my $self = shift;
+  return {map {$_ => 1}
+          sort {$self->{t}->{$b} <=> $self->{t}->{$a}}
+          keys %{$self->{t}}};
+} # as_sorted_key_hashref
+
 sub clone ($) {
   my $self = shift;
   my $clone = ref ($self)->new;

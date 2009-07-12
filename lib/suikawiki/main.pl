@@ -343,6 +343,8 @@ if ($path[0] eq 'n' and @path == 2) {
       my $a_el = $footer_el->get_elements_by_tag_name ('a')->[0];
       our $license_name;
       $a_el->set_attribute (href => get_page_url ($license_name));
+
+      set_foot_content ($html_doc);
       
       binmode STDOUT, ':encoding(utf-8)';
       print qq[Content-Type: text/html; charset=utf-8\n\n];
@@ -423,6 +425,8 @@ if ($path[0] eq 'n' and @path == 2) {
       $p_el->text_content ('No history data.');
       $table_el->parent_node->replace_child ($p_el, $table_el);
     }
+
+    set_foot_content ($doc);
 
     print $doc->inner_html;
     exit;
@@ -612,6 +616,8 @@ if ($path[0] eq 'n' and @path == 2) {
         $nav_el->append_child ($a_el);
         $nav_el->manakai_append_text (' ');
       }
+
+      set_foot_content ($html_doc);
      
       print $html_doc->inner_html;
       exit;
@@ -782,6 +788,8 @@ if ($path[0] eq 'n' and @path == 2) {
       $p_el->text_content ('No history data.');
       $table_el->parent_node->replace_child ($p_el, $table_el);
     }
+
+    set_foot_content ($doc);
 
     print $doc->inner_html;
     exit;
@@ -962,6 +970,8 @@ if ($path[0] eq 'n' and @path == 2) {
     our $license_name;
     $a_el->set_attribute (href => get_page_url ($license_name));
     
+    set_foot_content ($doc);
+
     print $doc->inner_html;
     exit;
   }
@@ -1424,11 +1434,17 @@ sub set_head_content ($;$$$) {
     $meta_el->set_attribute (content => $item->{content} // '');
     $head_el->append_child ($meta_el);
   }
+} # set_head_content
+
+sub set_foot_content ($) {
+  my $doc = shift;
+
+  my $body_el = $doc->last_child->last_child;
 
   our $script_url;
   my $script_el = $doc->create_element_ns (HTML_NS, 'script');
   $script_el->set_attribute (src => $script_url);
-  $head_el->append_child ($script_el);
-} # set_head_content
+  $body_el->append_child ($script_el);
+} # set_foot_content
 
-1; ## $Date: 2009/07/12 04:00:24 $
+1; ## $Date: 2009/07/12 04:49:51 $
