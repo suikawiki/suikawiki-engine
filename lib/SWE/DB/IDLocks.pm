@@ -18,6 +18,7 @@ sub get_lock ($$) {
 
   my $lock = SWE::DB::Lock->new;
   $lock->{file_name} = $file_name;
+  $lock->lock_type ('ID');
 
   return $lock;
 } # get_lock

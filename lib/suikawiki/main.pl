@@ -48,6 +48,7 @@ $sw3_pages->{root_directory_name} = $db_sw3_dir_name;
 require SWE::DB::Lock;
 my $names_lock = SWE::DB::Lock->new;
 $names_lock->{file_name} = $db_global_lock_dir_name . 'ids.lock';
+$names_lock->lock_type ('Names');
     ## NOTE: This lock MUST be used when $sw3pages or $name_prop_db is updated.
 
 require SWE::DB::IDProps;
@@ -1430,4 +1431,4 @@ sub set_head_content ($;$$$) {
   $head_el->append_child ($script_el);
 } # set_head_content
 
-1; ## $Date: 2009/07/11 11:03:46 $
+1; ## $Date: 2009/07/12 04:00:24 $

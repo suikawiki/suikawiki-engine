@@ -14,6 +14,7 @@ sub new ($) {
 sub get_next_id ($) {
   my $self = shift;
   my $lock = SWE::DB::Lock->new;
+  $lock->lock_type ('IDs');
   $lock->{file_name} = $self->{lock_file_name};
   $lock->lock;
   my $nextid = 1;

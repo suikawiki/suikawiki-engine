@@ -15,7 +15,7 @@ sub _get_file_name ($$$) {
   my $mkdir = $_[1];
   
   my $encoded_name = $name;
-  $encoded_name =~ s/([0-9A-Za-z_-])/sprintf '@%06X', ord $1/ge;
+  $encoded_name =~ s/([^0-9A-Za-z_-])/sprintf '@%06X', ord $1/ge;
 
   my $dir = $self->{root_directory_name};
   my $file_name = $dir . '/' . $encoded_name . $self->{leaf_suffix};

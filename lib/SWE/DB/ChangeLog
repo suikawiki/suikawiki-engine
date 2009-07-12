@@ -1,3 +1,16 @@
+2009-07-12  Wakaba  <wakaba@suika.fam.cx>
+
+	* NamedText.pm (_get_file_name): Typo.
+
+	* Lock.pm: Check whether any preferable locks are already taken or
+	not to avoid deadlocks.
+
+	* IDGenerator.pm (get_next_id): Set lock_type to enable lock order
+	control.
+
+	* IDLocks.pm (get_lock): Set lock_type to enable lock order
+	control.
+
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>
 
 	* NamedText.pm: New module.
