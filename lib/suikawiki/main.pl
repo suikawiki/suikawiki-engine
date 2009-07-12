@@ -947,31 +947,11 @@ if ($path[0] eq 'n' and @path == 2) {
       $id_lock->unlock;
     }
 
-    my $vc = $db->vc;
-    local $name_prop_db->{version_control} = $vc;
-
-    my $name_history_db = $db->name_history;
-    local $name_history_db->{version_control} = $vc;
-
-    for my $name (keys %$new_names) {
-      my $name_props = $name_prop_db->get_data ($name);
-      unless (defined $name_props) {
-        my $sw3id = $sw3_pages->get_data ($name);
-        convert_sw3_page ($sw3id => $name);                    
-        $name_props = $name_prop_db->get_data ($name);
-        unless (defined $name_props) {
-          $name_history_db->append_data ($name => [$time, 'c']);
-        }
-      }
-
-      push @{$name_props->{id} ||= []}, $id;
-      $name_props->{name} = $name;
-      $name_prop_db->set_data ($name => $name_props);
-
-      $name_history_db->append_data ($name => [$time, 'a', $id]);
-    }
-
-    $vc->commit_changes ("id=$id created by $user");
+    require SWE::Object::Document;
+    my $document = SWE::Object::Document->new (db => $db, id => $id);
+    $document->{name_prop_db} = $name_prop_db; ## TODO: ...
+    $document->{sw3_pages} = $sw3_pages; ## TODO: ...
+    $document->associate_names ($new_names, user => $user, time => $time);
     
     my $url = get_page_url ([keys %$new_names]->[0], undef, 0 + $id);
     http_redirect (301, 'Created', $url);
@@ -1522,4 +1502,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 09:45:40 $
+1; ## $Date: 2009/07/12 10:26:28 $

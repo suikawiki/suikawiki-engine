@@ -1,3 +1,7 @@
+2009-07-12  Wakaba  <wakaba@suika.fam.cx>
+
+	* Document.pm: New module.
+
 2009-03-16  Wakaba  <wakaba@suika.fam.cx>
 
 	* Repository.pm (are_related_ids): Repeat the relearning process
