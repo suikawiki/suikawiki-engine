@@ -474,7 +474,12 @@ if ($path[0] eq 'n' and @path == 2) {
         last APPEND if $id_prop->{'content-type'} ne 'text/x-suikawiki';
         
         my $textref = $content_db->get_data ($id);
-        $$textref .= "\n\n" . $added_text;
+        my $max = 0;
+        while ($$textref =~ /\[([0-9]+)\]/g) {
+          $max = $1 if $max < $1;
+        }
+        $max++;
+        $$textref .= "\n\n[$max] " . $added_text;
         
         $id_prop->{modified} = time;
         $id_prop->{hash} = get_hash ($textref);
@@ -1523,4 +1528,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 11:08:50 $
+1; ## $Date: 2009/07/12 11:54:19 $
