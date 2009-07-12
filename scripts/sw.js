@@ -1,3 +1,19 @@
+(function () {
+  var samiURL = 'http://suika.fam.cx/www/js/sami/script/sami-core.js';
+  
+  var script = document.createElement ('script');
+  script.src = samiURL;
+  script.defer = true;
+  script.async = true;
+  document.body.appendChild (script);
+
+  if (!self.SAMI) self.SAMI = {};
+  SAMI.onLoadFunctions = SAMI.onLoadFunctions || [];
+  SAMI.onLoadFunctions.push (function () {
+
+  });
+}) ();
+
 window.onload = function () {
   createToolbar ();
   initializeHatenaStar();

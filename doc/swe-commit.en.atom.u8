@@ -1,4 +1,9 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1247374191"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247374191</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T04:49:47Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	12 Jul 2009 04:49:44 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1247374904"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247374904</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T05:01:42Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/scripts/ChangeLog	12 Jul 2009 05:01:39 -0000
+2009-07-12  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw.js: Load sami-core.js.
+
+</content></entry><entry xml:id="entry-1247374191"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247374191</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T04:49:47Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	12 Jul 2009 04:49:44 -0000
 	* main.pl: Put the |script| element at the end of the |body|
 	element.
 
@@ -442,4 +447,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-07-12T04:49:47Z</updated></feed>
+</content></entry><updated>2009-07-12T05:01:42Z</updated></feed>
