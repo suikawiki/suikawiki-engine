@@ -9,6 +9,16 @@ sub new ($%) {
   return $self;
 }
 
+sub new_id ($%) {
+  my $self = shift->new (@_);
+  
+  my $idgen = $self->db->id;
+  my $id = $idgen->get_next_id;
+  $self->{id} = $id;
+
+  return $self;
+} # new_id
+
 sub db { $_[0]->{db} }
 
 sub id { $_[0]->{id} }

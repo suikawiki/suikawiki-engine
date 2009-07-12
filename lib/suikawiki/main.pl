@@ -894,16 +894,15 @@ if ($path[0] eq 'n' and @path == 2) {
     my $content = $cgi->get_parameter ('text') // '';
     normalize_content (\$content);
 
-    my $idgen = $db->id;
-
     $names_lock->lock;
-    my $id = $idgen->get_next_id;
     my $time = time;
 
     require SWE::Object::Document;
-    my $document = SWE::Object::Document->new (db => $db, id => $id);
+    my $document = SWE::Object::Document->new_id (db => $db);
     $document->{name_prop_db} = $name_prop_db; ## TODO: ...
     $document->{sw3_pages} = $sw3_pages; ## TODO: ...
+
+    my $id = $document->id;
 
     {
       ## This must be done before the ID lock.
@@ -915,7 +914,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $vc = $db->vc;
       local $content_db->{version_control} = $vc;
       local $id_prop_db->{version_control} = $vc;
-      $vc->add_file ($idgen->{file_name});
+      $vc->add_file ($db->id->{file_name});
       
       my $id_history_db = $db->id_history;
       local $id_history_db->{version_control} = $vc;
@@ -1463,4 +1462,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 10:37:45 $
+1; ## $Date: 2009/07/12 10:46:18 $
