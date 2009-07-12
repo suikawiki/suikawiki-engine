@@ -1,5 +1,9 @@
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Insert timestamp parameter of posturl.
+
+2009-07-12  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Implemented new-document case of posturl method.
 
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>

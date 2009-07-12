@@ -456,8 +456,9 @@ if ($path[0] eq 'n' and @path == 2) {
 
     if ($cgi->request_method eq 'POST') {
       my $user = '(anon)'; #$cgi->remote_user // '(anon)';
-      my $added_text = sprintf "[CITE[%s]]\n<%s>\n",
+      my $added_text = sprintf "[CITE[%s]] (Referenced: [TIME[%s]])\n<%s>\n",
         ($cgi->get_parameter ('title') // ''),
+        ($cgi->get_parameter ('timestamp') // ''),
         ($cgi->get_parameter ('url') // '');
       normalize_content (\$added_text);
 
@@ -1522,4 +1523,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 11:00:20 $
+1; ## $Date: 2009/07/12 11:08:50 $
