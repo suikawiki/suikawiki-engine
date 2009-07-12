@@ -1,5 +1,9 @@
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl (update_tfidf): Moved to another module.
+
+2009-07-12  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Facted out the code to associate new pages names to the
 	document.
 

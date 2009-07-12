@@ -900,6 +900,11 @@ if ($path[0] eq 'n' and @path == 2) {
     my $id = $idgen->get_next_id;
     my $time = time;
 
+    require SWE::Object::Document;
+    my $document = SWE::Object::Document->new (db => $db, id => $id);
+    $document->{name_prop_db} = $name_prop_db; ## TODO: ...
+    $document->{sw3_pages} = $sw3_pages; ## TODO: ...
+
     {
       ## This must be done before the ID lock.
       $db->name_inverted_index->lock;
@@ -941,16 +946,12 @@ if ($path[0] eq 'n' and @path == 2) {
       my $doc = $id_props ? get_xml_data ($id, $id_props, $cache_prop) : undef;
       
       if (defined $doc) {
-        update_tfidf ($id, $doc);
+        $document->update_tfidf ($doc);
       }
       
       $id_lock->unlock;
     }
 
-    require SWE::Object::Document;
-    my $document = SWE::Object::Document->new (db => $db, id => $id);
-    $document->{name_prop_db} = $name_prop_db; ## TODO: ...
-    $document->{sw3_pages} = $sw3_pages; ## TODO: ...
     $document->associate_names ($new_names, user => $user, time => $time);
     
     my $url = get_page_url ([keys %$new_names]->[0], undef, 0 + $id);
@@ -1310,56 +1311,16 @@ sub for_unique_words ($*) {
   }
 } # for_unique_words
 
+## TODO: This function is OBSOLETE!
 sub update_tfidf ($$) {
   my ($id, $doc) = @_;
 
-  ## It is REQUIRED to lock the $id before the invocation of this
-  ## method to keep the consistency of tfidf data for the $id.
-
-  my $tfidf_db = $db->id_tfidf;
-
-  require SWE::Data::FeatureVector;
-
-  my $deleted_terms = SWE::Data::FeatureVector->parse_stringref
-      ($tfidf_db->get_data ($id))->as_key_hashref;
-
-  my $tc = $doc->document_element->text_content;
-
-  ## TODO: use element semantics...
-
-  my $orig_tfs = {};
-  my $all_terms = 0;
-  for_unique_words ($tc => sub {
-    $orig_tfs->{$_[0]} = $_[1];
-    $all_terms += $_[1];
-  });
-
-  my $names_index_db = $db->name_inverted_index;
-  $names_index_db->lock;
-
-  my $idgen = $db->id;
-  my $doc_number = $idgen->get_last_id;
+  require SWE::Object::Document;
+  my $document = SWE::Object::Document->new (db => $db, id => $id);
+  $document->{name_prop_db} = $name_prop_db; ## TODO: ...
+  $document->{sw3_pages} = $sw3_pages; ## TODO: ...
   
-  my $terms = SWE::Data::FeatureVector->new;
-  for my $term (keys %$orig_tfs) {
-    my $n_tf = $orig_tfs->{$term} / $all_terms;
-    
-    my $df = $names_index_db->get_count ($term);
-    my $idf = log ($doc_number / ($df + 1));
-      
-    my $tfidf = $n_tf * $idf;
-    
-    $terms->set_tfidf ($term, $tfidf);
-    $names_index_db->add_data ($term => $id => $tfidf);
-
-    delete $deleted_terms->{$term};
-  }
-
-  for my $term (keys %$deleted_terms) {
-    $names_index_db->delete_data ($term, $id);
-  }
-  
-  $tfidf_db->set_data ($id => \( $terms->stringify ));
+  $document->update_tfidf ($doc);
 } # update_tfidf
 
 sub convert_sw3_page ($$) {
@@ -1502,4 +1463,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 10:26:28 $
+1; ## $Date: 2009/07/12 10:37:45 $

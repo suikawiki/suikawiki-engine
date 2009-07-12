@@ -1,5 +1,9 @@
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>
 
+	* Document.pm (update_tfidf): New method copied from main.pl.
+
+2009-07-12  Wakaba  <wakaba@suika.fam.cx>
+
 	* Document.pm: New module.
 
 2009-03-16  Wakaba  <wakaba@suika.fam.cx>
