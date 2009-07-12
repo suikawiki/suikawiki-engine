@@ -481,6 +481,9 @@ if ($path[0] eq 'n' and @path == 2) {
         $cgi->request_method eq 'PUT') {
       my $id = $path[1] + 0;
       
+      ## This must be done before the ID lock.
+      $db->name_inverted_index->lock;
+
       my $id_lock = $id_locks->get_lock ($id);
       $id_lock->lock;
       
@@ -518,6 +521,14 @@ if ($path[0] eq 'n' and @path == 2) {
 
         my $user = '(anon)'; #$cgi->remote_user // '(anon)';
         $vc->commit_changes ("updated by $user");
+
+        ## TODO: non-default content-type support
+        my $cache_prop = $cache_prop_db->get_data ($id);
+        my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
+
+        if (defined $doc) {
+          update_tfidf ($id, $doc);
+        }
 
         my $url = get_page_url ([keys %{$id_prop->{name} or {}}]->[0],
                                 undef, 0 + $id);
@@ -1456,4 +1467,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 06:33:54 $
+1; ## $Date: 2009/07/12 07:06:53 $

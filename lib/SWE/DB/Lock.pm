@@ -1,6 +1,5 @@
 package SWE::DB::Lock;
 use strict;
-use warnings;
 
 my $CurrentlyLocking = {};
 my $LockTypes = [qw/
