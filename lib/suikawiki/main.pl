@@ -454,7 +454,7 @@ if ($path[0] eq 'n' and @path == 2) {
       http_error (404, 'Not found');
     }
 
-    if ($cgi->request_method eq 'POST' or 1) {
+    if ($cgi->request_method eq 'POST') {
       my $user = '(anon)'; #$cgi->remote_user // '(anon)';
       my $added_text = sprintf "[CITE[%s]]\n<%s>\n",
         ($cgi->get_parameter ('title') // ''),
@@ -1522,4 +1522,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 10:57:24 $
+1; ## $Date: 2009/07/12 11:00:20 $
