@@ -1,5 +1,6 @@
 (function () {
   var samiURL = 'http://suika.fam.cx/www/js/sami/script/sami-core.js';
+  var swSamiURL = 'http://suika.fam.cx/swe/scripts/sw-sami.js';
   
   var script = document.createElement ('script');
   script.src = samiURL;
@@ -10,7 +11,9 @@
   if (!self.SAMI) self.SAMI = {};
   SAMI.onLoadFunctions = SAMI.onLoadFunctions || [];
   SAMI.onLoadFunctions.push (function () {
-
+    SAMI.Script.loadScripts (new SAMI.List([swSamiURL]), function () {
+      SW.init ();
+    });
   });
 }) ();
 

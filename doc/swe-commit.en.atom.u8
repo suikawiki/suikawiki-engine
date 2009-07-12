@@ -1,4 +1,12 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1247374904"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247374904</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T05:01:42Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/scripts/ChangeLog	12 Jul 2009 05:01:39 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1247378662"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247378662</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T06:04:20Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/scripts/ChangeLog	12 Jul 2009 06:04:15 -0000
+	* sw-sami.js: New script.  It loads search result and insert into
+	the document.
+
+	* sw.js: Loads sw-sami.js.
+
+2009-07-12  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1247374904"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247374904</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T05:01:42Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/scripts/ChangeLog	12 Jul 2009 05:01:39 -0000
 2009-07-12  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
 	* sw.js: Load sami-core.js.
@@ -447,4 +455,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-07-12T05:01:42Z</updated></feed>
+</content></entry><updated>2009-07-12T06:04:20Z</updated></feed>
