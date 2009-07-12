@@ -1257,6 +1257,9 @@ sub for_unique_words ($*) {
 sub update_tfidf ($$) {
   my ($id, $doc) = @_;
 
+  ## It is REQUIRED to lock the $id before the invocation of this
+  ## method to keep the consistency of tfidf data for the $id.
+
   my $tfidf_db = $db->id_tfidf;
 
   require SWE::Data::FeatureVector;
@@ -1275,10 +1278,11 @@ sub update_tfidf ($$) {
     $all_terms += $_[1];
   });
 
+  my $names_index_db = $db->name_inverted_index;
+  $names_index_db->lock;
+
   my $idgen = $db->id;
   my $doc_number = $idgen->get_last_id;
-
-  my $names_index_db = $db->name_inverted_index;
   
   my $terms = SWE::Data::FeatureVector->new;
   for my $term (keys %$orig_tfs) {
@@ -1447,4 +1451,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 04:49:51 $
+1; ## $Date: 2009/07/12 06:22:09 $

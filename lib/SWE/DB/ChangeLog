@@ -1,5 +1,9 @@
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>
 
+	* HashedIndex.pm (lock, lock_file_name): New methods.
+
+2009-07-12  Wakaba  <wakaba@suika.fam.cx>
+
 	* NamedText.pm (_get_file_name): Typo.
 
 	* Lock.pm: Check whether any preferable locks are already taken or

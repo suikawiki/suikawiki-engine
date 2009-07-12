@@ -1,5 +1,6 @@
 package SWE::DB::HashedIndex;
 use strict;
+use warnings;
 
 sub new ($) {
   my $self = bless {
@@ -13,6 +14,33 @@ sub new ($) {
 
 require Digest::MD5;
 require Encode;
+
+sub lock_file_name ($) : lvalue {
+  my $self = shift;
+  
+  $self->{lock_file_name} ||= $self->{root_directory_name} . 'index.lock';
+} # lock_file_name
+
+sub lock ($) {
+  my $self = shift;
+
+  $self->{lock} ||= do {
+    require SWE::DB::Lock;
+    my $lock = SWE::DB::Lock->new;
+    $lock->{file_name} = $self->lock_file_name;
+    $lock->lock_type ('Index');
+    $lock->lock;
+  };
+}
+
+sub unlock ($) {
+  my $self = shift;
+
+  return unless $self->{lock};
+
+  $self->{lock}->unlock;
+  delete $self->{lock};
+}
 
 sub _get_file_name ($$$$) {
   my $self = shift;
