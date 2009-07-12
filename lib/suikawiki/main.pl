@@ -480,8 +480,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $id_prop->{modified} = time;
         $id_prop->{hash} = get_hash ($textref);
         
-        require SWE::DB::VersionControl;
-        my $vc = SWE::DB::VersionControl->new;
+        my $vc = $db->vc;
         local $content_db->{version_control} = $vc;
         local $id_prop_db->{version_control} = $vc;
         
@@ -550,8 +549,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $id_prop->{title} = $title;
         $id_prop->{'title-type'} = 'text/plain'; ## TODO: get_parameter
 
-        require SWE::DB::VersionControl;
-        my $vc = SWE::DB::VersionControl->new;
+        my $vc = $db->vc;
         local $content_db->{version_control} = $vc;
         local $id_prop_db->{version_control} = $vc;
         
@@ -677,8 +675,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $cgi->request_method eq 'PUT') {
       my $id = $path[1] + 0;
 
-      require SWE::DB::VersionControl;
-      my $vc = SWE::DB::VersionControl->new;
+      my $vc = $db->vc;
       local $name_prop_db->{version_control} = $vc;
       local $id_prop_db->{version_control} = $vc;
       
@@ -894,8 +891,6 @@ if ($path[0] eq 'n' and @path == 2) {
   }
 } elsif ($path[0] eq 'new-page' and @path == 1) {
   if ($cgi->request_method eq 'POST') {
-    require SWE::DB::VersionControl;
-
     my $new_names = {};
     for (split /\x0D\x0A?|\x0A/, scalar $cgi->get_parameter ('names')) {
       $new_names->{normalize_name ($_)} = 1;
@@ -921,8 +916,8 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $id_lock = $id_locks->get_lock ($id);
       $id_lock->lock;
-      
-      my $vc = SWE::DB::VersionControl->new;
+
+      my $vc = $db->vc;
       local $content_db->{version_control} = $vc;
       local $id_prop_db->{version_control} = $vc;
       $vc->add_file ($idgen->{file_name});
@@ -964,7 +959,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $id_lock->unlock;
     }
 
-    my $vc = SWE::DB::VersionControl->new;
+    my $vc = $db->vc;
     local $name_prop_db->{version_control} = $vc;
 
     require SWE::DB::HashedHistory;
@@ -1418,8 +1413,7 @@ sub convert_sw3_page ($$) {
     my $id_lock = $id_locks->get_lock ($id);
     $id_lock->lock;
 
-    require SWE::DB::VersionControl;
-    my $vc = SWE::DB::VersionControl->new;
+    my $vc = $db->vc;
     local $content_db->{version_control} = $vc;
     local $id_prop_db->{version_control} = $vc;
     $vc->add_file ($idgen->{file_name});
@@ -1472,7 +1466,7 @@ sub convert_sw3_page ($$) {
 
     $id_lock->unlock;
 
-    $vc = SWE::DB::VersionControl->new;
+    $vc = $db->vc;
     local $name_prop_db->{version_control} = $vc;
     local $sw3_pages->{version_control} = $vc;
     
@@ -1546,4 +1540,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 08:59:27 $
+1; ## $Date: 2009/07/12 09:07:59 $

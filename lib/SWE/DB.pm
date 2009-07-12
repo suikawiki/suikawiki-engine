@@ -55,6 +55,7 @@ sub name_inverted_index ($) {
     require SWE::DB::HashedIndex;
     my $names_index_db = SWE::DB::HashedIndex->new;
     $names_index_db->{root_directory_name} = $self->name_dir_name;
+    
     $names_index_db;
   };
 } # name_inverted_index
@@ -82,5 +83,12 @@ sub graph_prop ($) {
     $graph_prop_db;
   };
 } # graph_prop
+
+sub vc ($) {
+  my $self = shift;
+
+  require SWE::DB::VersionControl;
+  return SWE::DB::VersionControl->new;
+} # vc
 
 1;
