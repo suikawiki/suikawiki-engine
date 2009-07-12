@@ -12,6 +12,8 @@ sub new ($%) {
 sub new_id ($%) {
   my $self = shift->new (@_);
   
+  ## NOTE: MUST be executed in names_lock.
+
   my $idgen = $self->db->id;
   my $id = $idgen->get_next_id;
   $self->{id} = $id;

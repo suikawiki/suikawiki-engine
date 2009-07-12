@@ -455,6 +455,7 @@ if ($path[0] eq 'n' and @path == 2) {
     }
 
     if ($cgi->request_method eq 'POST' or 1) {
+      my $user = '(anon)'; #$cgi->remote_user // '(anon)';
       my $added_text = sprintf "[CITE[%s]]\n<%s>\n",
         ($cgi->get_parameter ('title') // ''),
         ($cgi->get_parameter ('url') // '');
@@ -484,7 +485,6 @@ if ($path[0] eq 'n' and @path == 2) {
         $content_db->set_data ($id => $textref);
         $id_prop_db->set_data ($id => $id_prop);
         
-        my $user = '(anon)'; #$cgi->remote_user // '(anon)';
         $vc->commit_changes ("updated by $user");
 
         ## TODO: non-default content-type support
@@ -500,7 +500,67 @@ if ($path[0] eq 'n' and @path == 2) {
       }} # APPEND
 
       { ## New document
+        my $new_names = {$name => 1};
+        my $content = '[1] ' . $added_text;
 
+        $names_lock->lock;
+        my $time = time;
+        
+        require SWE::Object::Document;
+        my $document = SWE::Object::Document->new_id (db => $db);
+        $document->{name_prop_db} = $name_prop_db; ## TODO: ...
+        $document->{sw3_pages} = $sw3_pages; ## TODO: ...
+        
+        my $id = $document->id;
+        
+        {
+          ## This must be done before the ID lock.
+          $db->name_inverted_index->lock;
+          
+          my $id_lock = $id_locks->get_lock ($id);
+          $id_lock->lock;
+          
+          my $vc = $db->vc;
+          local $content_db->{version_control} = $vc;
+          local $id_prop_db->{version_control} = $vc;
+          $vc->add_file ($db->id->{file_name});
+          
+          my $id_history_db = $db->id_history;
+          local $id_history_db->{version_control} = $vc;
+          
+          $content_db->set_data ($id => \$content);
+          
+          my $id_props = {};
+          
+          $id_history_db->append_data ($id => [$time, 'c']);
+          $id_props->{modified} = $time;
+          
+          for (keys %$new_names) {
+            $id_props->{name}->{$_} = 1;
+            $id_history_db->append_data ($id => [$time, 'a', $_]);
+          }
+          
+          $id_props->{'content-type'} = 'text/x-suikawiki';
+          $id_props->{hash} = get_hash (\$content);
+          $id_prop_db->set_data ($id => $id_props);
+          
+          $vc->commit_changes ("created by $user");
+          
+          ## TODO: non-default content-type support
+          my $cache_prop = $cache_prop_db->get_data ($id);
+          my $doc = $id_props ? get_xml_data ($id, $id_props, $cache_prop) : undef;
+          
+          if (defined $doc) {
+            $document->update_tfidf ($doc);
+          }
+          
+          $id_lock->unlock;
+        }
+
+        $document->associate_names ($new_names, user => $user, time => $time);
+
+        http_redirect (303, 'Appended', get_page_url ($name, undef, $id));
+        exit;
       }
     } else {
       http_error (405, 'Method not allowed', 'POST');
@@ -1462,4 +1522,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 10:46:18 $
+1; ## $Date: 2009/07/12 10:57:24 $

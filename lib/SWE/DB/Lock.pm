@@ -5,8 +5,10 @@ my $CurrentlyLocking = {};
 my $LockTypes = [qw/
   ID Name Index IDs Names Graph Weight Global
 /];
-  # If you are locking for Graph, then you cannot lock for Global, but
-  # still you can lock for ID.
+  ## If you are locking for Graph, then you cannot lock for Global, but
+  ## still you can lock for ID.
+
+  ## idgen is currently controled by Names lock.
 
 use Fcntl ':flock';
 
