@@ -877,6 +877,9 @@ if ($path[0] eq 'n' and @path == 2) {
     my $time = time;
 
     {
+      ## This must be done before the ID lock.
+      $db->name_inverted_index->lock;
+
       my $id_lock = $id_locks->get_lock ($id);
       $id_lock->lock;
       
@@ -911,6 +914,14 @@ if ($path[0] eq 'n' and @path == 2) {
 
       $vc->commit_changes ("created by $user");
 
+      ## TODO: non-default content-type support
+      my $cache_prop = $cache_prop_db->get_data ($id);
+      my $doc = $id_props ? get_xml_data ($id, $id_props, $cache_prop) : undef;
+      
+      if (defined $doc) {
+        update_tfidf ($id, $doc);
+      }
+      
       $id_lock->unlock;
     }
 
@@ -1467,4 +1478,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 07:06:53 $
+1; ## $Date: 2009/07/12 07:15:34 $
