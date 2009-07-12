@@ -122,30 +122,10 @@ if ($path[0] eq 'n' and @path == 2) {
   }
 
   unless (defined $param) {
-    my $ids = get_ids_by_name ($name);
-    unless (ref $ids) {
-      $names_lock->lock;
-      $sw3_pages->reset;
+    my ($id, $ids) = prepare_by_name ($name, $dollar);
 
-      $ids = convert_sw3_page ($ids => $name);
-      $names_lock->unlock;
-    }
-
-    my $id;
-    if (defined $dollar) {
-      $dollar += 0;
-      for (0..$#$ids) {
-        if ($ids->[$_] == $dollar) {
-          $id = $dollar;
-          splice @$ids, $_, 1, ();
-          last;
-        }
-      }
-      unless (defined $id) {
-        http_redirect (301, 'Not found', get_page_url ($name, undef));
-      }
-    } else {
-      $id = shift @$ids;
+    if (defined $dollar and not defined $id) {
+      http_redirect (301, 'Not found', get_page_url ($name, undef));
     }
 
     my $format = $cgi->get_parameter ('format') // 'html';
@@ -1082,6 +1062,35 @@ if ($path[0] eq 'n' and @path == 2) {
 
 http_error (404, 'Not found');
 
+sub prepare_by_name ($$) {
+  my ($name, $id_cand) = @_;
+  
+  my $ids = get_ids_by_name ($name);
+  unless (ref $ids) {
+    $names_lock->lock;
+    $sw3_pages->reset;
+
+    $ids = convert_sw3_page ($ids => $name);
+    $names_lock->unlock;
+  }
+
+  my $id;
+  if (defined $id_cand) {
+    $id_cand += 0;
+    for (0..$#$ids) {
+      if ($ids->[$_] == $id_cand) {
+        $id = $id_cand;
+        splice @$ids, $_, 1, ();
+        last;
+      }
+    }
+  } else {
+    $id = shift @$ids;
+  }
+  
+  return ($id, $ids);
+} # prepare_by_name
+
 sub get_content_type_parameter () {
   my $ct = $cgi->get_parameter ('content-type') // 'text/x-suikawiki';
   
@@ -1478,4 +1487,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 07:15:34 $
+1; ## $Date: 2009/07/12 08:18:44 $
