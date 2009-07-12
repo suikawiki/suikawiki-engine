@@ -1,4 +1,9 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1247387085"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247387085</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T08:24:42Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	12 Jul 2009 08:24:39 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1247389166"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247389166</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T08:59:24Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	12 Jul 2009 08:59:20 -0000
+	* main.pl: posturl appending implemented.
+
+2009-07-12  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1247387085"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247387085</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T08:24:42Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	12 Jul 2009 08:24:39 -0000
 	* main.pl: Preparation for introducing posturl method.
 
 2009-07-12  Wakaba  &lt;wakaba@suika.fam.cx&gt;
@@ -502,4 +507,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-07-12T08:24:42Z</updated></feed>
+</content></entry><updated>2009-07-12T08:59:24Z</updated></feed>

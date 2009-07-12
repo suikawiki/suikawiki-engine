@@ -457,10 +457,53 @@ if ($path[0] eq 'n' and @path == 2) {
       http_error (404, 'Not found');
     }
 
-    if ($cgi->request_method eq 'POST') {
-      if (defined $id) { ## Existing document
+    if ($cgi->request_method eq 'POST' or 1) {
+      my $added_text = sprintf "[CITE[%s]]\n<%s>\n",
+        ($cgi->get_parameter ('title') // ''),
+        ($cgi->get_parameter ('url') // '');
+      normalize_content (\$added_text);
 
-      } else { ## New document
+      APPEND: { if (defined $id) { ## Existing document
+        ## This must be done before the ID lock.
+        $db->name_inverted_index->lock;
+
+        my $id_lock = $id_locks->get_lock ($id);
+        $id_lock->lock;
+        
+        my $id_prop = $id_prop_db->get_data ($id);
+        last APPEND unless $id_prop;
+        last APPEND if $id_prop->{'content-type'} ne 'text/x-suikawiki';
+        
+        my $textref = $content_db->get_data ($id);
+        $$textref .= "\n\n" . $added_text;
+        
+        $id_prop->{modified} = time;
+        $id_prop->{hash} = get_hash ($textref);
+        
+        require SWE::DB::VersionControl;
+        my $vc = SWE::DB::VersionControl->new;
+        local $content_db->{version_control} = $vc;
+        local $id_prop_db->{version_control} = $vc;
+        
+        $content_db->set_data ($id => $textref);
+        $id_prop_db->set_data ($id => $id_prop);
+        
+        my $user = '(anon)'; #$cgi->remote_user // '(anon)';
+        $vc->commit_changes ("updated by $user");
+
+        ## TODO: non-default content-type support
+        my $cache_prop = $cache_prop_db->get_data ($id);
+        my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
+          
+        if (defined $doc) {
+          update_tfidf ($id, $doc);
+        }
+
+        http_redirect (303, 'Appended', get_page_url ($name, undef, $id));
+        exit;
+      }} # APPEND
+
+      { ## New document
 
       }
     } else {
@@ -1503,4 +1546,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 08:24:45 $
+1; ## $Date: 2009/07/12 08:59:27 $
