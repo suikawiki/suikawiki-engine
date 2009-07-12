@@ -450,6 +450,22 @@ if ($path[0] eq 'n' and @path == 2) {
       print $index->{$id}, "\t", $id, "\t", $name, "\n";
     }
     exit;
+  } elsif ($param eq 'posturl') {
+    my ($id, undef) = prepare_by_name ($name, $dollar);
+
+    if (defined $dollar and not defined $id) {
+      http_error (404, 'Not found');
+    }
+
+    if ($cgi->request_method eq 'POST') {
+      if (defined $id) { ## Existing document
+
+      } else { ## New document
+
+      }
+    } else {
+      http_error (405, 'Method not allowed', 'POST');
+    }
   } else {
     $name .= '$' . $dollar if defined $dollar;
     $name .= ';' . $param;
@@ -1487,4 +1503,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 08:18:44 $
+1; ## $Date: 2009/07/12 08:24:45 $
