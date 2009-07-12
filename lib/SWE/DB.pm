@@ -36,6 +36,28 @@ sub global_prop ($) {
   };
 } # global_prop
 
+sub name_inverted_index ($) {
+  my $self = shift;
+  
+  return $self->{name_inverted_index} ||= do {
+    require SWE::DB::HashedIndex;
+    my $names_index_db = SWE::DB::HashedIndex->new;
+    $names_index_db->{root_directory_name} = $self->name_dir_name;
+    $names_index_db;
+  };
+} # name_inverted_index
+
+sub name_history ($) {
+  my $self = shift;
+
+  return $self->{name_history} ||= do {
+    require SWE::DB::HashedHistory;
+    my $names_history_db = SWE::DB::HashedHistory->new;
+    $names_history_db->{root_directory_name} = $self->name_dir_name;
+    $names_history_db;
+  };
+} # name_history
+
 sub id ($) {
   my $self = shift;
   
@@ -48,18 +70,6 @@ sub id ($) {
   };
 } # id
 
-sub name_inverted_index ($) {
-  my $self = shift;
-  
-  return $self->{name_inverted_index} ||= do {
-    require SWE::DB::HashedIndex;
-    my $names_index_db = SWE::DB::HashedIndex->new;
-    $names_index_db->{root_directory_name} = $self->name_dir_name;
-    
-    $names_index_db;
-  };
-} # name_inverted_index
-
 sub id_tfidf ($) {
   my $self = shift;
 
@@ -71,6 +81,17 @@ sub id_tfidf ($) {
     $tfidf_db;
   };
 } # id_tfidf
+
+sub id_history ($) {
+  my $self = shift;
+  
+  return $self->{id_history} ||= do {
+    require SWE::DB::IDHistory;
+    my $id_history_db = SWE::DB::IDHistory->new;
+    $id_history_db->{root_directory_name} = $self->id_dir_name;
+    $id_history_db;
+  };
+} # id_history
 
 sub graph_prop ($) {
   my $self = shift;

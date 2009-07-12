@@ -1,5 +1,9 @@
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>
 
+	* DB.pm (name_history, id_history): New methods.
+
+2009-07-12  Wakaba  <wakaba@suika.fam.cx>
+
 	* DB.pm (vc): New method.
 
 2009-03-15  Wakaba  <wakaba@suika.fam.cx>

@@ -334,10 +334,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
     exit;
   } elsif ($param eq 'history' and not defined $dollar) {
-    require SWE::DB::HashedHistory;
-    my $name_history_db = SWE::DB::HashedHistory->new;
-    $name_history_db->{root_directory_name} = $db_name_dir_name;
-    
+    my $name_history_db = $db->name_history;
     my $history = $name_history_db->get_data ($name);
 
     binmode STDOUT, ':encoding(utf-8)';
@@ -679,15 +676,11 @@ if ($path[0] eq 'n' and @path == 2) {
       local $name_prop_db->{version_control} = $vc;
       local $id_prop_db->{version_control} = $vc;
       
-      require SWE::DB::IDHistory;
-      my $id_history_db = SWE::DB::IDHistory->new;
-      $id_history_db->{root_directory_name} = $db_id_dir_name;
-      $id_history_db->{version_control} = $vc;
+      my $id_history_db = $db->id_history;
+      local $id_history_db->{version_control} = $vc;
 
-      require SWE::DB::HashedHistory;
-      my $names_history_db = SWE::DB::HashedHistory->new;
-      $names_history_db->{root_directory_name} = $db_name_dir_name;
-      $names_history_db->{version_control} = $vc;
+      my $names_history_db = $db->name_history;
+      local $names_history_db->{version_control} = $vc;
 
       my $time = time;
 
@@ -762,10 +755,7 @@ if ($path[0] eq 'n' and @path == 2) {
   } elsif ($param eq 'history' and not defined $dollar) {
     my $id = $path[1] + 0;
 
-    require SWE::DB::IDHistory;
-    my $id_history_db = SWE::DB::IDHistory->new;
-    $id_history_db->{root_directory_name} = $db_id_dir_name;
-    
+    my $id_history_db = $db->id_history;
     my $history = $id_history_db->get_data ($id);
 
     binmode STDOUT, ':encoding(utf-8)';
@@ -857,10 +847,10 @@ if ($path[0] eq 'n' and @path == 2) {
       update_tfidf ($id, $doc);
 
       $id_lock->unlock;
-      
+
       binmode STDOUT, ':encoding(utf-8)';
       print "Content-Type: text/plain; charset=utf-8\n\n";
-      
+
       print ${ $db->id_tfidf->get_data ($id) };
       
       exit;
@@ -922,10 +912,8 @@ if ($path[0] eq 'n' and @path == 2) {
       local $id_prop_db->{version_control} = $vc;
       $vc->add_file ($idgen->{file_name});
       
-      require SWE::DB::IDHistory;
-      my $id_history_db = SWE::DB::IDHistory->new;
-      $id_history_db->{root_directory_name} = $db_id_dir_name;
-      $id_history_db->{version_control} = $vc;
+      my $id_history_db = $db->id_history;
+      local $id_history_db->{version_control} = $vc;
 
       $content_db->set_data ($id => \$content);
       
@@ -962,10 +950,8 @@ if ($path[0] eq 'n' and @path == 2) {
     my $vc = $db->vc;
     local $name_prop_db->{version_control} = $vc;
 
-    require SWE::DB::HashedHistory;
-    my $name_history_db = SWE::DB::HashedHistory->new;
-    $name_history_db->{root_directory_name} = $db_name_dir_name;
-    $name_history_db->{version_control} = $vc;
+    my $name_history_db = $db->name_history;
+    local $name_history_db->{version_control} = $vc;
 
     for my $name (keys %$new_names) {
       my $name_props = $name_prop_db->get_data ($name);
@@ -1418,11 +1404,9 @@ sub convert_sw3_page ($$) {
     local $id_prop_db->{version_control} = $vc;
     $vc->add_file ($idgen->{file_name});
 
-    require SWE::DB::IDHistory;
-    my $id_history_db = SWE::DB::IDHistory->new;
-    $id_history_db->{root_directory_name} = $db_id_dir_name;
-    $id_history_db->{version_control} = $vc;
-
+    my $id_history_db = $db->id_history;
+    local $id_history_db->{version_control} = $vc;
+    
     our $sw3_db_dir_name;
     
     state $sw3_content_db;
@@ -1470,10 +1454,8 @@ sub convert_sw3_page ($$) {
     local $name_prop_db->{version_control} = $vc;
     local $sw3_pages->{version_control} = $vc;
     
-    require SWE::DB::HashedHistory;
-    my $names_history_db = SWE::DB::HashedHistory->new;
-    $names_history_db->{root_directory_name} = $db_name_dir_name;
-    $names_history_db->{version_control} = $vc;
+    my $names_history_db = $db->name_history;
+    local $names_history_db->{version_control} = $vc;
     
     my $name_props = $name_prop_db->get_data ($name);
     push @{$name_props->{id} ||= []}, $id;
@@ -1540,4 +1522,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 09:07:59 $
+1; ## $Date: 2009/07/12 09:45:40 $
