@@ -1,3 +1,7 @@
+2009-07-12  Wakaba  <wakaba@suika.fam.cx>
+
+	* sw.css: Styling for js-inserted sections.
+
 2009-07-11  Wakaba  <wakaba@suika.fam.cx>
 
 	* sw.css: Added .swe-info class.

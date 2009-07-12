@@ -82,7 +82,7 @@ h6 {
   font-size: 100%;
 }
 
-.article, .section {
+.article, .section, section {
   display: block;
   margin: 0 0 2em 0;
   padding: 0 1em 0 2em;

@@ -1,4 +1,14 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1247382933"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247382933</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T07:15:26Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	12 Jul 2009 07:15:23 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1247383880"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247383880</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T07:31:14Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/styles/ChangeLog	12 Jul 2009 07:30:45 -0000
+2009-07-12  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw.css: Styling for js-inserted sections.
+
+++ swe/scripts/ChangeLog	12 Jul 2009 07:31:10 -0000
+	* sw-sami.js: Improved where js-generated sections are inserted.
+
+2009-07-12  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1247382933"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1247382933</id><title>2009-07-12 Wakaba</title><updated>2009-07-12T07:15:26Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	12 Jul 2009 07:15:23 -0000
 	* main.pl: Create tfidf data when a page is created.
 
 2009-07-12  Wakaba  &lt;wakaba@suika.fam.cx&gt;
@@ -480,4 +490,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-07-12T07:15:26Z</updated></feed>
+</content></entry><updated>2009-07-12T07:31:14Z</updated></feed>

@@ -81,6 +81,31 @@ SW.SearchResult.Entry = new SAMI.Class (function (v) {
   } // toLI
 }); // SearchResult
 
+SW.PageContents = new SAMI.Class (function () {
+  this.footer = document.getElementsByTagName ('footer')[0];
+}, {
+  insertSection: function (sectionId, content) {
+    var sectionName = {
+      'search-results': 'Related pages'
+    }[sectionId] || sectionId;
+    var section = document.createElement ('section');
+    section.id = sectionId;
+    var h = document.createElement ('h2');
+    h.innerHTML = 'xxx';
+    h.firstChild.data = sectionName;
+    section.appendChild (h);
+    section.appendChild (content);
+    document.body.insertBefore (section, this.footer);
+  } // insertSection
+}); // PageContents
+
+SW.PageContents.getInstance = function () {
+  if (!this._instance) {
+    this._instance = new SW.PageContents;
+  }
+  return this._instance;
+}; // getInstance
+
 SW.init = function () {
   var doc = SW.CurrentDocument.getInstance ();
   if (doc.area == 'n') {
@@ -90,7 +115,7 @@ SW.init = function () {
       var sr = new SW.SearchResult (this.getText ());
       if (sr.entries.list.length) {
         var ol = sr.toOL ();
-        document.body.appendChild (ol);
+        SW.PageContents.getInstance ().insertSection ('search-results', ol);
       }
     }).get ();
   }

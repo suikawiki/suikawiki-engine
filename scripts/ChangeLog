@@ -1,5 +1,9 @@
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw-sami.js: Improved where js-generated sections are inserted.
+
+2009-07-12  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw-sami.js: New script.  It loads search result and insert into
 	the document.
 
