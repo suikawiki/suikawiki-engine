@@ -456,12 +456,31 @@ if ($path[0] eq 'n' and @path == 2) {
 
     if ($cgi->request_method eq 'POST') {
       my $user = '(anon)'; #$cgi->remote_user // '(anon)';
-      my $added_text = sprintf "[CITE[%s]] (Referenced: [TIME[%s]])\n<%s>\n",
-        ($cgi->get_parameter ('title') // ''),
-        ($cgi->get_parameter ('timestamp') // ''),
-        ($cgi->get_parameter ('url') // '');
+      my $added_text = '<' . ($cgi->get_parameter ('url') // '') . '>';
+      {
+        my $credit = $cgi->get_parameter ('credit') // '';
+        $added_text = '(' . $credit . ")\n" . $added_text if length $credit;
+
+        my $timestamp = $cgi->get_parameter ('timestamp') // '';
+        if (length $timestamp) {
+          $added_text = '(Referenced: [TIME[' . $timestamp . "]])\n". $added_text;
+        }
+
+        my $title = $cgi->get_parameter ('title') // '';
+        if (length $title) {
+          $title =~ s/(\[|\])/'''$1'''/g;
+          my $tl = $cgi->get_parameter ('title-lang') // '';
+          if (length $tl) {
+            $title = '[CITE@' . $tl . '[' . $title . ']]';
+          } else {
+            $title = '[CITE[' . $title . ']]';
+          }
+          $added_text = $title . "\n" . $added_text;
+        }
+      }
       normalize_content (\$added_text);
 
+      my $anchor = 1;
       APPEND: { if (defined $id) { ## Existing document
         ## This must be done before the ID lock.
         $db->name_inverted_index->lock;
@@ -480,6 +499,7 @@ if ($path[0] eq 'n' and @path == 2) {
         }
         $max++;
         $$textref .= "\n\n[$max] " . $added_text;
+        $anchor = $max;
         
         $id_prop->{modified} = time;
         $id_prop->{hash} = get_hash ($textref);
@@ -501,7 +521,11 @@ if ($path[0] eq 'n' and @path == 2) {
           update_tfidf ($id, $doc);
         }
 
-        http_redirect (303, 'Appended', get_page_url ($name, undef, $id));
+        if ($cgi->get_parameter ('redirect')) {
+          http_redirect (303, 'Appended', get_page_url ($name, undef, $id) . '#anchor-' . $anchor);
+        } else {
+          print qq[Status: 204 Appended\n\n];
+        }
         exit;
       }} # APPEND
 
@@ -565,7 +589,11 @@ if ($path[0] eq 'n' and @path == 2) {
 
         $document->associate_names ($new_names, user => $user, time => $time);
 
-        http_redirect (303, 'Appended', get_page_url ($name, undef, $id));
+        if ($cgi->get_parameter ('redirect')) {
+          http_redirect (303, 'Appended', get_page_url ($name, undef, $id) . '#anchor-' . $anchor);
+        } else {
+          print qq[Status: 204 Appended\n\n];
+        }
         exit;
       }
     } else {
@@ -1528,4 +1556,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/12 11:54:19 $
+1; ## $Date: 2009/07/19 12:38:19 $
