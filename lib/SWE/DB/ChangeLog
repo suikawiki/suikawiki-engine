@@ -1,3 +1,8 @@
+2009-07-19  Wakaba  <wakaba@suika.fam.cx>
+
+	* HashedIndex.pm (_for_each_id): Operator evaluation order was
+	wrong.
+
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>
 
 	* HashedIndex.pm (lock, lock_file_name): New methods.

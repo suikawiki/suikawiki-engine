@@ -107,7 +107,7 @@ sub _for_each_id ($$$) {
         eq $self->{id_directory_suffix};
    
     my $id_high = 0+substr $id_dir_name,
-        0, length $id_dir_name - length $self->{id_directory_suffix};
+        0, (length $id_dir_name) - (length $self->{id_directory_suffix});
     my $id_directory_name = $dir_name . '/' . $id_dir_name;
     opendir my $dd, $id_directory_name or die "$0: $id_directory_name: $!";
     while (defined (my $f_name = readdir $dd)) {
@@ -115,7 +115,7 @@ sub _for_each_id ($$$) {
           eq $self->{leaf_suffix};
       
       my $id = $id_high * 1000 +
-          substr $f_name, 0, length $f_name - length $self->{leaf_suffix};
+          substr $f_name, 0, (length $f_name) - (length $self->{leaf_suffix});
       my $file_name = $id_directory_name . '/' . $f_name;
       $code->($id, $file_name);
     }
