@@ -41,9 +41,15 @@ sub rebless ($) {
   $self->reblessed = 1;
 }
 
+sub prop ($) {
+  my $self = shift;
+  return $self->{prop} ||= $self->db->id_prop->get_data ($self->id);
+} # prop
+
 sub content_media_type ($) {
-  return 'text/x-suikawiki';
-}
+  my $self = shift;
+  return $self->prop->{'content-type'} // 'text/x-suikawiki';
+} # content_media_type
 
 sub associate_names ($$%) {
   my ($self, $names, %args) = @_;
@@ -156,16 +162,27 @@ sub unlock ($) {
   }
 } # unlock
 
-for (qw/
-  to_text to_text_media_type
-  to_xml to_xml_media_type
-  to_html_fragment
-/) {
-  eval qq{
-    sub $_ {
-      die "\$_[0]\->$_: Method not implmeneted\n";
-    }
-  };
-}
+sub to_text ($) {
+  my $self = shift;
+
+  return $self->{content_db}->get_data ($self->id); # XXX
+} # to_text
+
+sub to_text_media_type ($) {
+  my $self = shift;
+  return $self->content_media_type;
+} # to_text_media_type
+
+sub to_xml_media_type ($) {
+  return undef;
+} # to_xml_media_type
+
+sub to_xml ($) {
+  return undef;
+} # to_xml
+
+sub to_html_fragment ($) {
+  return (undef, undef);
+} # to_html_fragment
 
 1;

@@ -45,6 +45,7 @@ $names_lock->{file_name} = $db_global_lock_dir_name . 'ids.lock';
 $names_lock->lock_type ('Names');
     ## NOTE: This lock MUST be used when $sw3pages or $name_prop_db is updated.
 
+# XXX $db->id_prop
 require SWE::DB::IDProps;
 my $id_prop_db = SWE::DB::IDProps->new;
 $id_prop_db->{root_directory_name} = $db_id_dir_name;
@@ -141,6 +142,7 @@ if ($path[0] eq 'n' and @path == 2) {
       exit;
     } elsif ($format eq 'xml' and defined $id) {
       ## XXX
+      $docobj->{content_db} = $content_db; ## XXX
       $docobj->{id_locks} = $id_locks;
       $docobj->{id_prop_db} = $id_prop_db;
       $docobj->{cache_prop_db} = $cache_prop_db;
@@ -166,6 +168,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $docobj->{id_locks} = $id_locks;
         $docobj->{id_prop_db} = $id_prop_db;
         $docobj->{cache_prop_db} = $cache_prop_db;
+        $docobj->{content_db} = $content_db; ## XXX
         $docobj->{swml_to_xml} = \&get_xml_data;
         $docobj->{name} = $name;
         $docobj->{get_page_url} = \&get_page_url;
@@ -190,15 +193,24 @@ if ($path[0] eq 'n' and @path == 2) {
       $html_doc->inner_html ('<!DOCTYPE HTML><title></title>');
       
       $html_doc->get_elements_by_tag_name ('title')->[0]->text_content ($name);
-      my @link = ({rel => 'alternate',
-                   type => $docobj->to_text_media_type,
-                   href => get_page_url ($name, undef, $id) . '?format=text'},
-                  {rel => 'alternate',
-                   type => $docobj->to_xml_media_type,
-                   href => get_page_url ($name, undef, $id) . '?format=xml'},
-                  {rel => 'archives',
+      
+      my @link;
+      
+      my $tmt = $docobj->to_text_media_type;
+      if (defined $tmt) {
+        push @link, {rel => 'alternate', type => $tmt,
+                     href => get_page_url ($name, undef, $id) . '?format=text'};
+      }
+
+      my $xmt = $docobj->to_xml_media_type;
+      if (defined $xmt) {
+        push @link, {rel => 'alternate', type => $xmt,
+                     href => get_page_url ($name, undef, $id) . '?format=xml'};
+      }
+      
+      push @link, {rel => 'archives',
                    href => get_page_url ($name, undef, undef) . ';history',
-                   title => 'History of the page name'});
+                   title => 'History of the page name'};
       if (defined $id) {
         push @link, {rel => 'archives',
                      href => '../i/' . $id . ';history',
@@ -1516,4 +1528,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/14 02:41:01 $
+1; ## $Date: 2009/09/14 03:12:03 $

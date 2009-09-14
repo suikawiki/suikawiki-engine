@@ -1,5 +1,12 @@
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* Document.pm (prop): New method.
+	(content_media_type): Changed to return the real media type.
+	(to_xml_media_type, to_text_media_type, to_xml, to_html_fragment):
+	Changed to return appropriate default value.
+
+2009-09-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* Document.pm: Added |rebless| method family.  Moved
 	SWML-to-HTML/XML/text convertion methods to another module.
 

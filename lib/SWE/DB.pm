@@ -70,6 +70,18 @@ sub id ($) {
   };
 } # id
 
+sub id_prop ($) {
+  my $self = shift;
+
+  return $self->{id_prop} ||= do {
+    require SWE::DB::IDProps;
+    my $id_prop_db = SWE::DB::IDProps->new;
+    $id_prop_db->{root_directory_name} = $self->id_dir_name;
+    $id_prop_db->{leaf_suffix} = '.props';
+    $id_prop_db;
+  };
+} # id_prop
+
 sub id_tfidf ($) {
   my $self = shift;
 

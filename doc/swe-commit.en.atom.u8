@@ -1,4 +1,31 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1252896060"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1252896060</id><title>2009-09-14 Wakaba</title><updated>2009-09-14T02:40:52Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/ChangeLog	14 Sep 2009 02:38:21 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1252897921"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1252897921</id><title>2009-09-14 Wakaba</title><updated>2009-09-14T03:11:50Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/ChangeLog	14 Sep 2009 03:08:53 -0000
+	* DB.pm (id_prop): New method.
+
+2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/lib/SWE/Object/Document/ChangeLog	14 Sep 2009 03:10:40 -0000
+	* SWML.pm (to_text, to_text_media_type): Moved back to the
+	superclass.
+
+	* CanvasInstructions.pm: New module.
+	
+2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/lib/SWE/Object/ChangeLog	14 Sep 2009 03:10:03 -0000
+	* Document.pm (prop): New method.
+	(content_media_type): Changed to return the real media type.
+	(to_xml_media_type, to_text_media_type, to_xml, to_html_fragment):
+	Changed to return appropriate default value.
+
+2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/lib/suikawiki/ChangeLog	14 Sep 2009 03:11:39 -0000
+	* main.pl: Don't generate rel=alternate links if it is known that
+	the alternate is not available.
+
+2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1252896060"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1252896060</id><title>2009-09-14 Wakaba</title><updated>2009-09-14T02:40:52Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/ChangeLog	14 Sep 2009 02:38:21 -0000
 	* Lang.pm: Changed module names.
 
 2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
@@ -643,4 +670,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-09-14T02:40:52Z</updated></feed>
+</content></entry><updated>2009-09-14T03:11:50Z</updated></feed>

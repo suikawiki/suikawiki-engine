@@ -1,5 +1,10 @@
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Don't generate rel=alternate links if it is known that
+	the alternate is not available.
+
+2009-09-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Call the |rebless| method on the SWE::Object::Document
 	module such that format-dependent methods can be invoked.
 

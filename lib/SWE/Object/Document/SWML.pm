@@ -1,17 +1,7 @@
 package SWE::Object::Document::SWML;
+use strict;
+use warnings;
 use base qw(SWE::Object::Document);
-
-sub to_text ($) {
-  my $self = shift;
-
-  return $self->{content_db}->get_data ($self->id); # XXX
-} # to_text
-
-sub to_text_media_type ($) {
-  my $self = shift;
-  my $id_prop = $self->{id_prop_db}->get_data ($self->id); ## XXX
-  return $id_prop->{'content-type'} // 'text/x-suikawiki';
-} # to_text_media_type
 
 sub to_xml ($;%) {
   my ($self, %args) = @_;

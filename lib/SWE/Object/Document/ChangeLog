@@ -1,5 +1,12 @@
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* SWML.pm (to_text, to_text_media_type): Moved back to the
+	superclass.
+
+	* CanvasInstructions.pm: New module.
+	
+2009-09-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* SWML.pm: New module.
 
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>
