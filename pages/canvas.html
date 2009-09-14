@@ -183,7 +183,7 @@ menu {
       e('text', newEvents.join ("\n")),
       e('content-type', 'image/x-canvas-instructions+text'),
       e('hash', param.hash),
-      e('names', param.names || ''),
+      e('names', param.names || '(image)'),
       e('no-redirect', 1)
     ].join ('&'));
   }
