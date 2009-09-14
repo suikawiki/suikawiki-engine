@@ -1,5 +1,9 @@
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* Document.pm (to_html_fragment): New method.
+
+2009-09-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* Document.pm (to_xml, to_text): New methods.
 
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>

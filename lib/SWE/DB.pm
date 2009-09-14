@@ -93,6 +93,18 @@ sub id_history ($) {
   };
 } # id_history
 
+sub id_html_cache ($) {
+  my $self = shift;
+  
+  return $self->{id_html_cache} ||= do {
+    require SWE::DB::IDDOM;
+    my $html_cache_db = SWE::DB::IDDOM->new;
+    $html_cache_db->{root_directory_name} = $self->id_dir_name;
+    $html_cache_db->{leaf_suffix} = '.htmlcache';
+    $html_cache_db;
+  };
+} # id_html_cache
+
 sub graph_prop ($) {
   my $self = shift;
 

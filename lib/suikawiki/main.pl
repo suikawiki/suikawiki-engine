@@ -169,79 +169,29 @@ if ($path[0] eq 'n' and @path == 2) {
       }
       exit;
     } elsif ($format eq 'html') {
-      state $html_cache_db;
-      unless (defined $html_cache_db) {
-        require SWE::DB::IDDOM;
-        $html_cache_db = SWE::DB::IDDOM->new;
-        $html_cache_db->{root_directory_name} = $db_id_dir_name;
-        $html_cache_db->{leaf_suffix} = '.htmlcache';
-      }
-      
       my $html_doc;
       my $html_container;
       my $title_text;
       my $id_prop;
       if (defined $id) {
-        $docobj->{id_locks} = $id_locks; ## XXX
+        # XXX
+        $docobj->{id_locks} = $id_locks;
+        $docobj->{id_prop_db} = $id_prop_db;
+        $docobj->{cache_prop_db} = $cache_prop_db;
+        $docobj->{swml_to_xml} = \&get_xml_data;
+        $docobj->{name} = $name;
+        $docobj->{get_page_url} = \&get_page_url;
+
         $docobj->lock;
-        
-        require SWE::Lang::XML2HTML;
-        my $html_converter_version = $SWE::Lang::XML2HTML::ConverterVersion;
-        
-        $id_prop = $id_prop_db->get_data ($id);
-        my $cache_prop = $cache_prop_db->get_data ($id);
-        
-        my $html_cache_version = $cache_prop->{'html-cache-version'};
-        if (defined $html_cache_version and
-            $html_cache_version >= $html_converter_version) {
-          my $html_cached_hash = $cache_prop->{'html-cached-hash'} // 'x';
-          my $current_hash = $id_prop->{hash} // '';
-          if ($html_cached_hash eq $current_hash) {
-            $html_doc = $html_cache_db->get_data ($id);
-          }
-        }
-        unless ($html_doc) {
-          ## XXX
-          $docobj->{id_prop_db} = $id_prop_db;
-          $docobj->{cache_prop_db} = $cache_prop_db;
-          $docobj->{swml_to_xml} = \&get_xml_data;
-          my $xml_doc = $docobj->to_xml;
-          
-          if ($xml_doc) {
-            $html_doc = $dom->create_document;
-            $html_doc->strict_error_checking (0);
-            $html_doc->dom_config->set_parameter
-                ('http://suika.fam.cx/www/2006/dom-config/strict-document-children' => 0);
-            $html_doc->manakai_is_html (1);
-            
-            $html_container = SWE::Lang::XML2HTML->convert
-                ($name, $xml_doc => $html_doc, \&get_page_url, 2);
-            
-            $html_cache_db->set_data ($id => $html_container);
-            $cache_prop->{'html-cached-hash'} = $id_prop->{hash};
-            $cache_prop->{'html-cache-version'} = $html_converter_version;
-            $cache_prop_db->set_data ($id => $cache_prop);
-          } else {
-            $html_doc = $dom->create_document;
-            $html_doc->strict_error_checking (0);
-            $html_doc->dom_config->set_parameter
-                ('http://suika.fam.cx/www/2006/dom-config/strict-document-children' => 0);
-            $html_doc->manakai_is_html (1);
-            $html_container = $html_doc->create_document_fragment;
-          }
-        } else {
-          $html_doc->manakai_is_html (1);
-          $html_container = $html_doc->create_document_fragment;
-          while (@{$html_doc->child_nodes}) {
-            $html_container->append_child ($html_doc->first_child);
-          }
-        }
+        ($html_doc, $html_container) = $docobj->to_html_fragment;
 
         $title_text = $id_prop->{title};
         ## TODO: $title_type
         
         $docobj->unlock;
-      } else {
+      }
+
+      unless ($html_doc) {
         $html_doc = $dom->create_document;
         $html_doc->strict_error_checking (0);
         $html_doc->dom_config->set_parameter
@@ -253,10 +203,10 @@ if ($path[0] eq 'n' and @path == 2) {
       
       $html_doc->get_elements_by_tag_name ('title')->[0]->text_content ($name);
       my @link = ({rel => 'alternate',
-                   type => 'text/x-suikawiki',
+                   type => $docobj->to_text_media_type,
                    href => get_page_url ($name, undef, $id) . '?format=text'},
                   {rel => 'alternate',
-                   type => 'application/xml', ## TODO: ok?
+                   type => $docobj->to_xml_media_type,
                    href => get_page_url ($name, undef, $id) . '?format=xml'},
                   {rel => 'archives',
                    href => get_page_url ($name, undef, undef) . ';history',
@@ -1578,4 +1528,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/14 01:26:33 $
+1; ## $Date: 2009/09/14 02:03:25 $
