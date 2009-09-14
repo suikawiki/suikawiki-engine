@@ -1,5 +1,7 @@
 use strict;
+use warnings;
 use feature 'state';
+use UNIVERSAL::require;
 
 ## --- Configurations
 
@@ -11,12 +13,17 @@ my $db_name_dir_name = $db_dir_name . q[names/];
 
 my @content_type =
 (
- {type => 'text/x-suikawiki', label => 'SWML'},
- {type => 'text/x.suikawiki.image'},
- {type => 'application/x.suikawiki.config'},
- {type => 'text/plain', label => 'Plain text'},
- {type => 'text/css', label => 'CSS'},
+  {type => 'text/x-suikawiki', module => 'SWE::Lang::SWML',
+   label => 'SWML'},
+  {type => 'text/x.suikawiki.image', module => 'SWE::Lang::SWML'},
+  {type => 'application/x.suikawiki.config'},
+  {type => 'text/plain', label => 'Plain text'},
+  {type => 'image/x-canvas-instructions+text',
+   module => 'SWE::Lang::CanvasInstructions',
+   label => 'Drawing'},
+  {type => 'text/css', label => 'CSS'},
 );
+my %content_type = map { $_->{type} => $_ } @content_type;
 
 ## --- Common modules
 
@@ -133,31 +140,33 @@ if ($path[0] eq 'n' and @path == 2) {
     ## TODO: Is it semantically valid that there is path?format=html
     ## (200) but no path?format=xml (404)?
 
+    require SWE::Object::Document;
+    my $docobj = SWE::Object::Document->new (id => $id, db => $db);
+
     if ($format eq 'text' and defined $id) {
-      my $content = $content_db->get_data ($id);
+      $docobj->{content_db} = $content_db; ## XXX
+      $docobj->{id_prop_db} = $id_prop_db; ## XXX
 
       binmode STDOUT, ':encoding(utf-8)';
-      print qq[Content-Type: text/x-suikawiki; charset=utf-8\n\n];
-      print $$content;
+      print qq[Content-Type: @{[$docobj->to_text_media_type]}; charset=utf-8\n\n];
+      print ${$docobj->to_text};
       exit;
     } elsif ($format eq 'xml' and defined $id) {
-      my $id_lock = $id_locks->get_lock ($id);
-      $id_lock->lock;
+      ## XXX
+      $docobj->{id_locks} = $id_locks;
+      $docobj->{id_prop_db} = $id_prop_db;
+      $docobj->{cache_prop_db} = $cache_prop_db;
+      $docobj->{swml_to_xml} = \&get_xml_data;
 
-      my $id_prop = $id_prop_db->get_data ($id);
-      my $cache_prop = $cache_prop_db->get_data ($id);
-      my $doc = get_xml_data ($id, $id_prop, $cache_prop);
-      
-      $id_lock->unlock;
-
-      binmode STDOUT, ':encoding(utf-8)';
-      print qq[Content-Type: application/xml; charset=utf-8\n\n];
-
-      if (scalar $cgi->get_parameter ('styled')) {
-        print q[<?xml-stylesheet href="http://suika.fam.cx/www/style/swml/structure"?>];
+      my $xmldoc = $docobj->to_xml (styled => scalar $cgi->get_parameter ('styled'));
+      if ($xmldoc) {
+        binmode STDOUT, ':encoding(utf-8)';
+        print qq[Content-Type: @{[$docobj->to_xml_media_type]}; charset=utf-8\n\n];
+        
+        print $xmldoc->inner_html;
+      } else {
+        http_error (406, q{format=xml is not supported for this page});
       }
- 
-      print $doc->inner_html;
       exit;
     } elsif ($format eq 'html') {
       state $html_cache_db;
@@ -173,8 +182,8 @@ if ($path[0] eq 'n' and @path == 2) {
       my $title_text;
       my $id_prop;
       if (defined $id) {
-        my $id_lock = $id_locks->get_lock ($id);
-        $id_lock->lock;
+        $docobj->{id_locks} = $id_locks; ## XXX
+        $docobj->lock;
         
         require SWE::Lang::XML2HTML;
         my $html_converter_version = $SWE::Lang::XML2HTML::ConverterVersion;
@@ -192,21 +201,34 @@ if ($path[0] eq 'n' and @path == 2) {
           }
         }
         unless ($html_doc) {
-          my $xml_doc = get_xml_data ($id, $id_prop, $cache_prop);
+          ## XXX
+          $docobj->{id_prop_db} = $id_prop_db;
+          $docobj->{cache_prop_db} = $cache_prop_db;
+          $docobj->{swml_to_xml} = \&get_xml_data;
+          my $xml_doc = $docobj->to_xml;
           
-          $html_doc = $dom->create_document;
-          $html_doc->strict_error_checking (0);
-          $html_doc->dom_config->set_parameter
-              ('http://suika.fam.cx/www/2006/dom-config/strict-document-children' => 0);
-          $html_doc->manakai_is_html (1);
-          
-          $html_container = SWE::Lang::XML2HTML->convert
-              ($name, $xml_doc => $html_doc, \&get_page_url, 2);
-          
-          $html_cache_db->set_data ($id => $html_container);
-          $cache_prop->{'html-cached-hash'} = $id_prop->{hash};
-          $cache_prop->{'html-cache-version'} = $html_converter_version;
-          $cache_prop_db->set_data ($id => $cache_prop);
+          if ($xml_doc) {
+            $html_doc = $dom->create_document;
+            $html_doc->strict_error_checking (0);
+            $html_doc->dom_config->set_parameter
+                ('http://suika.fam.cx/www/2006/dom-config/strict-document-children' => 0);
+            $html_doc->manakai_is_html (1);
+            
+            $html_container = SWE::Lang::XML2HTML->convert
+                ($name, $xml_doc => $html_doc, \&get_page_url, 2);
+            
+            $html_cache_db->set_data ($id => $html_container);
+            $cache_prop->{'html-cached-hash'} = $id_prop->{hash};
+            $cache_prop->{'html-cache-version'} = $html_converter_version;
+            $cache_prop_db->set_data ($id => $cache_prop);
+          } else {
+            $html_doc = $dom->create_document;
+            $html_doc->strict_error_checking (0);
+            $html_doc->dom_config->set_parameter
+                ('http://suika.fam.cx/www/2006/dom-config/strict-document-children' => 0);
+            $html_doc->manakai_is_html (1);
+            $html_container = $html_doc->create_document_fragment;
+          }
         } else {
           $html_doc->manakai_is_html (1);
           $html_container = $html_doc->create_document_fragment;
@@ -218,7 +240,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $title_text = $id_prop->{title};
         ## TODO: $title_type
         
-        $id_lock->unlock;
+        $docobj->unlock;
       } else {
         $html_doc = $dom->create_document;
         $html_doc->strict_error_checking (0);
@@ -1556,4 +1578,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/07/19 12:38:19 $
+1; ## $Date: 2009/09/14 01:26:33 $

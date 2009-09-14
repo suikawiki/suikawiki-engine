@@ -1,3 +1,10 @@
+2009-09-14  Wakaba  <wakaba@suika.fam.cx>
+
+	* main.pl: Changed format=text and format=xml to obtain the text
+	or xml variant from SWE::Object::Document.  Changed format=text to
+	obtain the xml variant from SWE::Object::Document and then convert
+	into HTML.
+
 2009-07-19  Wakaba  <wakaba@suika.fam.cx>
 
 	* main.pl: Extended posturl API for the use of bookmarklet.

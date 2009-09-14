@@ -119,4 +119,59 @@ sub update_tfidf ($$) {
   $tfidf_db->set_data ($id => \( $terms->stringify ));
 } # update_tfidf
 
+sub to_text ($) {
+  my $self = shift;
+
+  return $self->{content_db}->get_data ($self->id); # XXX
+} # to_text
+
+sub to_text_media_type ($) {
+  my $self = shift;
+  my $id_prop = $self->{id_prop_db}->get_data ($self->id); ## XXX
+  return $id_prop->{'content-type'} // 'text/x-suikawiki';
+} # to_text_media_type
+
+sub lock ($) {
+  my $self = shift;
+  my $lock = $self->{lock} ||= $self->{id_locks}->get_lock ($self->id); ## XXX
+  $self->{lock_n}++ or $self->lock;
+} # lock
+
+sub unlock ($) {
+  my $self = shift;
+  my $lock = $self->{lock};
+  $self->{lock_n}--;
+  if ($lock and $self->{lock_n} <= 0) {
+    $lock->unlock;
+    delete $self->{lock};
+    delete $self->{lock_n};
+  }
+} # unlock
+
+sub to_xml ($;%) {
+  my ($self, %args) = @_;
+
+  my $id = $self->id;
+
+  $self->lock;
+  
+  my $id_prop = $self->{id_prop_db}->get_data ($id); ## XXX
+  my $cache_prop = $self->{cache_prop_db}->get_data ($id); ## XXX
+  my $doc = $self->{swml_to_xml}->($id, $id_prop, $cache_prop); ## XXX
+
+  $self->unlock;
+
+  if ($args{styled}) {
+    my $pi = $doc->create_processing_instruction
+        ('xml-stylesheet', 'href="http://suika.fam.cx/www/style/swml/structure"');
+    $doc->insert_before ($pi, $doc->first_child);
+  }
+  
+  return $doc;
+}
+
+sub to_xml_media_type ($) {
+  return 'application/xml';
+}
+
 1;
