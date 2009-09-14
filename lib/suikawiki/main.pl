@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use feature 'state';
-use UNIVERSAL::require;
 
 ## --- Configurations
 
@@ -10,20 +9,6 @@ my $db_sw3_dir_name = $db_dir_name . 'sw3pages/';
 my $db_global_lock_dir_name = $db_dir_name;
 my $db_id_dir_name = $db_dir_name . q[ids/];
 my $db_name_dir_name = $db_dir_name . q[names/];
-
-my @content_type =
-(
-  {type => 'text/x-suikawiki', module => 'SWE::Lang::SWML',
-   label => 'SWML'},
-  {type => 'text/x.suikawiki.image', module => 'SWE::Lang::SWML'},
-  {type => 'application/x.suikawiki.config'},
-  {type => 'text/plain', label => 'Plain text'},
-  {type => 'image/x-canvas-instructions+text',
-   module => 'SWE::Lang::CanvasInstructions',
-   label => 'Drawing'},
-  {type => 'text/css', label => 'CSS'},
-);
-my %content_type = map { $_->{type} => $_ } @content_type;
 
 ## --- Common modules
 
@@ -37,6 +22,8 @@ use Message::CGI::Util qw/percent_encode percent_encode_na
   datetime_in_content/;
 
 require Char::Normalize::FullwidthHalfwidth;
+
+use SWE::Lang qw/@ContentMediaType/;
 
 ## --- Prepares database access variables (commonly used ones)
 
@@ -1181,7 +1168,7 @@ sub get_content_type_parameter () {
   my $ct = $cgi->get_parameter ('content-type') // 'text/x-suikawiki';
   
   my $valid_ct;
-  for (@content_type) {
+  for (@ContentMediaType) {
     if ($_->{type} eq $ct) {
       $valid_ct = 1;
       last;
@@ -1200,7 +1187,7 @@ sub set_content_type_options ($$;$) {
   $ct //= 'text/x-suikawiki';
   
   my $has_ct;
-  for (@content_type) {
+  for (@ContentMediaType) {
     next unless defined $_->{label};
     my $option_el = $doc->create_element_ns (HTML_NS, 'option');
     $option_el->set_attribute (value => $_->{type});
@@ -1528,4 +1515,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/14 02:03:25 $
+1; ## $Date: 2009/09/14 02:13:13 $

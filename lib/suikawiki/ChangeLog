@@ -1,5 +1,9 @@
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Moved media type list to an external module.
+
+2009-09-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Moved format=html processing to external module.
 
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>

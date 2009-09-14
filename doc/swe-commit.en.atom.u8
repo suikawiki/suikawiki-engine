@@ -1,4 +1,14 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1252893804"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1252893804</id><title>2009-09-14 Wakaba</title><updated>2009-09-14T02:03:16Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	14 Sep 2009 02:03:14 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1252894392"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1252894392</id><title>2009-09-14 Wakaba</title><updated>2009-09-14T02:13:00Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/ChangeLog	14 Sep 2009 02:12:58 -0000
+2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* Lang.pm: New module.
+
+++ swe/lib/suikawiki/ChangeLog	14 Sep 2009 02:12:48 -0000
+	* main.pl: Moved media type list to an external module.
+
+2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1252893804"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1252893804</id><title>2009-09-14 Wakaba</title><updated>2009-09-14T02:03:16Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	14 Sep 2009 02:03:14 -0000
 	* Document.pm (to_html_fragment): New method.
 
 2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
@@ -609,4 +619,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-09-14T02:03:16Z</updated></feed>
+</content></entry><updated>2009-09-14T02:13:00Z</updated></feed>
