@@ -1,5 +1,12 @@
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* Document.pm: Added |rebless| method family.  Moved
+	SWML-to-HTML/XML/text convertion methods to another module.
+
+	* Document/: New directory.
+
+2009-09-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* Document.pm (to_html_fragment): New method.
 
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>

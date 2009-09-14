@@ -1,5 +1,10 @@
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Call the |rebless| method on the SWE::Object::Document
+	module such that format-dependent methods can be invoked.
+
+2009-09-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Moved media type list to an external module.
 
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>

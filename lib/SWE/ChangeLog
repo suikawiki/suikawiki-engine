@@ -1,5 +1,9 @@
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>
 
+	* Lang.pm: Changed module names.
+
+2009-09-14  Wakaba  <wakaba@suika.fam.cx>
+
 	* Lang.pm: New module.
 
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>

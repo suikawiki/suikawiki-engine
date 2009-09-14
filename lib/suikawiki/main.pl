@@ -129,6 +129,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
     require SWE::Object::Document;
     my $docobj = SWE::Object::Document->new (id => $id, db => $db);
+    $docobj->rebless;
 
     if ($format eq 'text' and defined $id) {
       $docobj->{content_db} = $content_db; ## XXX
@@ -1515,4 +1516,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/14 02:13:13 $
+1; ## $Date: 2009/09/14 02:41:01 $
