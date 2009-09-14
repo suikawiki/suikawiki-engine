@@ -106,6 +106,58 @@ SW.PageContents.getInstance = function () {
   return this._instance;
 }; // getInstance
 
+var CanvasInstructions = new SAMI.Class(function (canvas) {
+  this.canvas = canvas;
+}, {
+  clear: function () {
+    this.canvas.width = this.canvas.width;
+  }, // clear
+
+  processText: function (text) {
+    text = text.replace (/^<!--/, '').replace (/-->$/, '');
+    this.processLines (text.split(/\x0D\x0A?|\x0A/));
+  }, // processText
+
+  processLines: function (lines) {
+    var ctx = this.canvas.getContext ('2d');
+    for (var i = 0; i < lines.length; i++) {
+      var ev = lines[i].split (/,/);
+      if (ev[0] == 'lineTo') {
+        var x = parseFloat (ev[1]);
+        var y = parseFloat (ev[2]);
+        ctx.lineTo (x, y);
+        ctx.stroke ();
+//        ctx.closePath ();
+//        ctx.beginPath ();
+//        ctx.moveTo (x, y);
+      } else if (ev[0] == 'moveTo') {
+        var x = parseFloat (ev[1]);
+        var y = parseFloat (ev[2]);
+        ctx.moveTo (x, y);
+      } else if (ev[0] == 'strokeStyle' || ev[0] == 'lineWidth') {
+        ctx.closePath ();
+        ctx.beginPath ();
+        ctx[ev[0]] = ev[1];
+      }
+    }
+  } // processLines
+}); // CanvasInstructions
+
+SW.Drawings = {};
+SAMI.Class.addClassMethods (SW.Drawings, {
+  drawCanvases: function () {
+    var canvases = SAMI.Node.getElementsByClassName (document.body, 'swe-canvas-instructions');
+    canvases.forEach(function (canvas) {
+      var script = canvas.firstChild;
+      if (!script) return;
+      if (script.nodeName.toLowerCase () != 'script') return;
+      if (script.type != 'image/x-canvas-instructions+text') return;
+      var text = SAMI.Element.getTextContent (script);
+      new CanvasInstructions (canvas).processText (text);
+    });
+  } // drawCanvases
+}); // SW.Drawings
+
 SW.init = function () {
   var doc = SW.CurrentDocument.getInstance ();
   if (doc.area == 'n') {
@@ -118,6 +170,8 @@ SW.init = function () {
         SW.PageContents.getInstance ().insertSection ('search-results', ol);
       }
     }).get ();
+
+    SW.Drawings.drawCanvases ();
   }
 
 }; // init
