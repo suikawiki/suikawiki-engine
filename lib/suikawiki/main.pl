@@ -1,5 +1,4 @@
 use strict;
-use warnings;
 use feature 'state';
 
 ## --- Configurations
@@ -137,6 +136,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $docobj->{id_prop_db} = $id_prop_db; ## XXX
 
       binmode STDOUT, ':encoding(utf-8)';
+      print qq[X-SW-Hash: @{[ $id_prop_db->get_data ($id)->{hash} ]}\n];
       print qq[Content-Type: @{[$docobj->to_text_media_type]}; charset=utf-8\n\n];
       print ${$docobj->to_text};
       exit;
@@ -607,10 +607,12 @@ if ($path[0] eq 'n' and @path == 2) {
         $id_prop->{modified} = time;
         $id_prop->{hash} = get_hash ($textref);
 
-        my $title = $cgi->get_parameter ('title') // '';
-        normalize_content (\$title);
-        $id_prop->{title} = $title;
-        $id_prop->{'title-type'} = 'text/plain'; ## TODO: get_parameter
+        my $title = $cgi->get_parameter ('title');
+        if (defined $title) {
+          normalize_content (\$title);
+          $id_prop->{title} = $title;
+          $id_prop->{'title-type'} = 'text/plain'; ## TODO: get_parameter
+        }
 
         my $vc = $db->vc;
         local $content_db->{version_control} = $vc;
@@ -632,9 +634,12 @@ if ($path[0] eq 'n' and @path == 2) {
 
         my $url = get_page_url ([keys %{$id_prop->{name} or {}}]->[0],
                                 undef, 0 + $id);
-        http_redirect (301, 'Saved', $url);
-        #print qq[Status: 204 Saved\n\n];
-        #exit;
+        print "X-SW-Hash: $id_prop->{hash}\n";
+        if ($cgi->get_parameter ('no-redirect')) {
+          http_redirect (201, 'Saved', $url);
+        } else {
+          http_redirect (301, 'Saved', $url);
+        }
       } else {
         http_error (404, 'Not found');
       }
@@ -648,6 +653,26 @@ if ($path[0] eq 'n' and @path == 2) {
     if (defined $textref) {
       binmode STDOUT, ':encoding(utf-8)';
       print qq[Content-Type: text/html; charset=utf-8\n\n];
+
+      require SWE::Object::Document;
+      my $doc = SWE::Object::Document->new (db => $db, id => $id);
+
+      my $id_prop = $id_prop_db->get_data ($id);
+      my $names = $id_prop->{name} || {};
+      my $hash = $id_prop->{hash} // get_hash ($textref);
+
+      my $custom_edit = '';
+      if ($doc->content_media_type eq 'image/x-canvas-instructions+text') {
+        my $request_uri = $cgi->request_uri;
+        my $source_url = get_absolute_url (get_page_url ([keys %$names]->[0], undef, $id) . '?format=text', $request_uri);
+        my $post_url = get_absolute_url ($id, $request_uri);
+        my $url = 'http://suika.fam.cx/swe/pages/canvas?input-url=' . percent_encode ($source_url) . ';post-url=' . percent_encode($post_url);
+        $custom_edit = q[<a href="].$url.q[">Edit image</a>];
+
+        $post_url = get_absolute_url ('../new-page', $request_uri);
+        $url = 'http://suika.fam.cx/swe/pages/canvas?input-url=' . percent_encode ($source_url) . ';post-url=' . percent_encode($post_url);
+        $custom_edit .= q[ <a href="].$url.q[">Clone image</a>];
+      }
       
       ## TODO: <select name=title-type>
       my $html_doc = $dom->create_document;
@@ -658,6 +683,8 @@ if ($path[0] eq 'n' and @path == 2) {
 
 <div class=section>
 <h2>Page</h2>
+
+].$custom_edit.q[
 
 <form method=post accept-charset=utf-8>
 <p><button type=submit>Update</button>
@@ -690,12 +717,9 @@ if ($path[0] eq 'n' and @path == 2) {
       my $ta_el = $form_el->get_elements_by_tag_name ('textarea')->[0];
       $ta_el->text_content ($$textref);
 
-      my $id_prop = $id_prop_db->get_data ($id);
-
       my $title_field = $form_el->get_elements_by_tag_name ('input')->[0];
       $title_field->set_attribute (value => $id_prop->{title} // '');
 
-      my $hash = $id_prop->{hash} // get_hash ($textref);
       my $hash_field = $form_el->get_elements_by_tag_name ('input')->[1];
       $hash_field->set_attribute (value => $hash);
 
@@ -715,7 +739,6 @@ if ($path[0] eq 'n' and @path == 2) {
       $form_el = $html_doc->get_elements_by_tag_name ('form')->[1];
       $form_el->set_attribute (action => $id . ';names');
       
-      my $names = $id_prop->{name} || {};
       $ta_el = $form_el->get_elements_by_tag_name ('textarea')->[0];
       $ta_el->text_content (join "\x0A", keys %$names);
 
@@ -969,6 +992,7 @@ if ($path[0] eq 'n' and @path == 2) {
     $document->{sw3_pages} = $sw3_pages; ## TODO: ...
 
     my $id = $document->id;
+    my $id_prop = {};
 
     {
       ## This must be done before the ID lock.
@@ -986,29 +1010,27 @@ if ($path[0] eq 'n' and @path == 2) {
       local $id_history_db->{version_control} = $vc;
 
       $content_db->set_data ($id => \$content);
-      
-      my $id_props = {};
 
       $id_history_db->append_data ($id => [$time, 'c']);
-      $id_props->{modified} = $time;
+      $id_prop->{modified} = $time;
       
       for (keys %$new_names) {
-        $id_props->{name}->{$_} = 1;
+        $id_prop->{name}->{$_} = 1;
         $id_history_db->append_data ($id => [$time, 'a', $_]);
       }
 
-      $id_props->{'content-type'} = $ct;
-      $id_props->{hash} = get_hash (\$content);
-      $id_props->{title} = $cgi->get_parameter ('title') // '';
-      normalize_content (\($id_props->{title}));
-      $id_props->{'title-type'} = 'text/plain'; ## TODO: get_parameter
-      $id_prop_db->set_data ($id => $id_props);
+      $id_prop->{'content-type'} = $ct;
+      $id_prop->{hash} = get_hash (\$content);
+      $id_prop->{title} = $cgi->get_parameter ('title') // '';
+      normalize_content (\($id_prop->{title}));
+      $id_prop->{'title-type'} = 'text/plain'; ## TODO: get_parameter
+      $id_prop_db->set_data ($id => $id_prop);
 
       $vc->commit_changes ("created by $user");
 
       ## TODO: non-default content-type support
       my $cache_prop = $cache_prop_db->get_data ($id);
-      my $doc = $id_props ? get_xml_data ($id, $id_props, $cache_prop) : undef;
+      my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
       
       if (defined $doc) {
         $document->update_tfidf ($doc);
@@ -1019,17 +1041,33 @@ if ($path[0] eq 'n' and @path == 2) {
 
     $document->associate_names ($new_names, user => $user, time => $time);
     
+    print "X-SW-Hash: $id_prop->{hash}\n";
+    
+    my $post_url = get_absolute_url ("i/$id", $cgi->request_uri);
+    print "X-SW-Post-URL: $post_url\n";
+
     my $url = get_page_url ([keys %$new_names]->[0], undef, 0 + $id);
-    http_redirect (301, 'Created', $url);
+    if ($cgi->get_parameter ('no-redirect')) {
+      http_redirect (201, 'Created', $url);
+    } else {
+      http_redirect (301, 'Created', $url);
+    }
   } else {
     binmode STDOUT, ':encoding(utf8)';
     print "Content-Type: text/html; charset=utf-8\n\n";
+
+    my $custom_edit = '';
+    my $request_uri = $cgi->request_uri;
+    my $post_url = get_absolute_url ('new-page', $request_uri);
+    my $url = 'http://suika.fam.cx/swe/pages/canvas?post-url=' . percent_encode($post_url);
+    $custom_edit = q[<a href="].$url.q[">Image</a>];
 
     ## TODO: select name=title-type
     my $doc = $dom->create_document;
     $doc->manakai_is_html (1);
     $doc->inner_html (q[<!DOCTYPE HTML><title>New page</title>
 <h1>New page</h1>
+].$custom_edit.q[
 <form action=new-page method=post accept-charset=utf-8>
 <p><button type=submit>Save</button>
 <p><label><strong>Page name(s)</strong>:<br>
@@ -1528,4 +1566,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/14 03:12:03 $
+1; ## $Date: 2009/09/14 06:01:13 $
