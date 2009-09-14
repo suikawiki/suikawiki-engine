@@ -1,4 +1,15 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1252908072"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1252908072</id><title>2009-09-14 Wakaba</title><updated>2009-09-14T06:00:54Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	14 Sep 2009 05:59:53 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1252908996"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1252908996</id><title>2009-09-14 Wakaba</title><updated>2009-09-14T06:16:24Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	14 Sep 2009 06:15:55 -0000
+	* main.pl: Added names=&quot;&quot; parameter to canvas editor link.
+
+2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/pages/ChangeLog	14 Sep 2009 06:16:20 -0000
+	* canvas.html: Added names=&quot;&quot; parameter to specify the names of
+	new images.
+
+2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1252908072"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1252908072</id><title>2009-09-14 Wakaba</title><updated>2009-09-14T06:00:54Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	14 Sep 2009 05:59:53 -0000
 	* main.pl: Added links to canvas editor.
 
 2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
@@ -681,4 +692,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-09-14T06:00:54Z</updated></feed>
+</content></entry><updated>2009-09-14T06:16:24Z</updated></feed>

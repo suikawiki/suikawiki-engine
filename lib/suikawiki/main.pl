@@ -126,7 +126,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
     ## TODO: Is it semantically valid that there is path?format=html
     ## (200) but no path?format=xml (404)?
-
+    
     require SWE::Object::Document;
     my $docobj = SWE::Object::Document->new (id => $id, db => $db);
     $docobj->rebless;
@@ -163,6 +163,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $html_container;
       my $title_text;
       my $id_prop;
+      
       if (defined $id) {
         # XXX
         $docobj->{id_locks} = $id_locks;
@@ -1059,7 +1060,8 @@ if ($path[0] eq 'n' and @path == 2) {
     my $custom_edit = '';
     my $request_uri = $cgi->request_uri;
     my $post_url = get_absolute_url ('new-page', $request_uri);
-    my $url = 'http://suika.fam.cx/swe/pages/canvas?post-url=' . percent_encode($post_url);
+    my $names = $cgi->get_parameter ('names') // '';
+    my $url = 'http://suika.fam.cx/swe/pages/canvas?post-url=' . percent_encode($post_url) . ';names=' . percent_encode ($names);
     $custom_edit = q[<a href="].$url.q[">Image</a>];
 
     ## TODO: select name=title-type
@@ -1566,4 +1568,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/14 06:01:13 $
+1; ## $Date: 2009/09/14 06:16:38 $

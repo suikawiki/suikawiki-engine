@@ -33,8 +33,14 @@ sub rebless ($) {
   my $self = shift;
   return if $self->reblessed;
 
-  my $ct = $self->content_media_type;
-  my $module = $ContentMediaType{$ct}->{module} || $ContentMediaType{'text/x-suikawiki'}->{module};
+  my $id = $self->id;
+  my $module;
+  if (defined $id) {
+    my $ct = $self->content_media_type;
+    $module = $ContentMediaType{$ct}->{module} || $ContentMediaType{'text/x-suikawiki'}->{module};
+  } else {
+    $module = 'SWE::Object::Document::NotYet';
+  }
   $module->require or die $@;
   bless $self, $module;
 
