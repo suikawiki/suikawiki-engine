@@ -288,6 +288,20 @@ if ($path[0] eq 'n' and @path == 2) {
         $body_el->append_child ($article_el);
       }
 
+      my $ad_el = $html_doc->create_element_ns (HTML_NS, 'aside');
+      $ad_el->set_attribute (class => 'swe-ad');
+      $ad_el->inner_html (q[
+        <script>
+          google_ad_client = "pub-6943204637055835";
+          google_ad_slot = "4290129344";
+          google_ad_width = 728;
+          google_ad_height = 90;
+        </script>
+        <script src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        </script>
+      ]);
+      $body_el->append_child ($ad_el);
+
       my $footer_el = $html_doc->create_element_ns (HTML_NS, 'footer');
       $footer_el->set_attribute (class => 'footer');
       $footer_el->inner_html (q[<p class=copyright><small>&copy; Authors.  See <a rel=license>license terms</a>.  There might also be additional terms applied for this page.</small>]);
@@ -1568,4 +1582,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/14 06:16:38 $
+1; ## $Date: 2009/09/19 07:43:52 $

@@ -1,4 +1,14 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1252909412"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1252909412</id><title>2009-09-14 Wakaba</title><updated>2009-09-14T06:23:15Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/pages/ChangeLog	14 Sep 2009 06:23:13 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253346230"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253346230</id><title>2009-09-19 Wakaba</title><updated>2009-09-19T07:43:40Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	19 Sep 2009 07:43:34 -0000
+2009-09-19  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* main.pl: Added Google AdSense.
+
+++ swe/styles/ChangeLog	19 Sep 2009 07:43:26 -0000
+2009-09-19  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw.css: Added styles for Google AdSense.
+
+</content></entry><entry xml:id="entry-1252909412"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1252909412</id><title>2009-09-14 Wakaba</title><updated>2009-09-14T06:23:15Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/pages/ChangeLog	14 Sep 2009 06:23:13 -0000
 	* canvas.html: Set the default page name to &quot;(image)&quot;.
 
 2009-09-14  Wakaba  &lt;wakaba@suika.fam.cx&gt;
@@ -697,4 +707,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-09-14T06:23:15Z</updated></feed>
+</content></entry><updated>2009-09-19T07:43:40Z</updated></feed>

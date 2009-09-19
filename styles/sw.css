@@ -456,3 +456,9 @@ textarea[name=names] {
 input[name=title] {
   width: 98%;
 }
+
+.swe-ad {
+  display: block;
+  margin-left: 2em;
+  margin-top: 1em;
+}
