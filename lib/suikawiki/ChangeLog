@@ -1,5 +1,9 @@
 2009-09-19  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: |$id_prop| had been unintentionally unset.
+
+2009-09-19  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Added Google AdSense.
 
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>

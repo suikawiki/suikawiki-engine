@@ -177,6 +177,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $docobj->lock;
         ($html_doc, $html_container) = $docobj->to_html_fragment;
 
+        $id_prop = $id_prop_db->get_data ($id);
         $title_text = $id_prop->{title};
         ## TODO: $title_type
         
@@ -1582,4 +1583,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/19 07:43:52 $
+1; ## $Date: 2009/09/19 10:35:24 $
