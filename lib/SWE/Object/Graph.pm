@@ -13,6 +13,7 @@ sub db { $_[0]->{db} }
 
 use constant EMPTY_NODE_RATIO => 0.2;
 use constant INITIAL_DEGREE => 5;
+use constant NODE_CREATION_RATIO => 0.1;
 
 sub add_nodes ($$) {
   my ($self, $new_doc_number) = @_;
@@ -22,8 +23,14 @@ sub add_nodes ($$) {
   my $global_prop_db = $self->db->global_prop;
   
   my $last_node_index = ${$global_prop_db->get_data ('lastnodeindex') || \ 0};
-  my $max_node_index = int ($last_node_index + $new_doc_number / (1 - EMPTY_NODE_RATIO)) + 1;
-      
+  my $doc_on_node_number = ${$global_prop_db->get_data ('doconnodenumber') || \ 0};
+  $doc_on_node_number += $new_doc_number;
+  my $max_node_index = $doc_on_node_number / (1 - EMPTY_NODE_RATIO);
+  $max_node_index = $last_node_index if $max_node_index < $last_node_index;
+  $max_node_index = $last_node_index + $new_doc_number
+      if $max_node_index < $last_node_index + $new_doc_number;
+  $max_node_index = int $max_node_index;
+
   if ($last_node_index < $max_node_index) {
     my $new_edges = {};
     
@@ -48,6 +55,7 @@ sub add_nodes ($$) {
 
     $global_prop_db->set_data (lastnodeindex => \$max_node_index);
   }
+  $global_prop_db->set_data (doconnodenumber => \$doc_on_node_number);
 
   return ($last_node_index + 1 .. $max_node_index);
 } # add_nodes

@@ -1,4 +1,10 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253356523"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253356523</id><title>2009-09-19 Wakaba</title><updated>2009-09-19T10:35:16Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	19 Sep 2009 10:35:13 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253426959"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253426959</id><title>2009-09-20 Wakaba</title><updated>2009-09-20T06:09:11Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	20 Sep 2009 06:08:30 -0000
+2009-09-20  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* Graph.pm (add_nodes): Improved the way to determine the number
+	of added nodes.
+
+</content></entry><entry xml:id="entry-1253356523"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253356523</id><title>2009-09-19 Wakaba</title><updated>2009-09-19T10:35:16Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	19 Sep 2009 10:35:13 -0000
 	* main.pl: |$id_prop| had been unintentionally unset.
 
 2009-09-19  Wakaba  &lt;wakaba@suika.fam.cx&gt;
@@ -712,4 +718,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-09-19T10:35:16Z</updated></feed>
+</content></entry><updated>2009-09-20T06:09:11Z</updated></feed>
