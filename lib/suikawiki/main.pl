@@ -1190,6 +1190,8 @@ if ($path[0] eq 'n' and @path == 2) {
     }
   }
 
+  $graph->schelling_update ($id);
+
   exit;
 } elsif (@path == 1 and
          {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
@@ -1583,4 +1585,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/19 10:35:24 $
+1; ## $Date: 2009/09/20 08:54:33 $

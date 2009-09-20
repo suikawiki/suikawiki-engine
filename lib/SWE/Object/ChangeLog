@@ -1,5 +1,9 @@
 2009-09-20  Wakaba  <wakaba@suika.fam.cx>
 
+	* Graph.pm (schelling_update): Implemented.
+
+2009-09-20  Wakaba  <wakaba@suika.fam.cx>
+
 	* Graph.pm (add_nodes): Improved the way to determine the number
 	of added nodes.
 

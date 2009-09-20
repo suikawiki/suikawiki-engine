@@ -1,4 +1,9 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253426959"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253426959</id><title>2009-09-20 Wakaba</title><updated>2009-09-20T06:09:11Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	20 Sep 2009 06:08:30 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253436872"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253436872</id><title>2009-09-20 Wakaba</title><updated>2009-09-20T08:54:29Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	20 Sep 2009 08:53:58 -0000
+	* Graph.pm (schelling_update): Implemented.
+
+2009-09-20  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1253426959"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253426959</id><title>2009-09-20 Wakaba</title><updated>2009-09-20T06:09:11Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	20 Sep 2009 06:08:30 -0000
 2009-09-20  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
 	* Graph.pm (add_nodes): Improved the way to determine the number
@@ -718,4 +723,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-09-20T06:09:11Z</updated></feed>
+</content></entry><updated>2009-09-20T08:54:29Z</updated></feed>

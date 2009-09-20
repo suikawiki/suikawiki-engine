@@ -13,7 +13,6 @@ sub db { $_[0]->{db} }
 
 use constant EMPTY_NODE_RATIO => 0.2;
 use constant INITIAL_DEGREE => 5;
-use constant NODE_CREATION_RATIO => 0.1;
 
 sub add_nodes ($$) {
   my ($self, $new_doc_number) = @_;
@@ -87,5 +86,53 @@ sub get_node_by_id ($$) {
 
   return $node;
 } # get_node_by_id
+
+use constant RELATEDNESS_THRESHOLD => 0.9;
+
+sub schelling_update ($$) {
+  my ($self, $node_id) = @_;
+
+  my $node = $self->get_node_by_id ($node_id);
+  my $doc_id = $node->document_id // return;
+
+  require SWE::Object::Repository;
+  my $repo = SWE::Object::Repository->new (db => $self->db);
+
+  my $related = 0;
+  my $n = 0;
+  
+  my $neighbor_ids = $node->neighbor_ids;
+  my $unused_nodes = [];
+  for my $n_node_id (keys %$neighbor_ids) {
+    $n++;
+    my $n_node = $self->get_node_by_id ($n_node_id);
+    my $n_doc_id = $n_node->document_id;
+    unless (defined $n_doc_id) {
+      push @$unused_nodes, $n_node;
+      next;
+    }
+    $related++ if $repo->are_related_ids ($node_id, $n_doc_id);
+  }
+
+  my $v = 0;
+  if ($n) {
+    $v = $related / $n;
+  }
+
+  if ($v < RELATEDNESS_THRESHOLD and @$unused_nodes) {
+    my $unused_node = $unused_nodes->[rand @$unused_nodes];
+
+    my $id_prop_db = $self->db->id_prop;
+    my $id_prop = $id_prop_db->get_data ($doc_id);
+    
+    $id_prop->{node_id} = $unused_node->id;
+    $unused_node->prop->{ids}->{$doc_id} = 1;
+    delete $node->prop->{ids}->{$doc_id};
+
+    $unused_node->save_prop;
+    $id_prop_db->set_data ($doc_id => $id_prop);
+    $node->save_prop;
+  }
+} # schelling_update
 
 1;
