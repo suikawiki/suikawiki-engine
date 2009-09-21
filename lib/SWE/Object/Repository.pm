@@ -34,28 +34,41 @@ sub get_document_by_id ($$) {
   };
 } # get_document_by_id
 
-# XXX
-my $weight_file_name = 'data/weight.txt';
+## ------ The Term Weight Vector ------
+
+sub weight_lock () {
+  my $self = shift;
+
+  if ($self->{weight_lock_n}++ == 0) {
+    my $lock = $self->{weight_lock} ||= do {
+      require SWE::DB::Lock;
+      my $lock = SWE::DB::Lock->new;
+      $lock->{file_name} = $self->db->global_dir_name . 'weight.lock';
+      $lock->lock_type ('Weight');
+      $lock;
+    };
+
+    $lock->lock;
+  };
+} # weight_lock
+
+sub weight_unlock () {
+  my $self = shift;
+  
+  if (--$self->{weight_lock_n} <= 0 and $self->{weight_lock}) {
+    $self->{weight_lock}->unlock;
+  }
+} # weight_unlock
 
 sub term_weight_vector ($) {
   my $self = shift;
 
-  ## TODO: lock
-
-  ## TODO: use global props
-
   return $self->{term_weight_vector} ||= do {
     require SWE::Data::FeatureVector;
 
-    my $w;
-    if (-f $weight_file_name) {
-      local $/ = undef;
-      open my $file, '<:encoding(utf8)', $weight_file_name or die "$0: $weight_file_name: $!";
-      $w = SWE::Data::FeatureVector->parse_stringref (\<$file>);
-      close $file;
-    } else {
-      $w = SWE::Data::FeatureVector->new;
-    }
+    my $global_prop_db = $self->db->global_prop;
+    my $w = SWE::Data::FeatureVector->parse_stringref
+        ($global_prop_db->get_data ('termweightvector') || \ '');
     delete $self->{term_weight_vector_modified};
     $w;
   };
@@ -64,12 +77,10 @@ sub term_weight_vector ($) {
 sub save_term_weight_vector ($) {
   my $self = shift;
   return unless $self->{term_weight_vector_modified};
-  
-  ## TODO: use global props
-  
-  open my $file, '>:encoding(utf8)', $weight_file_name or die "$0: $weight_file_name: $!";
-  print $file $self->{term_weight_vector}->stringify;
-  close $file;
+
+  my $global_prop_db = $self->db->global_prop;
+  $global_prop_db->set_data
+      (termweightvector => \($self->{term_weight_vector}->stringify));
 } # save_term_weight_vector
 
 sub are_related_ids ($$$;$) {

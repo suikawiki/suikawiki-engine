@@ -1,5 +1,11 @@
 2009-09-21  Wakaba  <wakaba@suika.fam.cx>
 
+	* Repository.pm (weight_lock, weight_unlock): New methods.
+	(term_weight_vector, save_term_weight_vector): Changed to use
+	global props to save the term weight vector.
+
+2009-09-21  Wakaba  <wakaba@suika.fam.cx>
+
 	* Document.pm (repo, prop_untainted, untainted_prop, save_prop,
 	locked): New method.  Introduced the concept of "tainted" such
 	that we can access to the property in the locked code fragment

@@ -968,10 +968,15 @@ if ($path[0] eq 'n' and @path == 2) {
       
       require SWE::Object::Repository;
       my $repo = SWE::Object::Repository->new (db => $db);
+
+      my $vc = $db->vc;
       
+      $repo->weight_lock;
+      local $db->global_prop->{version_control} = $vc;
       my $y = $repo->are_related_ids ($id1, $id2, $answer);
-      
       $repo->save_term_weight_vector;
+      $vc->commit_changes ('term weight vector update');
+      $repo->weight_unlock;
       
       print "Content-Type: text/ping\n\n";
       print "PING";
@@ -1544,4 +1549,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/21 09:10:40 $
+1; ## $Date: 2009/09/21 09:30:37 $
