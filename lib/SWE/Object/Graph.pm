@@ -9,15 +9,43 @@ sub new ($%) {
   return $self;
 }
 
-sub db { $_[0]->{db} }
+## ------ Database ------
+
+sub db ($) { $_[0]->{db} }
+
+sub repo ($) { $_[0]->{repo} }
+
+sub lock () {
+  my $self = shift;
+
+  if ($self->{lock_n}++ == 0) {
+    my $lock = $self->{lock} ||= do {
+      require SWE::DB::Lock;
+      my $lock = SWE::DB::Lock->new;
+      $lock->{file_name} = $self->db->graph_dir_name . 'graph.lock';
+      $lock->lock_type ('Graph');
+      $lock;
+    };
+
+    $lock->lock;
+  };
+} # lock
+
+sub unlock () {
+  my $self = shift;
+  
+  if (--$self->{lock_n} <= 0 and $self->{lock}) {
+    $self->{lock}->unlock;
+  }
+} # unlock
 
 use constant EMPTY_NODE_RATIO => 0.2;
 use constant INITIAL_DEGREE => 5;
 
 sub add_nodes ($$) {
   my ($self, $new_doc_number) = @_;
-  
-  ## TODO: graph lock
+
+  $self->lock;
 
   my $global_prop_db = $self->db->global_prop;
   
@@ -56,21 +84,28 @@ sub add_nodes ($$) {
   }
   $global_prop_db->set_data (doconnodenumber => \$doc_on_node_number);
 
+  $self->unlock;
+
   return ($last_node_index + 1 .. $max_node_index);
 } # add_nodes
 
 sub create_node ($$) {
   my ($self, $doc_id) = @_;
 
-  ## TODO: docid lock
-  
+  ## In fact we don't need to lock the entire graph (though the
+  ## |add_nodes| method might require it anyway), but we don't have
+  ## way to lock a particular node only at the moment.
+  $self->lock;
+
   my ($node_id) = $self->add_nodes (1);
 
   require SWE::Object::Node;
-  my $node = SWE::Object::Node->new (db => $self->db);
+  my $node = SWE::Object::Node->new (db => $self->db, repo => $self->repo);
   $node->create (id => $node_id);
   $node->prop->{ids}->{$doc_id} = 1;
   $node->save_prop;
+
+  $self->unlock;
 
   return $node;
 } # create_node
@@ -81,7 +116,7 @@ sub get_node_by_id ($$) {
   ## TODO: cache
   
   require SWE::Object::Node;
-  my $node = SWE::Object::Node->new (db => $self->db);
+  my $node = SWE::Object::Node->new (db => $self->db, repo => $self->repo);
   $node->load (id => $node_id);
 
   return $node;
@@ -91,6 +126,8 @@ use constant RELATEDNESS_THRESHOLD => 0.9;
 
 sub schelling_update ($$) {
   my ($self, $node_id) = @_;
+
+  $self->lock;
 
   my $node = $self->get_node_by_id ($node_id);
   my $doc_id = $node->document_id // return;
@@ -133,6 +170,8 @@ sub schelling_update ($$) {
     $id_prop_db->set_data ($doc_id => $id_prop);
     $node->save_prop;
   }
+
+  $self->unlock;
 } # schelling_update
 
 1;

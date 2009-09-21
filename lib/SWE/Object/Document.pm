@@ -23,9 +23,11 @@ sub new_id ($%) {
   return $self;
 } # new_id
 
-sub db { $_[0]->{db} }
+sub db ($) { $_[0]->{db} }
 
-sub id { $_[0]->{id} }
+sub repo ($) { $_[0]->{repo} }
+
+sub id ($) { $_[0]->{id} }
 
 sub reblessed : lvalue { $_[0]->{reblessed} }
 
@@ -51,8 +53,34 @@ sub rebless ($) {
 
 sub prop ($) {
   my $self = shift;
-  return $self->{prop} ||= $self->db->id_prop->get_data ($self->id);
+  return $self->{prop} ||= do {
+    $self->prop_untainted = 0 unless $self->locked;
+    $self->db->id_prop->get_data ($self->id);
+  };
 } # prop
+
+sub prop_untainted ($) : lvalue { $_[0]->{propun_tainted} }
+
+sub untainted_prop ($) {
+  my $self = shift;
+  delete $self->{prop} unless $self->prop_untainted;
+  return $self->prop;
+} # untainted_prop
+
+sub save_prop ($) {
+  my $self = shift;
+  
+  $self->lock;
+
+  unless ($self->prop_untainted) {
+    die "Can't save a tainted prop object";
+  }
+
+  my $prop = $self->prop or die "Can't save an uncreated prop object";
+  $self->db->id_prop->set_data ($self->id => $prop);
+  
+  $self->unlock;
+} # save_prop
 
 sub content_media_type ($) {
   my $self = shift;
@@ -170,26 +198,27 @@ sub update_tfidf ($$) {
 sub get_or_create_graph_node ($) {
   my $self = shift;
 
-  my $db = $self->db;
-  my $doc_id = $self->id;
+  $self->lock;
 
-  my $id_prop = $db->id_prop->get_data ($doc_id);
-  return undef unless $id_prop;
+  my $id_prop = $self->untainted_prop or do {
+    $self->unlock;
+    return;
+  };
 
-  require SWE::Object::Graph;
-  my $graph = SWE::Object::Graph->new (db => $db);
-  
+  my $graph = $self->repo->graph;
   my $node;
   my $node_id = $id_prop->{node_id};
   if (defined $node_id) {
     $node = $graph->get_node_by_id ($node_id);
   } else {
-    $node = $graph->create_node ($doc_id);
+    $node = $graph->create_node ($self->id);
     $node_id = $node->id;
     
     $id_prop->{node_id} = $node_id;
-    $db->id_prop->set_data ($doc_id => $id_prop);
+    $self->save_prop;
   }
+
+  $self->unlock;
 
   return $node;
 } # get_or_create_graph_node
@@ -210,8 +239,13 @@ sub unlock ($) {
     $lock->unlock;
     delete $self->{lock};
     delete $self->{lock_n};
+    delete $self->{prop_untainted};
   }
 } # unlock
+
+sub locked ($) {
+  return $_[0]->{lock_n} > 0;
+} # locked
 
 # ------ Format Convertion ------
 

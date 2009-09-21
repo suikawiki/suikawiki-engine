@@ -9,7 +9,9 @@ sub new ($%) {
   return $self;
 } # new
 
-sub db { $_[0]->{db} }
+sub db ($) { $_[0]->{db} }
+
+sub repo ($) { $_[0]->{repo} }
 
 sub create ($%) {
   my ($self, %opt) = @_;
@@ -62,9 +64,8 @@ sub neighbor_documents ($) {
 
   my $db = $self->db;
   my $doc_id = $self->document_id;
-  
-  require SWE::Object::Graph;
-  my $graph = SWE::Object::Graph->new (db => $db);
+
+  my $graph = $self->repo->graph;
 
   require SWE::Object::Document;
   return [map {

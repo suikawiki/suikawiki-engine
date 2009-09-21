@@ -1120,22 +1120,18 @@ if ($path[0] eq 'n' and @path == 2) {
     exit;
   }
 } elsif (@path == 2 and $path[0] eq 'g') {
-  require SWE::Object::Graph;
-  my $graph = SWE::Object::Graph->new (db => $db);
+  require SWE::Object::Repository;
+  my $repo = SWE::Object::Repository->new (db => $db);
+
+  my $graph = $repo->graph;
+  $graph->lock;
 
   my $node;
   if ($path[1] =~ /\A([0-9]+)\z/ and not defined $dollar) {
-    my $id = 0+$path[1];
-    $node = $graph->get_node_by_id ($id);
+    $node = $graph->get_node_by_id (0+$path[1]);
   } elsif ($path[1] =~ /^id([0-9]+)$/ and not defined $dollar) {
-    my $docid = 0+$1;
-    
-    require SWE::Object::Document;
-    my $doc = SWE::Object::Document->new (db => $db, id => $docid);
-
-    $doc->lock;
+    my $doc = $repo->get_document_by_id (0+$1);
     $node = $doc->get_or_create_graph_node;
-    $doc->unlock;
   }
 
   if ($node) {
@@ -1150,8 +1146,11 @@ if ($path[0] eq 'n' and @path == 2) {
     close STDOUT;
     
     $graph->schelling_update ($node->id);
+    $graph->unlock;
     
     exit;
+  } else {
+    $graph->unlock;
   }
 } elsif (@path == 1 and
          {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
@@ -1545,4 +1544,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/21 07:30:30 $
+1; ## $Date: 2009/09/21 09:10:40 $

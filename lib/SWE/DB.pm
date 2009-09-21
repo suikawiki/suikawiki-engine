@@ -27,6 +27,9 @@ sub sw3db_dir_name : lvalue { $_[0]->{sw3db_dir_name} }
 sub global_prop ($) {
   my $self = shift;
 
+  ## Lock types:
+  ##   - Graph: lastnodeindex, doconnodenumber
+
   return $self->{global_prop} ||= do {
     require SWE::DB::NamedText;
     my $global_prop_db = SWE::DB::NamedText->new;

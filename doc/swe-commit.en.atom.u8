@@ -1,4 +1,34 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253518229"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253518229</id><title>2009-09-21 Wakaba</title><updated>2009-09-21T07:30:22Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/ChangeLog	21 Sep 2009 07:28:38 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253524239"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253524239</id><title>2009-09-21 Wakaba</title><updated>2009-09-21T09:10:32Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/DB/ChangeLog	21 Sep 2009 09:05:45 -0000
+2009-09-21  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* Lock.pm (check_lockability): Don't allow the same level of lock
+	type being locked twice to avoid deadlocks caused by same level of
+	locks.
+
+++ swe/lib/SWE/Object/ChangeLog	21 Sep 2009 09:10:06 -0000
+	* Document.pm (repo, prop_untainted, untainted_prop, save_prop,
+	locked): New method.  Introduced the concept of &quot;tainted&quot; such
+	that we can access to the property in the locked code fragment
+	without being afraid to update the property using old values.
+	(get_or_create_graph_node): Updated to utilize |prop| family of
+	method with locks.
+
+	* Graph.pm (repo, lock, unlock): New methods.
+	(add_nodes, create_node, schelling_update): Locks the database
+	before the modifications.
+
+	* Repository.pm (graph, get_document_by_id): New methods.
+
+	* Node.pm (repo): New method.
+
+2009-09-21  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/lib/suikawiki/ChangeLog	21 Sep 2009 09:10:27 -0000
+	* main.pl: Made the graph node view to lock the database.
+
+2009-09-21  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1253518229"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253518229</id><title>2009-09-21 Wakaba</title><updated>2009-09-21T07:30:22Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/ChangeLog	21 Sep 2009 07:28:38 -0000
 2009-09-21  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
 	* DB.pm (id_lock): New method.
@@ -755,4 +785,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-09-21T07:30:22Z</updated></feed>
+</content></entry><updated>2009-09-21T09:10:32Z</updated></feed>

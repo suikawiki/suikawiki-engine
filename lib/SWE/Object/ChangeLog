@@ -1,5 +1,22 @@
 2009-09-21  Wakaba  <wakaba@suika.fam.cx>
 
+	* Document.pm (repo, prop_untainted, untainted_prop, save_prop,
+	locked): New method.  Introduced the concept of "tainted" such
+	that we can access to the property in the locked code fragment
+	without being afraid to update the property using old values.
+	(get_or_create_graph_node): Updated to utilize |prop| family of
+	method with locks.
+
+	* Graph.pm (repo, lock, unlock): New methods.
+	(add_nodes, create_node, schelling_update): Locks the database
+	before the modifications.
+
+	* Repository.pm (graph, get_document_by_id): New methods.
+
+	* Node.pm (repo): New method.
+
+2009-09-21  Wakaba  <wakaba@suika.fam.cx>
+
 	* Document.pm (lock): Changed to use the $db->id_lock method to
 	obtain the lock object.
 

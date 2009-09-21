@@ -7,6 +7,13 @@ my $LockTypes = [qw/
 /];
   ## If you are locking for Graph, then you cannot lock for Global, but
   ## still you can lock for ID.
+  ##
+  ## In addition, if you are locking for an ID, then you can't lock
+  ## for another ID.
+  ##
+  ## XXX Maybe we should get rid of IDs and Name locks because they
+  ## conflict with ID and Names locks respectively.  Additionally,
+  ## maybe we should remove Global lock as well.
 
   ## idgen is currently controled by Names lock.
 
@@ -33,10 +40,10 @@ sub check_lockability ($) {
   
   my $self_lt = $self->lock_type;
   for my $lt (@$LockTypes) {
-    if ($self_lt eq $lt) {
-      last;
-    } elsif ($CurrentlyLocking->{$lt}) {
+    if ($CurrentlyLocking->{$lt}) {
       die qq[$0: It is currently locking for "$lt" so that it cannot be locked for the "$self_lt"];
+    } elsif ($self_lt eq $lt) {
+      last;
     }
   }
 
@@ -48,7 +55,8 @@ sub lock ($) {
 
   $self->check_lockability;
   $CurrentlyLocking->{$self->lock_type}++;
-warn "@{[$self->lock_type]} $CurrentlyLocking->{$self->lock_type} $self->{file_name}";
+
+warn "XXX @{[$self->lock_type]} $CurrentlyLocking->{$self->lock_type} $self->{file_name}";
   
   open my $file, '>', $self->{file_name} or die "$0: $self->{file_name}: $!";
   flock $file, LOCK_EX;

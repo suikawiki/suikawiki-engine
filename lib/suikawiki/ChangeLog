@@ -1,5 +1,9 @@
 2009-09-21  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Made the graph node view to lock the database.
+
+2009-09-21  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Moved most of remaining codes of graph node end point
 	processing to separate modules.
 

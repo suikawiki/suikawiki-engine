@@ -1,3 +1,9 @@
+2009-09-21  Wakaba  <wakaba@suika.fam.cx>
+
+	* Lock.pm (check_lockability): Don't allow the same level of lock
+	type being locked twice to avoid deadlocks caused by same level of
+	locks.
+
 2009-07-19  Wakaba  <wakaba@suika.fam.cx>
 
 	* HashedIndex.pm (_for_each_id): Operator evaluation order was
