@@ -1,4 +1,14 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253527649"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253527649</id><title>2009-09-21 Wakaba</title><updated>2009-09-21T10:07:26Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	21 Sep 2009 10:06:44 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253530162"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253530162</id><title>2009-09-21 Wakaba</title><updated>2009-09-21T10:49:05Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	21 Sep 2009 10:48:30 -0000
+	* main.pl: Allow non-POST pings.
+
+2009-09-21  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/scripts/ChangeLog	21 Sep 2009 10:48:59 -0000
+	* sw-sami.js: Added related/unrelated pings to neighbor links.
+
+2009-09-21  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+</content></entry><entry xml:id="entry-1253527649"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253527649</id><title>2009-09-21 Wakaba</title><updated>2009-09-21T10:07:26Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	21 Sep 2009 10:06:44 -0000
 	* main.pl: Changed the graph view to be a |param| of the ID view.
 
 2009-09-21  Wakaba  &lt;wakaba@suika.fam.cx&gt;
@@ -809,4 +819,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-09-21T10:07:26Z</updated></feed>
+</content></entry><updated>2009-09-21T10:49:05Z</updated></feed>

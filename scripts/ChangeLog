@@ -1,5 +1,9 @@
 2009-09-21  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw-sami.js: Added related/unrelated pings to neighbor links.
+
+2009-09-21  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw-sami.js: Added a set of classes to insert neighborhoods
 	section.
 

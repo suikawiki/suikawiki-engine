@@ -77,15 +77,9 @@ SW.SearchResult = new SAMI.Class (function (source) {
 }); // SearchResult
 
 SW.SearchResult.Entry = new SAMI.Class (function (v) {
-  if (v.length == 2) {
-    this.score = 0;
-    this.docId = v[0];
-    this.docName = v[1];
-  } else {
-    this.score = v[0];
-    this.docId = v[1];
-    this.docName = v[2];
-  }
+  this.score = v[0];
+  this.docId = v[1];
+  this.docName = v[2];
 }, {
   toLI: function () {
     var li = document.createElement ('li');
@@ -97,18 +91,72 @@ SW.SearchResult.Entry = new SAMI.Class (function (v) {
   } // toLI
 }); // SearchResult.Entry
 
-SW.Neighbors = new SAMI.Class (function (source) {
+SW.Neighbors = new SAMI.Class (function (id, source) {
+  this.documentId = id;
   this.parse (source);
 }, {
   parse: function (source) {
+    var id = this.documentId;
     this.entries = new SAMI.List (source.split (/\x0D?\x0A/)).map (function (v) {
       if (v == '') return;
-      return new SW.SearchResult.Entry (v.split (/\t/, 2));
+      return new SW.Neighbors.Entry (v.split (/\t/, 2), id);
     }).grep (function (v) { return v });
   }, // parse
 
-  toOL: SW.SearchResult.prototype.toOL
+  toUL: function () {
+    var ol = document.createElement ('ul');
+    this.entries.forEach (function (entry) {
+      ol.appendChild (entry.toLI ());
+    });
+    return ol;
+  } // toUL
 }); // Neighbors
+
+SW.Neighbors.Entry = new SAMI.Class (function (v, id) {
+  this.docId = v[0];
+  this.docName = v[1];
+  this.sourceDocId = id;
+}, {
+  toLI: function () {
+    var self = this;
+    var doc = SW.CurrentDocument.getInstance ();
+
+    var li = document.createElement ('li');
+    li.innerHTML = '<a href="">xxx</a> <button type=button>X</button>';
+    var a = li.firstChild;
+    a.firstChild.data = this.docName;
+    a.href = doc.constructURL ('n', this.docName, this.docId);
+
+    // XXX We don't use the real |ping| attribute for now since there
+    // is no reliable way to know whether the browser does or does not
+    // send ping and therefore we have to send the ping using a custom
+    // script code anyway.
+
+    // Use |GET| method instead of |POST| method to not require Basic auth.
+    a.onclick = function () {
+      var pingURL = doc.constructURL
+          ('i', self.sourceDocId, null, 'related-' + self.docId);
+      new SAMI.XHR (pingURL).get ();
+
+      var url = a.href;
+      setTimeout (function () {
+        location.href = url;
+      }, 500);
+
+      return false;
+    }; // a.onclick
+
+    var button = li.lastChild;
+    button.onclick = function () {
+      var pingURL = doc.constructURL
+          ('i', self.sourceDocId, null, 'unrelated-' + self.docId);
+      new SAMI.XHR (pingURL).get ();
+      li.parentNode.removeChild (li);
+    }; // button.onclick
+
+    return li;
+  } // toLI
+}); // Neighbors.Entry
 
 SW.PageContents = new SAMI.Class (function () {
   this.footer = document.getElementsByTagName ('footer')[0];
@@ -207,9 +255,9 @@ SW.init = function () {
     if (id) {
       var neighborsURL = doc.constructURL ('i', id, null, 'neighbors');
       new SAMI.XHR (neighborsURL, function () {
-        var sr = new SW.Neighbors (this.getText ());
+        var sr = new SW.Neighbors (id, this.getText ());
         if (sr.entries.list.length) {
-          var ol = sr.toOL ();
+          var ol = sr.toUL ();
           SW.PageContents.getInstance ().insertSection ('neighbors', ol);
         }
       }).get ();

@@ -992,7 +992,8 @@ if ($path[0] eq 'n' and @path == 2) {
       $id_lock->unlock;
     }
   } elsif ($param =~ /^(un)?related-([0-9]+)$/ and not defined $dollar) {
-    if ($cgi->request_method eq 'POST') {
+    ## Allow GET to not require Basic auth.
+    #if ($cgi->request_method eq 'POST') {
       my $id1 = $path[1] + 0;
       my $id2 = $2 + 0;
       my $answer = $1 ? -1 : 1;
@@ -1012,9 +1013,9 @@ if ($path[0] eq 'n' and @path == 2) {
       print "Content-Type: text/ping\n\n";
       print "PING";
       exit;
-    } else {
-      http_error (405, 'Method not allowed', 'POST');
-    }
+    #} else {
+    #  http_error (405, 'Method not allowed', 'POST');
+    #}
   }
 } elsif ($path[0] eq 'new-page' and @path == 1) {
   if ($cgi->request_method eq 'POST') {
@@ -1547,4 +1548,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/21 10:07:30 $
+1; ## $Date: 2009/09/21 10:49:24 $
