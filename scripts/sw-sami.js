@@ -40,6 +40,16 @@ SW.CurrentDocument = new SAMI.Class (function () {
   } // constructURL
 }); // CurrentDocument
 
+SW.CurrentDocument.getDocumentId = function () {
+  var el = document.body;
+  if (!el) return null;
+  
+  var value = el.getAttribute ('data-doc-id');
+  if (!value) return null;
+
+  return parseInt (value);
+}; // getDocumentId
+
 SW.CurrentDocument.getInstance = function () {
   if (!SW.CurrentDocument._instance) {
     SW.CurrentDocument._instance = new SW.CurrentDocument;
@@ -67,9 +77,15 @@ SW.SearchResult = new SAMI.Class (function (source) {
 }); // SearchResult
 
 SW.SearchResult.Entry = new SAMI.Class (function (v) {
-  this.score = v[0];
-  this.docId = v[1];
-  this.docName = v[2];
+  if (v.length == 2) {
+    this.score = 0;
+    this.docId = v[0];
+    this.docName = v[1];
+  } else {
+    this.score = v[0];
+    this.docId = v[1];
+    this.docName = v[2];
+  }
 }, {
   toLI: function () {
     var li = document.createElement ('li');
@@ -79,14 +95,28 @@ SW.SearchResult.Entry = new SAMI.Class (function (v) {
         ('n', this.docName, this.docId);
     return li;
   } // toLI
-}); // SearchResult
+}); // SearchResult.Entry
+
+SW.Neighbors = new SAMI.Class (function (source) {
+  this.parse (source);
+}, {
+  parse: function (source) {
+    this.entries = new SAMI.List (source.split (/\x0D?\x0A/)).map (function (v) {
+      if (v == '') return;
+      return new SW.SearchResult.Entry (v.split (/\t/, 2));
+    }).grep (function (v) { return v });
+  }, // parse
+
+  toOL: SW.SearchResult.prototype.toOL
+}); // Neighbors
 
 SW.PageContents = new SAMI.Class (function () {
   this.footer = document.getElementsByTagName ('footer')[0];
 }, {
   insertSection: function (sectionId, content) {
     var sectionName = {
-      'search-results': 'Related pages'
+      'search-results': 'Related pages',
+      'neighbors': 'Nearby'
     }[sectionId] || sectionId;
     var section = document.createElement ('section');
     section.id = sectionId;
@@ -170,6 +200,22 @@ SW.init = function () {
         SW.PageContents.getInstance ().insertSection ('search-results', ol);
       }
     }).get ();
+
+    if (location.href.match(/-temp/)) { // XXX
+
+    var id = SW.CurrentDocument.getDocumentId ();
+    if (id) {
+      var neighborsURL = doc.constructURL ('i', id, null, 'neighbors');
+      new SAMI.XHR (neighborsURL, function () {
+        var sr = new SW.Neighbors (this.getText ());
+        if (sr.entries.list.length) {
+          var ol = sr.toOL ();
+          SW.PageContents.getInstance ().insertSection ('neighbors', ol);
+        }
+      }).get ();
+    }
+
+    }
 
     SW.Drawings.drawCanvases ();
   }

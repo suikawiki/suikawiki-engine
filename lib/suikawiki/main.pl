@@ -255,6 +255,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $nav_el->inner_html (q[<a rel=edit>Edit</a> <a href="../new-page">New</a>]);
       if (defined $id) {
         $nav_el->first_child->set_attribute (href => '../i/' . $id . ';edit');
+        $body_el->set_attribute ('data-doc-id' => $id);
       } else {
         $nav_el->first_child->set_attribute
             (href => '../new-page?names=' . percent_encode ($name));
@@ -855,6 +856,36 @@ if ($path[0] eq 'n' and @path == 2) {
     } else {
       http_error (405, 'Method not allowed', 'PUT');
     }
+  } elsif ($param eq 'neighbors') {
+    require SWE::Object::Repository;
+    my $repo = SWE::Object::Repository->new (db => $db);
+    
+    my $graph = $repo->graph;
+    $graph->lock;
+    
+    my $id = $path[1] + 0;
+    my $doc = $repo->get_document_by_id ($id);
+    my $node = $doc->get_or_create_graph_node;
+    
+    if ($node) {
+      binmode STDOUT, ':encoding(utf-8)';
+      print "Content-Type: text/plain; charset=UTF-8\n\n";
+      
+      for my $doc (@{$node->neighbor_documents}) {
+        print join "\t", $doc->id, $doc->title;
+        print "\n";
+      }
+      
+      close STDOUT;
+      
+      $graph->schelling_update ($node->id);
+      $graph->unlock;
+      
+      exit;
+    } else {
+      $graph->unlock;
+      #
+    }
   } elsif ($param eq 'history' and not defined $dollar) {
     my $id = $path[1] + 0;
 
@@ -1123,39 +1154,6 @@ if ($path[0] eq 'n' and @path == 2) {
 
     print $doc->inner_html;
     exit;
-  }
-} elsif (@path == 2 and $path[0] eq 'g') {
-  require SWE::Object::Repository;
-  my $repo = SWE::Object::Repository->new (db => $db);
-
-  my $graph = $repo->graph;
-  $graph->lock;
-
-  my $node;
-  if ($path[1] =~ /\A([0-9]+)\z/ and not defined $dollar) {
-    $node = $graph->get_node_by_id (0+$path[1]);
-  } elsif ($path[1] =~ /^id([0-9]+)$/ and not defined $dollar) {
-    my $doc = $repo->get_document_by_id (0+$1);
-    $node = $doc->get_or_create_graph_node;
-  }
-
-  if ($node) {
-    binmode STDOUT, ':encoding(utf-8)';
-    print "Content-Type: text/plain; charset=UTF-8\n\n";
-
-    for my $doc (@{$node->neighbor_documents}) {
-      print join "\t", $doc->id, $doc->title;
-      print "\n";
-    }
-
-    close STDOUT;
-    
-    $graph->schelling_update ($node->id);
-    $graph->unlock;
-    
-    exit;
-  } else {
-    $graph->unlock;
   }
 } elsif (@path == 1 and
          {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
@@ -1549,4 +1547,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/21 09:30:37 $
+1; ## $Date: 2009/09/21 10:07:30 $

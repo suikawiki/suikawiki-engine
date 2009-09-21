@@ -1,5 +1,9 @@
 2009-09-21  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Changed the graph view to be a |param| of the ID view.
+
+2009-09-21  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Changed the related/unrelated end point to lock the
 	vector data file and put the file to the CVS repository.
 

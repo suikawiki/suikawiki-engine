@@ -1,3 +1,8 @@
+2009-09-21  Wakaba  <wakaba@suika.fam.cx>
+
+	* sw-sami.js: Added a set of classes to insert neighborhoods
+	section.
+
 2009-07-12  Wakaba  <wakaba@suika.fam.cx>
 
 	* sw-sami.js: Improved where js-generated sections are inserted.

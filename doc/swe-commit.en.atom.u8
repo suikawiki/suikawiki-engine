@@ -1,4 +1,15 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253525437"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253525437</id><title>2009-09-21 Wakaba</title><updated>2009-09-21T09:30:32Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	21 Sep 2009 09:29:32 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253527649"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253527649</id><title>2009-09-21 Wakaba</title><updated>2009-09-21T10:07:26Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	21 Sep 2009 10:06:44 -0000
+	* main.pl: Changed the graph view to be a |param| of the ID view.
+
+2009-09-21  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+++ swe/scripts/ChangeLog	21 Sep 2009 10:07:15 -0000
+2009-09-21  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw-sami.js: Added a set of classes to insert neighborhoods
+	section.
+
+</content></entry><entry xml:id="entry-1253525437"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253525437</id><title>2009-09-21 Wakaba</title><updated>2009-09-21T09:30:32Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	21 Sep 2009 09:29:32 -0000
 	* Repository.pm (weight_lock, weight_unlock): New methods.
 	(term_weight_vector, save_term_weight_vector): Changed to use
 	global props to save the term weight vector.
@@ -798,4 +809,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-09-21T09:30:32Z</updated></feed>
+</content></entry><updated>2009-09-21T10:07:26Z</updated></feed>
