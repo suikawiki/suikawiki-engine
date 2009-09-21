@@ -1,4 +1,17 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253436872"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253436872</id><title>2009-09-20 Wakaba</title><updated>2009-09-20T08:54:29Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	20 Sep 2009 08:53:58 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253516987"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253516987</id><title>2009-09-21 Wakaba</title><updated>2009-09-21T07:09:38Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	21 Sep 2009 06:44:52 -0000
+2009-09-21  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* Document.pm (title, get_or_create_graph_node): New methods (made
+	from codes moved from main.pl).
+
+++ swe/lib/suikawiki/ChangeLog	21 Sep 2009 07:09:35 -0000
+2009-09-21  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* main.pl: Changed &quot;related&quot;/&quot;unrelated&quot; URLs to a |ping| end
+	point.  Moved most of graph node end point processing to separate
+	modules.
+
+</content></entry><entry xml:id="entry-1253436872"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253436872</id><title>2009-09-20 Wakaba</title><updated>2009-09-20T08:54:29Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	20 Sep 2009 08:53:58 -0000
 	* Graph.pm (schelling_update): Implemented.
 
 2009-09-20  Wakaba  &lt;wakaba@suika.fam.cx&gt;
@@ -723,4 +736,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-09-20T08:54:29Z</updated></feed>
+</content></entry><updated>2009-09-21T07:09:38Z</updated></feed>

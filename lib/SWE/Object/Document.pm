@@ -47,6 +47,8 @@ sub rebless ($) {
   $self->reblessed = 1;
 }
 
+## ------ Metadata ------
+
 sub prop ($) {
   my $self = shift;
   return $self->{prop} ||= $self->db->id_prop->get_data ($self->id);
@@ -96,6 +98,20 @@ sub associate_names ($$%) {
   my $user = $args{user} || '(anon)';
   $vc->commit_changes ("id=$id created by $user");
 } # associate_names
+
+sub title ($) {
+  my $self = shift;
+
+  my $prop = $self->prop;
+  
+  my $title = $prop->{title};
+  return $title if defined $title and length $title;
+
+  $title = [keys %{$prop->{name}}]->[0] // ''; ## XXXTODO: title-type
+  return $title;
+} # title
+
+## ------ Indexing and Graph ------
 
 sub update_tfidf ($$) {
   my ($self, $doc) = @_; ## TODO: $doc should not be an argument
@@ -151,6 +167,35 @@ sub update_tfidf ($$) {
   $tfidf_db->set_data ($id => \( $terms->stringify ));
 } # update_tfidf
 
+sub get_or_create_graph_node ($) {
+  my $self = shift;
+
+  my $db = $self->db;
+  my $doc_id = $self->id;
+
+  my $id_prop = $db->id_prop->get_data ($doc_id);
+  return undef unless $id_prop;
+
+  require SWE::Object::Graph;
+  my $graph = SWE::Object::Graph->new (db => $db);
+  
+  my $node;
+  my $node_id = $id_prop->{node_id};
+  if (defined $node_id) {
+    $node = $graph->get_node_by_id ($node_id);
+  } else {
+    $node = $graph->create_node ($doc_id);
+    $node_id = $node->id;
+    
+    $id_prop->{node_id} = $node_id;
+    $db->id_prop->set_data ($doc_id => $id_prop);
+  }
+
+  return $node;
+} # get_or_create_graph_node
+
+# ------ Locking ------
+
 sub lock ($) {
   my $self = shift;
   my $lock = $self->{lock} ||= $self->{id_locks}->get_lock ($self->id); ## XXX
@@ -167,6 +212,8 @@ sub unlock ($) {
     delete $self->{lock_n};
   }
 } # unlock
+
+# ------ Format Convertion ------
 
 sub to_text ($) {
   my $self = shift;

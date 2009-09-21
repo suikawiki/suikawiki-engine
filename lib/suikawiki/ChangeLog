@@ -1,3 +1,9 @@
+2009-09-21  Wakaba  <wakaba@suika.fam.cx>
+
+	* main.pl: Changed "related"/"unrelated" URLs to a |ping| end
+	point.  Moved most of graph node end point processing to separate
+	modules.
+
 2009-09-19  Wakaba  <wakaba@suika.fam.cx>
 
 	* main.pl: |$id_prop| had been unintentionally unset.

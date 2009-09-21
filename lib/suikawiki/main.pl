@@ -963,26 +963,24 @@ if ($path[0] eq 'n' and @path == 2) {
       $id_lock->unlock;
     }
   } elsif ($param =~ /^(un)?related-([0-9]+)$/ and not defined $dollar) {
-    my $id1 = $path[1] + 0;
-    my $id2 = $2 + 0;
-    my $answer = $1 ? -1 : 1;
-
-    require SWE::Object::Repository;
-    my $repo = SWE::Object::Repository->new (db => $db);
-
-    my $y = $repo->are_related_ids ($id1, $id2, $answer);
-    
-    $repo->save_term_weight_vector;
-    
-    binmode STDOUT, ':encoding(utf-8)';
-    print "Content-Type: text/plain; charset=utf-8\n\n";
-    
-    print "$y\n\n";
-#    print $diff->stringify, "\n\n";
-#
-#    print $fv1->stringify, "\n\n";
-#    print $fv2->stringify, "\n\n";
-    exit;
+    if ($cgi->request_method eq 'POST') {
+      my $id1 = $path[1] + 0;
+      my $id2 = $2 + 0;
+      my $answer = $1 ? -1 : 1;
+      
+      require SWE::Object::Repository;
+      my $repo = SWE::Object::Repository->new (db => $db);
+      
+      my $y = $repo->are_related_ids ($id1, $id2, $answer);
+      
+      $repo->save_term_weight_vector;
+      
+      print "Content-Type: text/ping\n\n";
+      print "PING";
+      exit;
+    } else {
+      http_error (405, 'Method not allowed', 'POST');
+    }
   }
 } elsif ($path[0] eq 'new-page' and @path == 1) {
   if ($cgi->request_method eq 'POST') {
@@ -1124,75 +1122,56 @@ if ($path[0] eq 'n' and @path == 2) {
     exit;
   }
 } elsif (@path == 2 and $path[0] eq 'g') {
-  my $id = 0+$path[1];
+  require SWE::Object::Graph;
+  my $graph = SWE::Object::Graph->new (db => $db);
 
+  my $node;
   if ($path[1] =~ /\A([0-9]+)\z/ and not defined $dollar) {
-    #
+    my $id = 0+$path[1];
+    $node = $graph->get_node_by_id ($id);
   } elsif ($path[1] =~ /^id([0-9]+)$/ and not defined $dollar) {
     my $docid = 0+$1;
     
     ## TODO: ID lock
-    
-    my $id_prop = $id_prop_db->get_data ($docid);
-    
-    $id = $id_prop->{node_id};
-    
-    unless (defined $id) {
-      require SWE::Object::Graph;
-      my $graph = SWE::Object::Graph->new (db => $db);
-      my $node = $graph->create_node ($docid, $id_prop_db);
 
-      $id = $node->id;
-
-      $id_prop->{node_id} = $id;
-      $id_prop_db->set_data ($docid => $id_prop);
-    }
-  }
-  
-  use Data::Dumper;
-  binmode STDOUT, ':encoding(utf-8)';
-  print "Content-Type: text/plain; charset=UTF-8\n\n";
-
-  my $node_prop = $db->graph_prop->get_data ($id);
-
-  print Dumper $node_prop;
-
-  require SWE::Object::Graph;
-  my $graph = SWE::Object::Graph->new (db => $db);
-  my $node = $graph->get_node_by_id ($id);
-
-  my $neighbors = [map {
-    my $o = $_;
-    $o->{doc_id} = $o->{node}->document_id;
-    $o;
-  } map {
-    {
-      node_id => $_,
-      node => $graph->get_node_by_id ($_),
-    }
-  } $id, keys %{$node->neighbor_ids}];
-
-  require SWE::Object::Repository;
-  my $repo = SWE::Object::Repository->new (db => $db);
-  my $doc_id = $node->document_id;
-
-  for my $n (@$neighbors) {
-    if ($n->{doc_id}) {
-      my $id_prop = $id_prop_db->get_data ($n->{doc_id});
-      print $n->{node_id}, "\t", $n->{doc_id}, "\t",
-              (length $id_prop->{title} ? $id_prop->{title}
-               : [keys %{$id_prop->{name}}]->[0] // ''); ## TODO: title-type
-      print "\t", ($repo->are_related_ids ($doc_id, $n->{doc_id}) // 'u' || '0')
-          if defined $doc_id;
-      print "\n";
-    } else {
-      print $n->{node_id}, "\n";
-    }
+    require SWE::Object::Document;
+    my $doc = SWE::Object::Document->new (db => $db, id => $docid);
+    $node = $doc->get_or_create_graph_node;
   }
 
-  $graph->schelling_update ($id);
+  if ($node) {
+    use Data::Dumper;
+    binmode STDOUT, ':encoding(utf-8)';
+    print "Content-Type: text/plain; charset=UTF-8\n\n";
 
-  exit;
+    my $neighbors = [map {
+      my $o = $_;
+      $o->{doc_id} = $o->{node}->document_id;
+      $o;
+    } map {
+      {
+        node_id => $_,
+        node => $graph->get_node_by_id ($_),
+      }
+    } keys %{$node->neighbor_ids}];
+    
+    require SWE::Object::Repository;
+    my $repo = SWE::Object::Repository->new (db => $db);
+    my $doc_id = $node->document_id;
+    
+    require SWE::Object::Document;
+    for my $n (@$neighbors) {
+      if ($n->{doc_id}) {
+        my $doc = SWE::Object::Document->new (db => $db, id => $n->{doc_id});
+        print join "\t", $n->{doc_id}, $doc->title;
+        print "\n";
+      }
+    }
+    
+    $graph->schelling_update ($node->id);
+    
+    exit;
+  }
 } elsif (@path == 1 and
          {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
   our $homepage_name;
@@ -1585,4 +1564,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/20 08:54:33 $
+1; ## $Date: 2009/09/21 07:09:48 $
