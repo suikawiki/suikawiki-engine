@@ -143,7 +143,6 @@ if ($path[0] eq 'n' and @path == 2) {
     } elsif ($format eq 'xml' and defined $id) {
       ## XXX
       $docobj->{content_db} = $content_db; ## XXX
-      $docobj->{id_locks} = $id_locks;
       $docobj->{id_prop_db} = $id_prop_db;
       $docobj->{cache_prop_db} = $cache_prop_db;
       $docobj->{swml_to_xml} = \&get_xml_data;
@@ -166,7 +165,6 @@ if ($path[0] eq 'n' and @path == 2) {
       
       if (defined $id) {
         # XXX
-        $docobj->{id_locks} = $id_locks;
         $docobj->{id_prop_db} = $id_prop_db;
         $docobj->{cache_prop_db} = $cache_prop_db;
         $docobj->{content_db} = $content_db; ## XXX
@@ -1132,41 +1130,24 @@ if ($path[0] eq 'n' and @path == 2) {
   } elsif ($path[1] =~ /^id([0-9]+)$/ and not defined $dollar) {
     my $docid = 0+$1;
     
-    ## TODO: ID lock
-
     require SWE::Object::Document;
     my $doc = SWE::Object::Document->new (db => $db, id => $docid);
+
+    $doc->lock;
     $node = $doc->get_or_create_graph_node;
+    $doc->unlock;
   }
 
   if ($node) {
-    use Data::Dumper;
     binmode STDOUT, ':encoding(utf-8)';
     print "Content-Type: text/plain; charset=UTF-8\n\n";
 
-    my $neighbors = [map {
-      my $o = $_;
-      $o->{doc_id} = $o->{node}->document_id;
-      $o;
-    } map {
-      {
-        node_id => $_,
-        node => $graph->get_node_by_id ($_),
-      }
-    } keys %{$node->neighbor_ids}];
-    
-    require SWE::Object::Repository;
-    my $repo = SWE::Object::Repository->new (db => $db);
-    my $doc_id = $node->document_id;
-    
-    require SWE::Object::Document;
-    for my $n (@$neighbors) {
-      if ($n->{doc_id}) {
-        my $doc = SWE::Object::Document->new (db => $db, id => $n->{doc_id});
-        print join "\t", $n->{doc_id}, $doc->title;
-        print "\n";
-      }
+    for my $doc (@{$node->neighbor_documents}) {
+      print join "\t", $doc->id, $doc->title;
+      print "\n";
     }
+
+    close STDOUT;
     
     $graph->schelling_update ($node->id);
     
@@ -1564,4 +1545,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/21 07:09:48 $
+1; ## $Date: 2009/09/21 07:30:30 $

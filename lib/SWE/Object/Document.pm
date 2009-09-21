@@ -198,7 +198,7 @@ sub get_or_create_graph_node ($) {
 
 sub lock ($) {
   my $self = shift;
-  my $lock = $self->{lock} ||= $self->{id_locks}->get_lock ($self->id); ## XXX
+  my $lock = $self->{lock} ||= $self->db->id_lock->get_lock ($self->id);
   $self->{lock_n}++ or $self->lock;
 } # lock
 

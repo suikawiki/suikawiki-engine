@@ -57,4 +57,21 @@ sub document_id ($) {
   return [keys %{$self->prop->{ids} or {}}]->[0];
 } # document_id
 
+sub neighbor_documents ($) {
+  my $self = shift;
+
+  my $db = $self->db;
+  my $doc_id = $self->document_id;
+  
+  require SWE::Object::Graph;
+  my $graph = SWE::Object::Graph->new (db => $db);
+
+  require SWE::Object::Document;
+  return [map {
+    SWE::Object::Document->new (db => $db, id => $_)
+  } grep { $_ } map {
+    $graph->get_node_by_id ($_)->document_id
+  } keys %{$self->neighbor_ids}];
+} # neighbor_documents
+
 1;

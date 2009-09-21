@@ -70,6 +70,18 @@ sub id ($) {
   };
 } # id
 
+sub id_lock ($) {
+  my $self = shift;
+
+  return $self->{id_lock} ||= do {
+    require SWE::DB::IDLocks;
+    my $id_locks = SWE::DB::IDLocks->new;
+    $id_locks->{root_directory_name} = $self->id_dir_name;
+    $id_locks->{leaf_suffix} = '.lock';
+    $id_locks;
+  };
+} # id_lock
+
 sub id_prop ($) {
   my $self = shift;
 

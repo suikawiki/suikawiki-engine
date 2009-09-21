@@ -1,5 +1,12 @@
 2009-09-21  Wakaba  <wakaba@suika.fam.cx>
 
+	* Document.pm (lock): Changed to use the $db->id_lock method to
+	obtain the lock object.
+
+	* Node.pm (neighbor_documents): New method.
+
+2009-09-21  Wakaba  <wakaba@suika.fam.cx>
+
 	* Document.pm (title, get_or_create_graph_node): New methods (made
 	from codes moved from main.pl).
 

@@ -1,3 +1,7 @@
+2009-09-21  Wakaba  <wakaba@suika.fam.cx>
+
+	* DB.pm (id_lock): New method.
+
 2009-09-14  Wakaba  <wakaba@suika.fam.cx>
 
 	* DB.pm (id_prop): New method.
