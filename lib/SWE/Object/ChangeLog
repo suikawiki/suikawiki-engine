@@ -1,3 +1,8 @@
+2009-09-23  Wakaba  <wakaba@suika.fam.cx>
+
+	* Document.pm (prop_untainted): Typo.
+	(untainted_prop): The |prop_untainted| property was not set.
+
 2009-09-21  Wakaba  <wakaba@suika.fam.cx>
 
 	* Repository.pm (weight_lock, weight_unlock): New methods.

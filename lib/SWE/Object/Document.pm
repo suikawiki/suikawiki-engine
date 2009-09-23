@@ -59,11 +59,12 @@ sub prop ($) {
   };
 } # prop
 
-sub prop_untainted ($) : lvalue { $_[0]->{propun_tainted} }
+sub prop_untainted ($) : lvalue { $_[0]->{prop_untainted} }
 
 sub untainted_prop ($) {
   my $self = shift;
   delete $self->{prop} unless $self->prop_untainted;
+  $self->prop_untainted = 1;
   return $self->prop;
 } # untainted_prop
 

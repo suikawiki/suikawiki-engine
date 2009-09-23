@@ -159,6 +159,8 @@ sub schelling_update ($$) {
   if ($v < RELATEDNESS_THRESHOLD and @$unused_nodes) {
     my $unused_node = $unused_nodes->[rand @$unused_nodes];
 
+    ##XXX maybe we have to lock the ID.
+
     my $id_prop_db = $self->db->id_prop;
     my $id_prop = $id_prop_db->get_data ($doc_id);
     
