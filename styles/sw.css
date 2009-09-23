@@ -457,8 +457,38 @@ input[name=title] {
   width: 98%;
 }
 
+/* Advertisements */
+
 .swe-ad {
   display: block;
   margin-left: 2em;
   margin-top: 1em;
+}
+
+/* Links */
+
+.swe-links {
+  padding: 0;
+  text-indent: 0;
+}
+
+.swe-links li {
+  display: inline;
+  list-style: none;
+  margin: 0 1em 0;
+  padding: 0;
+}
+
+.swe-unrelated {
+  display: none;
+  margin: 0;
+  padding: 0;
+  font-size: 70%;
+  text-indent: 0;
+  color: inherit;
+  background-color: transparent;
+}
+
+li:hover .swe-unrelated {
+  display: inline;
 }

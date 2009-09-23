@@ -1,4 +1,14 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253703411"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253703411</id><title>2009-09-23 Wakaba</title><updated>2009-09-23T10:56:46Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	23 Sep 2009 10:56:11 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1253703873"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253703873</id><title>2009-09-23 Wakaba</title><updated>2009-09-23T11:04:24Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/styles/ChangeLog	23 Sep 2009 11:04:07 -0000
+2009-09-23  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw.css: Added styles for link lists.
+
+++ swe/scripts/ChangeLog	23 Sep 2009 11:04:21 -0000
+2009-09-23  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* sw-sami.js: Added class names to link list elements.
+
+</content></entry><entry xml:id="entry-1253703411"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1253703411</id><title>2009-09-23 Wakaba</title><updated>2009-09-23T10:56:46Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/SWE/Object/ChangeLog	23 Sep 2009 10:56:11 -0000
 	* Document.pm (lock): Typo; it did not lock in fact, orz.
 
 	* Graph.pm (schelling_update): Reuse the |repo| object's child
@@ -839,4 +849,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-09-23T10:56:46Z</updated></feed>
+</content></entry><updated>2009-09-23T11:04:24Z</updated></feed>

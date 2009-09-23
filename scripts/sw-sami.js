@@ -69,6 +69,7 @@ SW.SearchResult = new SAMI.Class (function (source) {
 
   toOL: function () {
     var ol = document.createElement ('ol');
+    ol.className = 'swe-links';
     this.entries.forEach (function (entry) {
       ol.appendChild (entry.toLI ());
     });
@@ -105,6 +106,7 @@ SW.Neighbors = new SAMI.Class (function (id, source) {
 
   toUL: function () {
     var ol = document.createElement ('ul');
+    ol.className = 'swe-links';
     this.entries.forEach (function (entry) {
       ol.appendChild (entry.toLI ());
     });
@@ -122,7 +124,7 @@ SW.Neighbors.Entry = new SAMI.Class (function (v, id) {
     var doc = SW.CurrentDocument.getInstance ();
 
     var li = document.createElement ('li');
-    li.innerHTML = '<a href="">xxx</a> <button type=button>X</button>';
+    li.innerHTML = '<a href="">xxx</a> <button type=button class=swe-unrelated>X</button>';
     var a = li.firstChild;
     a.firstChild.data = this.docName;
     a.href = doc.constructURL ('n', this.docName, this.docId);
