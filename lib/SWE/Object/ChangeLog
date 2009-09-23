@@ -1,5 +1,9 @@
 2009-09-23  Wakaba  <wakaba@suika.fam.cx>
 
+	* Document.pm (name): Separated from |title|.
+
+2009-09-23  Wakaba  <wakaba@suika.fam.cx>
+
 	* Document.pm (lock): Typo; it did not lock in fact, orz.
 
 	* Graph.pm (schelling_update): Reuse the |repo| object's child

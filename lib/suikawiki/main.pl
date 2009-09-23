@@ -874,7 +874,7 @@ if ($path[0] eq 'n' and @path == 2) {
       print "Content-Type: text/plain; charset=UTF-8\n\n";
       
       for my $doc (@{$node->neighbor_documents}) {
-        print join "\t", $doc->id, $doc->title;
+        print join "\t", $doc->id, $doc->name;
         print "\n";
       }
       
@@ -1553,4 +1553,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/23 10:56:52 $
+1; ## $Date: 2009/09/23 14:16:25 $

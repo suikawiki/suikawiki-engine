@@ -1,5 +1,11 @@
 2009-09-23  Wakaba  <wakaba@suika.fam.cx>
 
+	* main.pl: Use |name| method instead of |title| method for the
+	|neighbors| view, otherwise JS can't construct the URL for the
+	linked page.
+
+2009-09-23  Wakaba  <wakaba@suika.fam.cx>
+
 	* main.pl: Lock for the document ID at the beginning of the
 	neighbors view processing.
 

@@ -137,9 +137,15 @@ sub title ($) {
   my $title = $prop->{title};
   return $title if defined $title and length $title;
 
-  $title = [keys %{$prop->{name}}]->[0] // ''; ## XXXTODO: title-type
-  return $title;
+  return $self->name;
 } # title
+
+sub name ($) {
+  my $self = shift;
+
+  my $prop = $self->prop;
+  return [keys %{$prop->{name}}]->[0] // ''; ## XXXTODO: title-type
+} # name
 
 ## ------ Indexing and Graph ------
 
