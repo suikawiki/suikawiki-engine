@@ -74,7 +74,8 @@ sub save_prop ($) {
   $self->lock;
 
   unless ($self->prop_untainted) {
-    die "Can't save a tainted prop object";
+    require Carp;
+    die "Can't save a tainted prop object" . Carp::longmess ();
   }
 
   my $prop = $self->prop or die "Can't save an uncreated prop object";
@@ -203,7 +204,7 @@ sub get_or_create_graph_node ($) {
 
   my $id_prop = $self->untainted_prop or do {
     $self->unlock;
-    return;
+    die "Can't obtain untainted prop object";
   };
 
   my $graph = $self->repo->graph;
@@ -229,7 +230,7 @@ sub get_or_create_graph_node ($) {
 sub lock ($) {
   my $self = shift;
   my $lock = $self->{lock} ||= $self->db->id_lock->get_lock ($self->id);
-  $self->{lock_n}++ or $self->lock;
+  $self->{lock_n}++ or $lock->lock;
 } # lock
 
 sub unlock ($) {
@@ -245,7 +246,7 @@ sub unlock ($) {
 } # unlock
 
 sub locked ($) {
-  return $_[0]->{lock_n} > 0;
+  return (($_[0]->{lock_n} // 0) > 0);
 } # locked
 
 # ------ Format Convertion ------

@@ -132,8 +132,7 @@ sub schelling_update ($$) {
   my $node = $self->get_node_by_id ($node_id);
   my $doc_id = $node->document_id // return;
 
-  require SWE::Object::Repository;
-  my $repo = SWE::Object::Repository->new (db => $self->db);
+  my $repo = $self->repo;
 
   my $related = 0;
   my $n = 0;
@@ -159,18 +158,19 @@ sub schelling_update ($$) {
   if ($v < RELATEDNESS_THRESHOLD and @$unused_nodes) {
     my $unused_node = $unused_nodes->[rand @$unused_nodes];
 
-    ##XXX maybe we have to lock the ID.
-
-    my $id_prop_db = $self->db->id_prop;
-    my $id_prop = $id_prop_db->get_data ($doc_id);
+    my $doc = $repo->get_document_by_id ($doc_id);
+    $doc->lock;
+    my $id_prop = $doc->untainted_prop;
     
     $id_prop->{node_id} = $unused_node->id;
     $unused_node->prop->{ids}->{$doc_id} = 1;
     delete $node->prop->{ids}->{$doc_id};
 
     $unused_node->save_prop;
-    $id_prop_db->set_data ($doc_id => $id_prop);
+    $doc->save_prop;
     $node->save_prop;
+
+    $doc->unlock;
   }
 
   $self->unlock;

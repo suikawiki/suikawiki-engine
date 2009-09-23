@@ -859,12 +859,14 @@ if ($path[0] eq 'n' and @path == 2) {
   } elsif ($param eq 'neighbors') {
     require SWE::Object::Repository;
     my $repo = SWE::Object::Repository->new (db => $db);
-    
+
     my $graph = $repo->graph;
     $graph->lock;
     
     my $id = $path[1] + 0;
     my $doc = $repo->get_document_by_id ($id);
+    $doc->lock;
+    
     my $node = $doc->get_or_create_graph_node;
     
     if ($node) {
@@ -879,10 +881,13 @@ if ($path[0] eq 'n' and @path == 2) {
       close STDOUT;
       
       $graph->schelling_update ($node->id);
+
+      $doc->unlock;
       $graph->unlock;
       
       exit;
     } else {
+      $doc->unlock;
       $graph->unlock;
       #
     }
@@ -1548,4 +1553,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/09/21 10:49:24 $
+1; ## $Date: 2009/09/23 10:56:52 $
