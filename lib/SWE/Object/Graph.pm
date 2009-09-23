@@ -63,7 +63,8 @@ sub add_nodes ($$) {
     
     for my $index1 ($last_node_index + 1 .. $max_node_index) {
       for (1 .. INITIAL_DEGREE) {
-        my $index2 = int rand $index1;
+        #my $index2 = int rand $index1;
+        my $index2 = $index1 - rand 50; # XXX
         
         $new_edges->{$index1}->{$index2} = 1;
         $new_edges->{$index2}->{$index1} = 1;

@@ -109,6 +109,10 @@ SW.SearchResult.Entry = new SAMI.Class (function (v) {
         location.href = a.href;
       }).get ();
 
+      setTimeout(function () {
+        location.href = a.href;
+      }, 1000);
+
       return false;
     }; // a.onclick
 
@@ -167,6 +171,10 @@ SW.Neighbors.Entry = new SAMI.Class (function (v, id) {
       }, function () {
         location.href = a.href;
       }).get ();
+
+      setTimeout(function () {
+        location.href = a.href;
+      }, 1000);
 
       return false;
     }; // a.onclick
