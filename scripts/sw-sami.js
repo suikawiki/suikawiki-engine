@@ -251,8 +251,6 @@ SW.init = function () {
       }
     }).get ();
 
-    if (location.href.match(/-temp/)) { // XXX
-
     var id = SW.CurrentDocument.getDocumentId ();
     if (id) {
       var neighborsURL = doc.constructURL ('i', id, null, 'neighbors');
@@ -263,8 +261,6 @@ SW.init = function () {
           SW.PageContents.getInstance ().insertSection ('neighbors', ol);
         }
       }).get ();
-    }
-
     }
 
     SW.Drawings.drawCanvases ();

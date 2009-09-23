@@ -1,5 +1,9 @@
 2009-09-23  Wakaba  <wakaba@suika.fam.cx>
 
+	* sw-sami.js: Enable neighbor link feature to the production wiki.
+
+2009-09-23  Wakaba  <wakaba@suika.fam.cx>
+
 	* sw-sami.js: Added class names to link list elements.
 
 2009-09-21  Wakaba  <wakaba@suika.fam.cx>
