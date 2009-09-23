@@ -83,11 +83,35 @@ SW.SearchResult.Entry = new SAMI.Class (function (v) {
   this.docName = v[2];
 }, {
   toLI: function () {
+    var self = this;
+
     var li = document.createElement ('li');
     li.innerHTML = '<a href="">xxx</a>';
-    li.firstChild.firstChild.data = this.docName;
-    li.firstChild.href = SW.CurrentDocument.getInstance ().constructURL
+
+    var a = li.firstChild;
+    a.firstChild.data = this.docName;
+    a.href = SW.CurrentDocument.getInstance ().constructURL
         ('n', this.docName, this.docId);
+
+    // XXX We don't use the real |ping| attribute for now since there
+    // is no reliable way to know whether the browser does or does not
+    // send ping and therefore we have to send the ping using a custom
+    // script code anyway.
+
+    // Use |GET| method instead of |POST| method to not require Basic auth.
+    a.onclick = function () {
+      var pingURL = SW.CurrentDocument.getInstance ().constructURL
+          ('i', SW.CurrentDocument.getDocumentId (), null,
+           'related-' + self.docId);
+      new SAMI.XHR (pingURL, function () {
+        location.href = a.href;
+      }, function () {
+        location.href = a.href;
+      }).get ();
+
+      return false;
+    }; // a.onclick
+
     return li;
   } // toLI
 }); // SearchResult.Entry
@@ -138,12 +162,11 @@ SW.Neighbors.Entry = new SAMI.Class (function (v, id) {
     a.onclick = function () {
       var pingURL = doc.constructURL
           ('i', self.sourceDocId, null, 'related-' + self.docId);
-      new SAMI.XHR (pingURL).get ();
-
-      var url = a.href;
-      setTimeout (function () {
-        location.href = url;
-      }, 500);
+      new SAMI.XHR (pingURL, function () {
+        location.href = a.href;
+      }, function () {
+        location.href = a.href;
+      }).get ();
 
       return false;
     }; // a.onclick
