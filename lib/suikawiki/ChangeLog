@@ -1,3 +1,8 @@
+2009-11-02  Wakaba  <wakaba@suika.fam.cx>
+
+	* main.pl: Tentative workaround for Apache mod_rewrite's buggy
+	percent-decoding of %2B.
+
 2009-09-23  Wakaba  <wakaba@suika.fam.cx>
 
 	* main.pl: Use |name| method instead of |title| method for the
