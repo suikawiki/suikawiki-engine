@@ -82,12 +82,12 @@ $cgi->{decoder}->{'#default'} = sub {
 ## the script.
 
 my $ru;
-if ($ENV{QUERY_STRING} =~ /(?:^|&)ru=([^&]+)/) {
+if ($ENV{QUERY_STRING} =~ s/(?:^|&)ru=([^&]+)//) {
   $ru = $1;
 }
 if (defined $ru and length $ru) {
   $ENV{REQUEST_URI} = $ru;
-warn "RU: $ru";
+  #warn "RU: $ru";
 }
 
 my $rurl = $dom->create_uri_reference ($cgi->request_uri)
@@ -1562,4 +1562,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/11/01 23:31:23 $
+1; ## $Date: 2009/11/15 09:53:07 $

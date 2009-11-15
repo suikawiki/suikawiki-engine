@@ -1,3 +1,8 @@
+2009-11-15  Wakaba  <wakaba@suika.fam.cx>
+
+	* main.pl: Remove ru=xxx parameter set by proxy, otherwise
+	"changing page name" does not work because of ";" in URL.
+
 2009-11-02  Wakaba  <wakaba@suika.fam.cx>
 
 	* main.pl: Tentative workaround for Apache mod_rewrite's buggy

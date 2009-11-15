@@ -1,4 +1,10 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1257118282"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1257118282</id><title>2009-11-01 Wakaba</title><updated>2009-11-01T23:31:14Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	1 Nov 2009 23:30:48 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1258278787"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1258278787</id><title>2009-11-15 Wakaba</title><updated>2009-11-15T09:53:00Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	15 Nov 2009 09:52:52 -0000
+2009-11-15  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* main.pl: Remove ru=xxx parameter set by proxy, otherwise
+	&quot;changing page name&quot; does not work because of &quot;;&quot; in URL.
+
+</content></entry><entry xml:id="entry-1257118282"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1257118282</id><title>2009-11-01 Wakaba</title><updated>2009-11-01T23:31:14Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	1 Nov 2009 23:30:48 -0000
 2009-11-02  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
 	* main.pl: Tentative workaround for Apache mod_rewrite's buggy
@@ -878,4 +884,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-11-01T23:31:14Z</updated></feed>
+</content></entry><updated>2009-11-15T09:53:00Z</updated></feed>
