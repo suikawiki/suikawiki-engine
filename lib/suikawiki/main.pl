@@ -656,10 +656,6 @@ if ($path[0] eq 'n' and @path == 2) {
         my $cache_prop = $cache_prop_db->get_data ($id);
         my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
 
-        if (defined $doc) {
-          update_tfidf ($id, $doc);
-        }
-
         my $url = get_page_url ([keys %{$id_prop->{name} or {}}]->[0],
                                 undef, 0 + $id);
         print "X-SW-Hash: $id_prop->{hash}\n";
@@ -668,6 +664,11 @@ if ($path[0] eq 'n' and @path == 2) {
         } else {
           http_redirect (301, 'Saved', $url);
         }
+
+        if (defined $doc) {
+          update_tfidf ($id, $doc);
+        }
+
         exit;
       } else {
         http_error (404, 'Not found');
@@ -1569,4 +1570,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/12/27 11:34:31 $
+1; ## $Date: 2009/12/27 11:38:50 $
