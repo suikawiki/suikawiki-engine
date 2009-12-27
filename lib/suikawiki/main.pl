@@ -122,6 +122,7 @@ if ($path[0] eq 'n' and @path == 2) {
   unless (length $name) {
     our $homepage_name;
     http_redirect (303, 'See other', get_page_url ($homepage_name, undef));
+    exit;
   }
 
   unless (defined $param) {
@@ -129,6 +130,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
     if (defined $dollar and not defined $id) {
       http_redirect (301, 'Not found', get_page_url ($name, undef));
+      exit;
     }
 
     my $format = $cgi->get_parameter ('format') // 'html';
@@ -587,6 +589,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
         if ($cgi->get_parameter ('redirect')) {
           http_redirect (303, 'Appended', get_page_url ($name, undef, $id) . '#anchor-' . $anchor);
+          exit;
         } else {
           print qq[Status: 204 Appended\n\n];
         }
@@ -599,6 +602,7 @@ if ($path[0] eq 'n' and @path == 2) {
     $name .= '$' . $dollar if defined $dollar;
     $name .= ';' . $param;
     http_redirect (301, 'Not found', get_page_url ($name, undef));
+    exit;
   }
 } elsif ($path[0] eq 'i' and @path == 2 and not defined $dollar) {
   unless (defined $param) {
@@ -664,6 +668,7 @@ if ($path[0] eq 'n' and @path == 2) {
         } else {
           http_redirect (301, 'Saved', $url);
         }
+        exit;
       } else {
         http_error (404, 'Not found');
       }
@@ -1115,6 +1120,7 @@ if ($path[0] eq 'n' and @path == 2) {
     } else {
       http_redirect (301, 'Created', $url);
     }
+    exit;
   } else {
     binmode STDOUT, ':encoding(utf8)';
     print "Content-Type: text/html; charset=utf-8\n\n";
@@ -1174,10 +1180,12 @@ if ($path[0] eq 'n' and @path == 2) {
          {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
   our $homepage_name;
   http_redirect (303, 'See other', get_page_url ($homepage_name, undef));
+  exit;
 } elsif (@path == 0) {
   my $rurl = $cgi->request_uri;
   $rurl =~ s!\.[^/]*$!!g;
   http_redirect (303, 'See other', $rurl . '/');
+  exit;
 }
 
 http_error (404, 'Not found');
@@ -1285,7 +1293,6 @@ Content-Type: text/html; charset=utf-8
 <title>$code @{[htescape ($text)]}</title>
 <h1>@{[htescape ($text)]}</h1>
 <p>See <a href="@{[htescape ($url)]}">other page</a>.];
-  exit;
 } # http_redirect
 
 sub normalize_name ($) {
@@ -1562,4 +1569,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/11/15 09:53:07 $
+1; ## $Date: 2009/12/27 11:34:31 $

@@ -1,3 +1,7 @@
+2009-12-27  Wakaba  <wakaba@suika.fam.cx>
+
+	* main.pl (http_redirect): Don't call |exit| in this function.
+
 2009-11-15  Wakaba  <wakaba@suika.fam.cx>
 
 	* main.pl: Remove ru=xxx parameter set by proxy, otherwise

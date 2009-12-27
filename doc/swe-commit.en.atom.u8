@@ -1,4 +1,9 @@
-<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1258278787"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1258278787</id><title>2009-11-15 Wakaba</title><updated>2009-11-15T09:53:00Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	15 Nov 2009 09:52:52 -0000
+<feed xmlns="http://www.w3.org/2005/Atom"><link href="http://suika.fam.cx/swe/doc/swe-commit" hreflang="en" rel="self" type="application/atom+xml"></link><link href="http://suika.fam.cx/swe/doc/readme" rel="related"></link><link href="http://suika.fam.cx/swe/doc/readme#license" rel="license"></link><rights>This feed is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</rights><entry xml:id="entry-1261913670"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1261913670</id><title>2009-12-27 Wakaba</title><updated>2009-12-27T11:34:18Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	27 Dec 2009 11:34:15 -0000
+2009-12-27  Wakaba  &lt;wakaba@suika.fam.cx&gt;
+
+	* main.pl (http_redirect): Don't call |exit| in this function.
+
+</content></entry><entry xml:id="entry-1258278787"><id>http://suika.fam.cx/swe/doc/swe-commit#entry-1258278787</id><title>2009-11-15 Wakaba</title><updated>2009-11-15T09:53:00Z</updated><author><name>Wakaba</name><email>wakaba@suika.fam.cx</email></author><content type="text">++ swe/lib/suikawiki/ChangeLog	15 Nov 2009 09:52:52 -0000
 2009-11-15  Wakaba  &lt;wakaba@suika.fam.cx&gt;
 
 	* main.pl: Remove ru=xxx parameter set by proxy, otherwise
@@ -884,4 +889,4 @@
 	* ChangeLog: New file.
 
 
-</content></entry><updated>2009-11-15T09:53:00Z</updated></feed>
+</content></entry><updated>2009-12-27T11:34:18Z</updated></feed>
