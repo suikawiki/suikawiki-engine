@@ -15,7 +15,7 @@ our $style_url = q<http://suika.fam.cx/swe/styles/sw>;
 our $script_url = q<http://suika.fam.cx/swe/scripts/sw>;
 our $cvs_archives_url = q</gate/cvs/suikawiki/sw4data/>;
 
-our $sw3_db_dir_name = q[/home/wakaba/public_html/-temp/wiki/wikidata/page/];
+our $sw3_db_dir_name = q[/home/wakaba/server/sw3/wikidata/page/];
 our $db_dir_name = 'data/';
 
 my $log_file_name = 'data/all.tmp';
