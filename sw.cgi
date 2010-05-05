@@ -1,10 +1,8 @@
 #!/usr/bin/perl
 use strict;
-
-use lib qw[/home/httpd/html/www/markup/html/whatpm
-           /home/wakaba/work/manakai2/lib
-           /home/httpd/html/www/charclass/lib
-           /home/httpd/html/swe/lib/];
+use warnings;
+use Path::Class;
+use lib glob file (__FILE__)->dir->subdir ('modules/*/lib');
 
 use CGI::Carp qw[fatalsToBrowser];
 require Message::CGI::Carp;
@@ -27,7 +25,7 @@ my $time1 = time;
 #close $log_file;
 END {
 my $time2 = time - $time1;
-open my $log_file, '>>', $log_file_name;
+open my $log_file, '>>', $log_file_name or do { warn "$0: $log_file_name: $!"; return };
 print $log_file "$time2\tE: $$ ", scalar gmtime, "\t$ENV{REQUEST_METHOD} $ENV{CONTENT_LENGTH}\t", $ENV{REQUEST_URI}, "\n";
 }
 
