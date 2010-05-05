@@ -1,0 +1,9 @@
+[submodule "modules/SWE"]
+	path = modules/SWE
+	url = http://suika.fam.cx/gate/git/bare/suikawiki-engine.git/
+[submodule "modules/manakai"]
+	path = modules/manakai
+	url = http://suika.fam.cx/gate/git/bare/manakai.git/
+[submodule "modules/charclass"]
+	path = modules/charclass
+	url = http://suika.fam.cx/gate/git/bare/charclass.git/
