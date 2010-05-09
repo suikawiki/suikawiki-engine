@@ -89,46 +89,46 @@ dfn .DOMp {
 
 pre.example:before {
   display: block;
-  content: "$BNc(B: ";
+  content: "例: ";
   font-weight: bolder;
   font-family: sans-serif;
 }
 
 pre.continue.example:before {
-  content: "$BNc(B ($BB3$-(B): ";
+  content: "例 (続き): ";
 }
 
 pre.bad.example:before {
-  content: "$B0-$$Nc(B: ";
+  content: "悪い例: ";
 }
 
 pre.continue.bad.example:before {
-  content: "$B0-$$Nc(B ($BB3$-(B): ";
+  content: "悪い例 (続き): ";
 }
 
 pre.invalid.example:before {
-  content: "$BHsBEEv$JNc(B: ";
+  content: "非妥当な例: ";
 }
 
 pre.continue.invalid.example:before {
-  content: "$BHsBEEv$JNc(B ($BB3$-(B): ";
+  content: "非妥当な例 (続き): ";
 }
 
 pre.illegal.example:before {
-  content: "$B0cK!$JNc(B: ";
+  content: "違法な例: ";
 }
 
 pre.continue.illegal.example:before {
-  content: "$B0cK!$JNc(B ($BB3$-(B): ";
+  content: "違法な例 (続き): ";
 }
 
 pre.deprecated.example:before {
-  content: "$BHs?d>)$NNc(B: ";
+  content: "非推奨の例: ";
 }
 
 
 pre.continue.deprecated.example:before {
-  content: "$BHs?d>)$NNc(B ($BB3$-(B): ";
+  content: "非推奨の例 (続き): ";
 }
 
 /*

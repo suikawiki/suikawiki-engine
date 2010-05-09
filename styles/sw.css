@@ -309,11 +309,11 @@ cite {
 }
 
 cite:before {
-  content: "$B!X(B";
+  content: "『";
 }
 
 cite:after {
-  content: "$B!Y(B";
+  content: "』";
 }
 
 .sw-csection {
@@ -321,11 +321,11 @@ cite:after {
 }
 
 .sw-csection:before {
-  content: "$B!V(B";
+  content: "「";
 }
 
 .sw-csection:after {
-  content: "$B!W(B";
+  content: "」";
 }
 
 .sw-src {
@@ -344,19 +344,19 @@ cite:after {
 /* Inline quotations */
 
 q:before {
-  content: " $B!V(B";
+  content: " 「";
 }
 
 q:after {
-  content: "$B!W(B ";
+  content: "」 ";
 }
 
 q q:before {
-  content: " $B!X(B";
+  content: " 『";
 }
 
 q q:after {
-  content: "$B!Y(B ";
+  content: "』 ";
 }
 
 /* Emphases and important words */
