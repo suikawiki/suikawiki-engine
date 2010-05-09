@@ -13,12 +13,12 @@ our $help_page_name = 'HelpPage';
 
 our $style_url = q<http://suika.fam.cx/swe/styles/sw>;
 our $script_url = q<http://suika.fam.cx/swe/scripts/sw>;
-our $cvs_archives_url = q</gate/cvs/suikawiki/sw4data/>;
+our $cvs_archives_url = q</gate/cvs/melon/pub/suikawiki/sw4data/>;
 
 our $sw3_db_dir_name = q[/home/wakaba/server/sw3/wikidata/page/];
-our $db_dir_name = 'data/';
+our $db_dir_name = q[/data1/sw/sw4data/];
 
-my $log_file_name = 'data/all.tmp';
+my $log_file_name = '/data1/sw/sw4data/all.tmp';
 my $time1 = time;
 #open my $log_file, '>>', $log_file_name;
 #print $log_file "S: ", scalar gmtime, "\t", $ENV{REQUEST_URI}, "\n";
