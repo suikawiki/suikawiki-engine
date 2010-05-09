@@ -1,12 +1,14 @@
 package SWE::DB::VersionControl;
 use strict;
 
-sub new ($) {
+sub new ($%) {
+  my ($class, %args) = @_;
   my $self = bless {
+    db_dir_name => $args{db_dir_name},
     added_directories => {},
     added_files => {},
     modified_files => {},
-  }, shift;
+  }, $class;
   return $self;
 } # new
 
@@ -35,6 +37,11 @@ sub commit_changes ($$) {
   my $self = shift;
   my $msg = shift;
 
+  require Cwd;
+  my $cwd = Cwd::getcwd ();
+
+  chdir $self->{db_dir_name};
+
   for (sort {$a cmp $b} keys %{$self->{added_directories}}) {
     _system ('cvs', 'add', $_);
   }
@@ -52,6 +59,8 @@ sub commit_changes ($$) {
     _system ('cvs', 'ci', -m => $msg, @changed)
         or die "$0: commit_changes: $?";
   }
+
+  chdir $cwd;
 } # commit_changes
 
 sub _system (@) {

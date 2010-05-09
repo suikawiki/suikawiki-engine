@@ -148,7 +148,7 @@ sub vc ($) {
   my $self = shift;
 
   require SWE::DB::VersionControl;
-  return SWE::DB::VersionControl->new;
+  return SWE::DB::VersionControl->new(db_dir_name => $self->{db_dir_name});
 } # vc
 
 1;
