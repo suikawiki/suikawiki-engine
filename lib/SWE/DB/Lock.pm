@@ -56,7 +56,7 @@ sub lock ($) {
   $self->check_lockability;
   $CurrentlyLocking->{$self->lock_type}++;
 
-warn "XXX @{[$self->lock_type]} $CurrentlyLocking->{$self->lock_type} $self->{file_name}";
+  #warn "XXX @{[$self->lock_type]} $CurrentlyLocking->{$self->lock_type} $self->{file_name}";
   
   open my $file, '>', $self->{file_name} or die "$0: $self->{file_name}: $!";
   flock $file, LOCK_EX;
