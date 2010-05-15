@@ -9,3 +9,5 @@ AddHandler cgi-script .cgi
   AuthGroupFile /home/wakaba/public_html/pbin/accounts/data/htgroup
   AuthName "SuikaWiki"
 </Limit>
+
+RedirectMatch 301 /~wakaba/wiki/data/.*$ http://suika.fam.cx/~wakaba/wiki/sw/n/HomePage
