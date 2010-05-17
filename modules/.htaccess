@@ -1,1 +1,1 @@
-Deny from all
+Redirect 403 /~wakaba/wiki/modules/
