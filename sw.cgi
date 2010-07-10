@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Path::Class;
-use lib glob file (__FILE__)->dir->subdir ('modules-used/*/lib');
+use lib glob file (__FILE__)->dir->subdir ('modules/*/lib');
 
 use CGI::Carp qw[fatalsToBrowser];
 require Message::CGI::Carp;
