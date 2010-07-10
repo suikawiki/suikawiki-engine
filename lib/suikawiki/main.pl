@@ -18,7 +18,7 @@ my $dom = Message::DOM::DOMImplementation->new;
 
 use Message::CGI::Util qw/percent_encode percent_encode_na
   percent_decode htescape get_absolute_url
-  datetime_in_content/;
+  datetime_in_content datetime_for_http/;
 
 require Char::Normalize::FullwidthHalfwidth;
 
@@ -273,6 +273,7 @@ if ($path[0] eq 'n' and @path == 2) {
       }
       $body_el->append_child ($nav_el);
 
+      my $modified;
       if ($html_container) {
         my $article_el = $html_doc->create_element_ns (HTML_NS, 'div');
         $article_el->set_attribute (class => 'article');
@@ -286,7 +287,7 @@ if ($path[0] eq 'n' and @path == 2) {
           $article_el->append_child ($html_container->first_child);
         }
 
-        my $modified = $id_prop->{modified};
+        $modified = $id_prop->{modified};
         if (defined $modified) {
           my $footer_el = $html_doc->create_element_ns (HTML_NS, 'div');
           $footer_el->set_attribute (class => 'footer swe-updated');
@@ -325,7 +326,11 @@ if ($path[0] eq 'n' and @path == 2) {
       set_foot_content ($html_doc);
       
       binmode STDOUT, ':encoding(utf-8)';
-      print qq[Content-Type: text/html; charset=utf-8\n\n];
+      print qq[Content-Type: text/html; charset=utf-8\n];
+      if ($modified) {
+        print q[Last-Modified: ] . (datetime_for_http $modified) . qq[\n];
+      }
+      print "\n";
       print $html_doc->inner_html;
       exit;
     }
