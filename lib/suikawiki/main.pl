@@ -298,21 +298,34 @@ if ($path[0] eq 'n' and @path == 2) {
         }
           
         $body_el->append_child ($article_el);
-      }
 
-      my $ad_el = $html_doc->create_element_ns (HTML_NS, 'aside');
-      $ad_el->set_attribute (class => 'swe-ad');
-      $ad_el->inner_html (q[
-        <script>
-          google_ad_client = "pub-6943204637055835";
-          google_ad_slot = "4290129344";
-          google_ad_width = 728;
-          google_ad_height = 90;
-        </script>
-        <script src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-        </script>
-      ]);
-      $body_el->append_child ($ad_el);
+        my $ad_el = $html_doc->create_element_ns (HTML_NS, 'aside');
+        $ad_el->set_attribute (class => 'swe-ad');
+        $ad_el->inner_html (q[
+          <script>
+            google_ad_client = "pub-6943204637055835";
+            google_ad_slot = "4290129344";
+            google_ad_width = 728;
+            google_ad_height = 90;
+          </script>
+          <script src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+          </script>
+        ]);
+        $body_el->append_child ($ad_el);
+      } else {
+        my $new_nav_el = $html_doc->create_element_ns (HTML_NS, 'section');
+        $new_nav_el->inner_html (q[<a href="">Add a description</a> of <em>] . (htescape $name) . q[</em>]);
+        $new_nav_el->first_child->set_attribute
+            (href => '../new-page?names=' . percent_encode ($name));
+        $body_el->append_child ($new_nav_el);
+
+        my $new_el = $html_doc->create_element_ns (HTML_NS, 'section');
+        $new_el->inner_html (sprintf q[
+          <script src="http://h.hatena.ne.jp/widget?word=%s&width=600&height=500&scrolling=no" charset="utf-8"></script>
+          <div style="margin:0;padding:0;border:none;"><a href="http://h.hatena.ne.jp/"><img src="http://h.hatena.ne.jp/images/widget-credit.gif" style="border:none;" alt="Hatena Haiku"></a></div>
+        ], percent_encode $name);
+        $body_el->append_child ($new_el);
+      }
 
       my $footer_el = $html_doc->create_element_ns (HTML_NS, 'footer');
       $footer_el->set_attribute (class => 'footer');
