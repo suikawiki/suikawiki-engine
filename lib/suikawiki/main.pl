@@ -318,13 +318,6 @@ if ($path[0] eq 'n' and @path == 2) {
         $new_nav_el->first_child->set_attribute
             (href => '../new-page?names=' . percent_encode ($name));
         $body_el->append_child ($new_nav_el);
-
-        my $new_el = $html_doc->create_element_ns (HTML_NS, 'section');
-        $new_el->inner_html (sprintf q[
-          <script src="http://h.hatena.ne.jp/widget?word=%s&width=600&height=500&scrolling=no" charset="utf-8"></script>
-          <div style="margin:0;padding:0;border:none;"><a href="http://h.hatena.ne.jp/"><img src="http://h.hatena.ne.jp/images/widget-credit.gif" style="border:none;" alt="Hatena Haiku"></a></div>
-        ], percent_encode $name);
-        $body_el->append_child ($new_el);
       }
 
       my $footer_el = $html_doc->create_element_ns (HTML_NS, 'footer');
