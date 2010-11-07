@@ -154,7 +154,7 @@ function initializeHatenaStar () {
 
   var hsScript = document.createElement ('script');
   hsScript.defer = true;
-  hsScript.src = 'http://s.hatena.ne.jp/js/HatenaStarNew.js';
+  hsScript.src = 'http://s.hatena.ne.jp/js/HatenaStar.js';
   document.documentElement.lastChild.appendChild (hsScript);
 
   /*
