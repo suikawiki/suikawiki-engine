@@ -465,6 +465,73 @@ input[name=title] {
   margin-top: 1em;
 }
 
+/* Search form */
+
+#cse-search-form {
+  margin-left: 2em;
+}
+
+#cse-search-form form {
+  border-style: none;
+  padding-left: 0;
+  width: auto;
+}
+
+#cse-search-form table,
+#cse-search-form th,
+#cse-search-form td {
+  border-style: none;
+  line-height: 1.0;
+}
+
+#cse-search-form tr:hover,
+#cse-search-form table td:hover,
+#cse-search-form table th:hover {
+  background-color: transparent;
+}
+
+#cse-search-form .gsc-thinWrapper {
+  width: auto;
+  float: none;
+}
+
+#cse-search-form .gsc-tabsArea {
+  margin: 0;
+}
+
+#cse-search-form .gsc-tabHeader.gsc-tabhActive {
+  margin-top-color: #004000;
+}
+
+#cse-search-form .gsc-webResult .gsc-result {
+  padding: 0;
+  border-bottom: none;
+}
+
+#cse-search-form .gsc-webResult .gsc-result td {
+  line-height: 2.0;
+}
+
+#cse-search-form .gs-title {
+  text-align: left;
+  height: auto;
+  text-decoration: none;
+}
+
+#cse-search-form .gs-snippet {
+  line-height: 1.2;
+}
+
+#cse-search-form .gs-visibleUrl {
+/*  display: none; */
+  line-height: 1.1;
+}
+
+#cse-search-form .gs-per-result-labels {
+  display: none;
+  line-height: 1.1;
+}
+
 /* Links */
 
 .swe-links {

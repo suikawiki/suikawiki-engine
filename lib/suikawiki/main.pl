@@ -320,6 +320,11 @@ if ($path[0] eq 'n' and @path == 2) {
         $body_el->append_child ($new_nav_el);
       }
 
+      my $search_el = $html_doc->create_element_ns (HTML_NS, 'div');
+      $search_el->set_attribute (class => 'nav search');
+      $search_el->set_attribute (id => 'cse-search-form');
+      $body_el->append_child ($search_el);
+
       my $footer_el = $html_doc->create_element_ns (HTML_NS, 'footer');
       $footer_el->set_attribute (class => 'footer');
       $footer_el->inner_html (q[<p class=copyright><small>&copy; Authors.  See <a rel=license>license terms</a>.  There might also be additional terms applied for this page.</small>]);

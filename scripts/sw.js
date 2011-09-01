@@ -18,8 +18,25 @@
 }) ();
 
 window.onload = function () {
+  document.write = function (html) {
+    var div = document.createElement ('div');
+    div.innerHTML = html;
+    var scripts = div.getElementsByTagName ('script');
+    var scriptsL = scripts.length;
+    for (var i = 0; i < scriptsL; i++) {
+      var oldScript = scripts[i];
+      var script = document.createElement ('script');
+      if (oldScript.src) script.src = oldScript.src;
+      if (oldScript.charset) script.charset = oldScript.charset;
+      if (oldScript.text) script.text = oldScript.text;
+      div.appendChild (script);
+    }
+    document.body.appendChild (div);
+  };
+
   createToolbar ();
-  initializeHatenaStar();
+  addGoogleSearch ();
+//  initializeHatenaStar();
   enableHTML5Support ();
 }; // window.onload
 
@@ -178,6 +195,27 @@ function enableHTML5Support () {
   timeScript.src = 'http://suika.fam.cx/www/style/ui/time.js';
   document.documentElement.lastChild.appendChild (timeScript);
 } // enableHTML5Support
+
+function addGoogleSearch () {
+  var placeholder = document.getElementById ('cse-search-form');
+  if (!placeholder) return;
+
+  var script = document.createElement ('script');
+  script.src = 'http://www.google.co.jp/jsapi';
+  script.onload = function () {
+    google.load('search', '1');
+    setTimeout (function () {
+    //google.setOnLoadCallback(function() {
+      var customSearchControl = new google.search.CustomSearchControl('partner-pub-6943204637055835:1339232282');
+      customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+      var options = new google.search.DrawOptions();
+      options.setAutoComplete(true);
+      customSearchControl.draw('cse-search-form', options);
+    //}, true);
+    }, 1000);
+  }; // onload
+  document.body.appendChild (script);
+} // addGoogleSearch
 
 /* Hack for IE */
 document.createElement ('time');
