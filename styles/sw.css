@@ -308,6 +308,7 @@ code, samp, pre.code {
   background-color: #FBF8E6;
   line-height: 1.3;
   padding: 0.3em;
+  margin-bottom: 0.5em;
 }
 
 .sw-refs > ul {
