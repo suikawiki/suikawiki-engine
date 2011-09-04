@@ -149,7 +149,26 @@ $templates->{(SW09_NS)}->{refs} = sub {
   unshift @$items,
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
-};
+}; # refs
+
+$templates->{(HTML_NS)}->{figure} =
+$templates->{(HTML_NS)}->{figcaption} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns
+      (HTML_NS, $item->{node}->manakai_local_name);
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $el->set_attribute (class => $class) if defined $class;
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+}; # figcaption
 
 $templates->{(SW10_NS)}->{'comment-p'} = sub {
   my ($items, $item) = @_;
