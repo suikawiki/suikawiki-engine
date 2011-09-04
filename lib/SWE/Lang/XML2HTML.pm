@@ -134,6 +134,23 @@ $templates->{(SW09_NS)}->{delete} = sub {
       @{$item->{node}->child_nodes};
 };
 
+$templates->{(SW09_NS)}->{refs} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'div');
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class') // '';
+  $el->set_attribute (class => $class . ' sw-refs');
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+};
+
 $templates->{(SW10_NS)}->{'comment-p'} = sub {
   my ($items, $item) = @_;
 
@@ -405,13 +422,16 @@ $templates->{(SW09_NS)}->{'anchor-end'} = sub {
 $templates->{(SW09_NS)}->{'anchor-external'} = sub {
   my ($items, $item) = @_;
 
-  $item->{parent}->manakai_append_text ('<');
+  my $container = $item->{doc}->create_element_ns (HTML_NS, 'span');
+  $container->set_attribute (class => 'sw-anchor-external-container');
+
+  $container->manakai_append_text ('<');
 
   my $el = $item->{doc}->create_element_ns (HTML_NS, 'a');
-  $item->{parent}->append_child ($el);
+  $container->append_child ($el);
   $el->set_attribute (class => 'sw-anchor-external');
 
-  $item->{parent}->manakai_append_text ('>');
+  $container->manakai_append_text ('>');
 
   my $scheme = $item->{node}->get_attribute_ns (SW09_NS, 'resScheme');
   if ($scheme eq 'URI' or $scheme eq 'URL') {
@@ -424,7 +444,9 @@ $templates->{(SW09_NS)}->{'anchor-external'} = sub {
   unshift @$items,
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
-};
+
+  $item->{parent}->append_child ($container);
+}; # anchor-external
 
 $templates->{(SW09_NS)}->{image} = sub {
   my ($items, $item) = @_;
@@ -504,5 +526,14 @@ sub convert ($$$$$$) {
 
   return $df;
 } # convert_swml_to_html
+
+=head1 LICENSE
+
+Copyright 2008-2011 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
 
 1;
