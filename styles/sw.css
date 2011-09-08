@@ -128,10 +128,12 @@ blockquote {
 
 .sw-comment-p {
   display: block;
-  padding-left: 1em;
+  padding-left: 5em;
   color: #004000;
   background-color: transparent;
   text-indent: -1em;
+  font-size: 90%;
+  line-height: 2.2;
 }
 
 .sw-comment-p:before {
