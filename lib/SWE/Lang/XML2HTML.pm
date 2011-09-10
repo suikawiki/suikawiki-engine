@@ -134,14 +134,15 @@ $templates->{(SW09_NS)}->{delete} = sub {
       @{$item->{node}->child_nodes};
 };
 
-$templates->{(SW09_NS)}->{refs} = sub {
+$templates->{(SW09_NS)}->{refs} =
+$templates->{(SW09_NS)}->{example} = sub {
   my ($items, $item) = @_;
 
   my $el = $item->{doc}->create_element_ns (HTML_NS, 'div');
   $item->{parent}->append_child ($el);
 
   my $class = $item->{node}->get_attribute ('class') // '';
-  $el->set_attribute (class => $class . ' sw-refs');
+  $el->set_attribute (class => $class . ' sw-' . $item->{node}->manakai_local_name);
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;

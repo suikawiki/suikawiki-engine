@@ -87,11 +87,20 @@ dfn .DOMp {
 
 /* Examples */
 
+.sw-example pre.example {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
 pre.example:before {
   display: block;
   content: "例: ";
   font-weight: bolder;
   font-family: sans-serif;
+}
+
+.sw-example pre.example:before {
+  content: "";
 }
 
 pre.continue.example:before {
