@@ -52,6 +52,7 @@ sub check_lockability ($) {
                        
 sub lock ($) {
   my $self = shift;
+  #warn "Lock ", $self->lock_type, join ' ', %$CurrentlyLocking, "\n";
 
   $self->check_lockability;
   $CurrentlyLocking->{$self->lock_type}++;
@@ -65,8 +66,10 @@ sub lock ($) {
 
 sub unlock ($) {
   my $self = shift;
+  #warn "Unlock ", $self->lock_type, join ' ', %$CurrentlyLocking, "\n";
 
-  $CurrentlyLocking->{$self->lock_type}--;
+  $CurrentlyLocking->{$self->lock_type}--
+      if $CurrentlyLocking->{$self->lock_type};
 
   close $self->{lock};
 } # unlock
