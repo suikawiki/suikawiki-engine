@@ -1,0 +1,89 @@
+ServerTokens OS
+ServerRoot "%%APACHEROOT%%"
+PidFile run/httpd.pid
+Timeout 120
+KeepAlive Off
+MaxKeepAliveRequests 100
+KeepAliveTimeout 15
+
+StartServers       8
+MinSpareServers    5
+MaxSpareServers   20
+ServerLimit       25
+MaxClients        25
+MaxRequestsPerChild  4000
+
+LoadModule auth_basic_module %%APACHEMODULES%%/mod_auth_basic.so
+LoadModule authn_file_module %%APACHEMODULES%%/mod_authn_file.so
+LoadModule authn_alias_module %%APACHEMODULES%%/mod_authn_alias.so
+LoadModule authn_anon_module %%APACHEMODULES%%/mod_authn_anon.so
+LoadModule authn_default_module %%APACHEMODULES%%/mod_authn_default.so
+LoadModule authz_host_module %%APACHEMODULES%%/mod_authz_host.so
+LoadModule authz_user_module %%APACHEMODULES%%/mod_authz_user.so
+LoadModule authz_groupfile_module %%APACHEMODULES%%/mod_authz_groupfile.so
+LoadModule authz_owner_module %%APACHEMODULES%%/mod_authz_owner.so
+LoadModule authz_default_module %%APACHEMODULES%%/mod_authz_default.so
+LoadModule log_config_module %%APACHEMODULES%%/mod_log_config.so
+LoadModule logio_module %%APACHEMODULES%%/mod_logio.so
+LoadModule env_module %%APACHEMODULES%%/mod_env.so
+LoadModule ext_filter_module %%APACHEMODULES%%/mod_ext_filter.so
+LoadModule headers_module %%APACHEMODULES%%/mod_headers.so
+LoadModule setenvif_module %%APACHEMODULES%%/mod_setenvif.so
+LoadModule mime_module %%APACHEMODULES%%/mod_mime.so
+LoadModule info_module %%APACHEMODULES%%/mod_info.so
+LoadModule vhost_alias_module %%APACHEMODULES%%/mod_vhost_alias.so
+LoadModule negotiation_module %%APACHEMODULES%%/mod_negotiation.so
+LoadModule dir_module %%APACHEMODULES%%/mod_dir.so
+LoadModule rewrite_module %%APACHEMODULES%%/mod_rewrite.so
+LoadModule perl_module %%APACHEMODULES%%/mod_perl.so
+
+#User apache
+#Group apache
+
+ServerAdmin %%APACHESERVERADMIN%%
+ServerName %%APACHESERVERNAME%%
+UseCanonicalName Off
+
+HostnameLookups Off
+
+ErrorLog logs/error_log
+LogLevel warn
+
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+LogFormat "%{Referer}i -> %U" referer
+LogFormat "%{User-agent}i" agent
+
+CustomLog logs/access_log combined
+
+ServerSignature On
+AddDefaultCharset UTF-8
+
+Listen %%APACHESERVERPORT%%
+
+<Location />
+  Deny from all
+</Location>
+
+PerlSwitches -I%%SWLIB%%
+PerlSetEnv X_SW_ENV %%SWENV%%
+PerlModule SuikaWiki5::Main
+
+<Location /query>
+  Allow from all
+
+  PerlSetEnv X_SW_SCRIPT_NAME %%SWSCRIPTNAME%%
+  PerlSetEnv X_SW_USE_QUERY_STRING_AS_URL 1
+
+  SetHandler perl-script
+  PerlResponseHandler SuikaWiki5::Main
+  PerlOptions +ParseHeaders
+
+  <Limit POST PUT DELETE>
+    Require group %%EDITGROUP%%
+    AuthType Basic
+    AuthUserFile %%EDITHTPASSWD%%
+    AuthGroupFile %%EDITHTGROUP%%
+    AuthName "%%EDITREALM%%"
+  </Limit>
+</Location>
