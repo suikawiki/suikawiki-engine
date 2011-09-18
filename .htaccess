@@ -1,6 +1,6 @@
-Options +ExecCGI
-AddType text/html .cgi
-AddHandler cgi-script .cgi
+#Options +ExecCGI
+#AddType text/html .cgi
+#AddHandler cgi-script .cgi
 
 <Limit POST PUT DELETE>
   Require group suikawiki
