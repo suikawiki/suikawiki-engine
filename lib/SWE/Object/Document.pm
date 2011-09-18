@@ -110,7 +110,7 @@ sub associate_names ($$%) {
     my $name_props = $name_prop_db->get_data ($name);
     unless (defined $name_props) {
       my $sw3id = $sw3_pages->get_data ($name);
-      main::convert_sw3_page ($sw3id => $name); ## TODO: ...
+      SuikaWiki5::Main::convert_sw3_page ($sw3id => $name); ## TODO: ...
       
       $name_props = $name_prop_db->get_data ($name);
       unless (defined $name_props) {
@@ -170,7 +170,7 @@ sub update_tfidf ($$) {
 
   my $orig_tfs = {};
   my $all_terms = 0;
-  main::for_unique_words ($tc => sub {
+  SuikaWiki5::Main::for_unique_words ($tc => sub {
     $orig_tfs->{$_[0]} = $_[1];
     $all_terms += $_[1];
   }); ## TODO: XXX

@@ -1,3 +1,4 @@
+package SuikaWiki5::Main;
 use strict;
 use feature 'state';
 
@@ -38,22 +39,11 @@ require SWE::DB::SuikaWiki3PageList2;
 my $sw3_pages = SWE::DB::SuikaWiki3PageList2->new;
 $sw3_pages->{root_directory_name} = $db_sw3_dir_name;
 
-require SWE::DB::Lock;
-my $names_lock = SWE::DB::Lock->new;
-$names_lock->{file_name} = $db_global_lock_dir_name . 'ids.lock';
-$names_lock->lock_type ('Names');
-    ## NOTE: This lock MUST be used when $sw3pages or $name_prop_db is updated.
-
 # XXX $db->id_prop
 require SWE::DB::IDProps;
 my $id_prop_db = SWE::DB::IDProps->new;
 $id_prop_db->{root_directory_name} = $db_id_dir_name;
 $id_prop_db->{leaf_suffix} = '.props';
-
-require SWE::DB::IDLocks;
-my $id_locks = SWE::DB::IDLocks->new;
-$id_locks->{root_directory_name} = $db_id_dir_name;
-$id_locks->{leaf_suffix} = '.lock';
 
 require SWE::DB::HashedProps;
 my $name_prop_db = SWE::DB::HashedProps->new;
@@ -69,6 +59,9 @@ my $content_db = SWE::DB::IDText->new;
 $content_db->{root_directory_name} = $db_id_dir_name;
 $content_db->{leaf_suffix} = '.txt';
 
+my $names_lock;
+my $id_locks;
+
 ## --- Process Request-URI
 
 require Message::CGI::HTTP;
@@ -77,23 +70,15 @@ $cgi->{decoder}->{'#default'} = sub {
   return Encode::decode ('utf-8', $_[1]);
 };
 
-## NOTE: This script requires the server set REQUEST_URI and
-## SCRIPT_NAME which is the part of the REQUEST_URI that identifies
-## the script.
-
-my $ru;
-if ($ENV{QUERY_STRING} =~ s/(?:^|&)ru=([^&]+)//) {
-  $ru = $1;
-}
-if (defined $ru and length $ru) {
-  $ENV{REQUEST_URI} = $ru;
-  #warn "RU: $ru";
-}
+## NOTE: This script requires the server set a meta variable
+## |REQUEST_URI| and another meta variable (|X_SW_SCRIPT_NAME| or
+## |SCRIPT_NAME|) which is a prefix part of the |REQUEST_URI| that
+## identifies the script.
 
 my $rurl = $dom->create_uri_reference ($cgi->request_uri)
     ->get_uri_reference;
 my $sname = $dom->create_uri_reference
-    (percent_encode_na ($cgi->get_meta_variable ('SCRIPT_NAME')))
+    (percent_encode_na ($cgi->get_meta_variable ('X_SW_SCRIPT_NAME') || $cgi->get_meta_variable ('SCRIPT_NAME')))
     ->get_absolute_reference ($rurl)
     ->get_uri_reference;
 my $path = $rurl->get_relative_reference ($sname);
@@ -116,13 +101,28 @@ shift @path; # script's name
 
 sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
 
+main ();
+
+sub main {
+
+require SWE::DB::IDLocks;
+$id_locks = SWE::DB::IDLocks->new;
+$id_locks->{root_directory_name} = $db_id_dir_name;
+$id_locks->{leaf_suffix} = '.lock';
+
+require SWE::DB::Lock;
+$names_lock = SWE::DB::Lock->new;
+$names_lock->{file_name} = $db_global_lock_dir_name . 'ids.lock';
+$names_lock->lock_type ('Names');
+    ## NOTE: This lock MUST be used when $sw3pages or $name_prop_db is updated.
+
 if ($path[0] eq 'n' and @path == 2) {
   my $name = normalize_name ($path[1]);
   
   unless (length $name) {
     our $homepage_name;
     http_redirect (303, 'See other', get_page_url ($homepage_name, undef));
-    exit;
+    return;
   }
 
   unless (defined $param) {
@@ -130,7 +130,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
     if (defined $dollar and not defined $id) {
       http_redirect (301, 'Not found', get_page_url ($name, undef));
-      exit;
+      return;
     }
 
     my $format = $cgi->get_parameter ('format') // 'html';
@@ -150,7 +150,7 @@ if ($path[0] eq 'n' and @path == 2) {
       print qq[X-SW-Hash: @{[ $id_prop_db->get_data ($id)->{hash} ]}\n];
       print qq[Content-Type: @{[$docobj->to_text_media_type]}; charset=utf-8\n\n];
       print ${$docobj->to_text};
-      exit;
+      return;
     } elsif ($format eq 'xml' and defined $id) {
       ## XXX
       $docobj->{content_db} = $content_db; ## XXX
@@ -165,9 +165,9 @@ if ($path[0] eq 'n' and @path == 2) {
         
         print $xmldoc->inner_html;
       } else {
-        http_error (406, q{format=xml is not supported for this page});
+        return http_error (406, q{format=xml is not supported for this page});
       }
-      exit;
+      return;
     } elsif ($format eq 'html') {
       my $html_doc;
       my $html_container;
@@ -343,10 +343,10 @@ if ($path[0] eq 'n' and @path == 2) {
       }
       print "\n";
       print $html_doc->inner_html;
-      exit;
+      return;
     }
 
-    exit;
+    return;
   } elsif ($param eq 'history' and not defined $dollar) {
     my $name_history_db = $db->name_history;
     my $history = $name_history_db->get_data ($name);
@@ -420,7 +420,7 @@ if ($path[0] eq 'n' and @path == 2) {
     set_foot_content ($doc);
 
     print $doc->inner_html;
-    exit;
+    return;
   } elsif ($param eq 'search' and not defined $dollar) {
     my $names = [];
     for_unique_words ($name => sub {
@@ -460,12 +460,12 @@ if ($path[0] eq 'n' and @path == 2) {
 
       print $index->{$id}, "\t", $id, "\t", $name, "\n";
     }
-    exit;
+    return;
   } elsif ($param eq 'posturl') {
     my ($id, undef) = prepare_by_name ($name, $dollar);
 
     if (defined $dollar and not defined $id) {
-      http_error (404, 'Not found');
+      return http_error (404, 'Not found');
     }
 
     if ($cgi->request_method eq 'POST') {
@@ -540,7 +540,7 @@ if ($path[0] eq 'n' and @path == 2) {
         } else {
           print qq[Status: 204 Appended\n\n];
         }
-        exit;
+        return;
       }} # APPEND
 
       { ## New document
@@ -605,20 +605,20 @@ if ($path[0] eq 'n' and @path == 2) {
 
         if ($cgi->get_parameter ('redirect')) {
           http_redirect (303, 'Appended', get_page_url ($name, undef, $id) . '#anchor-' . $anchor);
-          exit;
+          return;
         } else {
           print qq[Status: 204 Appended\n\n];
         }
-        exit;
+        return;
       }
     } else {
-      http_error (405, 'Method not allowed', 'POST');
+      return http_error (405, 'Method not allowed', 'POST');
     }
   } else {
     $name .= '$' . $dollar if defined $dollar;
     $name .= ';' . $param;
     http_redirect (301, 'Not found', get_page_url ($name, undef));
-    exit;
+    return;
   }
 } elsif ($path[0] eq 'i' and @path == 2 and not defined $dollar) {
   unless (defined $param) {
@@ -634,14 +634,14 @@ if ($path[0] eq 'n' and @path == 2) {
       
       my $id_prop = $id_prop_db->get_data ($id);
       if ($id_prop) {
-        my $ct = get_content_type_parameter ();
+        my $ct = get_content_type_parameter () or return;
 
         my $prev_hash = $cgi->get_parameter ('hash') // '';
         my $current_hash = $id_prop->{hash} //
             get_hash ($content_db->get_data ($id) // '');
         unless ($prev_hash eq $current_hash) {
           ## TODO: conflict
-          exit;
+          return;
         }
 
         my $textref = \ ($cgi->get_parameter ('text') // '');
@@ -685,12 +685,12 @@ if ($path[0] eq 'n' and @path == 2) {
           update_tfidf ($id, $doc);
         }
 
-        exit;
+        return;
       } else {
-        http_error (404, 'Not found');
+        return http_error (404, 'Not found');
       }
     } else {
-      http_error (405, 'Method not allowed', 'PUT');
+      return http_error (405, 'Method not allowed', 'PUT');
     }
   } elsif ($param eq 'edit') {
     my $id = $path[1] + 0;
@@ -800,7 +800,7 @@ if ($path[0] eq 'n' and @path == 2) {
       set_foot_content ($html_doc);
      
       print $html_doc->inner_html;
-      exit;
+      return;
     }
   } elsif ($param eq 'names') {
     if ($cgi->request_method eq 'POST' or
@@ -883,9 +883,9 @@ if ($path[0] eq 'n' and @path == 2) {
 
       print "Status: 204 Changed\n\n";
 
-      exit;
+      return;
     } else {
-      http_error (405, 'Method not allowed', 'PUT');
+      return http_error (405, 'Method not allowed', 'PUT');
     }
   } elsif ($param eq 'neighbors') {
     require SWE::Object::Repository;
@@ -916,7 +916,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $doc->unlock;
       $graph->unlock;
       
-      exit;
+      return;
     } else {
       $doc->unlock;
       $graph->unlock;
@@ -999,7 +999,7 @@ if ($path[0] eq 'n' and @path == 2) {
     set_foot_content ($doc);
 
     print $doc->inner_html;
-    exit;
+    return;
   } elsif ($param eq 'terms' and not defined $dollar) {
     my $id = $path[1] + 0;
 
@@ -1023,7 +1023,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       print ${ $db->id_tfidf->get_data ($id) };
       
-      exit;
+      return;
     } else {
       $id_lock->unlock;
     }
@@ -1048,9 +1048,9 @@ if ($path[0] eq 'n' and @path == 2) {
       
       print "Content-Type: text/ping\n\n";
       print "PING";
-      exit;
+      return;
     #} else {
-    #  http_error (405, 'Method not allowed', 'POST');
+    #  return http_error (405, 'Method not allowed', 'POST');
     #}
   }
 } elsif ($path[0] eq 'new-page' and @path == 1) {
@@ -1063,7 +1063,7 @@ if ($path[0] eq 'n' and @path == 2) {
     $new_names->{'(no title)'} = 1 unless keys %$new_names;
 
     my $user = '(anon)'; #$cgi->remote_user // '(anon)';
-    my $ct = get_content_type_parameter ();
+    my $ct = get_content_type_parameter () or return;
 
     my $content = $cgi->get_parameter ('text') // '';
     normalize_content (\$content);
@@ -1137,7 +1137,7 @@ if ($path[0] eq 'n' and @path == 2) {
     } else {
       http_redirect (301, 'Created', $url);
     }
-    exit;
+    return;
   } else {
     binmode STDOUT, ':encoding(utf8)';
     print "Content-Type: text/html; charset=utf-8\n\n";
@@ -1191,21 +1191,23 @@ if ($path[0] eq 'n' and @path == 2) {
     set_foot_content ($doc);
 
     print $doc->inner_html;
-    exit;
+    return;
   }
 } elsif (@path == 1 and
          {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
   our $homepage_name;
   http_redirect (303, 'See other', get_page_url ($homepage_name, undef));
-  exit;
+  return;
 } elsif (@path == 0) {
   my $rurl = $cgi->request_uri;
   $rurl =~ s!\.[^/]*$!!g;
   http_redirect (303, 'See other', $rurl . '/');
-  exit;
+  return;
 }
 
-http_error (404, 'Not found');
+return http_error (404, 'Not found');
+
+} # main
 
 sub prepare_by_name ($$) {
   my ($name, $id_cand) = @_;
@@ -1249,6 +1251,7 @@ sub get_content_type_parameter () {
   unless ($valid_ct) {
     http_error (400, 'content-type parameter not allowed');
     ## TODO: 406?
+    return undef;
   }
 
   return $ct;
@@ -1292,7 +1295,6 @@ sub http_error ($$;$) {
 <html lang=en><title>$code @{[htescape ($text)]}</title>
 <link rel=stylesheet href="@{[htescape ($style_url)]}">
 <h1>@{[htescape ($text)]}</h1>];
-  exit;
 } # http_error
 
 sub http_redirect ($$$) {
@@ -1327,7 +1329,7 @@ sub normalize_content ($) {
 } # normalize_content
 
 ## A source anchor label in SWML -> URL
-sub get_page_url ($$;$) {
+sub get_page_url ($;$$) {
   my ($wiki_name, $base_name, $id) = @_;
   $wiki_name = percent_encode ($wiki_name);
   $wiki_name =~ s/%2F/+/g;
