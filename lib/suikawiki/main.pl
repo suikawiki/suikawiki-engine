@@ -27,8 +27,21 @@ use SWE::Lang qw/@ContentMediaType/;
 
 ## --- Prepares database access variables (commonly used ones)
 
+my $db;
+my $sw3_pages;
+my $id_prop_db;
+my $name_prop_db;
+my $cache_prop_db;
+my $content_db;
+my $names_lock;
+my $id_locks;
+my $cgi;
+my @path;
+
+sub main {
+
 require SWE::DB;
-my $db = SWE::DB->new;
+$db = SWE::DB->new;
 $db->db_dir_name = $db_dir_name;
 $db->global_lock_dir_name = $db_global_lock_dir_name;
 $db->id_dir_name = $db_id_dir_name;
@@ -36,36 +49,33 @@ $db->name_dir_name = $db_name_dir_name;
 $db->sw3db_dir_name = $db_sw3_dir_name;
 
 require SWE::DB::SuikaWiki3PageList2;
-my $sw3_pages = SWE::DB::SuikaWiki3PageList2->new;
+$sw3_pages = SWE::DB::SuikaWiki3PageList2->new;
 $sw3_pages->{root_directory_name} = $db_sw3_dir_name;
 
 # XXX $db->id_prop
 require SWE::DB::IDProps;
-my $id_prop_db = SWE::DB::IDProps->new;
+$id_prop_db = SWE::DB::IDProps->new;
 $id_prop_db->{root_directory_name} = $db_id_dir_name;
 $id_prop_db->{leaf_suffix} = '.props';
 
 require SWE::DB::HashedProps;
-my $name_prop_db = SWE::DB::HashedProps->new;
+$name_prop_db = SWE::DB::HashedProps->new;
 $name_prop_db->{root_directory_name} = $db_name_dir_name;
 $name_prop_db->{leaf_suffix} = '.props';
 
-my $cache_prop_db = SWE::DB::IDProps->new;
+$cache_prop_db = SWE::DB::IDProps->new;
 $cache_prop_db->{root_directory_name} = $db_id_dir_name;
 $cache_prop_db->{leaf_suffix} = '.cacheprops';
 
 require SWE::DB::IDText;
-my $content_db = SWE::DB::IDText->new;
+$content_db = SWE::DB::IDText->new;
 $content_db->{root_directory_name} = $db_id_dir_name;
 $content_db->{leaf_suffix} = '.txt';
-
-my $names_lock;
-my $id_locks;
 
 ## --- Process Request-URI
 
 require Message::CGI::HTTP;
-my $cgi = Message::CGI::HTTP->new;
+$cgi = Message::CGI::HTTP->new;
 $cgi->{decoder}->{'#default'} = sub {
   return Encode::decode ('utf-8', $_[1]);
 };
@@ -94,16 +104,12 @@ if ($path =~ s[\$([^/]*)\z][]) {
   $dollar = percent_decode ($1);
 }
 
-my @path = map { s/\+/%2F/g; percent_decode ($_) } split m#/#, $path, -1;
+@path = map { s/\+/%2F/g; percent_decode ($_) } split m#/#, $path, -1;
 shift @path; # script's name
 
 ## --- Process request and generate response
 
 sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
-
-main ();
-
-sub main {
 
 require SWE::DB::IDLocks;
 $id_locks = SWE::DB::IDLocks->new;
