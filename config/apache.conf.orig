@@ -86,4 +86,6 @@ PerlModule SuikaWiki5::Main
     AuthGroupFile %%EDITHTGROUP%%
     AuthName "%%EDITREALM%%"
   </Limit>
+
+  ErrorDocument 401 /query?%%SWSCRIPTNAME%%/n/Wiki++Error++401
 </Location>
