@@ -233,7 +233,9 @@ if ($path[0] eq 'n' and @path == 2) {
                      href => '../i/' . $id . ';history',
                      title => 'History of the page content'};
       }
-      set_head_content ($html_doc, $id, \@link);
+      set_head_content ($html_doc, $id, \@link,
+                        defined $id
+                            ? [] : [{name => 'ROBOTS', content => 'NOINDEX'}]);
       
       my $body_el = $html_doc->last_child->last_child;
 
@@ -1594,4 +1596,4 @@ sub set_foot_content ($) {
   $body_el->append_child ($script_el);
 } # set_foot_content
 
-1; ## $Date: 2009/12/27 11:38:50 $
+1;
