@@ -153,8 +153,14 @@ if ($path[0] eq 'n' and @path == 2) {
       $docobj->{id_prop_db} = $id_prop_db; ## XXX
 
       binmode STDOUT, ':encoding(utf-8)';
-      print qq[X-SW-Hash: @{[ $id_prop_db->get_data ($id)->{hash} ]}\n];
-      print qq[Content-Type: @{[$docobj->to_text_media_type]}; charset=utf-8\n\n];
+      my $id_prop = $id_prop_db->get_data ($id);
+      print qq[X-SW-Hash: @{[ $id_prop->{hash} ]}\n];
+      print qq[Content-Type: @{[$docobj->to_text_media_type]}; charset=utf-8\n];
+      my $modified = $id_prop->{modified};
+      if ($modified) {
+        print q[Last-Modified: ] . (datetime_for_http $modified) . qq[\n];
+      }
+      print qq{\n};
       print ${$docobj->to_text};
       return;
     } elsif ($format eq 'xml' and defined $id) {
@@ -167,7 +173,14 @@ if ($path[0] eq 'n' and @path == 2) {
       my $xmldoc = $docobj->to_xml (styled => scalar $cgi->get_parameter ('styled'));
       if ($xmldoc) {
         binmode STDOUT, ':encoding(utf-8)';
-        print qq[Content-Type: @{[$docobj->to_xml_media_type]}; charset=utf-8\n\n];
+        print qq[Content-Type: @{[$docobj->to_xml_media_type]}; charset=utf-8\n];
+        my $id_prop = $id_prop_db->get_data ($id);
+        print qq[X-SW-Hash: @{[ $id_prop->{hash} ]}\n];
+        my $modified = $id_prop->{modified};
+        if ($modified) {
+          print q[Last-Modified: ] . (datetime_for_http $modified) . qq[\n];
+        }
+        print qq{\n};
         
         print $xmldoc->inner_html;
       } else {
@@ -346,6 +359,7 @@ if ($path[0] eq 'n' and @path == 2) {
       
       binmode STDOUT, ':encoding(utf-8)';
       print qq[Content-Type: text/html; charset=utf-8\n];
+      print qq[X-SW-Hash: @{[ $id_prop->{hash} ]}\n];
       if ($modified) {
         print q[Last-Modified: ] . (datetime_for_http $modified) . qq[\n];
       }
