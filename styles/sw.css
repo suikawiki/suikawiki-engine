@@ -169,6 +169,12 @@ pre {
 ul, ol, dl {
   margin: 0;
   text-indent: 0;
+  font-size: 90%;
+  line-height: 2;
+}
+
+ul li, ol li {
+
 }
 
 /* Tables */
@@ -177,6 +183,7 @@ table {
   margin: 0 0.5em;
   border: 1px solid gray;
   border-spacing: 0;
+  font-size: 90%;
 }
 
 thead, tfoot, th {
@@ -185,10 +192,11 @@ thead, tfoot, th {
 }
 
 td, th {
-  padding: 0.2em 0.4em;
+  padding: 0.1em 0.3em;
   border: 1px solid #E0E0E0;
   empty-cells: show;
   text-indent: 0;
+  line-height: 2;
 }
 
 th[scope="row"], th[scope="rowgroup"] {
