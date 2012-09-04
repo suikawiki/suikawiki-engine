@@ -320,19 +320,19 @@ if ($path[0] eq 'n' and @path == 2) {
           
         $body_el->append_child ($article_el);
 
-        my $ad_el = $html_doc->create_element_ns (HTML_NS, 'aside');
-        $ad_el->set_attribute (class => 'swe-ad');
-        $ad_el->inner_html (q[
-          <script>
-            google_ad_client = "pub-6943204637055835";
-            google_ad_slot = "4290129344";
-            google_ad_width = 728;
-            google_ad_height = 90;
-          </script>
-          <script src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-          </script>
-        ]);
-        $body_el->append_child ($ad_el);
+#        my $ad_el = $html_doc->create_element_ns (HTML_NS, 'aside');
+#        $ad_el->set_attribute (class => 'swe-ad');
+#        $ad_el->inner_html (q[
+#          <script>
+#            google_ad_client = "pub-6943204637055835";
+#            google_ad_slot = "4290129344";
+#            google_ad_width = 728;
+#            google_ad_height = 90;
+#          </script>
+#          <script src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+#          </script>
+#        ]);
+#        $body_el->append_child ($ad_el);
       } else {
         my $new_nav_el = $html_doc->create_element_ns (HTML_NS, 'section');
         $new_nav_el->inner_html (q[<a href="">Add a description</a> of <em>] . (htescape $name) . q[</em>]);
