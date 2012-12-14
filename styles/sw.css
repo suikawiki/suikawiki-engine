@@ -101,6 +101,11 @@ del + .article, del + .section {
   margin-top: 2em;
 }
 
+body > .article,
+#cse-search-form {
+  margin-right: 130px;
+}
+
 .article > h1, .section > h1,
 .article > h2, .section > h2,
 .article > h3, .section > h3,
@@ -122,6 +127,13 @@ blockquote {
   padding: 0.2em 0.5em;
   background-color: #f7fff7;
   color: black;
+}
+
+.swe-ad-amazon {
+  position: absolute;
+  right: 0;
+  top: 7em;
+  z-index: -100;
 }
 
 /* Paragraph-level blocks */

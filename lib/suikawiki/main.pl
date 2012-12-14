@@ -351,6 +351,13 @@ if ($path[0] eq 'n' and @path == 2) {
       $footer_el->inner_html (q[<p class=copyright><small>&copy; Authors.  See <a rel=license>license terms</a>.  There might also be additional terms applied for this page.</small>]);
       $body_el->append_child ($footer_el);
       
+      if ($html_container) {
+        my $ad_el = $html_doc->create_element_ns (HTML_NS, 'aside');
+        $ad_el->set_attribute (class => 'swe-ad swe-ad-amazon');
+        $ad_el->inner_html (q{<SCRIPT charset="utf-8" src="http://ws.amazon.co.jp/widgets/q?ServiceVersion=20070822&MarketPlace=JP&ID=V20070822/JP/wakaba1-22/8006/cedb4b02-c1cc-4a6f-86f1-f8fa1c52b252"></SCRIPT>});
+        $body_el->append_child ($ad_el);
+      }
+
       my $a_el = $footer_el->get_elements_by_tag_name ('a')->[0];
       our $license_name;
       $a_el->set_attribute (href => get_page_url ($license_name));
