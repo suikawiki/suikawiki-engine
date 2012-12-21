@@ -354,7 +354,8 @@ if ($path[0] eq 'n' and @path == 2) {
       if ($html_container) {
         my $ad_el = $html_doc->create_element_ns (HTML_NS, 'aside');
         $ad_el->set_attribute (class => 'swe-ad swe-ad-amazon');
-        $ad_el->inner_html (q{<SCRIPT charset="utf-8" src="http://ws.amazon.co.jp/widgets/q?ServiceVersion=20070822&MarketPlace=JP&ID=V20070822/JP/wakaba1-22/8006/cedb4b02-c1cc-4a6f-86f1-f8fa1c52b252"></SCRIPT>});
+        #$ad_el->inner_html (q{<SCRIPT charset="utf-8" src="http://ws.amazon.co.jp/widgets/q?ServiceVersion=20070822&MarketPlace=JP&ID=V20070822/JP/wakaba1-22/8006/cedb4b02-c1cc-4a6f-86f1-f8fa1c52b252"></SCRIPT>});
+        $ad_el->inner_html (q{<script>amazon_ad_tag = "wakaba1-22"; amazon_ad_width = "160"; amazon_ad_height = "600"; amazon_ad_logo = "hide"; amazon_ad_border = "hide"; amazon_color_border = "FFFFFF"; amazon_color_link = "004000"; amazon_color_logo = "004000";</script><script src="http://www.assoc-amazon.jp/s/ads.js"></script>});
         $body_el->append_child ($ad_el);
       }
 
