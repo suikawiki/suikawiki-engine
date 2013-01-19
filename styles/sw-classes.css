@@ -14,11 +14,11 @@ pre.aafig {
 }
 
 .hw {
-  -moz-binding: url(http://suika.fam.cx/www/style/text/width.xbl#halfwidth);
+  -moz-binding: url(/www/style/text/width.xbl#halfwidth);
 }
 
 .fw {
-  -moz-binding: url(http://suika.fam.cx/www/style/text/width.xbl#fullwidth);
+  -moz-binding: url(/www/style/text/width.xbl#fullwidth);
 }
 
 /* Code fragments */

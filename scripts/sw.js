@@ -1,6 +1,6 @@
 (function () {
-  var samiURL = 'http://suika.fam.cx/www/js/sami/script/sami-core.js';
-  var swSamiURL = 'http://suika.fam.cx/swe/scripts/sw-sami.js';
+  var samiURL = '/www/js/sami/script/sami-core.js';
+  var swSamiURL = '/swe/scripts/sw-sami.js';
   
   var script = document.createElement ('script');
   script.src = samiURL;
@@ -192,7 +192,7 @@ function enableHTML5Support () {
   var timeScript = document.createElement ('script');
   timeScript.defer = true;
   timeScript.charset = 'utf-8';
-  timeScript.src = 'http://suika.fam.cx/www/style/ui/time.js';
+  timeScript.src = '/www/style/ui/time.js';
   document.documentElement.lastChild.appendChild (timeScript);
 } // enableHTML5Support
 
