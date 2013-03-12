@@ -13,6 +13,15 @@ html, td {
   text-align: right;
 }
 
+.nav.tools {
+  z-index: 600;
+  position: relative;
+}
+
+.nav.tools > * {
+  background-color: white;
+}
+
 .nav.swe-names {
   margin-left: 0.5em;
   font-size: 150%;
@@ -133,7 +142,6 @@ blockquote {
   position: absolute;
   right: 0;
   top: 7em;
-  z-index: -100;
 }
 
 /* Paragraph-level blocks */
@@ -310,7 +318,8 @@ ins + ins {
 a:hover,
 .sw-anchor:hover,
 .sw-anchor-internal:hover,
-.sw-anchor-external:hover {
+.sw-anchor-external:hover,
+.nav.tools > *:hover {
   background-color: #FFA;
   color: #000080;
   border-bottom-style: solid;
