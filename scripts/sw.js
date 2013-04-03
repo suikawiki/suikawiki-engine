@@ -38,6 +38,7 @@ window.onload = function () {
   addGoogleSearch ();
 //  initializeHatenaStar();
   enableHTML5Support ();
+  addGoogleAnalytics ();
 }; // window.onload
 
 function getElementsByClassName (c) {
@@ -216,6 +217,16 @@ function addGoogleSearch () {
   }; // onload
   document.body.appendChild (script);
 } // addGoogleSearch
+
+function addGoogleAnalytics () {
+  var _gaq = _gaq || [];
+  _gaq.push (['_setAccount', 'UA-39820773-1']);
+  _gaq.push (['_trackPageview']);
+  var ga = document.createElement ('script');
+  ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  document.body.appendChild (ga);
+} // addGoogleAnalytics
 
 /* Hack for IE */
 document.createElement ('time');
