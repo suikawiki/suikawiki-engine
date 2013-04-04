@@ -222,6 +222,7 @@ function addGoogleAnalytics () {
   var _gaq = _gaq || [];
   _gaq.push (['_setAccount', 'UA-39820773-1']);
   _gaq.push (['_trackPageview']);
+  window._gaq = _gaq;
   var ga = document.createElement ('script');
   ga.async = true;
   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
