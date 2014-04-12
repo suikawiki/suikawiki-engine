@@ -1,0 +1,4 @@
+basename=`dirname $0`/..
+KARASUMA_CONFIG_JSON=config/local.json \
+KARASUMA_CONFIG_FILE_DIR_NAME=local/keys \
+exec $basename/plackup bin/server.psgi -p 5012

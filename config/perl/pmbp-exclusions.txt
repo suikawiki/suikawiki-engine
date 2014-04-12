@@ -1,0 +1,7 @@
+- "../../modules/json-functions-xs" tests
+- "../../modules/charclass" tests
+- "../../modules/ooutils" tests classregistry objectresponse
+- "../../modules/karasuma-config" tests
+- "../../modules/wanage" tests
+- "../../modules/web-url" tests
+- "../../modules/web-encodings" tests
