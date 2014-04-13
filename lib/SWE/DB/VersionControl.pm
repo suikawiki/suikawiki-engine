@@ -1,5 +1,6 @@
 package SWE::DB::VersionControl;
 use strict;
+use Path::Tiny;
 
 sub new ($%) {
   my ($class, %args) = @_;
@@ -9,6 +10,12 @@ sub new ($%) {
     added_files => {},
     modified_files => {},
   }, $class;
+  unless (-d $args{db_dir_name}) {
+    path ($args{db_dir_name})->mkpath;
+    unless (-d "$args{db_dir_name}/.git") {
+      system "cd \Q$args{db_dir_name}\E && git init";
+    }
+  }
   return $self;
 } # new
 
@@ -43,22 +50,18 @@ sub commit_changes ($$) {
   chdir $self->{db_dir_name};
 
   for (sort {$a cmp $b} keys %{$self->{added_directories}}) {
-    _system ('cvs', 'add', $_);
+    #_system ('git', 'add', $_);
   }
 
   for (keys %{$self->{added_files}}) {
-    _system ('cvs', 'add', '-kb', $_);
+    _system ('git', 'add', $_);
   }
   
-  my @changed;
   for (keys %{$self->{modified_files}}) {
-    push @changed, $_;
-  }       
-       
-  if (@changed) {
-    _system ('cvs', 'ci', -m => $msg, @changed)
-        or die "$0: commit_changes: $?";
+    _system ('git', 'add', $_);
   }
+
+  _system ('git', 'commit', -m => $msg);
 
   chdir $cwd;
 } # commit_changes

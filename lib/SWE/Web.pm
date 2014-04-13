@@ -3,17 +3,19 @@ use strict;
 use warnings;
 use Path::Tiny;
 use Wanage::HTTP;
-use Warabe::App;
+use SWE::Warabe::App;
 require 'suikawiki/main.pl';
 
-sub psgi_app ($$) {
-  my (undef, $config) = @_;
+sub psgi_app ($$$) {
+  my (undef, $config, $root_path) = @_;
   return sub {
     my $http = Wanage::HTTP->new_from_psgi_env ($_[0]);
-    my $app = Warabe::App->new_from_http ($http);
+    my $app = SWE::Warabe::App->new_from_http ($http);
+    $app->config ($config);
+    $app->db_root_path ($root_path->child ($config->get_text ('db_dir_name')));
     return $http->send_response (onready => sub {
       $app->execute (sub {
-        SWE::Web->process ($app, $config);
+        SWE::Web->process ($app);
       });
     });
   };
@@ -21,8 +23,8 @@ sub psgi_app ($$) {
 
 my $static_root_path = path (__FILE__)->parent->parent->parent;
 
-sub process ($$$) {
-  my ($class, $app, $config) = @_;
+sub process ($$) {
+  my ($class, $app) = @_;
   my $path = $app->path_segments;
 
   if ($path->[0] eq 'styles' and
@@ -53,7 +55,7 @@ sub process ($$$) {
     # XXX auth
     # XXX CSRF
 
-    SuikaWiki5::Main->main ($app, $config);
+    SuikaWiki5::Main->main ($app);
   }
 
   return $app->throw_error (404);

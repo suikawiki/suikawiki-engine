@@ -11,4 +11,11 @@ sub config ($;$) {
   return $_[0]->{config};
 } # config
 
+sub db_root_path ($;$) {
+  if (@_ > 1) {
+    $_[0]->{db_root_path} = $_[1];
+  }
+  return $_[0]->{db_root_path};
+} # db_root_path
+
 1;

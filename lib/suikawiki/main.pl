@@ -2,14 +2,6 @@ package SuikaWiki5::Main;
 use strict;
 use feature 'state';
 
-## --- Configurations
-
-our $db_dir_name;
-my $db_sw3_dir_name = $db_dir_name . 'sw3pages/';
-my $db_global_lock_dir_name = $db_dir_name;
-my $db_id_dir_name = $db_dir_name . q[ids/];
-my $db_name_dir_name = $db_dir_name . q[names/];
-
 ## --- Common modules
 
 require Encode;
@@ -35,10 +27,21 @@ my $cache_prop_db;
 my $content_db;
 my $names_lock;
 my $id_locks;
+my $db_id_dir_name;
 my @path;
 
-sub main ($$$) {
-  my (undef, $app, $config) = @_;
+sub main ($$) {
+  my (undef, $app) = @_;
+
+  our $db_dir_name = $app->db_root_path . '/';
+  my $db_sw3_dir_name = $db_dir_name . 'sw3pages/';
+  my $db_global_lock_dir_name = $db_dir_name;
+  $db_id_dir_name = $db_dir_name . q[ids/];
+  my $db_name_dir_name = $db_dir_name . q[names/];
+
+  use Path::Tiny;
+  path ($db_id_dir_name)->mkpath;
+  path ($db_name_dir_name)->mkpath;
 
 require SWE::DB;
 $db = SWE::DB->new;
@@ -108,7 +111,7 @@ if ($path[0] eq 'n' and @path == 2) {
   my $name = normalize_name ($path[1]);
   
   unless (length $name) {
-    our $homepage_name;
+    my $homepage_name = $app->config->get_text ('wiki_page_home');
     return $app->throw_redirect
         (get_page_url ($homepage_name, undef), status => 303);
   }
