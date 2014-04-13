@@ -709,19 +709,6 @@ if ($path[0] eq 'n' and @path == 2) {
       my $names = $id_prop->{name} || {};
       my $hash = $id_prop->{hash} // get_hash ($textref);
 
-      my $custom_edit = '';
-      if ($doc->content_media_type eq 'image/x-canvas-instructions+text') {
-        my $request_uri = $app->http->url->stringify;
-        my $source_url = get_absolute_url (get_page_url ([keys %$names]->[0], undef, $id) . '?format=text', $request_uri);
-        my $post_url = get_absolute_url ($id, $request_uri);
-        my $url = 'http://suika.fam.cx/swe/pages/canvas?input-url=' . percent_encode ($source_url) . ';post-url=' . percent_encode($post_url);
-        $custom_edit = q[<a href="].$url.q[">Edit image</a>];
-
-        $post_url = get_absolute_url ('../new-page', $request_uri);
-        $url = 'http://suika.fam.cx/swe/pages/canvas?input-url=' . percent_encode ($source_url) . ';post-url=' . percent_encode($post_url);
-        $custom_edit .= q[ <a href="].$url.q[">Clone image</a>];
-      }
-      
       ## TODO: <select name=title-type>
       my $html_doc = $dom->create_document;
       $html_doc->manakai_is_html (1);
@@ -731,8 +718,6 @@ if ($path[0] eq 'n' and @path == 2) {
 
 <div class=section>
 <h2>Page</h2>
-
-].$custom_edit.q[
 
 <form method=post accept-charset=utf-8>
 <p><button type=submit>Update</button>
@@ -1130,19 +1115,11 @@ if ($path[0] eq 'n' and @path == 2) {
       $app->http->add_response_header
           ('Content-Type' => 'text/html; charset=utf-8');
 
-    my $custom_edit = '';
-    my $request_uri = $app->http->url->stringify;
-    my $post_url = get_absolute_url ('new-page', $request_uri);
-    my $names = $app->text_param ('names') // '';
-    my $url = 'http://suika.fam.cx/swe/pages/canvas?post-url=' . percent_encode($post_url) . ';names=' . percent_encode ($names);
-    $custom_edit = q[<a href="].$url.q[">Image</a>];
-
     ## TODO: select name=title-type
     my $doc = $dom->create_document;
     $doc->manakai_is_html (1);
     $doc->inner_html (q[<!DOCTYPE HTML><title>New page</title>
 <h1>New page</h1>
-].$custom_edit.q[
 <form action=new-page method=post accept-charset=utf-8>
 <p><button type=submit>Save</button>
 <p><label><strong>Page name(s)</strong>:<br>
