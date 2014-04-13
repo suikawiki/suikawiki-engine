@@ -27,40 +27,47 @@ my $static_root_path = path (__FILE__)->parent->parent->parent;
 
 sub process ($$) {
   my ($class, $app) = @_;
+  $app->parse_path;
   my $path = $app->path_segments;
 
-  if ($path->[0] eq 'styles' and
-      defined $path->[1] and $path->[1] =~ /\A[a-z-]+\z/ and
-      not defined $path->[2]) {
-    my $file_path = $static_root_path->child ('styles', $path->[1] . '.css');
-    if ($file_path->is_file) {
-      $app->http->add_response_header
-          ('Content-Type' => 'text/css; charset=utf-8');
-      $app->http->set_response_last_modified ($file_path->stat->mtime);
-      $app->http->send_response_body_as_ref (\($file_path->slurp));
-      $app->http->close_response_body;
-      return $app->throw;
+  if (@$path == 0) {
+    # /
+    return $app->throw_redirect ($app->home_page_url, status => 302);
+  } elsif (@$path == 1) {
+    if (@$path == 1 and ($path->[0] eq 'n' or $path->[0] eq 'i')) {
+      # /n
+      # /i
+      return $app->throw_redirect ($app->home_page_url, status => 302);
     }
-  } elsif ($path->[0] eq 'scripts' and
-           defined $path->[1] and $path->[1] =~ /\A[a-z-]+\z/ and
-           not defined $path->[2]) {
-    my $file_path = $static_root_path->child ('scripts', $path->[1] . '.js');
-    if ($file_path->is_file) {
-      $app->http->add_response_header
-          ('Content-Type' => 'text/javascript; charset=utf-8');
-      $app->http->set_response_last_modified ($file_path->stat->mtime);
-      $app->http->send_response_body_as_ref (\($file_path->slurp));
-      $app->http->close_response_body;
-      return $app->throw;
+  } elsif (@$path == 2) {
+    if ($path->[0] eq 'styles' and $path->[1] =~ /\A[a-z-]+\z/ and
+        not defined $app->path_param and not defined $app->path_dollar) {
+      my $file_path = $static_root_path->child ('styles', $path->[1] . '.css');
+      if ($file_path->is_file) {
+        $app->http->add_response_header
+            ('Content-Type' => 'text/css; charset=utf-8');
+        $app->http->set_response_last_modified ($file_path->stat->mtime);
+        $app->http->send_response_body_as_ref (\($file_path->slurp));
+        $app->http->close_response_body;
+        return $app->throw;
+      }
+    } elsif ($path->[0] eq 'scripts' and $path->[1] =~ /\A[a-z-]+\z/ and
+             not defined $app->path_param and not defined $app->path_dollar) {
+      my $file_path = $static_root_path->child ('scripts', $path->[1] . '.js');
+      if ($file_path->is_file) {
+        $app->http->add_response_header
+            ('Content-Type' => 'text/javascript; charset=utf-8');
+        $app->http->set_response_last_modified ($file_path->stat->mtime);
+        $app->http->send_response_body_as_ref (\($file_path->slurp));
+        $app->http->close_response_body;
+        return $app->throw;
+      }
     }
-  } else {
-    # XXX auth
-    # XXX CSRF
-
-    SuikaWiki5::Main->main ($app);
   }
 
-  return $app->throw_error (404);
+  # XXX auth
+  # XXX CSRF
+  return SuikaWiki5::Main->main ($app);
 } # process
 
 1;

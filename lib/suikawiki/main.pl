@@ -1,10 +1,10 @@
 package SuikaWiki5::Main;
 use strict;
 use SWE::String;
-use SWE::DB;
 
 require Message::DOM::DOMImplementation;
 my $dom = Message::DOM::DOMImplementation->new;
+sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
 
 use Message::CGI::Util qw/percent_encode percent_decode datetime_in_content/;
 
@@ -15,29 +15,8 @@ use SWE::Lang qw/@ContentMediaType/;
 sub main ($$) {
   my (undef, $app) = @_;
 
-  my $db = SWE::DB->new_from_root_path ($app->db_root_path);
-
-## --- Process Request-URI
-
-  my @path;
-  my $param;
-  my $dollar;
-  {
-    my $path = $app->http->url->{path};
-    if ($path =~ s[;([^/]*)\z][]) {
-      $param = percent_decode ($1);
-    }
-    if ($path =~ s[\$([^/]*)\z][]) {
-      $dollar = percent_decode ($1);
-    }
-
-    @path = map { s/\+/%2F/g; percent_decode ($_) } split m#/#, $path, -1;
-    shift @path if $path[0] eq '';
-  }
-
-## --- Process request and generate response
-
-sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
+  my @path = @{$app->path_segments};
+  my $db = $app->db;
 
 if ($path[0] eq 'n' and @path == 2) {
   my $name = normalize_name ($path[1]);
@@ -46,10 +25,11 @@ if ($path[0] eq 'n' and @path == 2) {
     return $app->throw_redirect ($app->home_page_url, status => 303);
   }
 
+  my $param = $app->path_param;
   unless (defined $param) {
-    my ($id, $ids) = prepare_by_name ($db, $name, $dollar);
+    my ($id, $ids) = prepare_by_name ($db, $name, $app->path_dollar);
 
-    if (defined $dollar and not defined $id) {
+    if (defined $app->path_dollar and not defined $id) {
       return $app->throw_redirect
           ($app->name_url ($name),
            status => 301, reason_phrase => 'Not found');
@@ -290,7 +270,7 @@ if ($path[0] eq 'n' and @path == 2) {
       return $app->throw;
     }
 
-  } elsif ($param eq 'history' and not defined $dollar) {
+  } elsif ($param eq 'history' and not defined $app->path_dollar) {
     my $name_history_db = $db->name_history;
     my $history = $name_history_db->get_data ($name);
 
@@ -365,7 +345,7 @@ if ($path[0] eq 'n' and @path == 2) {
     $app->http->send_response_body_as_text ($doc->inner_html);
     $app->http->close_response_body;
     return $app->throw;
-  } elsif ($param eq 'search' and not defined $dollar) {
+  } elsif ($param eq 'search' and not defined $app->path_dollar) {
     my $names = [];
     for_unique_words {
       push @$names, $_[0];
@@ -406,9 +386,9 @@ if ($path[0] eq 'n' and @path == 2) {
       $app->http->close_response_body;
       return $app->throw;
     } elsif ($param eq 'posturl') {
-      my ($id, undef) = prepare_by_name ($db, $name, $dollar);
+      my ($id, undef) = prepare_by_name ($db, $name, $app->path_dollar);
 
-      if (defined $dollar and not defined $id) {
+      if (defined $app->path_dollar and not defined $id) {
         return $app->throw_error (404);
       }
 
@@ -562,13 +542,14 @@ if ($path[0] eq 'n' and @path == 2) {
         }
       }
     } else {
-      $name .= '$' . $dollar if defined $dollar;
+      $name .= '$' . $app->path_dollar if defined $app->path_dollar;
       $name .= ';' . $param;
       return $app->throw_redirect
           ($app->name_url ($name),
            status => 301, reason_phrase => 'Not found');
     }
-  } elsif ($path[0] eq 'i' and @path == 2 and not defined $dollar) {
+  } elsif ($path[0] eq 'i' and @path == 2 and not defined $app->path_dollar) {
+    my $param = $app->path_param;
     unless (defined $param) {
       $app->requires_request_method ({POST => 1});
       my $id = $path[1] + 0;
@@ -808,7 +789,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $app->http->set_status (204, 'Changed');
       $app->http->close_response_body;
       return $app->throw;
-    } elsif ($param eq 'history' and not defined $dollar) {
+    } elsif ($param eq 'history' and not defined $app->path_dollar) {
       my $id = $path[1] + 0;
 
       my $id_history_db = $db->id_history;
@@ -1017,9 +998,6 @@ if ($path[0] eq 'n' and @path == 2) {
       $app->http->close_response_body;
       return $app->throw;
     }
-  } elsif (@path == 1 and
-           {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
-    return $app->throw_redirect ($app->home_page_url, status => 302);
   }
 
   return $app->throw_error (404);

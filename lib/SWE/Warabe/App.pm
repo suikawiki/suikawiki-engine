@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Warabe::App;
 push our @ISA, qw(Warabe::App);
-use Wanage::URL qw(percent_encode_c);
+use Wanage::URL qw(percent_encode_c percent_decode_c);
 
 sub config ($;$) {
   if (@_ > 1) {
@@ -18,6 +18,38 @@ sub db_root_path ($;$) {
   }
   return $_[0]->{db_root_path};
 } # db_root_path
+
+sub db ($) {
+  require SWE::DB;
+  return $_[0]->{db} ||= SWE::DB->new_from_root_path ($_[0]->db_root_path);
+} # db
+
+sub path_segments ($) {
+  return $_[0]->{path_segments};
+} # path_segments
+
+sub path_param ($) {
+  return $_[0]->{path_param};
+} # path_param
+
+sub path_dollar ($) {
+  return $_[0]->{path_dollar};
+} # path_dollar
+
+sub parse_path ($) {
+  my $self = $_[0];
+  my $path = $self->http->url->{path};
+  if ($path =~ s[;([^/]*)\z][]) {
+    $self->{path_param} = percent_decode_c ($1);
+  }
+  if ($path =~ s[\$([^/]*)\z][]) {
+    $self->{path_dollar} = percent_decode_c ($1);
+  }
+
+  my @path = map { s/\+/%2F/g; percent_decode_c ($_) } split m#/#, $path, -1;
+  shift @path while @path and $path[0] eq '';
+  $self->{path_segments} = \@path;
+} # parse_path
 
 sub name_url ($$;$%) {
   my (undef, $name, $id, %args) = @_;
