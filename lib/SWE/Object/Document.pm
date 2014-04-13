@@ -95,7 +95,6 @@ sub associate_names ($$%) {
 
   my $id = $self->id;
   my $time = $args{time} || time;
-  my $sw3_pages = $self->{sw3_pages}; ## TODO: ...
 
   my $vc = $self->db->vc;
 
@@ -108,13 +107,7 @@ sub associate_names ($$%) {
   for my $name (keys %$names) {
     my $name_props = $name_prop_db->get_data ($name);
     unless (defined $name_props) {
-      my $sw3id = $sw3_pages->get_data ($name);
-      SuikaWiki5::Main::convert_sw3_page ($sw3id => $name); ## TODO: ...
-      
-      $name_props = $name_prop_db->get_data ($name);
-      unless (defined $name_props) {
-        $name_history_db->append_data ($name => [$time, 'c']);
-      }
+      $name_history_db->append_data ($name => [$time, 'c']);
     }
     
     push @{$name_props->{id} ||= []}, $id;

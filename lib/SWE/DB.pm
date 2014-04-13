@@ -22,8 +22,6 @@ sub global_dir_name ($) {
   return $self->db_dir_name . q[global/];
 } # global_dir_name
 
-sub sw3db_dir_name : lvalue { $_[0]->{sw3db_dir_name} }
-
 sub global_prop ($) {
   my $self = shift;
 

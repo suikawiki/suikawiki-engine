@@ -20,7 +20,6 @@ use SWE::Lang qw/@ContentMediaType/;
 ## --- Prepares database access variables (commonly used ones)
 
 my $db;
-my $sw3_pages;
 my $id_prop_db;
 my $name_prop_db;
 my $cache_prop_db;
@@ -34,7 +33,6 @@ sub main ($$) {
   my (undef, $app) = @_;
 
   our $db_dir_name = $app->db_root_path . '/';
-  my $db_sw3_dir_name = $db_dir_name . 'sw3pages/';
   my $db_global_lock_dir_name = $db_dir_name;
   $db_id_dir_name = $db_dir_name . q[ids/];
   my $db_name_dir_name = $db_dir_name . q[names/];
@@ -49,11 +47,6 @@ $db->db_dir_name = $db_dir_name;
 $db->global_lock_dir_name = $db_global_lock_dir_name;
 $db->id_dir_name = $db_id_dir_name;
 $db->name_dir_name = $db_name_dir_name;
-$db->sw3db_dir_name = $db_sw3_dir_name;
-
-require SWE::DB::SuikaWiki3PageList2;
-$sw3_pages = SWE::DB::SuikaWiki3PageList2->new;
-$sw3_pages->{root_directory_name} = $db_sw3_dir_name;
 
 # XXX $db->id_prop
 require SWE::DB::IDProps;
@@ -105,7 +98,7 @@ require SWE::DB::Lock;
 $names_lock = SWE::DB::Lock->new;
 $names_lock->{file_name} = $db_global_lock_dir_name . 'ids.lock';
 $names_lock->lock_type ('Names');
-    ## NOTE: This lock MUST be used when $sw3pages or $name_prop_db is updated.
+    ## NOTE: This lock MUST be used when $name_prop_db is updated.
 
 if ($path[0] eq 'n' and @path == 2) {
   my $name = normalize_name ($path[1]);
@@ -567,7 +560,6 @@ if ($path[0] eq 'n' and @path == 2) {
         require SWE::Object::Document;
         my $document = SWE::Object::Document->new_id (db => $db);
         $document->{name_prop_db} = $name_prop_db; ## TODO: ...
-        $document->{sw3_pages} = $sw3_pages; ## TODO: ...
         
         my $id = $document->id;
         
@@ -853,12 +845,7 @@ if ($path[0] eq 'n' and @path == 2) {
       for my $new_name (keys %$added_names) {
         my $new_name_prop = $name_prop_db->get_data ($new_name);
         unless (defined $new_name_prop) {
-          my $sw3id = $sw3_pages->get_data ($new_name);
-          convert_sw3_page ($sw3id => $new_name);                    
-          $new_name_prop = $name_prop_db->get_data ($new_name);
-          unless (defined $new_name_prop) {
-            $names_history_db->append_data ($new_name => [$time, 'c']);
-          }
+          $names_history_db->append_data ($new_name => [$time, 'c']);
         }
         $new_name_prop->{name} = $new_name;
         push @{$new_name_prop->{id} ||= []}, $id;
@@ -1075,7 +1062,6 @@ if ($path[0] eq 'n' and @path == 2) {
     require SWE::Object::Document;
     my $document = SWE::Object::Document->new_id (db => $db);
     $document->{name_prop_db} = $name_prop_db; ## TODO: ...
-    $document->{sw3_pages} = $sw3_pages; ## TODO: ...
 
     my $id = $document->id;
     my $id_prop = {};
@@ -1214,14 +1200,6 @@ sub prepare_by_name ($$) {
   my ($name, $id_cand) = @_;
   
   my $ids = get_ids_by_name ($name);
-  unless (ref $ids) {
-    $names_lock->lock;
-    $sw3_pages->reset;
-
-    $ids = convert_sw3_page ($ids => $name);
-    $names_lock->unlock;
-  }
-
   my $id;
   if (defined $id_cand) {
     $id_cand += 0;
@@ -1369,13 +1347,7 @@ sub get_ids_by_name ($) {
   if ($name_prop->{id}) {
     return $name_prop->{id};
   } else {
-    my $sw3id = $sw3_pages->get_data ($name);
-
-    if (defined $sw3id) {
-      return $sw3id; # not an arrayref
-    } else {
-      return [];
-    }
+    return [];
   }
 } # get_ids_by_name
 
@@ -1413,106 +1385,9 @@ sub update_tfidf ($$) {
   require SWE::Object::Document;
   my $document = SWE::Object::Document->new (db => $db, id => $id);
   $document->{name_prop_db} = $name_prop_db; ## TODO: ...
-  $document->{sw3_pages} = $sw3_pages; ## TODO: ...
   
   $document->update_tfidf ($doc);
 } # update_tfidf
-
-sub convert_sw3_page ($$) {
-  my ($sw3key => $name) = @_;
-  
-  my $page_key = $sw3_pages->get_data ($name);
-      ## NOTE: $page_key is undef if the page has been converted
-      ## between the first (in get_ids_by_name) and the second (the
-      ## line above) $sw3_pages->get_data calls.
-
-  my $ids;
-  if (defined $page_key) {
-    my $idgen = $db->id;
-    my $time = time;
-    
-    my $id = $idgen->get_next_id;
-    my $id_lock = $id_locks->get_lock ($id);
-    $id_lock->lock;
-
-    my $vc = $db->vc;
-    local $content_db->{version_control} = $vc;
-    local $id_prop_db->{version_control} = $vc;
-    $vc->add_file ($idgen->{file_name});
-
-    my $id_history_db = $db->id_history;
-    local $id_history_db->{version_control} = $vc;
-    
-    our $sw3_db_dir_name;
-    
-    state $sw3_content_db;
-    unless (defined $sw3_content_db) {
-      require SWE::DB::SuikaWiki3;
-      $sw3_content_db = SWE::DB::SuikaWiki3->new;
-      $sw3_content_db->{root_directory_name} = $sw3_db_dir_name;
-    }
-    
-    state $sw3_prop_db;
-    unless (defined $sw3_prop_db) {
-      require SWE::DB::SuikaWiki3Props;
-      $sw3_prop_db = SWE::DB::SuikaWiki3Props->new;
-      $sw3_prop_db->{root_directory_name} = $sw3_db_dir_name;
-    }
-    
-    state $sw3_lm_db;
-    unless (defined $sw3_lm_db) {
-      require SWE::DB::SuikaWiki3LastModified;
-      $sw3_lm_db = SWE::DB::SuikaWiki3LastModified->new;
-      $sw3_lm_db->{file_name} = $sw3_db_dir_name .
-          'mt--6C6173745F6D6F646966696564.dat';
-    }
-
-    my $content = $sw3_content_db->get_data ($page_key);
-    $content_db->set_data ($id => \$content);
-    
-    my $id_props = $sw3_prop_db->get_data ($page_key);
-    my $lm = $sw3_lm_db->get_data ($name);
-    $id_props->{name}->{$name} = 1;
-    $id_props->{modified} = $lm if defined $lm;
-    $id_props->{'converted-from-sw3'} = time;
-    $id_props->{'sw3-key'} = $page_key;
-    $id_props->{hash} = get_hash (\$content);
-    $id_prop_db->set_data ($id => $id_props);
-
-    $id_history_db->append_data ($id => [$time, 't']);
-    $id_history_db->append_data ($id => [$time, 'a', $name]);
-
-    $vc->commit_changes ("converted from SuikaWiki3 <http://suika.fam.cx/gate/cvs/suikawiki/wikidata/page/$page_key.txt>");
-
-    $id_lock->unlock;
-
-    $vc = $db->vc;
-    local $name_prop_db->{version_control} = $vc;
-    local $sw3_pages->{version_control} = $vc;
-    
-    my $names_history_db = $db->name_history;
-    local $names_history_db->{version_control} = $vc;
-    
-    my $name_props = $name_prop_db->get_data ($name);
-    push @{$name_props->{id} ||= []}, $id;
-    $ids = $name_props->{id};
-    $name_props->{name} = $name;
-    $name_prop_db->set_data ($name => $name_props);
-
-    $names_history_db->append_data ($name => [$time, 't']);
-    $names_history_db->append_data ($name => [$time, 'a', $id]);
-
-    $sw3_pages->delete_data ($name);
-    $sw3_pages->save_data;
-    
-    $vc->commit_changes ("converted from SuikaWiki3 <http://suika.fam.cx/gate/cvs/suikawiki/wikidata/page/$page_key.txt>");
-  } else {
-    my $name_props = $name_prop_db->get_data ($name);
-    $ids = $name_props->{id};
-  }
-
-  return $ids;
-} # convert_sw3_page
 
 sub set_head_content ($;$$$) {
   my ($doc, $id, $links, $metas) = @_;
