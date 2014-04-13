@@ -6,13 +6,15 @@ use Wanage::HTTP;
 use SWE::Warabe::App;
 require 'suikawiki/main.pl';
 
-sub psgi_app ($$$) {
-  my (undef, $config, $root_path) = @_;
+sub psgi_app ($$) {
+  my (undef, $config) = @_;
+  die "|SW_DB_DIR| is not specified" unless defined $ENV{SW_DB_DIR};
+  my $db_path = path $ENV{SW_DB_DIR};
   return sub {
     my $http = Wanage::HTTP->new_from_psgi_env ($_[0]);
     my $app = SWE::Warabe::App->new_from_http ($http);
     $app->config ($config);
-    $app->db_root_path ($root_path->child ($config->get_text ('db_dir_name')));
+    $app->db_root_path ($db_path);
     return $http->send_response (onready => sub {
       $app->execute (sub {
         SWE::Web->process ($app);
