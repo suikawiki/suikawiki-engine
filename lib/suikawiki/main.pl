@@ -534,9 +534,11 @@ if ($path[0] eq 'n' and @path == 2) {
         ## TODO: non-default content-type support
         my $cache_prop = $cache_prop_db->get_data ($id);
         my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
-          
         if (defined $doc) {
-          update_tfidf ($id, $doc);
+          require SWE::Object::Document;
+          my $document = SWE::Object::Document->new (db => $db, id => $id);
+          $document->{name_prop_db} = $name_prop_db; ## TODO: ...
+          $document->update_tfidf ($doc);
         }
 
         if ($app->bare_param ('redirect')) {
@@ -687,7 +689,10 @@ if ($path[0] eq 'n' and @path == 2) {
         }
 
         if (defined $doc) {
-          update_tfidf ($id, $doc);
+          require SWE::Object::Document;
+          my $document = SWE::Object::Document->new (db => $db, id => $id);
+          $document->{name_prop_db} = $name_prop_db; ## TODO: ...
+          $document->update_tfidf ($doc);
         }
 
         return $app->throw;
@@ -865,38 +870,6 @@ if ($path[0] eq 'n' and @path == 2) {
       $app->http->set_status (204, 'Changed');
       $app->http->close_response_body;
       return $app->throw;
-  } elsif ($param eq 'neighbors') {
-    require SWE::Object::Repository;
-    my $repo = SWE::Object::Repository->new (db => $db);
-
-    my $graph = $repo->graph;
-    $graph->lock;
-    
-    my $id = $path[1] + 0;
-    my $doc = $repo->get_document_by_id ($id);
-    $doc->lock;
-    
-    my $node = $doc->get_or_create_graph_node;
-    
-      if ($node) {
-        $app->http->add_response_header
-            ('Content-Type' => 'text/plain; charset=utf-8');
-        for my $doc (@{$node->neighbor_documents}) {
-          $app->http->send_response_body
-              ($doc->id . "\t" . $doc->name . "\x0A");
-        }
-        $app->http->close_response_body;
-        
-        $graph->schelling_update ($node->id);
-
-        $doc->unlock;
-        $graph->unlock;
-        return $app->throw;
-      } else {
-        $doc->unlock;
-        $graph->unlock;
-        #
-      }
     } elsif ($param eq 'history' and not defined $dollar) {
       my $id = $path[1] + 0;
 
@@ -973,56 +946,6 @@ if ($path[0] eq 'n' and @path == 2) {
 
       set_foot_content ($doc);
       $app->http->send_response_body_as_text ($doc->inner_html);
-      $app->http->close_response_body;
-      return $app->throw;
-    } elsif ($param eq 'terms' and not defined $dollar) {
-      my $id = $path[1] + 0;
-
-      ## This must be done before the ID lock.
-      $db->name_inverted_index->lock;
-      
-      my $id_lock = $id_locks->get_lock ($id);
-      $id_lock->lock;
-      
-      my $id_prop = $id_prop_db->get_data ($id);
-      my $cache_prop = $cache_prop_db->get_data ($id);
-      my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
-
-      if (defined $doc) {
-        update_tfidf ($id, $doc);
-
-        $id_lock->unlock;
-
-        $app->http->add_response_header
-            ('Content-Type' => 'text/plain; charset=utf-8');
-        $app->http->send_response_body_as_text
-            (${ $db->id_tfidf->get_data ($id) });
-        $app->http->close_response_body;
-        return $app->throw;
-      } else {
-        $id_lock->unlock;
-      }
-    } elsif ($param =~ /^(un)?related-([0-9]+)$/ and not defined $dollar) {
-      ## Allow GET to not require Basic auth.
-      #$app->requires_request_method ({POST => 1});
-      my $id1 = $path[1] + 0;
-      my $id2 = $2 + 0;
-      my $answer = $1 ? -1 : 1;
-      
-      require SWE::Object::Repository;
-      my $repo = SWE::Object::Repository->new (db => $db);
-
-      my $vc = $db->vc;
-      
-      $repo->weight_lock;
-      local $db->global_prop->{version_control} = $vc;
-      my $y = $repo->are_related_ids ($id1, $id2, $answer);
-      $repo->save_term_weight_vector;
-      $vc->commit_changes ('term weight vector update');
-      $repo->weight_unlock;
-
-      $app->http->add_response_header ('Content-Type' => 'text/ping');
-      $app->http->send_response_body_as_text ('PING');
       $app->http->close_response_body;
       return $app->throw;
     }
@@ -1354,17 +1277,6 @@ sub for_unique_words ($*) {
     $_[1]->($term, $terms->{$term});
   }
 } # for_unique_words
-
-## TODO: This function is OBSOLETE!
-sub update_tfidf ($$) {
-  my ($id, $doc) = @_;
-
-  require SWE::Object::Document;
-  my $document = SWE::Object::Document->new (db => $db, id => $id);
-  $document->{name_prop_db} = $name_prop_db; ## TODO: ...
-  
-  $document->update_tfidf ($doc);
-} # update_tfidf
 
 sub set_head_content ($;$$$) {
   my ($doc, $id, $links, $metas) = @_;

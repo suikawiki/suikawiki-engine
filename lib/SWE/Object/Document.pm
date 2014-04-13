@@ -139,7 +139,7 @@ sub name ($) {
   return [keys %{$prop->{name}}]->[0] // ''; ## XXXTODO: title-type
 } # name
 
-## ------ Indexing and Graph ------
+## ------ Indexing ------
 
 sub update_tfidf ($$) {
   my ($self, $doc) = @_; ## TODO: $doc should not be an argument
@@ -194,34 +194,6 @@ sub update_tfidf ($$) {
   
   $tfidf_db->set_data ($id => \( $terms->stringify ));
 } # update_tfidf
-
-sub get_or_create_graph_node ($) {
-  my $self = shift;
-
-  $self->lock;
-
-  my $id_prop = $self->untainted_prop or do {
-    $self->unlock;
-    die "Can't obtain untainted prop object";
-  };
-
-  my $graph = $self->repo->graph;
-  my $node;
-  my $node_id = $id_prop->{node_id};
-  if (defined $node_id) {
-    $node = $graph->get_node_by_id ($node_id);
-  } else {
-    $node = $graph->create_node ($self->id);
-    $node_id = $node->id;
-    
-    $id_prop->{node_id} = $node_id;
-    $self->save_prop;
-  }
-
-  $self->unlock;
-
-  return $node;
-} # get_or_create_graph_node
 
 # ------ Locking ------
 

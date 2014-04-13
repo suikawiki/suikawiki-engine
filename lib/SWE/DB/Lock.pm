@@ -3,9 +3,9 @@ use strict;
 
 my $CurrentlyLocking = {};
 my $LockTypes = [qw/
-  ID Name Index IDs Names Graph Weight Global
+  ID Name Index IDs Names Global
 /];
-  ## If you are locking for Graph, then you cannot lock for Global, but
+  ## If you are locking for Names, then you cannot lock for Global, but
   ## still you can lock for ID.
   ##
   ## In addition, if you are locking for an ID, then you can't lock
