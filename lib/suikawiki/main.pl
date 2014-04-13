@@ -570,7 +570,7 @@ if ($path[0] eq 'n' and @path == 2) {
     }
   } elsif ($path[0] eq 'i' and @path == 2 and not defined $dollar) {
     unless (defined $param) {
-      $app->requires_request_method ({POST => 1, PUT => 1});
+      $app->requires_request_method ({POST => 1});
       my $id = $path[1] + 0;
       
       ## This must be done before the ID lock.
@@ -733,7 +733,7 @@ if ($path[0] eq 'n' and @path == 2) {
         return $app->throw;
       }
     } elsif ($param eq 'names') {
-      $app->requires_request_method ({POST => 1, PUT => 1});
+      $app->requires_request_method ({POST => 1});
       my $id = $path[1] + 0;
 
       my $vc = $db->vc;
