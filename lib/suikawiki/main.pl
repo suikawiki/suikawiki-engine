@@ -1,6 +1,5 @@
 package SuikaWiki5::Main;
 use strict;
-use feature 'state';
 
 ## --- Common modules
 
@@ -9,9 +8,8 @@ require Encode;
 require Message::DOM::DOMImplementation;
 my $dom = Message::DOM::DOMImplementation->new;
 
-use Message::CGI::Util qw/percent_encode percent_encode_na
-  percent_decode htescape get_absolute_url
-  datetime_in_content datetime_for_http/;
+use Message::CGI::Util qw/percent_encode percent_decode
+  datetime_in_content/;
 
 require Char::Normalize::FullwidthHalfwidth;
 
@@ -221,7 +219,7 @@ if ($path[0] eq 'n' and @path == 2) {
                      href => '../i/' . $id . ';history',
                      title => 'History of the page content'};
       }
-      set_head_content ($html_doc, $id, \@link,
+      set_head_content ($app, $html_doc, $id, \@link,
                         defined $id
                             ? [] : [{name => 'ROBOTS', content => 'NOINDEX'}]);
       
@@ -310,7 +308,8 @@ if ($path[0] eq 'n' and @path == 2) {
 #        $body_el->append_child ($ad_el);
       } else {
         my $new_nav_el = $html_doc->create_element_ns (HTML_NS, 'section');
-        $new_nav_el->inner_html (q[<a href="">Add a description</a> of <em>] . (htescape $name) . q[</em>]);
+        $new_nav_el->inner_html (q[<a href="">Add a description</a> of <em></em>]);
+        $new_nav_el->last_child->text_content ($name);
         $new_nav_el->first_child->set_attribute
             (href => '../new-page?names=' . percent_encode ($name));
         $body_el->append_child ($new_nav_el);
@@ -335,7 +334,7 @@ if ($path[0] eq 'n' and @path == 2) {
       }
 
       my $a_el = $footer_el->get_elements_by_tag_name ('a')->[0];
-      our $license_name;
+      my $license_name = $app->config->get_text ('wiki_page_license');
       $a_el->set_attribute (href => get_page_url ($license_name));
 
       set_foot_content ($html_doc);
@@ -368,7 +367,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <tbody>
                         
 </table></div>]);
-    set_head_content ($doc, undef, [], []);
+    set_head_content ($app, $doc, undef, [], []);
 
     my $title_el = $doc->get_elements_by_tag_name ('title')->[0];
     $title_el->inner_html ('History &mdash; ');
@@ -748,7 +747,7 @@ if ($path[0] eq 'n' and @path == 2) {
 </form>
 </div>
 ]);
-      set_head_content ($html_doc, $id, [],
+      set_head_content ($app, $html_doc, $id, [],
                         [{name => 'ROBOTS', content => 'NOINDEX'}]);
       my $form_el = $html_doc->get_elements_by_tag_name ('form')->[0];
       $form_el->set_attribute (action => $id);
@@ -771,7 +770,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $a_el->set_attribute (href => get_page_url ($help_page_name));
 
       $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
-      our $license_name;
+      my $license_name = $app->config->get_text ('wiki_page_license');
       $a_el->set_attribute (href => get_page_url ($license_name));
 
       $form_el = $html_doc->get_elements_by_tag_name ('form')->[1];
@@ -890,7 +889,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <tbody>
                         
 </table></div>]);
-      set_head_content ($doc, undef, [], []);
+      set_head_content ($app, $doc, undef, [], []);
 
     my $title_el = $doc->get_elements_by_tag_name ('title')->[0];
     $title_el->inner_html ('History &mdash; #');
@@ -1023,7 +1022,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
       
-      my $post_url = get_absolute_url ("i/$id", $app->http->url->stringify);
+      my $post_url = $app->http->url->resolve_string ("i/$id");
       $app->http->add_response_header ('X-SW-Post-URL' => $post_url);
 
       my $url = get_page_url ([keys %$new_names]->[0], undef, 0 + $id);
@@ -1057,7 +1056,7 @@ if ($path[0] eq 'n' and @path == 2) {
 [<a rel=help>Help</a> / <a rel=license>License</a>]
 </form>
 ]);
-    set_head_content ($doc, undef, [],
+    set_head_content ($app, $doc, undef, [],
                       [{name => 'ROBOTS', content => 'NOINDEX'}]);
 
     my $form_el = $doc->get_elements_by_tag_name ('form')->[0];
@@ -1072,11 +1071,10 @@ if ($path[0] eq 'n' and @path == 2) {
     our $help_page_name;
     $a_el->set_attribute (href => get_page_url ($help_page_name));
 
-    $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
-    our $license_name;
-    $a_el->set_attribute (href => get_page_url ($license_name));
-    
-    set_foot_content ($doc);
+      $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
+      my $license_name = $app->config->get_text ('wiki_page_license');
+      $a_el->set_attribute (href => get_page_url ($license_name));
+      set_foot_content ($doc);
 
       $app->http->send_response_body_as_text ($doc->inner_html);
       $app->http->close_response_body;
@@ -1201,7 +1199,7 @@ sub get_xml_data ($$$) {
     }
   }
 
-  state $content_cache_db;
+  our $content_cache_db;
   unless (defined $content_cache_db) {
     require SWE::DB::IDDOM;
     $content_cache_db = SWE::DB::IDDOM->new;
@@ -1278,11 +1276,11 @@ sub for_unique_words ($*) {
   }
 } # for_unique_words
 
-sub set_head_content ($;$$$) {
-  my ($doc, $id, $links, $metas) = @_;
+sub set_head_content ($$;$$$) {
+  my ($app, $doc, $id, $links, $metas) = @_;
   my $head_el = $doc->manakai_head;
 
-  our $license_name;
+  my $license_name = $app->config->get_text ('wiki_page_license');
   push @{$links ||= []}, {rel => 'stylesheet', href => '/styles/sw'},
       {rel => 'license', href => get_page_url ($license_name, undef)};
   

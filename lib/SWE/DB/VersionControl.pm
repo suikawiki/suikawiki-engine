@@ -14,6 +14,7 @@ sub new ($%) {
     path ($args{db_dir_name})->mkpath;
     unless (-d "$args{db_dir_name}/.git") {
       system "cd \Q$args{db_dir_name}\E && git init";
+      # XXX if error,
     }
   }
   return $self;
@@ -44,33 +45,19 @@ sub commit_changes ($$) {
   my $self = shift;
   my $msg = shift;
 
-  require Cwd;
-  my $cwd = Cwd::getcwd ();
+  #for (sort {$a cmp $b} keys %{$self->{added_directories}}) {
+  #  add directory $_;
+  #}
 
-  chdir $self->{db_dir_name};
+  my @file = (keys %{$self->{added_files}}, keys %{$self->{modified_files}});
+  if (@file) {
+    my $dir_path = path ($self->{db_dir_name});
+    system "cd \Q$dir_path\E && " . join ' ', map { quotemeta $_ } 'git', 'add', map { path ($_)->relative ($dir_path) } @file;
+    # XXX if error,
 
-  for (sort {$a cmp $b} keys %{$self->{added_directories}}) {
-    #_system ('git', 'add', $_);
+    system "cd \Q$dir_path\E && git commit -m \Q$msg\E";
+    # XXX if error,
   }
-
-  for (keys %{$self->{added_files}}) {
-    _system ('git', 'add', $_);
-  }
-  
-  for (keys %{$self->{modified_files}}) {
-    _system ('git', 'add', $_);
-  }
-
-  _system ('git', 'commit', -m => $msg);
-
-  chdir $cwd;
 } # commit_changes
-
-sub _system (@) {
-  return ((system join (' ', map {quotemeta $_} @_) . " > /dev/null") == 0);
-  ## If false, see $? for exit value of the program.
-  ## TODO: If false, log the stdout/stderr...
-} # _system
-
 
 1;
