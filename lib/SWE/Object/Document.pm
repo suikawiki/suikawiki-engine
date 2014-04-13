@@ -1,6 +1,7 @@
 package SWE::Object::Document;
 use strict;
 use warnings;
+use SWE::String;
 use SWE::Lang qw/%ContentMediaType/;
 
 sub new ($%) {
@@ -162,10 +163,10 @@ sub update_tfidf ($$) {
 
   my $orig_tfs = {};
   my $all_terms = 0;
-  SuikaWiki5::Main::for_unique_words ($tc => sub {
+  for_unique_words {
     $orig_tfs->{$_[0]} = $_[1];
     $all_terms += $_[1];
-  }); ## TODO: XXX
+  } $tc;
 
   my $names_index_db = $self->db->name_inverted_index;
   $names_index_db->lock;

@@ -1,7 +1,6 @@
 package SuikaWiki5::Main;
 use strict;
-use Encode;
-use Char::Normalize::FullwidthHalfwidth;
+use SWE::String;
 use SWE::DB;
 
 require Message::DOM::DOMImplementation;
@@ -371,9 +370,9 @@ if ($path[0] eq 'n' and @path == 2) {
     return $app->throw;
   } elsif ($param eq 'search' and not defined $dollar) {
     my $names = [];
-    for_unique_words ($name => sub {
-      push @$names, shift;
-    });
+    for_unique_words {
+      push @$names, $_[0];
+    } $name;
 
     my $names_index_db = $db->name_inverted_index;
     my $index = {};
@@ -464,7 +463,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $anchor = $max;
         
         $id_prop->{modified} = time;
-        $id_prop->{hash} = get_hash ($textref);
+        $id_prop->{hash} = string_hash $$textref;
         
         my $vc = $db->vc;
         local $db->id_content->{version_control} = $vc;
@@ -537,7 +536,7 @@ if ($path[0] eq 'n' and @path == 2) {
           }
           
           $id_props->{'content-type'} = 'text/x-suikawiki';
-          $id_props->{hash} = get_hash (\$content);
+          $id_props->{hash} = string_hash $content;
           $db->id_prop->set_data ($id => $id_props);
           
           $vc->commit_changes ("created by $user");
@@ -589,7 +588,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
         my $prev_hash = $app->bare_param ('hash') // '';
         my $current_hash = $id_prop->{hash} //
-            get_hash ($db->id_content->get_data ($id) // '');
+            string_hash ${$db->id_content->get_data ($id) // \''};
         unless ($prev_hash eq $current_hash) {
           ## TODO: conflict
           return $app->throw_error (409);
@@ -600,7 +599,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
         $id_prop->{'content-type'} = $ct;
         $id_prop->{modified} = time;
-        $id_prop->{hash} = get_hash ($textref);
+        $id_prop->{hash} = string_hash $$textref;
 
         my $title = $app->text_param ('title');
         if (defined $title) {
@@ -656,7 +655,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $id_prop = $db->id_prop->get_data ($id);
       my $names = $id_prop->{name} || {};
-      my $hash = $id_prop->{hash} // get_hash ($textref);
+      my $hash = $id_prop->{hash} // string_hash $$textref;
 
       ## TODO: <select name=title-type>
       my $html_doc = $dom->create_document;
@@ -944,7 +943,7 @@ if ($path[0] eq 'n' and @path == 2) {
       }
 
       $id_prop->{'content-type'} = $ct;
-      $id_prop->{hash} = get_hash (\$content);
+      $id_prop->{hash} = string_hash $content;
       $id_prop->{title} = $app->text_param ('title') // '';
       normalize_content (\($id_prop->{title}));
       $id_prop->{'title-type'} = 'text/plain'; ## TODO: get_parameter
@@ -1106,20 +1105,6 @@ sub set_content_type_options ($$;$) {
   }
 } # set_content_type_options
 
-sub normalize_name ($) {
-  my $s = shift;
-  Char::Normalize::FullwidthHalfwidth::normalize_width (\$s);
-  $s =~ s/\s+/ /g;
-  $s =~ s/^ //;
-  $s =~ s/ $//;
-  return $s;
-} # normalize_name
-
-sub normalize_content ($) {
-  my $sref = shift;
-  Char::Normalize::FullwidthHalfwidth::normalize_width ($sref);
-} # normalize_content
-
 ## A source anchor label in SWML -> URL
 sub get_page_url ($$;$$) {
   my ($path, $wiki_name, $base_name, $id) = @_;
@@ -1160,7 +1145,7 @@ sub get_xml_data ($$$$) {
       
       $content_cache_db->set_data ($id => $doc);
 
-      $cache_prop->{'cached-hash'} = get_hash ($textref);
+      $cache_prop->{'cached-hash'} = string_hash $$textref;
       $db->id_cache_prop->set_data ($id => $cache_prop);
     } else {
       ## Content not found.
@@ -1170,38 +1155,6 @@ sub get_xml_data ($$$$) {
 
   return $doc;
 } # get_xml_data
-
-sub get_hash ($) {
-  require Digest::MD5;
-  return Digest::MD5::md5_hex (Encode::encode ('utf8', ${$_[0]}));
-} # get_hash
-
-sub for_unique_words ($*) {
-  #my ($string, $code) = @_;
-  
-  ## TODO: use mecab
-
-  require Text::Kakasi;
-  my $k = Text::Kakasi->new;
-  
-  ## TODO: support stop words
-  
-  my $all_terms = 0;
-  my $terms = {};
-  for my $term (split /\s+/, $k->set (qw/-iutf8 -outf8 -w/)->get ($_[0])) {
-
-    ## TODO: provide a way to save original representation
-
-    ## TODO: more normalization
-    $term = lc $term;
-
-    $terms->{$term}++;
-  }
-  
-  for my $term (keys %$terms) {
-    $_[1]->($term, $terms->{$term});
-  }
-} # for_unique_words
 
 sub set_head_content ($$$;$$$) {
   my ($app, $path, $doc, $id, $links, $metas) = @_;
@@ -1246,3 +1199,12 @@ sub set_foot_content ($) {
 } # set_foot_content
 
 1;
+
+=head1 LICENSE
+
+Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
