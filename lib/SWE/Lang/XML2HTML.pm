@@ -393,7 +393,7 @@ $templates->{(SW09_NS)}->{anchor} = sub {
   $name =~ s/ $//;
   $name = 'HomePage' unless length $name;
 
-  my $url = $item->{name_to_url}->($name, $item->{name});
+  my $url = $item->{name_to_url}->($name);
 
   my $anchor = $item->{node}->get_attribute_ns (SW09_NS, 'anchor');
   if (defined $anchor) {

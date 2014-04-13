@@ -45,7 +45,7 @@ if ($path[0] eq 'n' and @path == 2) {
   unless (length $name) {
     my $homepage_name = $app->config->get_text ('wiki_page_home');
     return $app->throw_redirect
-        (get_page_url (\@path, $homepage_name, undef), status => 303);
+        ($app->name_url ($homepage_name), status => 303);
   }
 
   unless (defined $param) {
@@ -53,7 +53,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
     if (defined $dollar and not defined $id) {
       return $app->throw_redirect
-          (get_page_url (\@path, $name, undef),
+          ($app->name_url ($name),
            status => 301, reason_phrase => 'Not found');
     }
 
@@ -116,7 +116,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $docobj->{swml_to_xml} = \&get_xml_data;
         $docobj->{name} = $name;
         $docobj->{get_page_url} = sub {
-          get_page_url (\@path, @_);
+          return $app->name_url ($_[0]);
         };
 
         $docobj->lock;
@@ -146,17 +146,17 @@ if ($path[0] eq 'n' and @path == 2) {
       my $tmt = $docobj->to_text_media_type;
       if (defined $tmt) {
         push @link, {rel => 'alternate', type => $tmt,
-                     href => get_page_url (\@path, $name, undef, $id) . '?format=text'};
+                     href => $app->name_url ($name, $id) . '?format=text'};
       }
 
       my $xmt = $docobj->to_xml_media_type;
       if (defined $xmt) {
         push @link, {rel => 'alternate', type => $xmt,
-                     href => get_page_url (\@path, $name, undef, $id) . '?format=xml'};
+                     href => $app->name_url ($name, $id) . '?format=xml'};
       }
       
       push @link, {rel => 'archives',
-                   href => get_page_url (\@path, $name, undef, undef) . ';history',
+                   href => $app->name_url ($name) . ';history',
                    title => 'History of the page name'};
       if (defined $id) {
         push @link, {rel => 'archives',
@@ -171,7 +171,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $h1_el = $html_doc->create_element_ns (HTML_NS, 'h1');
       my $a_el = $html_doc->create_element_ns (HTML_NS, 'a');
-      $a_el->set_attribute (href => get_page_url (\@path, $name, undef));
+      $a_el->set_attribute (href => $app->name_url ($name));
       $a_el->set_attribute (rel => 'bookmark');
       $a_el->text_content ($name);
       $h1_el->append_child ($a_el);
@@ -192,7 +192,7 @@ if ($path[0] eq 'n' and @path == 2) {
           $a_el->text_content
               (length $id_prop->{title} ? $id_prop->{title}
                  : [keys %{$id_prop->{name}}]->[0] // $id); ## TODO: title-type
-          $a_el->set_attribute (href => get_page_url (\@path, $name, $name, $id));
+          $a_el->set_attribute (href => $app->name_url ($name, $id));
           $ul_el->append_child ($li_el);
         }
         $nav_el->append_child ($ul_el);
@@ -279,7 +279,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $a_el = $footer_el->get_elements_by_tag_name ('a')->[0];
       my $license_name = $app->config->get_text ('wiki_page_license');
-      $a_el->set_attribute (href => get_page_url (\@path, $license_name));
+      $a_el->set_attribute (href => $app->name_url ($license_name));
 
       set_foot_content ($html_doc);
 
@@ -486,7 +486,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
         if ($app->bare_param ('redirect')) {
           return $app->throw_redirect
-              (get_page_url (\@path, $name, undef, $id) . '#anchor-' . $anchor,
+              ($app->name_url ($name, $id) . '#anchor-' . $anchor,
                status => 303, reason_phrase => 'Appended');
         } else {
           $app->http->set_status (204, 'Appended');
@@ -556,7 +556,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
         if ($app->bare_param ('redirect')) {
           return $app->throw_redirect
-              (get_page_url (\@path, $name, undef, $id) . '#anchor-' . $anchor,
+              ($app->name_url ($name, $id) . '#anchor-' . $anchor,
                status => 303, reason_phrase => 'Appended');
         } else {
           $app->http->set_status (204, 'Appended');
@@ -568,7 +568,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $name .= '$' . $dollar if defined $dollar;
       $name .= ';' . $param;
       return $app->throw_redirect
-          (get_page_url (\@path, $name, undef),
+          ($app->name_url ($name),
            status => 301, reason_phrase => 'Not found');
     }
   } elsif ($path[0] eq 'i' and @path == 2 and not defined $dollar) {
@@ -614,7 +614,7 @@ if ($path[0] eq 'n' and @path == 2) {
         
         $db->id_content->set_data ($id => $textref);
         $db->id_prop->set_data ($id => $id_prop);
-
+        
         my $user = '(anon)'; #$cgi->remote_user // '(anon)';
         $vc->commit_changes ("updated by $user");
 
@@ -622,8 +622,7 @@ if ($path[0] eq 'n' and @path == 2) {
         my $cache_prop = $db->id_cache_prop->get_data ($id);
         my $doc = $id_prop ? get_xml_data ($db, $id, $id_prop, $cache_prop) : undef;
 
-        my $url = get_page_url (\@path, [keys %{$id_prop->{name} or {}}]->[0],
-                                undef, 0 + $id);
+        my $url = $app->name_url ([keys %{$id_prop->{name} or {}}]->[0], $id);
         $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
         if ($app->bare_param ('no-redirect')) {
           $app->send_redirect ($url, status => 201, reason_phrase => 'Saved');
@@ -710,12 +709,12 @@ if ($path[0] eq 'n' and @path == 2) {
            $form_el->get_elements_by_tag_name ('select')->[0] => $ct);
 
       my $a_el = $form_el->get_elements_by_tag_name ('a')->[0];
-      our $help_page_name;
-      $a_el->set_attribute (href => get_page_url (\@path, $help_page_name));
+      my $help_page_name = $app->config->get_text ('wiki_page_home');
+      $a_el->set_attribute (href => $app->name_url ($help_page_name));
 
       $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
       my $license_name = $app->config->get_text ('wiki_page_license');
-      $a_el->set_attribute (href => get_page_url (\@path, $license_name));
+      $a_el->set_attribute (href => $app->name_url ($license_name));
 
       $form_el = $html_doc->get_elements_by_tag_name ('form')->[1];
       $form_el->set_attribute (action => $id . ';names');
@@ -726,7 +725,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $nav_el = $html_doc->get_elements_by_tag_name ('div')->[0];
       for (keys %$names) {
         my $a_el = $html_doc->create_element_ns (HTML_NS, 'a');
-        $a_el->set_attribute (href => get_page_url (\@path, $_, undef, $id));
+        $a_el->set_attribute (href => $app->name_url ($_, $id));
         $a_el->text_content ($_);
         $nav_el->append_child ($a_el);
         $nav_el->manakai_append_text (' ');
@@ -860,14 +859,14 @@ if ($path[0] eq 'n' and @path == 2) {
         } elsif ($entry->[1] eq 'a') {
           $change_cell->manakai_append_text ('Associated with ');
           my $a_el = $doc->create_element_ns (HTML_NS, 'a');
-          $a_el->set_attribute (href => get_page_url (\@path, $entry->[2], undef)
+          $a_el->set_attribute (href => $app->name_url ($entry->[2])
                                     . ';history');
           $a_el->text_content ($entry->[2]);
           $change_cell->append_child ($a_el);
         } elsif ($entry->[1] eq 'r') {
           $change_cell->manakai_append_text ('Disassociated from ');
           my $a_el = $doc->create_element_ns (HTML_NS, 'a');
-          $a_el->set_attribute (href => get_page_url (\@path, $entry->[2], undef)
+          $a_el->set_attribute (href => $app->name_url ($entry->[2])
                                     . ';history');
           $a_el->text_content ($entry->[2]);
           $change_cell->append_child ($a_el);
@@ -969,7 +968,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $post_url = $app->http->url->resolve_string ("i/$id");
       $app->http->add_response_header ('X-SW-Post-URL' => $post_url);
 
-      my $url = get_page_url (\@path, [keys %$new_names]->[0], undef, 0 + $id);
+      my $url = $app->name_url ([keys %$new_names]->[0], $id);
       if ($app->bare_param ('no-redirect')) {
         return $app->throw_redirect
             ($url, status => 201, reason_phrase => 'Created');
@@ -1011,13 +1010,13 @@ if ($path[0] eq 'n' and @path == 2) {
     $form_el->get_elements_by_tag_name ('textarea')->[0]
         ->text_content ($names);
 
-    my $a_el = $form_el->get_elements_by_tag_name ('a')->[0];
-    our $help_page_name;
-    $a_el->set_attribute (href => get_page_url (\@path, $help_page_name));
+      my $a_el = $form_el->get_elements_by_tag_name ('a')->[0];
+      my $help_page_name = $app->config->get_text ('wiki_page_home');
+      $a_el->set_attribute (href => $app->name_url ($help_page_name));
 
       $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
       my $license_name = $app->config->get_text ('wiki_page_license');
-      $a_el->set_attribute (href => get_page_url (\@path, $license_name));
+      $a_el->set_attribute (href => $app->name_url ($license_name));
       set_foot_content ($doc);
 
       $app->http->send_response_body_as_text ($doc->inner_html);
@@ -1026,13 +1025,9 @@ if ($path[0] eq 'n' and @path == 2) {
     }
   } elsif (@path == 1 and
            {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
-    our $homepage_name;
+    my $homepage_name = $app->config->get_text ('wiki_page_home');
     return $app->throw_redirect
-        (get_page_url (\@path, $homepage_name, undef), status => 303);
-  } elsif (@path == 0) {
-    my $rurl = $app->http->url->stringify;
-    $rurl =~ s!\.[^/]*$!!g;
-    return $app->throw_redirect ($rurl . '/', status => 303);
+        ($app->name_url ($homepage_name), status => 302);
   }
 
   return $app->throw_error (404);
@@ -1105,18 +1100,6 @@ sub set_content_type_options ($$;$) {
   }
 } # set_content_type_options
 
-## A source anchor label in SWML -> URL
-sub get_page_url ($$;$$) {
-  my ($path, $wiki_name, $base_name, $id) = @_;
-  $wiki_name = percent_encode ($wiki_name);
-  $wiki_name =~ s/%2F/+/g;
-  if (defined $id) {
-    $wiki_name .= '$' . (0 + $id);
-  }
-  $wiki_name = ('../' x (@$path - 1)) . 'n/' . $wiki_name;
-  return $wiki_name;
-} # get_page_url
-
 sub get_xml_data ($$$$) {
   my ($db, $id, $id_prop, $cache_prop) = @_;
 
@@ -1162,10 +1145,10 @@ sub set_head_content ($$$;$$$) {
 
   my $license_name = $app->config->get_text ('wiki_page_license');
   push @{$links ||= []}, {rel => 'stylesheet', href => '/styles/sw'},
-      {rel => 'license', href => get_page_url ($path, $license_name, undef)};
+      {rel => 'license', href => $app->name_url ($license_name)};
   
   if (defined $id) {
-    our $cvs_archives_url;
+    my $cvs_archives_url = $app->config->get_text ('wiki_url_cvs');
     push @$links, {rel => 'archives',
                    href => $cvs_archives_url . 'ids/' .
                              int ($id / 1000) . '/' . ($id % 1000) . '.txt',
