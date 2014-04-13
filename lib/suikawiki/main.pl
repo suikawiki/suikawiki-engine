@@ -43,9 +43,7 @@ if ($path[0] eq 'n' and @path == 2) {
   my $name = normalize_name ($path[1]);
   
   unless (length $name) {
-    my $homepage_name = $app->config->get_text ('wiki_page_home');
-    return $app->throw_redirect
-        ($app->name_url ($homepage_name), status => 303);
+    return $app->throw_redirect ($app->home_page_url, status => 303);
   }
 
   unless (defined $param) {
@@ -146,17 +144,17 @@ if ($path[0] eq 'n' and @path == 2) {
       my $tmt = $docobj->to_text_media_type;
       if (defined $tmt) {
         push @link, {rel => 'alternate', type => $tmt,
-                     href => $app->name_url ($name, $id) . '?format=text'};
+                     href => $app->name_url ($name, $id, format => 'text')};
       }
 
       my $xmt = $docobj->to_xml_media_type;
       if (defined $xmt) {
         push @link, {rel => 'alternate', type => $xmt,
-                     href => $app->name_url ($name, $id) . '?format=xml'};
+                     href => $app->name_url ($name, $id, format => 'xml')};
       }
       
       push @link, {rel => 'archives',
-                   href => $app->name_url ($name) . ';history',
+                   href => $app->name_url ($name, undef, param => 'history'),
                    title => 'History of the page name'};
       if (defined $id) {
         push @link, {rel => 'archives',
@@ -278,10 +276,9 @@ if ($path[0] eq 'n' and @path == 2) {
       }
 
       my $a_el = $footer_el->get_elements_by_tag_name ('a')->[0];
-      my $license_name = $app->config->get_text ('wiki_page_license');
-      $a_el->set_attribute (href => $app->name_url ($license_name));
+      $a_el->set_attribute (href => $app->license_page_url);
 
-      set_foot_content ($html_doc);
+      set_foot_content ($app, $html_doc);
 
       $app->http->add_response_header
           ('Content-Type' => 'text/html; charset=utf-8');
@@ -363,7 +360,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $table_el->parent_node->replace_child ($p_el, $table_el);
     }
 
-    set_foot_content ($doc);
+    set_foot_content ($app, $doc);
 
     $app->http->send_response_body_as_text ($doc->inner_html);
     $app->http->close_response_body;
@@ -486,7 +483,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
         if ($app->bare_param ('redirect')) {
           return $app->throw_redirect
-              ($app->name_url ($name, $id) . '#anchor-' . $anchor,
+              ($app->name_url ($name, $id, anchor => $anchor),
                status => 303, reason_phrase => 'Appended');
         } else {
           $app->http->set_status (204, 'Appended');
@@ -556,7 +553,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
         if ($app->bare_param ('redirect')) {
           return $app->throw_redirect
-              ($app->name_url ($name, $id) . '#anchor-' . $anchor,
+              ($app->name_url ($name, $id, anchor => $anchor),
                status => 303, reason_phrase => 'Appended');
         } else {
           $app->http->set_status (204, 'Appended');
@@ -713,8 +710,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $a_el->set_attribute (href => $app->name_url ($help_page_name));
 
       $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
-      my $license_name = $app->config->get_text ('wiki_page_license');
-      $a_el->set_attribute (href => $app->name_url ($license_name));
+      $a_el->set_attribute (href => $app->license_page_url);
 
       $form_el = $html_doc->get_elements_by_tag_name ('form')->[1];
       $form_el->set_attribute (action => $id . ';names');
@@ -731,7 +727,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $nav_el->manakai_append_text (' ');
       }
 
-        set_foot_content ($html_doc);
+        set_foot_content ($app, $html_doc);
         $app->http->send_response_body_as_text ($html_doc->inner_html);
         $app->http->close_response_body;
         return $app->throw;
@@ -859,15 +855,15 @@ if ($path[0] eq 'n' and @path == 2) {
         } elsif ($entry->[1] eq 'a') {
           $change_cell->manakai_append_text ('Associated with ');
           my $a_el = $doc->create_element_ns (HTML_NS, 'a');
-          $a_el->set_attribute (href => $app->name_url ($entry->[2])
-                                    . ';history');
+          $a_el->set_attribute
+              (href => $app->name_url ($entry->[2], undef, param => 'history'));
           $a_el->text_content ($entry->[2]);
           $change_cell->append_child ($a_el);
         } elsif ($entry->[1] eq 'r') {
           $change_cell->manakai_append_text ('Disassociated from ');
           my $a_el = $doc->create_element_ns (HTML_NS, 'a');
-          $a_el->set_attribute (href => $app->name_url ($entry->[2])
-                                    . ';history');
+          $a_el->set_attribute
+              (href => $app->name_url ($entry->[2], undef, param => 'history'));
           $a_el->text_content ($entry->[2]);
           $change_cell->append_child ($a_el);
         } elsif ($entry->[1] eq 't') {
@@ -886,7 +882,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $table_el->parent_node->replace_child ($p_el, $table_el);
     }
 
-      set_foot_content ($doc);
+      set_foot_content ($app, $doc);
       $app->http->send_response_body_as_text ($doc->inner_html);
       $app->http->close_response_body;
       return $app->throw;
@@ -1011,13 +1007,11 @@ if ($path[0] eq 'n' and @path == 2) {
         ->text_content ($names);
 
       my $a_el = $form_el->get_elements_by_tag_name ('a')->[0];
-      my $help_page_name = $app->config->get_text ('wiki_page_home');
-      $a_el->set_attribute (href => $app->name_url ($help_page_name));
+      $a_el->set_attribute (href => $app->help_page_url);
 
       $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
-      my $license_name = $app->config->get_text ('wiki_page_license');
-      $a_el->set_attribute (href => $app->name_url ($license_name));
-      set_foot_content ($doc);
+      $a_el->set_attribute (href => $app->license_page_url);
+      set_foot_content ($app, $doc);
 
       $app->http->send_response_body_as_text ($doc->inner_html);
       $app->http->close_response_body;
@@ -1025,9 +1019,7 @@ if ($path[0] eq 'n' and @path == 2) {
     }
   } elsif (@path == 1 and
            {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
-    my $homepage_name = $app->config->get_text ('wiki_page_home');
-    return $app->throw_redirect
-        ($app->name_url ($homepage_name), status => 302);
+    return $app->throw_redirect ($app->home_page_url, status => 302);
   }
 
   return $app->throw_error (404);
@@ -1143,17 +1135,14 @@ sub set_head_content ($$$;$$$) {
   my ($app, $path, $doc, $id, $links, $metas) = @_;
   my $head_el = $doc->manakai_head;
 
-  my $license_name = $app->config->get_text ('wiki_page_license');
-  push @{$links ||= []}, {rel => 'stylesheet', href => '/styles/sw'},
-      {rel => 'license', href => $app->name_url ($license_name)};
+  push @{$links ||= []},
+      {rel => 'stylesheet', href => $app->css_url},
+      {rel => 'license', href => $app->license_page_url};
   
-  if (defined $id) {
-    my $cvs_archives_url = $app->config->get_text ('wiki_url_cvs');
-    push @$links, {rel => 'archives',
-                   href => $cvs_archives_url . 'ids/' .
-                             int ($id / 1000) . '/' . ($id % 1000) . '.txt',
-                   title => 'CVS log for the page content'};
-  }
+  push @$links, {rel => 'archives',
+                 href => $app->cvs_archive_url ($id),
+                 title => 'CVS log for the page content'}
+      if defined $id;
   
   for my $item (@$links) {
     my $link_el = $doc->create_element_ns (HTML_NS, 'link');
@@ -1171,13 +1160,11 @@ sub set_head_content ($$$;$$$) {
   }
 } # set_head_content
 
-sub set_foot_content ($) {
-  my $doc = shift;
-
+sub set_foot_content ($$) {
+  my ($app, $doc) = @_;
   my $body_el = $doc->last_child->last_child;
-
   my $script_el = $doc->create_element_ns (HTML_NS, 'script');
-  $script_el->set_attribute (src => '/scripts/sw');
+  $script_el->set_attribute (src => $app->js_url);
   $body_el->append_child ($script_el);
 } # set_foot_content
 
