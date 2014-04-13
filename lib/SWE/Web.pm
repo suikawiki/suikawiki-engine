@@ -1,6 +1,7 @@
 package SWE::Web;
 use strict;
 use warnings;
+use Path::Tiny;
 use Wanage::HTTP;
 use Warabe::App;
 require 'suikawiki/main.pl';
@@ -18,12 +19,42 @@ sub psgi_app ($$) {
   };
 } # psgi_app
 
+my $static_root_path = path (__FILE__)->parent->parent->parent;
+
 sub process ($$$) {
   my ($class, $app, $config) = @_;
   my $path = $app->path_segments;
 
-  # XXX
-  SuikaWiki5::Main->main;
+  if ($path->[0] eq 'styles' and
+      defined $path->[1] and $path->[1] =~ /\A[a-z-]+\z/ and
+      not defined $path->[2]) {
+    my $file_path = $static_root_path->child ('styles', $path->[1] . '.css');
+    if ($file_path->is_file) {
+      $app->http->add_response_header
+          ('Content-Type' => 'text/css; charset=utf-8');
+      $app->http->set_response_last_modified ($file_path->stat->mtime);
+      $app->http->send_response_body_as_ref (\($file_path->slurp));
+      $app->http->close_response_body;
+      return $app->throw;
+    }
+  } elsif ($path->[0] eq 'scripts' and
+           defined $path->[1] and $path->[1] =~ /\A[a-z-]+\z/ and
+           not defined $path->[2]) {
+    my $file_path = $static_root_path->child ('scripts', $path->[1] . '.js');
+    if ($file_path->is_file) {
+      $app->http->add_response_header
+          ('Content-Type' => 'text/javascript; charset=utf-8');
+      $app->http->set_response_last_modified ($file_path->stat->mtime);
+      $app->http->send_response_body_as_ref (\($file_path->slurp));
+      $app->http->close_response_body;
+      return $app->throw;
+    }
+  } else {
+    # XXX auth
+    # XXX CSRF
+
+    SuikaWiki5::Main->main ($app, $config);
+  }
 
   return $app->throw_error (404);
 } # process

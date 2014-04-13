@@ -2,7 +2,6 @@ package SWE::Object::Document;
 use strict;
 use warnings;
 use SWE::Lang qw/%ContentMediaType/;
-use UNIVERSAL::require;
 
 sub new ($%) {
   my $class = shift;
@@ -43,7 +42,7 @@ sub rebless ($) {
   } else {
     $module = 'SWE::Object::Document::NotYet';
   }
-  $module->require or die $@;
+  eval qq{ require $module } or die $@;
   bless $self, $module;
 
   $self->reblessed = 1;

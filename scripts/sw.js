@@ -1,6 +1,6 @@
 (function () {
-  var samiURL = '/www/js/sami/script/sami-core.js';
-  var swSamiURL = '/swe/scripts/sw-sami.js';
+  var samiURL = '//suika.suikawiki.org/www/js/sami/script/sami-core.js';
+  var swSamiURL = '/scripts/sw-sami';
   
   var script = document.createElement ('script');
   script.src = samiURL;
@@ -172,7 +172,7 @@ function initializeHatenaStar () {
 
   var hsScript = document.createElement ('script');
   hsScript.defer = true;
-  hsScript.src = 'http://s.hatena.ne.jp/js/HatenaStar.js';
+  hsScript.src = '//s.hatena.ne.jp/js/HatenaStar.js';
   document.documentElement.lastChild.appendChild (hsScript);
 
   /*
@@ -193,7 +193,7 @@ function enableHTML5Support () {
   var timeScript = document.createElement ('script');
   timeScript.defer = true;
   timeScript.charset = 'utf-8';
-  timeScript.src = '/www/style/ui/time.js';
+  timeScript.src = '//suika.suikawiki.org/www/style/ui/time.js';
   document.documentElement.lastChild.appendChild (timeScript);
 } // enableHTML5Support
 
@@ -202,7 +202,7 @@ function addGoogleSearch () {
   if (!placeholder) return;
 
   var script = document.createElement ('script');
-  script.src = 'http://www.google.co.jp/jsapi';
+  script.src = '//www.google.co.jp/jsapi';
   script.onload = function () {
     google.load('search', '1');
     setTimeout (function () {
@@ -231,3 +231,12 @@ function addGoogleAnalytics () {
 
 /* Hack for IE */
 document.createElement ('time');
+
+/* 
+
+Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+*/

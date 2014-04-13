@@ -1,4 +1,4 @@
-@import 'sw-classes.css';
+@import 'sw-classes';
 
 html {
   padding: 0.5em;
@@ -64,7 +64,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  background-image: url(/~wakaba/-temp/2004/sw) /* 107x59 */;
+  background-image: url(//suika.suikawiki.org/~wakaba/-temp/2004/sw) /* 107x59 */;
   background-position: middle left;
   background-repeat: no-repeat;
   padding-left: 120px;
@@ -670,7 +670,7 @@ li:hover .swe-unrelated {
 
 /* 
 
-Copyright 2002-2011 Wakaba <w@suika.fam.cx>.
+Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

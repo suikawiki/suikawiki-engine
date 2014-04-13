@@ -35,10 +35,10 @@ my $cache_prop_db;
 my $content_db;
 my $names_lock;
 my $id_locks;
-my $cgi;
 my @path;
 
-sub main {
+sub main ($$$) {
+  my (undef, $app, $config) = @_;
 
 require SWE::DB;
 $db = SWE::DB->new;
@@ -74,38 +74,20 @@ $content_db->{leaf_suffix} = '.txt';
 
 ## --- Process Request-URI
 
-require Message::CGI::HTTP;
-$cgi = Message::CGI::HTTP->new;
-$cgi->{decoder}->{'#default'} = sub {
-  return Encode::decode ('utf-8', $_[1]);
-};
+  my $param;
+  my $dollar;
+  {
+    my $path = $app->http->url->{path};
+    if ($path =~ s[;([^/]*)\z][]) {
+      $param = percent_decode ($1);
+    }
+    if ($path =~ s[\$([^/]*)\z][]) {
+      $dollar = percent_decode ($1);
+    }
 
-## NOTE: This script requires the server set a meta variable
-## |REQUEST_URI| and another meta variable (|X_SW_SCRIPT_NAME| or
-## |SCRIPT_NAME|) which is a prefix part of the |REQUEST_URI| that
-## identifies the script.
-
-my $rurl = $dom->create_uri_reference ($cgi->request_uri)
-    ->get_uri_reference;
-my $sname = $dom->create_uri_reference
-    (percent_encode_na ($cgi->get_meta_variable ('X_SW_SCRIPT_NAME') || $cgi->get_meta_variable ('SCRIPT_NAME')))
-    ->get_absolute_reference ($rurl)
-    ->get_uri_reference;
-my $path = $rurl->get_relative_reference ($sname);
-$path->uri_query (undef);
-$path->uri_fragment (undef);
-
-my $param;
-if ($path =~ s[;([^/]*)\z][]) {
-  $param = percent_decode ($1);
-}
-my $dollar;
-if ($path =~ s[\$([^/]*)\z][]) {
-  $dollar = percent_decode ($1);
-}
-
-@path = map { s/\+/%2F/g; percent_decode ($_) } split m#/#, $path, -1;
-shift @path; # script's name
+    @path = map { s/\+/%2F/g; percent_decode ($_) } split m#/#, $path, -1;
+    shift @path if $path[0] eq '';
+  }
 
 ## --- Process request and generate response
 
@@ -127,19 +109,20 @@ if ($path[0] eq 'n' and @path == 2) {
   
   unless (length $name) {
     our $homepage_name;
-    http_redirect (303, 'See other', get_page_url ($homepage_name, undef));
-    return;
+    return $app->throw_redirect
+        (get_page_url ($homepage_name, undef), status => 303);
   }
 
   unless (defined $param) {
     my ($id, $ids) = prepare_by_name ($name, $dollar);
 
     if (defined $dollar and not defined $id) {
-      http_redirect (301, 'Not found', get_page_url ($name, undef));
-      return;
+      return $app->throw_redirect
+          (get_page_url ($name, undef),
+           status => 301, reason_phrase => 'Not found');
     }
 
-    my $format = $cgi->get_parameter ('format') // 'html';
+    my $format = $app->bare_param ('format') // 'html';
 
     ## TODO: Is it semantically valid that there is path?format=html
     ## (200) but no path?format=xml (404)?
@@ -152,17 +135,15 @@ if ($path[0] eq 'n' and @path == 2) {
       $docobj->{content_db} = $content_db; ## XXX
       $docobj->{id_prop_db} = $id_prop_db; ## XXX
 
-      binmode STDOUT, ':encoding(utf-8)';
       my $id_prop = $id_prop_db->get_data ($id);
-      print qq[X-SW-Hash: @{[ $id_prop->{hash} ]}\n];
-      print qq[Content-Type: @{[$docobj->to_text_media_type]}; charset=utf-8\n];
+      $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
+      $app->http->add_response_header
+          ('Content-Type' => $docobj->to_text_media_type . '; charset=utf-8');
       my $modified = $id_prop->{modified};
-      if ($modified) {
-        print q[Last-Modified: ] . (datetime_for_http $modified) . qq[\n];
-      }
-      print qq{\n};
-      print ${$docobj->to_text};
-      return;
+      $app->http->set_response_last_modified ($modified) if $modified;
+      $app->http->send_response_body_as_text (${$docobj->to_text});
+      $app->http->close_response_body;
+      return $app->throw;
     } elsif ($format eq 'xml' and defined $id) {
       ## XXX
       $docobj->{content_db} = $content_db; ## XXX
@@ -170,23 +151,21 @@ if ($path[0] eq 'n' and @path == 2) {
       $docobj->{cache_prop_db} = $cache_prop_db;
       $docobj->{swml_to_xml} = \&get_xml_data;
 
-      my $xmldoc = $docobj->to_xml (styled => scalar $cgi->get_parameter ('styled'));
+      my $xmldoc = $docobj->to_xml (styled => scalar $app->bare_param ('styled'));
       if ($xmldoc) {
-        binmode STDOUT, ':encoding(utf-8)';
-        print qq[Content-Type: @{[$docobj->to_xml_media_type]}; charset=utf-8\n];
+        $app->http->add_response_header
+            ('Content-Type' => $docobj->to_xml_media_type . '; charset=utf-8');
         my $id_prop = $id_prop_db->get_data ($id);
-        print qq[X-SW-Hash: @{[ $id_prop->{hash} ]}\n];
+        $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
         my $modified = $id_prop->{modified};
-        if ($modified) {
-          print q[Last-Modified: ] . (datetime_for_http $modified) . qq[\n];
-        }
-        print qq{\n};
-        
-        print $xmldoc->inner_html;
+        $app->http->set_response_last_modified ($modified) if $modified;
+        $app->http->send_response_body_as_text ($xmldoc->inner_html);
+        $app->http->close_response_body;
+        return $app->throw;
       } else {
-        return http_error (406, q{format=xml is not supported for this page});
+        return $app->throw_error
+            (406, reason_phrase => q{format=xml is not supported for this page});
       }
-      return;
     } elsif ($format eq 'html') {
       my $html_doc;
       my $html_container;
@@ -364,25 +343,23 @@ if ($path[0] eq 'n' and @path == 2) {
       $a_el->set_attribute (href => get_page_url ($license_name));
 
       set_foot_content ($html_doc);
-      
-      binmode STDOUT, ':encoding(utf-8)';
-      print qq[Content-Type: text/html; charset=utf-8\n];
-      print qq[X-SW-Hash: @{[ $id_prop->{hash} ]}\n];
-      if ($modified) {
-        print q[Last-Modified: ] . (datetime_for_http $modified) . qq[\n];
-      }
-      print "\n";
-      print $html_doc->inner_html;
-      return;
+
+      $app->http->add_response_header
+          ('Content-Type' => 'text/html; charset=utf-8');
+      $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash})
+          if defined $id;
+      $app->http->set_response_last_modified ($modified) if $modified;
+      $app->http->send_response_body_as_text ($html_doc->inner_html);
+      $app->http->close_response_body;
+      return $app->throw;
     }
 
-    return;
   } elsif ($param eq 'history' and not defined $dollar) {
     my $name_history_db = $db->name_history;
     my $history = $name_history_db->get_data ($name);
 
-    binmode STDOUT, ':encoding(utf-8)';
-    print "Content-Type: text/html; charset=utf-8\n\n";
+    $app->http->add_response_header
+        ('Content-Type' => 'text/html; charset=utf-8');
 
     my $doc = $dom->create_document;
     $doc->manakai_is_html (1);
@@ -449,8 +426,9 @@ if ($path[0] eq 'n' and @path == 2) {
 
     set_foot_content ($doc);
 
-    print $doc->inner_html;
-    return;
+    $app->http->send_response_body_as_text ($doc->inner_html);
+    $app->http->close_response_body;
+    return $app->throw;
   } elsif ($param eq 'search' and not defined $dollar) {
     my $names = [];
     for_unique_words ($name => sub {
@@ -479,41 +457,41 @@ if ($path[0] eq 'n' and @path == 2) {
         }
       }
     }
-    
-    binmode STDOUT, ':encoding(utf-8)';
-    print "Content-Type: text/plain; charset=utf-8\n\n";
-    
-    for my $id (sort {$index->{$b} <=> $index->{$a}} keys %$index) {
 
-      my $id_prop = $id_prop_db->get_data ($id);
-      my $name = [keys %{$id_prop->{name}}]->[0] // $id;
+      $app->http->add_response_header
+          ('Content-Type' => 'text/plain; charset=utf-8');
+      
+      for my $id (sort {$index->{$b} <=> $index->{$a}} keys %$index) {
+        my $id_prop = $id_prop_db->get_data ($id);
+        my $name = [keys %{$id_prop->{name}}]->[0] // $id;
+        $app->http->send_response_body_as_text
+            (join '', $index->{$id}, "\t", $id, "\t", $name, "\x0A");
+      }
+      $app->http->close_response_body;
+      return $app->throw;
+    } elsif ($param eq 'posturl') {
+      my ($id, undef) = prepare_by_name ($name, $dollar);
 
-      print $index->{$id}, "\t", $id, "\t", $name, "\n";
-    }
-    return;
-  } elsif ($param eq 'posturl') {
-    my ($id, undef) = prepare_by_name ($name, $dollar);
+      if (defined $dollar and not defined $id) {
+        return $app->throw_error (404);
+      }
 
-    if (defined $dollar and not defined $id) {
-      return http_error (404, 'Not found');
-    }
-
-    if ($cgi->request_method eq 'POST') {
+      $app->requires_request_method ({POST => 1});
       my $user = '(anon)'; #$cgi->remote_user // '(anon)';
-      my $added_text = '<' . ($cgi->get_parameter ('url') // '') . '>';
+      my $added_text = '<' . ($app->text_param ('url') // '') . '>';
       {
-        my $credit = $cgi->get_parameter ('credit') // '';
+        my $credit = $app->text_param ('credit') // '';
         $added_text = '(' . $credit . ")\n" . $added_text if length $credit;
 
-        my $timestamp = $cgi->get_parameter ('timestamp') // '';
+        my $timestamp = $app->text_param ('timestamp') // '';
         if (length $timestamp) {
           $added_text = '(Referenced: [TIME[' . $timestamp . "]])\n". $added_text;
         }
 
-        my $title = $cgi->get_parameter ('title') // '';
+        my $title = $app->text_param ('title') // '';
         if (length $title) {
           $title =~ s/(\[|\])/'''$1'''/g;
-          my $tl = $cgi->get_parameter ('title-lang') // '';
+          my $tl = $app->text_param ('title-lang') // '';
           if (length $tl) {
             $title = '[CITE@' . $tl . '[' . $title . ']]';
           } else {
@@ -565,12 +543,15 @@ if ($path[0] eq 'n' and @path == 2) {
           update_tfidf ($id, $doc);
         }
 
-        if ($cgi->get_parameter ('redirect')) {
-          http_redirect (303, 'Appended', get_page_url ($name, undef, $id) . '#anchor-' . $anchor);
+        if ($app->bare_param ('redirect')) {
+          return $app->throw_redirect
+              (get_page_url ($name, undef, $id) . '#anchor-' . $anchor,
+               status => 303, reason_phrase => 'Appended');
         } else {
-          print qq[Status: 204 Appended\n\n];
+          $app->http->set_status (204, 'Appended');
+          $app->http->close_response_body;
+          return $app->throw;
         }
-        return;
       }} # APPEND
 
       { ## New document
@@ -633,27 +614,26 @@ if ($path[0] eq 'n' and @path == 2) {
 
         $document->associate_names ($new_names, user => $user, time => $time);
 
-        if ($cgi->get_parameter ('redirect')) {
-          http_redirect (303, 'Appended', get_page_url ($name, undef, $id) . '#anchor-' . $anchor);
-          return;
+        if ($app->bare_param ('redirect')) {
+          return $app->throw_redirect
+              (get_page_url ($name, undef, $id) . '#anchor-' . $anchor,
+               status => 303, reason_phrase => 'Appended');
         } else {
-          print qq[Status: 204 Appended\n\n];
+          $app->http->set_status (204, 'Appended');
+          $app->http->close_response_body;
+          return $app->throw;
         }
-        return;
       }
     } else {
-      return http_error (405, 'Method not allowed', 'POST');
+      $name .= '$' . $dollar if defined $dollar;
+      $name .= ';' . $param;
+      return $app->throw_redirect
+          (get_page_url ($name, undef),
+           status => 301, reason_phrase => 'Not found');
     }
-  } else {
-    $name .= '$' . $dollar if defined $dollar;
-    $name .= ';' . $param;
-    http_redirect (301, 'Not found', get_page_url ($name, undef));
-    return;
-  }
-} elsif ($path[0] eq 'i' and @path == 2 and not defined $dollar) {
-  unless (defined $param) {
-    if ($cgi->request_method eq 'POST' or
-        $cgi->request_method eq 'PUT') {
+  } elsif ($path[0] eq 'i' and @path == 2 and not defined $dollar) {
+    unless (defined $param) {
+      $app->requires_request_method ({POST => 1, PUT => 1});
       my $id = $path[1] + 0;
       
       ## This must be done before the ID lock.
@@ -664,24 +644,24 @@ if ($path[0] eq 'n' and @path == 2) {
       
       my $id_prop = $id_prop_db->get_data ($id);
       if ($id_prop) {
-        my $ct = get_content_type_parameter () or return;
+        my $ct = get_content_type_parameter ($app) or return; # thrown
 
-        my $prev_hash = $cgi->get_parameter ('hash') // '';
+        my $prev_hash = $app->bare_param ('hash') // '';
         my $current_hash = $id_prop->{hash} //
             get_hash ($content_db->get_data ($id) // '');
         unless ($prev_hash eq $current_hash) {
           ## TODO: conflict
-          return;
+          return $app->throw_error (409);
         }
 
-        my $textref = \ ($cgi->get_parameter ('text') // '');
+        my $textref = \ ($app->text_param ('text') // '');
         normalize_content ($textref);
 
         $id_prop->{'content-type'} = $ct;
         $id_prop->{modified} = time;
         $id_prop->{hash} = get_hash ($textref);
 
-        my $title = $cgi->get_parameter ('title');
+        my $title = $app->text_param ('title');
         if (defined $title) {
           normalize_content (\$title);
           $id_prop->{title} = $title;
@@ -704,31 +684,28 @@ if ($path[0] eq 'n' and @path == 2) {
 
         my $url = get_page_url ([keys %{$id_prop->{name} or {}}]->[0],
                                 undef, 0 + $id);
-        print "X-SW-Hash: $id_prop->{hash}\n";
-        if ($cgi->get_parameter ('no-redirect')) {
-          http_redirect (201, 'Saved', $url);
+        $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
+        if ($app->bare_param ('no-redirect')) {
+          $app->send_redirect ($url, status => 201, reason_phrase => 'Saved');
         } else {
-          http_redirect (301, 'Saved', $url);
+          $app->send_redirect ($url, status => 303, reason_phrase => 'Saved');
         }
 
         if (defined $doc) {
           update_tfidf ($id, $doc);
         }
 
-        return;
+        return $app->throw;
       } else {
-        return http_error (404, 'Not found');
+        return $app->throw_error (404);
       }
-    } else {
-      return http_error (405, 'Method not allowed', 'PUT');
-    }
-  } elsif ($param eq 'edit') {
-    my $id = $path[1] + 0;
-    
-    my $textref = $content_db->get_data ($id);
-    if (defined $textref) {
-      binmode STDOUT, ':encoding(utf-8)';
-      print qq[Content-Type: text/html; charset=utf-8\n\n];
+    } elsif ($param eq 'edit') {
+      my $id = $path[1] + 0;
+      
+      my $textref = $content_db->get_data ($id);
+      if (defined $textref) {
+        $app->http->add_response_header
+            ('Content-Type' => 'text/html; charset=utf-8');
 
       require SWE::Object::Document;
       my $doc = SWE::Object::Document->new (db => $db, id => $id);
@@ -739,7 +716,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $custom_edit = '';
       if ($doc->content_media_type eq 'image/x-canvas-instructions+text') {
-        my $request_uri = $cgi->request_uri;
+        my $request_uri = $app->http->url->stringify;
         my $source_url = get_absolute_url (get_page_url ([keys %$names]->[0], undef, $id) . '?format=text', $request_uri);
         my $post_url = get_absolute_url ($id, $request_uri);
         my $url = 'http://suika.fam.cx/swe/pages/canvas?input-url=' . percent_encode ($source_url) . ';post-url=' . percent_encode($post_url);
@@ -827,14 +804,13 @@ if ($path[0] eq 'n' and @path == 2) {
         $nav_el->manakai_append_text (' ');
       }
 
-      set_foot_content ($html_doc);
-     
-      print $html_doc->inner_html;
-      return;
-    }
-  } elsif ($param eq 'names') {
-    if ($cgi->request_method eq 'POST' or
-        $cgi->request_method eq 'PUT') {
+        set_foot_content ($html_doc);
+        $app->http->send_response_body_as_text ($html_doc->inner_html);
+        $app->http->close_response_body;
+        return $app->throw;
+      }
+    } elsif ($param eq 'names') {
+      $app->requires_request_method ({POST => 1, PUT => 1});
       my $id = $path[1] + 0;
 
       my $vc = $db->vc;
@@ -855,7 +831,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $old_names = $id_prop->{name} || {};
       
       my $new_names = {};
-      for (split /\x0D\x0A?|\x0A/, $cgi->get_parameter ('names')) {
+      for (split /\x0D\x0A?|\x0A/, $app->text_param ('names')) {
         $new_names->{normalize_name ($_)} = 1;
       }
       delete $new_names->{''};
@@ -906,17 +882,14 @@ if ($path[0] eq 'n' and @path == 2) {
       $id_prop->{name} = $new_names;
       $id_prop_db->set_data ($id => $id_prop);
 
-      my $user = $cgi->remote_user // '(anon)';
+      my $user = '(anon)'; #$cgi->remote_user // '(anon)';
       $vc->commit_changes ("id-name association changed by $user");
 
       $names_lock->unlock;
 
-      print "Status: 204 Changed\n\n";
-
-      return;
-    } else {
-      return http_error (405, 'Method not allowed', 'PUT');
-    }
+      $app->http->set_status (204, 'Changed');
+      $app->http->close_response_body;
+      return $app->throw;
   } elsif ($param eq 'neighbors') {
     require SWE::Object::Repository;
     my $repo = SWE::Object::Repository->new (db => $db);
@@ -930,40 +903,37 @@ if ($path[0] eq 'n' and @path == 2) {
     
     my $node = $doc->get_or_create_graph_node;
     
-    if ($node) {
-      binmode STDOUT, ':encoding(utf-8)';
-      print "Content-Type: text/plain; charset=UTF-8\n\n";
-      
-      for my $doc (@{$node->neighbor_documents}) {
-        print join "\t", $doc->id, $doc->name;
-        print "\n";
+      if ($node) {
+        $app->http->add_response_header
+            ('Content-Type' => 'text/plain; charset=utf-8');
+        for my $doc (@{$node->neighbor_documents}) {
+          $app->http->send_response_body
+              ($doc->id . "\t" . $doc->name . "\x0A");
+        }
+        $app->http->close_response_body;
+        
+        $graph->schelling_update ($node->id);
+
+        $doc->unlock;
+        $graph->unlock;
+        return $app->throw;
+      } else {
+        $doc->unlock;
+        $graph->unlock;
+        #
       }
-      
-      close STDOUT;
-      
-      $graph->schelling_update ($node->id);
+    } elsif ($param eq 'history' and not defined $dollar) {
+      my $id = $path[1] + 0;
 
-      $doc->unlock;
-      $graph->unlock;
-      
-      return;
-    } else {
-      $doc->unlock;
-      $graph->unlock;
-      #
-    }
-  } elsif ($param eq 'history' and not defined $dollar) {
-    my $id = $path[1] + 0;
+      my $id_history_db = $db->id_history;
+      my $history = $id_history_db->get_data ($id);
 
-    my $id_history_db = $db->id_history;
-    my $history = $id_history_db->get_data ($id);
+      $app->http->add_response_header
+          ('Content-Type' => 'text/html; charset=utf-8');
 
-    binmode STDOUT, ':encoding(utf-8)';
-    print "Content-Type: text/html; charset=utf-8\n\n";
-
-    my $doc = $dom->create_document;
-    $doc->manakai_is_html (1);
-    $doc->inner_html (q[<!DOCTYPE HTML><html lang=en><title></title><h1></h1>
+      my $doc = $dom->create_document;
+      $doc->manakai_is_html (1);
+      $doc->inner_html (q[<!DOCTYPE HTML><html lang=en><title></title><h1></h1>
 <div class=section><h2>History</h2><table>
 
 <thead>
@@ -972,7 +942,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <tbody>
                         
 </table></div>]);
-    set_head_content ($doc, undef, [], []);
+      set_head_content ($doc, undef, [], []);
 
     my $title_el = $doc->get_elements_by_tag_name ('title')->[0];
     $title_el->inner_html ('History &mdash; #');
@@ -1026,40 +996,40 @@ if ($path[0] eq 'n' and @path == 2) {
       $table_el->parent_node->replace_child ($p_el, $table_el);
     }
 
-    set_foot_content ($doc);
+      set_foot_content ($doc);
+      $app->http->send_response_body_as_text ($doc->inner_html);
+      $app->http->close_response_body;
+      return $app->throw;
+    } elsif ($param eq 'terms' and not defined $dollar) {
+      my $id = $path[1] + 0;
 
-    print $doc->inner_html;
-    return;
-  } elsif ($param eq 'terms' and not defined $dollar) {
-    my $id = $path[1] + 0;
-
-    ## This must be done before the ID lock.
-    $db->name_inverted_index->lock;
-    
-    my $id_lock = $id_locks->get_lock ($id);
-    $id_lock->lock;
-    
-    my $id_prop = $id_prop_db->get_data ($id);
-    my $cache_prop = $cache_prop_db->get_data ($id);
-    my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
-
-    if (defined $doc) {
-      update_tfidf ($id, $doc);
-
-      $id_lock->unlock;
-
-      binmode STDOUT, ':encoding(utf-8)';
-      print "Content-Type: text/plain; charset=utf-8\n\n";
-
-      print ${ $db->id_tfidf->get_data ($id) };
+      ## This must be done before the ID lock.
+      $db->name_inverted_index->lock;
       
-      return;
-    } else {
-      $id_lock->unlock;
-    }
-  } elsif ($param =~ /^(un)?related-([0-9]+)$/ and not defined $dollar) {
-    ## Allow GET to not require Basic auth.
-    #if ($cgi->request_method eq 'POST') {
+      my $id_lock = $id_locks->get_lock ($id);
+      $id_lock->lock;
+      
+      my $id_prop = $id_prop_db->get_data ($id);
+      my $cache_prop = $cache_prop_db->get_data ($id);
+      my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
+
+      if (defined $doc) {
+        update_tfidf ($id, $doc);
+
+        $id_lock->unlock;
+
+        $app->http->add_response_header
+            ('Content-Type' => 'text/plain; charset=utf-8');
+        $app->http->send_response_body_as_text
+            (${ $db->id_tfidf->get_data ($id) });
+        $app->http->close_response_body;
+        return $app->throw;
+      } else {
+        $id_lock->unlock;
+      }
+    } elsif ($param =~ /^(un)?related-([0-9]+)$/ and not defined $dollar) {
+      ## Allow GET to not require Basic auth.
+      #$app->requires_request_method ({POST => 1});
       my $id1 = $path[1] + 0;
       my $id2 = $2 + 0;
       my $answer = $1 ? -1 : 1;
@@ -1075,27 +1045,25 @@ if ($path[0] eq 'n' and @path == 2) {
       $repo->save_term_weight_vector;
       $vc->commit_changes ('term weight vector update');
       $repo->weight_unlock;
-      
-      print "Content-Type: text/ping\n\n";
-      print "PING";
-      return;
-    #} else {
-    #  return http_error (405, 'Method not allowed', 'POST');
-    #}
-  }
-} elsif ($path[0] eq 'new-page' and @path == 1) {
-  if ($cgi->request_method eq 'POST') {
-    my $new_names = {};
-    for (split /\x0D\x0A?|\x0A/, scalar $cgi->get_parameter ('names')) {
-      $new_names->{normalize_name ($_)} = 1;
+
+      $app->http->add_response_header ('Content-Type' => 'text/ping');
+      $app->http->send_response_body_as_text ('PING');
+      $app->http->close_response_body;
+      return $app->throw;
     }
-    delete $new_names->{''};
-    $new_names->{'(no title)'} = 1 unless keys %$new_names;
+  } elsif ($path[0] eq 'new-page' and @path == 1) {
+    if ($app->http->request_method eq 'POST') {
+      my $new_names = {};
+      for (split /\x0D\x0A?|\x0A/, $app->text_param ('names')) {
+        $new_names->{normalize_name ($_)} = 1;
+      }
+      delete $new_names->{''};
+      $new_names->{'(no title)'} = 1 unless keys %$new_names;
 
     my $user = '(anon)'; #$cgi->remote_user // '(anon)';
-    my $ct = get_content_type_parameter () or return;
+    my $ct = get_content_type_parameter ($app) or return;
 
-    my $content = $cgi->get_parameter ('text') // '';
+    my $content = $app->text_param ('text') // '';
     normalize_content (\$content);
 
     $names_lock->lock;
@@ -1136,7 +1104,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       $id_prop->{'content-type'} = $ct;
       $id_prop->{hash} = get_hash (\$content);
-      $id_prop->{title} = $cgi->get_parameter ('title') // '';
+      $id_prop->{title} = $app->text_param ('title') // '';
       normalize_content (\($id_prop->{title}));
       $id_prop->{'title-type'} = 'text/plain'; ## TODO: get_parameter
       $id_prop_db->set_data ($id => $id_prop);
@@ -1155,27 +1123,28 @@ if ($path[0] eq 'n' and @path == 2) {
     }
 
     $document->associate_names ($new_names, user => $user, time => $time);
-    
-    print "X-SW-Hash: $id_prop->{hash}\n";
-    
-    my $post_url = get_absolute_url ("i/$id", $cgi->request_uri);
-    print "X-SW-Post-URL: $post_url\n";
 
-    my $url = get_page_url ([keys %$new_names]->[0], undef, 0 + $id);
-    if ($cgi->get_parameter ('no-redirect')) {
-      http_redirect (201, 'Created', $url);
-    } else {
-      http_redirect (301, 'Created', $url);
-    }
-    return;
-  } else {
-    binmode STDOUT, ':encoding(utf8)';
-    print "Content-Type: text/html; charset=utf-8\n\n";
+      $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
+      
+      my $post_url = get_absolute_url ("i/$id", $app->http->url->stringify);
+      $app->http->add_response_header ('X-SW-Post-URL' => $post_url);
+
+      my $url = get_page_url ([keys %$new_names]->[0], undef, 0 + $id);
+      if ($app->bare_param ('no-redirect')) {
+        return $app->throw_redirect
+            ($url, status => 201, reason_phrase => 'Created');
+      } else {
+        return $app->throw_redirect
+            ($url, status => 303, reason_phrase => 'Created');
+      }
+    } else { # GET
+      $app->http->add_response_header
+          ('Content-Type' => 'text/html; charset=utf-8');
 
     my $custom_edit = '';
-    my $request_uri = $cgi->request_uri;
+    my $request_uri = $app->http->url->stringify;
     my $post_url = get_absolute_url ('new-page', $request_uri);
-    my $names = $cgi->get_parameter ('names') // '';
+    my $names = $app->text_param ('names') // '';
     my $url = 'http://suika.fam.cx/swe/pages/canvas?post-url=' . percent_encode($post_url) . ';names=' . percent_encode ($names);
     $custom_edit = q[<a href="].$url.q[">Image</a>];
 
@@ -1206,7 +1175,7 @@ if ($path[0] eq 'n' and @path == 2) {
     set_content_type_options
         ($doc, $form_el->get_elements_by_tag_name ('select')->[0]);
 
-    my $names = $cgi->get_parameter ('names') // '';
+    my $names = $app->text_param ('names') // '';
     $form_el->get_elements_by_tag_name ('textarea')->[0]
         ->text_content ($names);
 
@@ -1220,23 +1189,22 @@ if ($path[0] eq 'n' and @path == 2) {
     
     set_foot_content ($doc);
 
-    print $doc->inner_html;
-    return;
+      $app->http->send_response_body_as_text ($doc->inner_html);
+      $app->http->close_response_body;
+      return $app->throw;
+    }
+  } elsif (@path == 1 and
+           {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
+    our $homepage_name;
+    return $app->throw_redirect
+        (get_page_url ($homepage_name, undef), status => 303);
+  } elsif (@path == 0) {
+    my $rurl = $app->http->url->stringify;
+    $rurl =~ s!\.[^/]*$!!g;
+    return $app->throw_redirect ($rurl . '/', status => 303);
   }
-} elsif (@path == 1 and
-         {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
-  our $homepage_name;
-  http_redirect (303, 'See other', get_page_url ($homepage_name, undef));
-  return;
-} elsif (@path == 0) {
-  my $rurl = $cgi->request_uri;
-  $rurl =~ s!\.[^/]*$!!g;
-  http_redirect (303, 'See other', $rurl . '/');
-  return;
-}
 
-return http_error (404, 'Not found');
-
+  return $app->throw_error (404);
 } # main
 
 sub prepare_by_name ($$) {
@@ -1268,8 +1236,9 @@ sub prepare_by_name ($$) {
   return ($id, $ids);
 } # prepare_by_name
 
-sub get_content_type_parameter () {
-  my $ct = $cgi->get_parameter ('content-type') // 'text/x-suikawiki';
+sub get_content_type_parameter ($) {
+  my $app = $_[0];
+  my $ct = $app->bare_param ('content-type') // 'text/x-suikawiki';
   
   my $valid_ct;
   for (@ContentMediaType) {
@@ -1279,9 +1248,9 @@ sub get_content_type_parameter () {
     }
   }
   unless ($valid_ct) {
-    http_error (400, 'content-type parameter not allowed');
-    ## TODO: 406?
-    return undef;
+    return $app->throw_error
+        (400, reason_phrase => 'content-type parameter not allowed');
+    ## XXX 406?
   }
 
   return $ct;
@@ -1311,38 +1280,6 @@ sub set_content_type_options ($$;$) {
     $select_el->append_child ($option_el);
   }
 } # set_content_type_options
-
-sub http_error ($$;$) {
-  my ($code, $text, $allowed) = @_;
-  binmode STDOUT, ":encoding(utf-8)";
-
-  our $style_url;
-
-  print qq[Status: $code $text\n];
-  print qq[Allow: $allowed\n] if defined $allowed;
-  print qq[Content-Type: text/html; charset=utf-8\n\n];
-  print qq[<!DOCTYPE HTML>
-<html lang=en><title>$code @{[htescape ($text)]}</title>
-<link rel=stylesheet href="@{[htescape ($style_url)]}">
-<h1>@{[htescape ($text)]}</h1>];
-} # http_error
-
-sub http_redirect ($$$) {
-  my ($code, $text, $url) = @_;
-  
-  my $abs_url = get_absolute_url ($url, $cgi->request_uri);
-
-  binmode STDOUT, ':encoding(utf-8)';
-  print qq[Status: $code $text
-Location: $abs_url
-Content-Type: text/html; charset=utf-8
-
-<!DOCTYPE HTML>
-<html lang=en>
-<title>$code @{[htescape ($text)]}</title>
-<h1>@{[htescape ($text)]}</h1>
-<p>See <a href="@{[htescape ($url)]}">other page</a>.];
-} # http_redirect
 
 sub normalize_name ($) {
   my $s = shift;
@@ -1579,8 +1516,7 @@ sub set_head_content ($;$$$) {
   my $head_el = $doc->manakai_head;
 
   our $license_name;
-  our $style_url;
-  push @{$links ||= []}, {rel => 'stylesheet', href => $style_url},
+  push @{$links ||= []}, {rel => 'stylesheet', href => '/styles/sw'},
       {rel => 'license', href => get_page_url ($license_name, undef)};
   
   if (defined $id) {
@@ -1612,9 +1548,8 @@ sub set_foot_content ($) {
 
   my $body_el = $doc->last_child->last_child;
 
-  our $script_url;
   my $script_el = $doc->create_element_ns (HTML_NS, 'script');
-  $script_el->set_attribute (src => $script_url);
+  $script_el->set_attribute (src => '/scripts/sw');
   $body_el->append_child ($script_el);
 } # set_foot_content
 
