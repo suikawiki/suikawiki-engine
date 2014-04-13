@@ -1,73 +1,26 @@
 package SuikaWiki5::Main;
 use strict;
-
-## --- Common modules
-
-require Encode;
+use Encode;
+use Char::Normalize::FullwidthHalfwidth;
+use SWE::DB;
 
 require Message::DOM::DOMImplementation;
 my $dom = Message::DOM::DOMImplementation->new;
 
-use Message::CGI::Util qw/percent_encode percent_decode
-  datetime_in_content/;
-
-require Char::Normalize::FullwidthHalfwidth;
+use Message::CGI::Util qw/percent_encode percent_decode datetime_in_content/;
 
 use SWE::Lang qw/@ContentMediaType/;
 
 ## --- Prepares database access variables (commonly used ones)
 
-my $db;
-my $id_prop_db;
-my $name_prop_db;
-my $cache_prop_db;
-my $content_db;
-my $names_lock;
-my $id_locks;
-my $db_id_dir_name;
-my @path;
-
 sub main ($$) {
   my (undef, $app) = @_;
 
-  our $db_dir_name = $app->db_root_path . '/';
-  my $db_global_lock_dir_name = $db_dir_name;
-  $db_id_dir_name = $db_dir_name . q[ids/];
-  my $db_name_dir_name = $db_dir_name . q[names/];
-
-  use Path::Tiny;
-  path ($db_id_dir_name)->mkpath;
-  path ($db_name_dir_name)->mkpath;
-
-require SWE::DB;
-$db = SWE::DB->new;
-$db->db_dir_name = $db_dir_name;
-$db->global_lock_dir_name = $db_global_lock_dir_name;
-$db->id_dir_name = $db_id_dir_name;
-$db->name_dir_name = $db_name_dir_name;
-
-# XXX $db->id_prop
-require SWE::DB::IDProps;
-$id_prop_db = SWE::DB::IDProps->new;
-$id_prop_db->{root_directory_name} = $db_id_dir_name;
-$id_prop_db->{leaf_suffix} = '.props';
-
-require SWE::DB::HashedProps;
-$name_prop_db = SWE::DB::HashedProps->new;
-$name_prop_db->{root_directory_name} = $db_name_dir_name;
-$name_prop_db->{leaf_suffix} = '.props';
-
-$cache_prop_db = SWE::DB::IDProps->new;
-$cache_prop_db->{root_directory_name} = $db_id_dir_name;
-$cache_prop_db->{leaf_suffix} = '.cacheprops';
-
-require SWE::DB::IDText;
-$content_db = SWE::DB::IDText->new;
-$content_db->{root_directory_name} = $db_id_dir_name;
-$content_db->{leaf_suffix} = '.txt';
+  my $db = SWE::DB->new_from_root_path ($app->db_root_path);
 
 ## --- Process Request-URI
 
+  my @path;
   my $param;
   my $dollar;
   {
@@ -87,32 +40,21 @@ $content_db->{leaf_suffix} = '.txt';
 
 sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
 
-require SWE::DB::IDLocks;
-$id_locks = SWE::DB::IDLocks->new;
-$id_locks->{root_directory_name} = $db_id_dir_name;
-$id_locks->{leaf_suffix} = '.lock';
-
-require SWE::DB::Lock;
-$names_lock = SWE::DB::Lock->new;
-$names_lock->{file_name} = $db_global_lock_dir_name . 'ids.lock';
-$names_lock->lock_type ('Names');
-    ## NOTE: This lock MUST be used when $name_prop_db is updated.
-
 if ($path[0] eq 'n' and @path == 2) {
   my $name = normalize_name ($path[1]);
   
   unless (length $name) {
     my $homepage_name = $app->config->get_text ('wiki_page_home');
     return $app->throw_redirect
-        (get_page_url ($homepage_name, undef), status => 303);
+        (get_page_url (\@path, $homepage_name, undef), status => 303);
   }
 
   unless (defined $param) {
-    my ($id, $ids) = prepare_by_name ($name, $dollar);
+    my ($id, $ids) = prepare_by_name ($db, $name, $dollar);
 
     if (defined $dollar and not defined $id) {
       return $app->throw_redirect
-          (get_page_url ($name, undef),
+          (get_page_url (\@path, $name, undef),
            status => 301, reason_phrase => 'Not found');
     }
 
@@ -126,10 +68,10 @@ if ($path[0] eq 'n' and @path == 2) {
     $docobj->rebless;
 
     if ($format eq 'text' and defined $id) {
-      $docobj->{content_db} = $content_db; ## XXX
-      $docobj->{id_prop_db} = $id_prop_db; ## XXX
+      $docobj->{content_db} = $db->id_content;
+      $docobj->{id_prop_db} = $db->id_prop;
 
-      my $id_prop = $id_prop_db->get_data ($id);
+      my $id_prop = $db->id_prop->get_data ($id);
       $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
       $app->http->add_response_header
           ('Content-Type' => $docobj->to_text_media_type . '; charset=utf-8');
@@ -140,16 +82,17 @@ if ($path[0] eq 'n' and @path == 2) {
       return $app->throw;
     } elsif ($format eq 'xml' and defined $id) {
       ## XXX
-      $docobj->{content_db} = $content_db; ## XXX
-      $docobj->{id_prop_db} = $id_prop_db;
-      $docobj->{cache_prop_db} = $cache_prop_db;
+      $docobj->{content_db} = $db->id_content;
+      $docobj->{id_prop_db} = $db->id_prop;
+      $docobj->{cache_prop_db} = $db->id_cache_prop;
       $docobj->{swml_to_xml} = \&get_xml_data;
 
-      my $xmldoc = $docobj->to_xml (styled => scalar $app->bare_param ('styled'));
+      my $xmldoc = $docobj->to_xml
+          (db => $db, styled => scalar $app->bare_param ('styled'));
       if ($xmldoc) {
         $app->http->add_response_header
             ('Content-Type' => $docobj->to_xml_media_type . '; charset=utf-8');
-        my $id_prop = $id_prop_db->get_data ($id);
+        my $id_prop = $db->id_prop->get_data ($id);
         $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
         my $modified = $id_prop->{modified};
         $app->http->set_response_last_modified ($modified) if $modified;
@@ -168,17 +111,19 @@ if ($path[0] eq 'n' and @path == 2) {
       
       if (defined $id) {
         # XXX
-        $docobj->{id_prop_db} = $id_prop_db;
-        $docobj->{cache_prop_db} = $cache_prop_db;
-        $docobj->{content_db} = $content_db; ## XXX
+        $docobj->{id_prop_db} = $db->id_prop;
+        $docobj->{cache_prop_db} = $db->id_cache_prop;
+        $docobj->{content_db} = $db->id_content;
         $docobj->{swml_to_xml} = \&get_xml_data;
         $docobj->{name} = $name;
-        $docobj->{get_page_url} = \&get_page_url;
+        $docobj->{get_page_url} = sub {
+          get_page_url (\@path, @_);
+        };
 
         $docobj->lock;
-        ($html_doc, $html_container) = $docobj->to_html_fragment;
+        ($html_doc, $html_container) = $docobj->to_html_fragment (db => $db);
 
-        $id_prop = $id_prop_db->get_data ($id);
+        $id_prop = $db->id_prop->get_data ($id);
         $title_text = $id_prop->{title};
         ## TODO: $title_type
         
@@ -202,24 +147,24 @@ if ($path[0] eq 'n' and @path == 2) {
       my $tmt = $docobj->to_text_media_type;
       if (defined $tmt) {
         push @link, {rel => 'alternate', type => $tmt,
-                     href => get_page_url ($name, undef, $id) . '?format=text'};
+                     href => get_page_url (\@path, $name, undef, $id) . '?format=text'};
       }
 
       my $xmt = $docobj->to_xml_media_type;
       if (defined $xmt) {
         push @link, {rel => 'alternate', type => $xmt,
-                     href => get_page_url ($name, undef, $id) . '?format=xml'};
+                     href => get_page_url (\@path, $name, undef, $id) . '?format=xml'};
       }
       
       push @link, {rel => 'archives',
-                   href => get_page_url ($name, undef, undef) . ';history',
+                   href => get_page_url (\@path, $name, undef, undef) . ';history',
                    title => 'History of the page name'};
       if (defined $id) {
         push @link, {rel => 'archives',
                      href => '../i/' . $id . ';history',
                      title => 'History of the page content'};
       }
-      set_head_content ($app, $html_doc, $id, \@link,
+      set_head_content ($app, \@path, $html_doc, $id, \@link,
                         defined $id
                             ? [] : [{name => 'ROBOTS', content => 'NOINDEX'}]);
       
@@ -227,7 +172,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $h1_el = $html_doc->create_element_ns (HTML_NS, 'h1');
       my $a_el = $html_doc->create_element_ns (HTML_NS, 'a');
-      $a_el->set_attribute (href => get_page_url ($name, undef));
+      $a_el->set_attribute (href => get_page_url (\@path, $name, undef));
       $a_el->set_attribute (rel => 'bookmark');
       $a_el->text_content ($name);
       $h1_el->append_child ($a_el);
@@ -244,11 +189,11 @@ if ($path[0] eq 'n' and @path == 2) {
           my $li_el = $html_doc->create_element_ns (HTML_NS, 'li');
           $li_el->inner_html (q[<a></a>]);
           my $a_el = $li_el->first_child;
-          my $id_prop = $id_prop_db->get_data ($id);
+          my $id_prop = $db->id_prop->get_data ($id);
           $a_el->text_content
               (length $id_prop->{title} ? $id_prop->{title}
                  : [keys %{$id_prop->{name}}]->[0] // $id); ## TODO: title-type
-          $a_el->set_attribute (href => get_page_url ($name, $name, $id));
+          $a_el->set_attribute (href => get_page_url (\@path, $name, $name, $id));
           $ul_el->append_child ($li_el);
         }
         $nav_el->append_child ($ul_el);
@@ -335,7 +280,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $a_el = $footer_el->get_elements_by_tag_name ('a')->[0];
       my $license_name = $app->config->get_text ('wiki_page_license');
-      $a_el->set_attribute (href => get_page_url ($license_name));
+      $a_el->set_attribute (href => get_page_url (\@path, $license_name));
 
       set_foot_content ($html_doc);
 
@@ -367,7 +312,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <tbody>
                         
 </table></div>]);
-    set_head_content ($app, $doc, undef, [], []);
+    set_head_content ($app, \@path, $doc, undef, [], []);
 
     my $title_el = $doc->get_elements_by_tag_name ('title')->[0];
     $title_el->inner_html ('History &mdash; ');
@@ -457,7 +402,7 @@ if ($path[0] eq 'n' and @path == 2) {
           ('Content-Type' => 'text/plain; charset=utf-8');
       
       for my $id (sort {$index->{$b} <=> $index->{$a}} keys %$index) {
-        my $id_prop = $id_prop_db->get_data ($id);
+        my $id_prop = $db->id_prop->get_data ($id);
         my $name = [keys %{$id_prop->{name}}]->[0] // $id;
         $app->http->send_response_body_as_text
             (join '', $index->{$id}, "\t", $id, "\t", $name, "\x0A");
@@ -465,7 +410,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $app->http->close_response_body;
       return $app->throw;
     } elsif ($param eq 'posturl') {
-      my ($id, undef) = prepare_by_name ($name, $dollar);
+      my ($id, undef) = prepare_by_name ($db, $name, $dollar);
 
       if (defined $dollar and not defined $id) {
         return $app->throw_error (404);
@@ -502,14 +447,14 @@ if ($path[0] eq 'n' and @path == 2) {
         ## This must be done before the ID lock.
         $db->name_inverted_index->lock;
 
-        my $id_lock = $id_locks->get_lock ($id);
+        my $id_lock = $db->id_lock->get_lock ($id);
         $id_lock->lock;
         
-        my $id_prop = $id_prop_db->get_data ($id);
+        my $id_prop = $db->id_prop->get_data ($id);
         last APPEND unless $id_prop;
         last APPEND if $id_prop->{'content-type'} ne 'text/x-suikawiki';
         
-        my $textref = $content_db->get_data ($id);
+        my $textref = $db->id_content->get_data ($id);
         my $max = 0;
         while ($$textref =~ /\[([0-9]+)\]/g) {
           $max = $1 if $max < $1;
@@ -522,27 +467,27 @@ if ($path[0] eq 'n' and @path == 2) {
         $id_prop->{hash} = get_hash ($textref);
         
         my $vc = $db->vc;
-        local $content_db->{version_control} = $vc;
-        local $id_prop_db->{version_control} = $vc;
+        local $db->id_content->{version_control} = $vc;
+        local $db->id_prop->{version_control} = $vc;
         
-        $content_db->set_data ($id => $textref);
-        $id_prop_db->set_data ($id => $id_prop);
+        $db->id_content->set_data ($id => $textref);
+        $db->id_prop->set_data ($id => $id_prop);
         
         $vc->commit_changes ("updated by $user");
 
         ## TODO: non-default content-type support
-        my $cache_prop = $cache_prop_db->get_data ($id);
-        my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
+        my $cache_prop = $db->id_cache_prop->get_data ($id);
+        my $doc = $id_prop ? get_xml_data ($db, $id, $id_prop, $cache_prop) : undef;
         if (defined $doc) {
           require SWE::Object::Document;
           my $document = SWE::Object::Document->new (db => $db, id => $id);
-          $document->{name_prop_db} = $name_prop_db; ## TODO: ...
+          $document->{name_prop_db} = $db->name_prop;
           $document->update_tfidf ($doc);
         }
 
         if ($app->bare_param ('redirect')) {
           return $app->throw_redirect
-              (get_page_url ($name, undef, $id) . '#anchor-' . $anchor,
+              (get_page_url (\@path, $name, undef, $id) . '#anchor-' . $anchor,
                status => 303, reason_phrase => 'Appended');
         } else {
           $app->http->set_status (204, 'Appended');
@@ -555,12 +500,12 @@ if ($path[0] eq 'n' and @path == 2) {
         my $new_names = {$name => 1};
         my $content = '[1] ' . $added_text;
 
-        $names_lock->lock;
+        $db->names_lock->lock;
         my $time = time;
         
         require SWE::Object::Document;
         my $document = SWE::Object::Document->new_id (db => $db);
-        $document->{name_prop_db} = $name_prop_db; ## TODO: ...
+        $document->{name_prop_db} = $db->name_prop;
         
         my $id = $document->id;
         
@@ -568,18 +513,18 @@ if ($path[0] eq 'n' and @path == 2) {
           ## This must be done before the ID lock.
           $db->name_inverted_index->lock;
           
-          my $id_lock = $id_locks->get_lock ($id);
+          my $id_lock = $db->id_lock->get_lock ($id);
           $id_lock->lock;
           
           my $vc = $db->vc;
-          local $content_db->{version_control} = $vc;
-          local $id_prop_db->{version_control} = $vc;
+          local $db->id_content->{version_control} = $vc;
+          local $db->id_prop->{version_control} = $vc;
           $vc->add_file ($db->id->{file_name});
           
           my $id_history_db = $db->id_history;
           local $id_history_db->{version_control} = $vc;
           
-          $content_db->set_data ($id => \$content);
+          $db->id_content->set_data ($id => \$content);
           
           my $id_props = {};
           
@@ -593,13 +538,13 @@ if ($path[0] eq 'n' and @path == 2) {
           
           $id_props->{'content-type'} = 'text/x-suikawiki';
           $id_props->{hash} = get_hash (\$content);
-          $id_prop_db->set_data ($id => $id_props);
+          $db->id_prop->set_data ($id => $id_props);
           
           $vc->commit_changes ("created by $user");
           
           ## TODO: non-default content-type support
-          my $cache_prop = $cache_prop_db->get_data ($id);
-          my $doc = $id_props ? get_xml_data ($id, $id_props, $cache_prop) : undef;
+          my $cache_prop = $db->id_cache_prop->get_data ($id);
+          my $doc = $id_props ? get_xml_data ($db, $id, $id_props, $cache_prop) : undef;
           
           if (defined $doc) {
             $document->update_tfidf ($doc);
@@ -612,7 +557,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
         if ($app->bare_param ('redirect')) {
           return $app->throw_redirect
-              (get_page_url ($name, undef, $id) . '#anchor-' . $anchor,
+              (get_page_url (\@path, $name, undef, $id) . '#anchor-' . $anchor,
                status => 303, reason_phrase => 'Appended');
         } else {
           $app->http->set_status (204, 'Appended');
@@ -624,7 +569,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $name .= '$' . $dollar if defined $dollar;
       $name .= ';' . $param;
       return $app->throw_redirect
-          (get_page_url ($name, undef),
+          (get_page_url (\@path, $name, undef),
            status => 301, reason_phrase => 'Not found');
     }
   } elsif ($path[0] eq 'i' and @path == 2 and not defined $dollar) {
@@ -635,16 +580,16 @@ if ($path[0] eq 'n' and @path == 2) {
       ## This must be done before the ID lock.
       $db->name_inverted_index->lock;
 
-      my $id_lock = $id_locks->get_lock ($id);
+      my $id_lock = $db->id_lock->get_lock ($id);
       $id_lock->lock;
       
-      my $id_prop = $id_prop_db->get_data ($id);
+      my $id_prop = $db->id_prop->get_data ($id);
       if ($id_prop) {
         my $ct = get_content_type_parameter ($app) or return; # thrown
 
         my $prev_hash = $app->bare_param ('hash') // '';
         my $current_hash = $id_prop->{hash} //
-            get_hash ($content_db->get_data ($id) // '');
+            get_hash ($db->id_content->get_data ($id) // '');
         unless ($prev_hash eq $current_hash) {
           ## TODO: conflict
           return $app->throw_error (409);
@@ -665,20 +610,20 @@ if ($path[0] eq 'n' and @path == 2) {
         }
 
         my $vc = $db->vc;
-        local $content_db->{version_control} = $vc;
-        local $id_prop_db->{version_control} = $vc;
+        local $db->id_content->{version_control} = $vc;
+        local $db->id_prop->{version_control} = $vc;
         
-        $content_db->set_data ($id => $textref);
-        $id_prop_db->set_data ($id => $id_prop);
+        $db->id_content->set_data ($id => $textref);
+        $db->id_prop->set_data ($id => $id_prop);
 
         my $user = '(anon)'; #$cgi->remote_user // '(anon)';
         $vc->commit_changes ("updated by $user");
 
         ## TODO: non-default content-type support
-        my $cache_prop = $cache_prop_db->get_data ($id);
-        my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
+        my $cache_prop = $db->id_cache_prop->get_data ($id);
+        my $doc = $id_prop ? get_xml_data ($db, $id, $id_prop, $cache_prop) : undef;
 
-        my $url = get_page_url ([keys %{$id_prop->{name} or {}}]->[0],
+        my $url = get_page_url (\@path, [keys %{$id_prop->{name} or {}}]->[0],
                                 undef, 0 + $id);
         $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
         if ($app->bare_param ('no-redirect')) {
@@ -690,7 +635,7 @@ if ($path[0] eq 'n' and @path == 2) {
         if (defined $doc) {
           require SWE::Object::Document;
           my $document = SWE::Object::Document->new (db => $db, id => $id);
-          $document->{name_prop_db} = $name_prop_db; ## TODO: ...
+          $document->{name_prop_db} = $db->name_prop;
           $document->update_tfidf ($doc);
         }
 
@@ -701,7 +646,7 @@ if ($path[0] eq 'n' and @path == 2) {
     } elsif ($param eq 'edit') {
       my $id = $path[1] + 0;
       
-      my $textref = $content_db->get_data ($id);
+      my $textref = $db->id_content->get_data ($id);
       if (defined $textref) {
         $app->http->add_response_header
             ('Content-Type' => 'text/html; charset=utf-8');
@@ -709,7 +654,7 @@ if ($path[0] eq 'n' and @path == 2) {
       require SWE::Object::Document;
       my $doc = SWE::Object::Document->new (db => $db, id => $id);
 
-      my $id_prop = $id_prop_db->get_data ($id);
+      my $id_prop = $db->id_prop->get_data ($id);
       my $names = $id_prop->{name} || {};
       my $hash = $id_prop->{hash} // get_hash ($textref);
 
@@ -747,7 +692,7 @@ if ($path[0] eq 'n' and @path == 2) {
 </form>
 </div>
 ]);
-      set_head_content ($app, $html_doc, $id, [],
+      set_head_content ($app, \@path, $html_doc, $id, [],
                         [{name => 'ROBOTS', content => 'NOINDEX'}]);
       my $form_el = $html_doc->get_elements_by_tag_name ('form')->[0];
       $form_el->set_attribute (action => $id);
@@ -767,11 +712,11 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $a_el = $form_el->get_elements_by_tag_name ('a')->[0];
       our $help_page_name;
-      $a_el->set_attribute (href => get_page_url ($help_page_name));
+      $a_el->set_attribute (href => get_page_url (\@path, $help_page_name));
 
       $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
       my $license_name = $app->config->get_text ('wiki_page_license');
-      $a_el->set_attribute (href => get_page_url ($license_name));
+      $a_el->set_attribute (href => get_page_url (\@path, $license_name));
 
       $form_el = $html_doc->get_elements_by_tag_name ('form')->[1];
       $form_el->set_attribute (action => $id . ';names');
@@ -782,7 +727,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $nav_el = $html_doc->get_elements_by_tag_name ('div')->[0];
       for (keys %$names) {
         my $a_el = $html_doc->create_element_ns (HTML_NS, 'a');
-        $a_el->set_attribute (href => get_page_url ($_, undef, $id));
+        $a_el->set_attribute (href => get_page_url (\@path, $_, undef, $id));
         $a_el->text_content ($_);
         $nav_el->append_child ($a_el);
         $nav_el->manakai_append_text (' ');
@@ -798,8 +743,8 @@ if ($path[0] eq 'n' and @path == 2) {
       my $id = $path[1] + 0;
 
       my $vc = $db->vc;
-      local $name_prop_db->{version_control} = $vc;
-      local $id_prop_db->{version_control} = $vc;
+      local $db->name_prop->{version_control} = $vc;
+      local $db->id_prop->{version_control} = $vc;
       
       my $id_history_db = $db->id_history;
       local $id_history_db->{version_control} = $vc;
@@ -809,9 +754,9 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $time = time;
 
-      $names_lock->lock;
+      $db->names_lock->lock;
       
-      my $id_prop = $id_prop_db->get_data ($id);
+      my $id_prop = $db->id_prop->get_data ($id);
       my $old_names = $id_prop->{name} || {};
       
       my $new_names = {};
@@ -832,39 +777,39 @@ if ($path[0] eq 'n' and @path == 2) {
       }
       
       for my $new_name (keys %$added_names) {
-        my $new_name_prop = $name_prop_db->get_data ($new_name);
+        my $new_name_prop = $db->name_prop->get_data ($new_name);
         unless (defined $new_name_prop) {
           $names_history_db->append_data ($new_name => [$time, 'c']);
         }
         $new_name_prop->{name} = $new_name;
         push @{$new_name_prop->{id} ||= []}, $id;
-        $name_prop_db->set_data ($new_name => $new_name_prop);
+        $db->name_prop->set_data ($new_name => $new_name_prop);
 
         $id_history_db->append_data ($id => [$time, 'a', $new_name]);
         $names_history_db->append_data ($new_name => [$time, 'a', $id]);
       }
 
       for my $removed_name (keys %$removed_names) {
-        my $removed_name_prop = $name_prop_db->get_data ($removed_name);
+        my $removed_name_prop = $db->name_prop->get_data ($removed_name);
         for (0..$#{$removed_name_prop->{id} or []}) {
           if ($removed_name_prop->{id}->[$_] eq $id) {
             splice @{$removed_name_prop->{id}}, $_, 1, ();
             last;
           }
         }
-        $name_prop_db->set_data ($removed_name => $removed_name_prop);
+        $db->name_prop->set_data ($removed_name => $removed_name_prop);
 
         $id_history_db->append_data ($id => [$time, 'r', $removed_name]);
         $names_history_db->append_data ($removed_name => [$time, 'r', $id]);
       }
 
       $id_prop->{name} = $new_names;
-      $id_prop_db->set_data ($id => $id_prop);
+      $db->id_prop->set_data ($id => $id_prop);
 
       my $user = '(anon)'; #$cgi->remote_user // '(anon)';
       $vc->commit_changes ("id-name association changed by $user");
 
-      $names_lock->unlock;
+      $db->names_lock->unlock;
 
       $app->http->set_status (204, 'Changed');
       $app->http->close_response_body;
@@ -889,7 +834,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <tbody>
                         
 </table></div>]);
-      set_head_content ($app, $doc, undef, [], []);
+      set_head_content ($app, \@path, $doc, undef, [], []);
 
     my $title_el = $doc->get_elements_by_tag_name ('title')->[0];
     $title_el->inner_html ('History &mdash; #');
@@ -916,14 +861,14 @@ if ($path[0] eq 'n' and @path == 2) {
         } elsif ($entry->[1] eq 'a') {
           $change_cell->manakai_append_text ('Associated with ');
           my $a_el = $doc->create_element_ns (HTML_NS, 'a');
-          $a_el->set_attribute (href => get_page_url ($entry->[2], undef)
+          $a_el->set_attribute (href => get_page_url (\@path, $entry->[2], undef)
                                     . ';history');
           $a_el->text_content ($entry->[2]);
           $change_cell->append_child ($a_el);
         } elsif ($entry->[1] eq 'r') {
           $change_cell->manakai_append_text ('Disassociated from ');
           my $a_el = $doc->create_element_ns (HTML_NS, 'a');
-          $a_el->set_attribute (href => get_page_url ($entry->[2], undef)
+          $a_el->set_attribute (href => get_page_url (\@path, $entry->[2], undef)
                                     . ';history');
           $a_el->text_content ($entry->[2]);
           $change_cell->append_child ($a_el);
@@ -957,18 +902,18 @@ if ($path[0] eq 'n' and @path == 2) {
       delete $new_names->{''};
       $new_names->{'(no title)'} = 1 unless keys %$new_names;
 
-    my $user = '(anon)'; #$cgi->remote_user // '(anon)';
-    my $ct = get_content_type_parameter ($app) or return;
+      my $user = '(anon)'; #$cgi->remote_user // '(anon)';
+      my $ct = get_content_type_parameter ($app) or return;
 
-    my $content = $app->text_param ('text') // '';
-    normalize_content (\$content);
+      my $content = $app->text_param ('text') // '';
+      normalize_content (\$content);
 
-    $names_lock->lock;
-    my $time = time;
+      $db->names_lock->lock;
+      my $time = time;
 
     require SWE::Object::Document;
     my $document = SWE::Object::Document->new_id (db => $db);
-    $document->{name_prop_db} = $name_prop_db; ## TODO: ...
+    $document->{name_prop_db} = $db->name_prop;
 
     my $id = $document->id;
     my $id_prop = {};
@@ -977,18 +922,18 @@ if ($path[0] eq 'n' and @path == 2) {
       ## This must be done before the ID lock.
       $db->name_inverted_index->lock;
 
-      my $id_lock = $id_locks->get_lock ($id);
+      my $id_lock = $db->id_lock->get_lock ($id);
       $id_lock->lock;
 
       my $vc = $db->vc;
-      local $content_db->{version_control} = $vc;
-      local $id_prop_db->{version_control} = $vc;
+      local $db->id_content->{version_control} = $vc;
+      local $db->id_prop->{version_control} = $vc;
       $vc->add_file ($db->id->{file_name});
       
       my $id_history_db = $db->id_history;
       local $id_history_db->{version_control} = $vc;
 
-      $content_db->set_data ($id => \$content);
+      $db->id_content->set_data ($id => \$content);
 
       $id_history_db->append_data ($id => [$time, 'c']);
       $id_prop->{modified} = $time;
@@ -1003,13 +948,13 @@ if ($path[0] eq 'n' and @path == 2) {
       $id_prop->{title} = $app->text_param ('title') // '';
       normalize_content (\($id_prop->{title}));
       $id_prop->{'title-type'} = 'text/plain'; ## TODO: get_parameter
-      $id_prop_db->set_data ($id => $id_prop);
+      $db->id_prop->set_data ($id => $id_prop);
 
       $vc->commit_changes ("created by $user");
 
       ## TODO: non-default content-type support
-      my $cache_prop = $cache_prop_db->get_data ($id);
-      my $doc = $id_prop ? get_xml_data ($id, $id_prop, $cache_prop) : undef;
+      my $cache_prop = $db->id_cache_prop->get_data ($id);
+      my $doc = $id_prop ? get_xml_data ($db, $id, $id_prop, $cache_prop) : undef;
       
       if (defined $doc) {
         $document->update_tfidf ($doc);
@@ -1025,7 +970,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $post_url = $app->http->url->resolve_string ("i/$id");
       $app->http->add_response_header ('X-SW-Post-URL' => $post_url);
 
-      my $url = get_page_url ([keys %$new_names]->[0], undef, 0 + $id);
+      my $url = get_page_url (\@path, [keys %$new_names]->[0], undef, 0 + $id);
       if ($app->bare_param ('no-redirect')) {
         return $app->throw_redirect
             ($url, status => 201, reason_phrase => 'Created');
@@ -1056,7 +1001,7 @@ if ($path[0] eq 'n' and @path == 2) {
 [<a rel=help>Help</a> / <a rel=license>License</a>]
 </form>
 ]);
-    set_head_content ($app, $doc, undef, [],
+    set_head_content ($app, \@path, $doc, undef, [],
                       [{name => 'ROBOTS', content => 'NOINDEX'}]);
 
     my $form_el = $doc->get_elements_by_tag_name ('form')->[0];
@@ -1069,11 +1014,11 @@ if ($path[0] eq 'n' and @path == 2) {
 
     my $a_el = $form_el->get_elements_by_tag_name ('a')->[0];
     our $help_page_name;
-    $a_el->set_attribute (href => get_page_url ($help_page_name));
+    $a_el->set_attribute (href => get_page_url (\@path, $help_page_name));
 
       $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
       my $license_name = $app->config->get_text ('wiki_page_license');
-      $a_el->set_attribute (href => get_page_url ($license_name));
+      $a_el->set_attribute (href => get_page_url (\@path, $license_name));
       set_foot_content ($doc);
 
       $app->http->send_response_body_as_text ($doc->inner_html);
@@ -1084,7 +1029,7 @@ if ($path[0] eq 'n' and @path == 2) {
            {'' => 1, 'n' => 1, 'i' => 1}->{$path[0]}) {
     our $homepage_name;
     return $app->throw_redirect
-        (get_page_url ($homepage_name, undef), status => 303);
+        (get_page_url (\@path, $homepage_name, undef), status => 303);
   } elsif (@path == 0) {
     my $rurl = $app->http->url->stringify;
     $rurl =~ s!\.[^/]*$!!g;
@@ -1094,10 +1039,11 @@ if ($path[0] eq 'n' and @path == 2) {
   return $app->throw_error (404);
 } # main
 
-sub prepare_by_name ($$) {
-  my ($name, $id_cand) = @_;
-  
-  my $ids = get_ids_by_name ($name);
+sub prepare_by_name ($$$) {
+  my ($db, $name, $id_cand) = @_;
+  my $name_prop = $db->name_prop->get_data ($name);
+  my $ids = $name_prop->{id} || [];
+
   my $id;
   if (defined $id_cand) {
     $id_cand += 0;
@@ -1175,19 +1121,19 @@ sub normalize_content ($) {
 } # normalize_content
 
 ## A source anchor label in SWML -> URL
-sub get_page_url ($;$$) {
-  my ($wiki_name, $base_name, $id) = @_;
+sub get_page_url ($$;$$) {
+  my ($path, $wiki_name, $base_name, $id) = @_;
   $wiki_name = percent_encode ($wiki_name);
   $wiki_name =~ s/%2F/+/g;
   if (defined $id) {
     $wiki_name .= '$' . (0 + $id);
   }
-  $wiki_name = ('../' x (@path - 1)) . 'n/' . $wiki_name;
+  $wiki_name = ('../' x (@$path - 1)) . 'n/' . $wiki_name;
   return $wiki_name;
 } # get_page_url
 
-sub get_xml_data ($$$) {
-  my ($id, $id_prop, $cache_prop) = @_;
+sub get_xml_data ($$$$) {
+  my ($db, $id, $id_prop, $cache_prop) = @_;
 
   my $cached_hash = $cache_prop->{'cached-hash'};
 
@@ -1199,19 +1145,12 @@ sub get_xml_data ($$$) {
     }
   }
 
-  our $content_cache_db;
-  unless (defined $content_cache_db) {
-    require SWE::DB::IDDOM;
-    $content_cache_db = SWE::DB::IDDOM->new;
-    $content_cache_db->{root_directory_name} = $db_id_dir_name;
-    $content_cache_db->{leaf_suffix} = '.domcache';
-  }
-  
+  my $content_cache_db = $db->id_dom_cache;
   my $doc;
   if ($cached_hash) {
     $doc = $content_cache_db->get_data ($id);
   } else {
-    my $textref = $content_db->get_data ($id);
+    my $textref = $db->id_content->get_data ($id);
     if ($textref) {
       require Whatpm::SWML::Parser;
       my $p = Whatpm::SWML::Parser->new;
@@ -1222,7 +1161,7 @@ sub get_xml_data ($$$) {
       $content_cache_db->set_data ($id => $doc);
 
       $cache_prop->{'cached-hash'} = get_hash ($textref);
-      $cache_prop_db->set_data ($id => $cache_prop);
+      $db->id_cache_prop->set_data ($id => $cache_prop);
     } else {
       ## Content not found.
       $doc = $dom->create_document;
@@ -1236,18 +1175,6 @@ sub get_hash ($) {
   require Digest::MD5;
   return Digest::MD5::md5_hex (Encode::encode ('utf8', ${$_[0]}));
 } # get_hash
-
-sub get_ids_by_name ($) {
-  my $name = shift;
-
-  my $name_prop = $name_prop_db->get_data ($name);
-  
-  if ($name_prop->{id}) {
-    return $name_prop->{id};
-  } else {
-    return [];
-  }
-} # get_ids_by_name
 
 sub for_unique_words ($*) {
   #my ($string, $code) = @_;
@@ -1276,13 +1203,13 @@ sub for_unique_words ($*) {
   }
 } # for_unique_words
 
-sub set_head_content ($$;$$$) {
-  my ($app, $doc, $id, $links, $metas) = @_;
+sub set_head_content ($$$;$$$) {
+  my ($app, $path, $doc, $id, $links, $metas) = @_;
   my $head_el = $doc->manakai_head;
 
   my $license_name = $app->config->get_text ('wiki_page_license');
   push @{$links ||= []}, {rel => 'stylesheet', href => '/styles/sw'},
-      {rel => 'license', href => get_page_url ($license_name, undef)};
+      {rel => 'license', href => get_page_url ($path, $license_name, undef)};
   
   if (defined $id) {
     our $cvs_archives_url;

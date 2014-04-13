@@ -12,13 +12,13 @@ sub to_xml ($;%) {
   
   my $id_prop = $self->{id_prop_db}->get_data ($id); ## XXX
   my $cache_prop = $self->{cache_prop_db}->get_data ($id); ## XXX
-  my $doc = $self->{swml_to_xml}->($id, $id_prop, $cache_prop); ## XXX
+  my $doc = $self->{swml_to_xml}->($args{db}, $id, $id_prop, $cache_prop); ## XXX
 
   $self->unlock;
 
   if ($args{styled}) {
     my $pi = $doc->create_processing_instruction
-        ('xml-stylesheet', 'href="http://suika.fam.cx/www/style/swml/structure"');
+        ('xml-stylesheet', 'href="http://suika.suikawiki.org/www/style/swml/structure"');
     $doc->insert_before ($pi, $doc->first_child);
   }
   
@@ -29,8 +29,8 @@ sub to_xml_media_type ($) {
   return 'application/xml';
 }
 
-sub to_html_fragment ($) {
-  my $self = shift;
+sub to_html_fragment ($;%) {
+  my ($self, %args) = @_;
 
   my ($html_doc, $html_container);
 
@@ -54,7 +54,7 @@ sub to_html_fragment ($) {
   }
 
   unless ($html_doc) {
-    my $xml_doc = $self->to_xml;
+    my $xml_doc = $self->to_xml (%args);
     if ($xml_doc) {
       require Message::DOM::DOMImplementation;
       my $dom = Message::DOM::DOMImplementation->new;
