@@ -1,27 +1,3 @@
 [submodule "modules/SWE"]
 	path = modules/SWE
-	url = http://suika.fam.cx/gate/git/bare/suikawiki-engine.git/
-[submodule "modules/manakai"]
-	path = modules/manakai
-	url = http://suika.fam.cx/gate/git/bare/manakai.git/
-[submodule "modules/charclass"]
-	path = modules/charclass
-	url = http://suika.fam.cx/gate/git/bare/charclass.git/
-[submodule "modules/wanage"]
-	path = modules/wanage
-	url = git://github.com/wakaba/wanage
-[submodule "modules/karasuma-config"]
-	path = modules/karasuma-config
-	url = git://github.com/wakaba/karasuma-config
-[submodule "modules/ooutils"]
-	path = modules/ooutils
-	url = git://github.com/wakaba/perl-ooutils
-[submodule "modules/web-url"]
-	path = modules/web-url
-	url = git://github.com/wakaba/perl-web-url
-[submodule "modules/web-encodings"]
-	path = modules/web-encodings
-	url = git://github.com/wakaba/perl-web-encodings
-[submodule "modules/json-functions-xs"]
-	path = modules/json-functions-xs
-	url = git://github.com/wakaba/perl-json-functions-xs
+	url = git://github.com/wakaba/suikawiki-engine
