@@ -6,11 +6,7 @@ require Message::DOM::DOMImplementation;
 my $dom = Message::DOM::DOMImplementation->new;
 sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
 
-use Message::CGI::Util qw/percent_encode percent_decode datetime_in_content/;
-
 use SWE::Lang qw/@ContentMediaType/;
-
-## --- Prepares database access variables (commonly used ones)
 
 sub main ($$) {
   my (undef, $app) = @_;
@@ -138,7 +134,7 @@ if ($path[0] eq 'n' and @path == 2) {
                    title => 'History of the page name'};
       if (defined $id) {
         push @link, {rel => 'archives',
-                     href => '../i/' . $id . ';history',
+                     href => $app->page_url ($id, param => 'history'),
                      title => 'History of the page content'};
       }
       set_head_content ($app, \@path, $html_doc, $id, \@link,
@@ -179,13 +175,15 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $nav_el = $html_doc->create_element_ns (HTML_NS, 'div');
       $nav_el->set_attribute (class => 'nav tools');
-      $nav_el->inner_html (q[<a rel=edit>Edit</a> <a href="../new-page">New</a>]);
+      $nav_el->inner_html (q[<a rel=edit>Edit</a> <a>New</a>]);
+      $nav_el->last_child->href ($app->page_create_url);
       if (defined $id) {
-        $nav_el->first_child->set_attribute (href => '../i/' . $id . ';edit');
+        $nav_el->first_child->set_attribute
+            (href => $app->page_url ($id, param => 'edit'));
         $body_el->set_attribute ('data-doc-id' => $id);
       } else {
         $nav_el->first_child->set_attribute
-            (href => '../new-page?names=' . percent_encode ($name));
+            (href => $app->page_create_url ($name));
       }
       $body_el->append_child ($nav_el);
 
@@ -208,8 +206,11 @@ if ($path[0] eq 'n' and @path == 2) {
           my $footer_el = $html_doc->create_element_ns (HTML_NS, 'div');
           $footer_el->set_attribute (class => 'footer swe-updated');
           $footer_el->inner_html ('Updated: <time></time>');
+          my @time = gmtime $modified;
           $footer_el->last_child->text_content
-              (datetime_in_content ($modified));
+              (sprintf '%04d-%02d-%02d %02d:%02d:%02d+00:00',
+               $time[5] + 1900, $time[4] + 1, $time[3],
+               $time[2], $time[1], $time[0]);
           $article_el->append_child ($footer_el);
         }
           
@@ -233,7 +234,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $new_nav_el->inner_html (q[<a href="">Add a description</a> of <em></em>]);
         $new_nav_el->last_child->text_content ($name);
         $new_nav_el->first_child->set_attribute
-            (href => '../new-page?names=' . percent_encode ($name));
+            (href => $app->page_create_url ($name));
         $body_el->append_child ($new_nav_el);
       }
 
@@ -305,8 +306,10 @@ if ($path[0] eq 'n' and @path == 2) {
         my $tr_el = $doc->create_element_ns (HTML_NS, 'tr');
         
         my $date_cell = $doc->create_element_ns (HTML_NS, 'td');
-        my $date = gmtime ($entry->[0] || 0); ## TODO: ...
-        $date_cell->inner_html ('<time>' . $date . '</time>');
+        my @time = gmtime ($entry->[0] || 0);
+        $date_cell->inner_html ('<time>' . (sprintf '%04d-%02d-%02d %02d:%02d:%02d+00:00',
+               $time[5] + 1900, $time[4] + 1, $time[3],
+               $time[2], $time[1], $time[0]) . '</time>');
         $tr_el->append_child ($date_cell);
 
         my $change_cell = $doc->create_element_ns (HTML_NS, 'td');
@@ -315,13 +318,15 @@ if ($path[0] eq 'n' and @path == 2) {
         } elsif ($entry->[1] eq 'a') {
           $change_cell->manakai_append_text ('Associated with ');
           my $a_el = $doc->create_element_ns (HTML_NS, 'a');
-          $a_el->set_attribute (href => '../i/' . $entry->[2] . ';history');
+          $a_el->set_attribute
+              (href => $app->page_url ($entry->[2], param => 'history'));
           $a_el->text_content ($entry->[2]);
           $change_cell->append_child ($a_el);
         } elsif ($entry->[1] eq 'r') {
           $change_cell->manakai_append_text ('Disassociated from ');
           my $a_el = $doc->create_element_ns (HTML_NS, 'a');
-          $a_el->set_attribute (href => '../i/' . $entry->[2] . ';history');
+          $a_el->set_attribute
+              (href => $app->page_url ($entry->[2], param => 'history'));
           $a_el->text_content ($entry->[2]);
           $change_cell->append_child ($a_el);
         } elsif ($entry->[1] eq 't') {
@@ -826,8 +831,10 @@ if ($path[0] eq 'n' and @path == 2) {
         my $tr_el = $doc->create_element_ns (HTML_NS, 'tr');
         
         my $date_cell = $doc->create_element_ns (HTML_NS, 'td');
-        my $date = gmtime ($entry->[0] || 0); ## TODO: ...
-        $date_cell->inner_html ('<time>' . $date . '</time>');
+        my @time = gmtime ($entry->[0] || 0);
+        $date_cell->inner_html ('<time>' . (sprintf '%04d-%02d-%02d %02d:%02d:%02d+00:00',
+               $time[5] + 1900, $time[4] + 1, $time[3],
+               $time[2], $time[1], $time[0]) . '</time>');
         $tr_el->append_child ($date_cell);
 
         my $change_cell = $doc->create_element_ns (HTML_NS, 'td');

@@ -54,6 +54,7 @@ sub parse_path ($) {
 sub name_url ($$;$%) {
   my (undef, $name, $id, %args) = @_;
   my $url = q</n/> . percent_encode_c $name;
+  $url .= ';' . percent_encode_c $args{param} if defined $args{param};
   $url .= '$' . (0+$id) if defined $id;
   $url .= '?format=' . percent_encode_c $args{format} if defined $args{format};
   $url .= '#anchor-' . percent_encode_c $args{anchor} if defined $args{anchor};
@@ -82,6 +83,18 @@ sub cvs_archive_url ($$) {
       $id / 1000,
       $id % 1000;
 } # cvs_archive_url
+
+sub page_create_url ($$) {
+  return '/new-page' unless defined $_[1];
+  return '/new-page?names=' . percent_encode_c ($_[1]);
+} # page_create_url
+
+sub page_url ($$%) {
+  my ($self, $id, %args) = @_;
+  my $url = '/i/' . (0+$id);
+  $url .= ';' . percent_encode_c $args{param} if defined $args{param};
+  return $url;
+} # page_url
 
 sub css_url ($) {
   return '/styles/sw';
