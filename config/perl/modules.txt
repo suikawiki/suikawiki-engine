@@ -1,0 +1,8 @@
+Carp
+Digest::MD5
+Encode
+Exporter::Lite
+Fcntl
+Path::Tiny
+Scalar::Util
+Text::Kakasi
