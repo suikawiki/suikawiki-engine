@@ -1,0 +1,21 @@
+[submodule "modules/charclass"]
+	path = modules/charclass
+	url = git://github.com/wakaba/perl-charclass
+[submodule "modules/web-dom"]
+	path = modules/web-dom
+	url = git://github.com/manakai/perl-web-dom
+[submodule "modules/web-markup"]
+	path = modules/web-markup
+	url = git://github.com/manakai/perl-web-markup
+[submodule "modules/web-url"]
+	path = modules/web-url
+	url = git://github.com/manakai/perl-web-url
+[submodule "modules/web-encodings"]
+	path = modules/web-encodings
+	url = git://github.com/manakai/perl-web-encodings
+[submodule "modules/wanage"]
+	path = modules/wanage
+	url = git://github.com/wakaba/wanage
+[submodule "modules/ooutils"]
+	path = modules/ooutils
+	url = git://github.com/wakaba/perl-ooutils

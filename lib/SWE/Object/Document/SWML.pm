@@ -2,6 +2,7 @@ package SWE::Object::Document::SWML;
 use strict;
 use warnings;
 use base qw(SWE::Object::Document);
+use Web::DOM::Document;
 
 sub to_xml ($;%) {
   my ($self, %args) = @_;
@@ -56,9 +57,7 @@ sub to_html_fragment ($;%) {
   unless ($html_doc) {
     my $xml_doc = $self->to_xml (%args);
     if ($xml_doc) {
-      require Message::DOM::DOMImplementation;
-      my $dom = Message::DOM::DOMImplementation->new;
-      $html_doc = $dom->create_document;
+      $html_doc = new Web::DOM::Document;
       $html_doc->strict_error_checking (0);
       $html_doc->dom_config->set_parameter
           ('http://suika.fam.cx/www/2006/dom-config/strict-document-children' => 0);

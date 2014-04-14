@@ -1,9 +1,8 @@
 package SuikaWiki5::Main;
 use strict;
 use SWE::String;
+use Web::DOM::Document;
 
-require Message::DOM::DOMImplementation;
-my $dom = Message::DOM::DOMImplementation->new;
 sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
 
 use SWE::Lang qw/@ContentMediaType/;
@@ -104,7 +103,7 @@ if ($path[0] eq 'n' and @path == 2) {
       }
 
       unless ($html_doc) {
-        $html_doc = $dom->create_document;
+        $html_doc = new Web::DOM::Document;
         $html_doc->strict_error_checking (0);
         $html_doc->dom_config->set_parameter
             ('http://suika.fam.cx/www/2006/dom-config/strict-document-children' => 0);
@@ -278,7 +277,7 @@ if ($path[0] eq 'n' and @path == 2) {
     $app->http->add_response_header
         ('Content-Type' => 'text/html; charset=utf-8');
 
-    my $doc = $dom->create_document;
+    my $doc = new Web::DOM::Document;
     $doc->manakai_is_html (1);
     $doc->inner_html (q[<!DOCTYPE HTML><html lang=en><title></title><h1></h1>
 <div class=section><h2>History</h2><table>
@@ -640,7 +639,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $hash = $id_prop->{hash} // string_hash $$textref;
 
       ## TODO: <select name=title-type>
-      my $html_doc = $dom->create_document;
+      my $html_doc = new Web::DOM::Document;
       $html_doc->manakai_is_html (1);
       $html_doc->inner_html (q[<!DOCTYPE HTML><title>Edit</title>
 <h1>Edit</h1>
@@ -803,7 +802,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $app->http->add_response_header
           ('Content-Type' => 'text/html; charset=utf-8');
 
-      my $doc = $dom->create_document;
+      my $doc = new Web::DOM::Document;
       $doc->manakai_is_html (1);
       $doc->inner_html (q[<!DOCTYPE HTML><html lang=en><title></title><h1></h1>
 <div class=section><h2>History</h2><table>
@@ -965,7 +964,7 @@ if ($path[0] eq 'n' and @path == 2) {
           ('Content-Type' => 'text/html; charset=utf-8');
 
     ## TODO: select name=title-type
-    my $doc = $dom->create_document;
+    my $doc = new Web::DOM::Document;
     $doc->manakai_is_html (1);
     $doc->inner_html (q[<!DOCTYPE HTML><title>New page</title>
 <h1>New page</h1>
@@ -1100,7 +1099,7 @@ sub get_xml_data ($$$$) {
       require Whatpm::SWML::Parser;
       my $p = Whatpm::SWML::Parser->new;
       
-      $doc = $dom->create_document;
+      $doc = new Web::DOM::Document;
       $p->parse_char_string ($$textref => $doc);
       
       $content_cache_db->set_data ($id => $doc);
@@ -1109,7 +1108,7 @@ sub get_xml_data ($$$$) {
       $db->id_cache_prop->set_data ($id => $cache_prop);
     } else {
       ## Content not found.
-      $doc = $dom->create_document;
+      $doc = new Web::DOM::Document;
     }
   }
 

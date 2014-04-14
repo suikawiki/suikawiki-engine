@@ -3,8 +3,7 @@ use strict;
 
 require SWE::DB::IDProps;
 push our @ISA, 'SWE::DB::IDProps';
-
-require Message::DOM::DOMImplementation;
+use Web::DOM::Document;
 
 sub new ($) {
   my $self = shift->SUPER::new (@_);
@@ -40,8 +39,7 @@ sub set_data ($$$) {
 sub _load_dom ($) {
   my $handle = shift;
 
-  my $dom = Message::DOM::DOMImplementation->new;
-  my @node = ($dom->create_document);
+  my @node = (new Web::DOM::Document);
 
   $node[0]->strict_error_checking (0);
   $node[0]->dom_config->set_parameter
