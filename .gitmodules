@@ -1,30 +1,40 @@
 [submodule "modules/charclass"]
 	path = modules/charclass
 	url = git://github.com/wakaba/perl-charclass
+	track = master
 [submodule "modules/web-dom"]
 	path = modules/web-dom
 	url = git://github.com/manakai/perl-web-dom
+	track = master
 [submodule "modules/web-markup"]
 	path = modules/web-markup
 	url = git://github.com/manakai/perl-web-markup
+	track = master
 [submodule "modules/web-url"]
 	path = modules/web-url
 	url = git://github.com/manakai/perl-web-url
+	track = master
 [submodule "modules/web-encodings"]
 	path = modules/web-encodings
 	url = git://github.com/manakai/perl-web-encodings
+	track = master
 [submodule "modules/wanage"]
 	path = modules/wanage
 	url = git://github.com/wakaba/wanage
+	track = master
 [submodule "modules/ooutils"]
 	path = modules/ooutils
 	url = git://github.com/wakaba/perl-ooutils
+	track = master
 [submodule "modules/swml-parser"]
 	path = modules/swml-parser
 	url = git://github.com/wakaba/perl-swml-parser
+	track = master
 [submodule "modules/json-functions-xs"]
 	path = modules/json-functions-xs
 	url = git://github.com/wakaba/perl-json-functions-xs
+	track = master
 [submodule "modules/karasuma-config"]
 	path = modules/karasuma-config
 	url = git://github.com/wakaba/karasuma-config
+	track = master
