@@ -2,9 +2,7 @@ package SuikaWiki5::Main;
 use strict;
 use SWE::String;
 use Web::DOM::Document;
-
-sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
-
+use SWML::Parser;
 use SWE::Lang qw/@ContentMediaType/;
 
 sub main ($$) {
@@ -142,8 +140,8 @@ if ($path[0] eq 'n' and @path == 2) {
       
       my $body_el = $html_doc->last_child->last_child;
 
-      my $h1_el = $html_doc->create_element_ns (HTML_NS, 'h1');
-      my $a_el = $html_doc->create_element_ns (HTML_NS, 'a');
+      my $h1_el = $html_doc->create_element ('h1');
+      my $a_el = $html_doc->create_element ('a');
       $a_el->set_attribute (href => $app->name_url ($name));
       $a_el->set_attribute (rel => 'bookmark');
       $a_el->text_content ($name);
@@ -151,14 +149,14 @@ if ($path[0] eq 'n' and @path == 2) {
       $body_el->append_child ($h1_el);
       
       if (@$ids) {
-        my $nav_el = $html_doc->create_element_ns (HTML_NS, 'div');
+        my $nav_el = $html_doc->create_element ('div');
         $nav_el->set_attribute (class => 'nav swe-ids');
         $nav_el->manakai_append_text
             (@$ids == 1 ? 'There is another page with same name:'
                  : 'There are other pages with same name:');
-        my $ul_el = $html_doc->create_element_ns (HTML_NS, 'ul');
+        my $ul_el = $html_doc->create_element ('ul');
         for my $id (@$ids) {
-          my $li_el = $html_doc->create_element_ns (HTML_NS, 'li');
+          my $li_el = $html_doc->create_element ('li');
           $li_el->inner_html (q[<a></a>]);
           my $a_el = $li_el->first_child;
           my $id_prop = $db->id_prop->get_data ($id);
@@ -172,7 +170,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $body_el->append_child ($nav_el);
       }
 
-      my $nav_el = $html_doc->create_element_ns (HTML_NS, 'div');
+      my $nav_el = $html_doc->create_element ('div');
       $nav_el->set_attribute (class => 'nav tools');
       $nav_el->inner_html (q[<a rel=edit>Edit</a> <a>New</a>]);
       $nav_el->last_child->href ($app->page_create_url);
@@ -188,10 +186,10 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $modified;
       if ($html_container) {
-        my $article_el = $html_doc->create_element_ns (HTML_NS, 'div');
+        my $article_el = $html_doc->create_element ('div');
         $article_el->set_attribute (class => 'article');
 
-        my $h2_el = $html_doc->create_element_ns (HTML_NS, 'h2');
+        my $h2_el = $html_doc->create_element ('h2');
         $h2_el->text_content (length $title_text ? $title_text : $name);
             ## TODO: {'title-type'};
         $article_el->append_child ($h2_el);
@@ -202,7 +200,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
         $modified = $id_prop->{modified};
         if (defined $modified) {
-          my $footer_el = $html_doc->create_element_ns (HTML_NS, 'div');
+          my $footer_el = $html_doc->create_element ('div');
           $footer_el->set_attribute (class => 'footer swe-updated');
           $footer_el->inner_html ('Updated: <time></time>');
           my @time = gmtime $modified;
@@ -215,7 +213,7 @@ if ($path[0] eq 'n' and @path == 2) {
           
         $body_el->append_child ($article_el);
 
-#        my $ad_el = $html_doc->create_element_ns (HTML_NS, 'aside');
+#        my $ad_el = $html_doc->create_element ('aside');
 #        $ad_el->set_attribute (class => 'swe-ad');
 #        $ad_el->inner_html (q[
 #          <script>
@@ -229,7 +227,7 @@ if ($path[0] eq 'n' and @path == 2) {
 #        ]);
 #        $body_el->append_child ($ad_el);
       } else {
-        my $new_nav_el = $html_doc->create_element_ns (HTML_NS, 'section');
+        my $new_nav_el = $html_doc->create_element ('section');
         $new_nav_el->inner_html (q[<a href="">Add a description</a> of <em></em>]);
         $new_nav_el->last_child->text_content ($name);
         $new_nav_el->first_child->set_attribute
@@ -237,18 +235,18 @@ if ($path[0] eq 'n' and @path == 2) {
         $body_el->append_child ($new_nav_el);
       }
 
-      my $search_el = $html_doc->create_element_ns (HTML_NS, 'div');
+      my $search_el = $html_doc->create_element ('div');
       $search_el->set_attribute (class => 'nav search');
       $search_el->set_attribute (id => 'cse-search-form');
       $body_el->append_child ($search_el);
 
-      my $footer_el = $html_doc->create_element_ns (HTML_NS, 'footer');
+      my $footer_el = $html_doc->create_element ('footer');
       $footer_el->set_attribute (class => 'footer');
       $footer_el->inner_html (q[<p class=copyright><small>&copy; Authors.  See <a rel=license>license terms</a>.  There might also be additional terms applied for this page.</small>]);
       $body_el->append_child ($footer_el);
       
       if ($html_container) {
-        my $ad_el = $html_doc->create_element_ns (HTML_NS, 'aside');
+        my $ad_el = $html_doc->create_element ('aside');
         $ad_el->set_attribute (class => 'swe-ad swe-ad-amazon');
         #$ad_el->inner_html (q{<SCRIPT charset="utf-8" src="http://ws.amazon.co.jp/widgets/q?ServiceVersion=20070822&MarketPlace=JP&ID=V20070822/JP/wakaba1-22/8006/cedb4b02-c1cc-4a6f-86f1-f8fa1c52b252"></SCRIPT>});
         $ad_el->inner_html (q{<script>amazon_ad_tag = "wakaba1-22"; amazon_ad_width = "160"; amazon_ad_height = "600"; amazon_ad_logo = "hide"; amazon_ad_border = "hide"; amazon_color_border = "FFFFFF"; amazon_color_link = "004000"; amazon_color_logo = "004000";</script><script src="http://www.assoc-amazon.jp/s/ads.js"></script>});
@@ -302,28 +300,28 @@ if ($path[0] eq 'n' and @path == 2) {
       my $tbody_el = $table_el->last_child;
 
       for my $entry (@$history) {
-        my $tr_el = $doc->create_element_ns (HTML_NS, 'tr');
+        my $tr_el = $doc->create_element ('tr');
         
-        my $date_cell = $doc->create_element_ns (HTML_NS, 'td');
+        my $date_cell = $doc->create_element ('td');
         my @time = gmtime ($entry->[0] || 0);
         $date_cell->inner_html ('<time>' . (sprintf '%04d-%02d-%02d %02d:%02d:%02d+00:00',
                $time[5] + 1900, $time[4] + 1, $time[3],
                $time[2], $time[1], $time[0]) . '</time>');
         $tr_el->append_child ($date_cell);
 
-        my $change_cell = $doc->create_element_ns (HTML_NS, 'td');
+        my $change_cell = $doc->create_element ('td');
         if ($entry->[1] eq 'c') {
           $change_cell->manakai_append_text ('Created');
         } elsif ($entry->[1] eq 'a') {
           $change_cell->manakai_append_text ('Associated with ');
-          my $a_el = $doc->create_element_ns (HTML_NS, 'a');
+          my $a_el = $doc->create_element ('a');
           $a_el->set_attribute
               (href => $app->page_url ($entry->[2], param => 'history'));
           $a_el->text_content ($entry->[2]);
           $change_cell->append_child ($a_el);
         } elsif ($entry->[1] eq 'r') {
           $change_cell->manakai_append_text ('Disassociated from ');
-          my $a_el = $doc->create_element_ns (HTML_NS, 'a');
+          my $a_el = $doc->create_element ('a');
           $a_el->set_attribute
               (href => $app->page_url ($entry->[2], param => 'history'));
           $a_el->text_content ($entry->[2]);
@@ -339,7 +337,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $tbody_el->append_child ($tr_el);
       }
     } else {
-      my $p_el = $doc->create_element_ns (HTML_NS, 'p');
+      my $p_el = $doc->create_element ('p');
       $p_el->text_content ('No history data.');
       $table_el->parent_node->replace_child ($p_el, $table_el);
     }
@@ -705,7 +703,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $nav_el = $html_doc->get_elements_by_tag_name ('div')->[0];
       for (keys %$names) {
-        my $a_el = $html_doc->create_element_ns (HTML_NS, 'a');
+        my $a_el = $html_doc->create_element ('a');
         $a_el->set_attribute (href => $app->name_url ($_, $id));
         $a_el->text_content ($_);
         $nav_el->append_child ($a_el);
@@ -827,28 +825,28 @@ if ($path[0] eq 'n' and @path == 2) {
       my $tbody_el = $table_el->last_child;
 
       for my $entry (@$history) {
-        my $tr_el = $doc->create_element_ns (HTML_NS, 'tr');
+        my $tr_el = $doc->create_element ('tr');
         
-        my $date_cell = $doc->create_element_ns (HTML_NS, 'td');
+        my $date_cell = $doc->create_element ('td');
         my @time = gmtime ($entry->[0] || 0);
         $date_cell->inner_html ('<time>' . (sprintf '%04d-%02d-%02d %02d:%02d:%02d+00:00',
                $time[5] + 1900, $time[4] + 1, $time[3],
                $time[2], $time[1], $time[0]) . '</time>');
         $tr_el->append_child ($date_cell);
 
-        my $change_cell = $doc->create_element_ns (HTML_NS, 'td');
+        my $change_cell = $doc->create_element ('td');
         if ($entry->[1] eq 'c') {
           $change_cell->manakai_append_text ('Created');
         } elsif ($entry->[1] eq 'a') {
           $change_cell->manakai_append_text ('Associated with ');
-          my $a_el = $doc->create_element_ns (HTML_NS, 'a');
+          my $a_el = $doc->create_element ('a');
           $a_el->set_attribute
               (href => $app->name_url ($entry->[2], undef, param => 'history'));
           $a_el->text_content ($entry->[2]);
           $change_cell->append_child ($a_el);
         } elsif ($entry->[1] eq 'r') {
           $change_cell->manakai_append_text ('Disassociated from ');
-          my $a_el = $doc->create_element_ns (HTML_NS, 'a');
+          my $a_el = $doc->create_element ('a');
           $a_el->set_attribute
               (href => $app->name_url ($entry->[2], undef, param => 'history'));
           $a_el->text_content ($entry->[2]);
@@ -864,7 +862,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $tbody_el->append_child ($tr_el);
       }
     } else {
-      my $p_el = $doc->create_element_ns (HTML_NS, 'p');
+      my $p_el = $doc->create_element ('p');
       $p_el->text_content ('No history data.');
       $table_el->parent_node->replace_child ($p_el, $table_el);
     }
@@ -1058,7 +1056,7 @@ sub set_content_type_options ($$;$) {
   my $has_ct;
   for (@ContentMediaType) {
     next unless defined $_->{label};
-    my $option_el = $doc->create_element_ns (HTML_NS, 'option');
+    my $option_el = $doc->create_element ('option');
     $option_el->set_attribute (value => $_->{type});
     $option_el->text_content ($_->{label});
     if ($_->{type} eq $ct) {
@@ -1068,7 +1066,7 @@ sub set_content_type_options ($$;$) {
     $select_el->append_child ($option_el);
   }
   unless ($has_ct) {
-    my $option_el = $doc->create_element_ns (HTML_NS, 'option');
+    my $option_el = $doc->create_element ('option');
     $option_el->set_attribute (value => $ct);
     $option_el->text_content ($ct);
     $option_el->set_attribute (selected => '');
@@ -1096,8 +1094,7 @@ sub get_xml_data ($$$$) {
   } else {
     my $textref = $db->id_content->get_data ($id);
     if ($textref) {
-      require Whatpm::SWML::Parser;
-      my $p = Whatpm::SWML::Parser->new;
+      my $p = SWML::Parser->new;
       
       $doc = new Web::DOM::Document;
       $p->parse_char_string ($$textref => $doc);
@@ -1129,7 +1126,7 @@ sub set_head_content ($$$;$$$) {
       if defined $id;
   
   for my $item (@$links) {
-    my $link_el = $doc->create_element_ns (HTML_NS, 'link');
+    my $link_el = $doc->create_element ('link');
     for (keys %$item) {
       $link_el->set_attribute ($_ => $item->{$_});
     }
@@ -1137,7 +1134,7 @@ sub set_head_content ($$$;$$$) {
   }
 
   for my $item (@{$metas or []}) {
-    my $meta_el = $doc->create_element_ns (HTML_NS, 'meta');
+    my $meta_el = $doc->create_element ('meta');
     $meta_el->set_attribute (name => $item->{name} // '');
     $meta_el->set_attribute (content => $item->{content} // '');
     $head_el->append_child ($meta_el);
@@ -1147,7 +1144,7 @@ sub set_head_content ($$$;$$$) {
 sub set_foot_content ($$) {
   my ($app, $doc) = @_;
   my $body_el = $doc->last_child->last_child;
-  my $script_el = $doc->create_element_ns (HTML_NS, 'script');
+  my $script_el = $doc->create_element ('script');
   $script_el->set_attribute (src => $app->js_url);
   $body_el->append_child ($script_el);
 } # set_foot_content

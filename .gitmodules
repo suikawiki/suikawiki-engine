@@ -19,3 +19,6 @@
 [submodule "modules/ooutils"]
 	path = modules/ooutils
 	url = git://github.com/wakaba/perl-ooutils
+[submodule "modules/swml-parser"]
+	path = modules/swml-parser
+	url = git://github.com/wakaba/perl-swml-parser
