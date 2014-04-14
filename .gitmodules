@@ -22,3 +22,9 @@
 [submodule "modules/swml-parser"]
 	path = modules/swml-parser
 	url = git://github.com/wakaba/perl-swml-parser
+[submodule "modules/json-functions-xs"]
+	path = modules/json-functions-xs
+	url = git://github.com/wakaba/perl-json-functions-xs
+[submodule "modules/karasuma-config"]
+	path = modules/karasuma-config
+	url = git://github.com/wakaba/karasuma-config
