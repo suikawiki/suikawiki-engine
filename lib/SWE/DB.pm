@@ -9,6 +9,10 @@ sub new_from_root_path ($$) {
   return $self;
 } # new
 
+sub root_path ($) {
+  return $_[0]->{root_path};
+} # root_path
+
 ## DEPRECATED
 sub db_dir_name ($) {
   return $_[0]->{root_path} . '/';
@@ -171,6 +175,14 @@ sub id_cache_prop ($) {
     $id_cache_prop_db;
   };
 } # id_cache_prop
+
+sub id_data_history ($) {
+  my $self = $_[0];
+  return $self->{id_data_history} ||= do {
+    require SWE::DB::IDDataHistory;
+    SWE::DB::IDDataHistory->new_from_root_path ($self->root_path);
+  };
+} # id_data_history
 
 sub vc ($) {
   my $self = shift;

@@ -38,3 +38,6 @@
 	path = modules/karasuma-config
 	url = git://github.com/wakaba/karasuma-config
 	track = master
+[submodule "modules/vcutils"]
+	path = modules/vcutils
+	url = git://github.com/wakaba/perl-vcutils

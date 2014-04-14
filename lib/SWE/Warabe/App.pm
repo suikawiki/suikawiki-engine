@@ -2,7 +2,8 @@ package SWE::Warabe::App;
 use strict;
 use warnings;
 use Warabe::App;
-push our @ISA, qw(Warabe::App);
+use Warabe::App::Role::JSON;
+push our @ISA, qw(Warabe::App Warabe::App::Role::JSON);
 use Wanage::URL qw(percent_encode_c percent_decode_c);
 
 sub config ($;$) {
@@ -83,6 +84,24 @@ sub cvs_archive_url ($$) {
       $id / 1000,
       $id % 1000;
 } # cvs_archive_url
+
+sub id_rev_url ($$$;$) {
+  my ($self, $id, $rev, $sw3_name) = @_;
+  if ($rev =~ /^6:(.+)$/) {
+    return $1; # XXX
+  } elsif ($rev =~ /^4:(.+)$/) {
+    return sprintf q<http://suika.suikawiki.org/gate/cvs/melon/pub/suikawiki/sw4data/ids/%d/%d.txt?revision=%s>,
+        $id / 1000,
+        $id % 1000,
+        $1;
+  } elsif ($rev =~ /^3:(.+)$/) {
+    return sprintf q<http://suika.suikawiki.org/gate/cvs/melon/pub/suikawiki/wikidata/page/%s?revision=%s>,
+        $sw3_name,
+        $1;
+  } else {
+    return $rev; ## error
+  }
+} # rev_history_url
 
 sub page_create_url ($$) {
   return '/new-page' unless defined $_[1];

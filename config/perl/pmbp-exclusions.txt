@@ -8,3 +8,4 @@
 - "../../modules/ooutils" tests test build classdiamondgenerator classregistry operationresponse
 - "../../modules/swml-parser" tests build
 - "../../modules/charclass" tests build
+- "../../modules/vcutils" tests anyevent viewvc

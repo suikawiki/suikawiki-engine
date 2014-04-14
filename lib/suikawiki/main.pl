@@ -132,7 +132,10 @@ if ($path[0] eq 'n' and @path == 2) {
       if (defined $id) {
         push @link, {rel => 'archives',
                      href => $app->page_url ($id, param => 'history'),
-                     title => 'History of the page content'};
+                     title => 'History of the page ID'};
+        push @link, {rel => 'archives',
+                     href => $app->page_url ($id, param => 'datahistory'),
+                     title => 'History of the page data'};
       }
       set_head_content ($app, \@path, $html_doc, $id, \@link,
                         defined $id
@@ -870,6 +873,82 @@ if ($path[0] eq 'n' and @path == 2) {
       set_foot_content ($app, $doc);
       $app->http->send_response_body_as_text ($doc->inner_html);
       $app->http->close_response_body;
+      return $app->throw;
+
+    } elsif (($param eq 'datahistory' or $param eq 'datahistory.json') and
+             not defined $app->path_dollar) {
+      # /i/{id};datahistory
+      # /i/{id};datahistory.json
+      my $id = $path[1] + 0;
+      $db->id_data_history->get_data_as_cv ($id)->cb (sub {
+        my $result = $_[0]->recv;
+        if ($result->{data}) {
+          $app->http->set_response_last_modified ($result->{last_modified});
+          if ($param eq 'datahistory') {
+            my $doc = new Web::DOM::Document;
+            $doc->manakai_is_html (1);
+            $doc->inner_html (q[<!DOCTYPE HTML><html lang=en><title></title><h1></h1>
+<div class=section><h2>History</h2><table>
+
+<thead>
+<tr><th scope=col>Revision<th scope=col>Time<th scope=col>Change
+
+<tbody></table></div>]);
+            my $links = [];
+            push @$links,
+                {rel => 'alternate',
+                 type => 'application/json',
+                 href => $app->page_url ($id, param => 'datahistory.json')};
+            set_head_content ($app, \@path, $doc, undef, $links, []);
+            my $tbody = $doc->get_elements_by_tag_name ('table')->[0]->tbodies->[0];
+            for my $rev (@{$result->{data}->{revs}}) {
+              my $tr = $doc->create_element ('tr');
+              {
+                my $cell = $doc->create_element ('th');
+                my $a = $doc->create_element ('a');
+                $a->href ($app->id_rev_url ($id, $rev->{rev}, $result->{data}->{sw3_name}));
+                $a->text_content ($rev->{rev});
+                $cell->append_child ($a);
+                $tr->append_child ($cell);
+              }
+              {
+                my $cell = $doc->create_element ('td');
+                my $time = $doc->create_element ('time');
+                my @time = gmtime $rev->{time};
+                $time->text_content
+                    (sprintf '%04d-%02d-%02d %02d:%02d:%02d+00:00',
+                     $time[5] + 1900, $time[4] + 1, $time[3],
+                     $time[2], $time[1], $time[0]);
+                $cell->append_child ($time);
+                $tr->append_child ($cell);
+              }
+              {
+                my $cell = $doc->create_element ('td');
+                if ($rev->{event} eq 'misc') {
+                  $cell->text_content ($rev->{comment});
+                } else {
+                  $cell->text_content ({
+                    created => 'Created',
+                    updated => 'Updated',
+                    'from-sw3' => 'Converted from SuikaWiki3 database',
+                    'id-name' => 'ID/Name association updated',
+                  }->{$rev->{event}} // $rev->{event});
+                }
+                $tr->append_child ($cell);
+              }
+              $tbody->append_child ($tr);
+            } # $rev
+            set_foot_content ($app, $doc);
+            $app->http->add_response_header ('Content-Type' => 'text/html; charset=utf-8');
+            $app->http->send_response_body_as_text ($doc->inner_html);
+            $app->http->close_response_body;
+          } else {
+            $app->send_json ($result->{data});
+          }
+        } else {
+          $app->send_error (404);
+        }
+      });
       return $app->throw;
     }
   } elsif ($path[0] eq 'new-page' and @path == 1) {
