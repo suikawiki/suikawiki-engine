@@ -22,6 +22,7 @@ set get_daemontools_log_file_name => sub {
 
 role L1 => 'iyokan', {
   server_env => 'L1',
+  git_branch => 'sw6',
 };
 
 task deploy => sub {
@@ -29,6 +30,11 @@ task deploy => sub {
   call 'update', $host, @args;
   call 'setup', $host, @args;
   call 'restart', $host, @args;
+};
+
+task tail => sub {
+  my ($host, @args) = @_;
+  call 'web:log:tail', $host, @args;
 };
 
 task deploy_full => sub {
