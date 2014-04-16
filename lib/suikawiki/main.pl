@@ -398,6 +398,7 @@ if ($path[0] eq 'n' and @path == 2) {
       }
 
       $app->requires_request_method ({POST => 1});
+      $app->requires_editable;
       my $user = '(anon)'; #$cgi->remote_user // '(anon)';
       my $added_text = '<' . ($app->text_param ('url') // '') . '>';
       {
@@ -557,6 +558,7 @@ if ($path[0] eq 'n' and @path == 2) {
     my $param = $app->path_param;
     unless (defined $param) {
       $app->requires_request_method ({POST => 1});
+      $app->requires_editable;
       my $id = $path[1] + 0;
       
       ## This must be done before the ID lock.
@@ -720,6 +722,7 @@ if ($path[0] eq 'n' and @path == 2) {
       }
     } elsif ($param eq 'names') {
       $app->requires_request_method ({POST => 1});
+      $app->requires_editable;
       my $id = $path[1] + 0;
 
       my $vc = $db->vc;
@@ -953,6 +956,7 @@ if ($path[0] eq 'n' and @path == 2) {
     }
   } elsif ($path[0] eq 'new-page' and @path == 1) {
     if ($app->http->request_method eq 'POST') {
+      $app->requires_editable;
       my $new_names = {};
       for (split /\x0D\x0A?|\x0A/, $app->text_param ('names')) {
         $new_names->{normalize_name ($_)} = 1;

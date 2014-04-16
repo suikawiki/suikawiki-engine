@@ -2,6 +2,7 @@ AnyEvent
 AnyEvent::Util
 Carp
 Digest::MD5
+Digest::SHA
 Encode
 Exporter::Lite
 Fcntl

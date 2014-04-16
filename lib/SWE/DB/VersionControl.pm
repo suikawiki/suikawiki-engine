@@ -73,7 +73,7 @@ sub commit_changes ($$) {
   if (@file) {
     my $dir_path = $self->root_path;
     (system "cd \Q$dir_path\E && " . join ' ', map { quotemeta $_ } 'git', 'add', map { path ($_)->relative ($dir_path) } @file) == 0 or die $?;
-    (system "cd \Q$dir_path\E && git commit -m \Q$msg\E") == 0 or die $?;
+    system "cd \Q$dir_path\E && git commit -m \Q$msg\E";
   }
 } # commit_changes
 
