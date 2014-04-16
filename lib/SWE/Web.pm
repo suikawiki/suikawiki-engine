@@ -30,6 +30,11 @@ sub process ($$) {
   $app->parse_path;
   my $path = $app->path_segments;
 
+  $app->requires_valid_content_length;
+  $app->requires_mime_type;
+  $app->requires_request_method;
+  $app->requires_same_origin unless $app->http->request_method_is_safe;
+
   if (@$path == 0) {
     # /
     return $app->throw_redirect ($app->home_page_url, status => 302);
@@ -65,8 +70,6 @@ sub process ($$) {
     }
   }
 
-  # XXX auth
-  # XXX CSRF
   return SuikaWiki5::Main->main ($app);
 } # process
 

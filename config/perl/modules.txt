@@ -2,9 +2,10 @@ AnyEvent
 AnyEvent::Util
 Carp
 Digest::MD5
+Digest::SHA
 Encode
 Exporter::Lite
 Fcntl
 Path::Tiny
 Scalar::Util
-Text::Kakasi
+Text::MeCab

@@ -2,23 +2,42 @@ package SWE::DB::VersionControl;
 use strict;
 use Path::Tiny;
 
-sub new ($%) {
-  my ($class, %args) = @_;
-  my $self = bless {
-    db_dir_name => $args{db_dir_name},
-    added_directories => {},
-    added_files => {},
-    modified_files => {},
-  }, $class;
-  unless (-d $args{db_dir_name}) {
-    path ($args{db_dir_name})->mkpath;
-    unless (-d "$args{db_dir_name}/.git") {
-      system "cd \Q$args{db_dir_name}\E && git init";
-      # XXX if error,
-    }
+sub new_from_root_path ($$) {
+  my ($class, $root_path) = @_;
+  return bless {root_path => $root_path,
+                added_directories => {},
+                added_files => {},
+                modified_files => {}}, $class;
+} # new_from_root_path
+
+sub root_path ($) {
+  return $_[0]->{root_path};
+} # root_path
+
+sub _init {
+  my $self = $_[0];
+  my $dir_path = $self->root_path;
+  $dir_path->mkpath unless $dir_path->exists;
+  unless ($dir_path->child ('.git')->exists) {
+    (system "cd \Q$dir_path\E && git init") == 0 or die $?;
   }
-  return $self;
-} # new
+
+  my $ignore_path = $dir_path->child ('.gitignore');
+  my @ignore;
+  push @ignore, split /\x0D?\x0A/, $ignore_path->slurp if $ignore_path->is_file;
+  push @ignore, qw(
+    *.lock
+    *.htmlcache
+    *.domcache
+    *.cacheprops
+    *.tfidf
+    *.x
+  );
+  my %found;
+  @ignore = grep { length $_ and not $found{$_}++ } @ignore;
+  $ignore_path->spew (join "\x0A", @ignore);
+  $self->add_file ($ignore_path);
+} # _init
 
 sub add_directory ($$) {
   my $self = shift;
@@ -44,6 +63,7 @@ sub write_file ($$) {
 sub commit_changes ($$) {
   my $self = shift;
   my $msg = shift;
+  $self->_init;
 
   #for (sort {$a cmp $b} keys %{$self->{added_directories}}) {
   #  add directory $_;
@@ -51,13 +71,19 @@ sub commit_changes ($$) {
 
   my @file = (keys %{$self->{added_files}}, keys %{$self->{modified_files}});
   if (@file) {
-    my $dir_path = path ($self->{db_dir_name});
-    system "cd \Q$dir_path\E && " . join ' ', map { quotemeta $_ } 'git', 'add', map { path ($_)->relative ($dir_path) } @file;
-    # XXX if error,
-
+    my $dir_path = $self->root_path;
+    (system "cd \Q$dir_path\E && " . join ' ', map { quotemeta $_ } 'git', 'add', map { path ($_)->relative ($dir_path) } @file) == 0 or die $?;
     system "cd \Q$dir_path\E && git commit -m \Q$msg\E";
-    # XXX if error,
   }
 } # commit_changes
 
 1;
+
+=head1 LICENSE
+
+Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

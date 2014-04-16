@@ -57,9 +57,9 @@ sub _log_from_git ($$) {
     my $entry = {};
     $entry->{rev} = '6:'.$commit->{commit};
     $entry->{time} = $commit->{author}->{time};
-    if ($commit->{body} =~ /^updated by /) {
+    if ($commit->{body} =~ /updated by /) {
       $entry->{event} = 'updated';
-    } elsif ($commit->{body} =~ /^created by /) {
+    } elsif ($commit->{body} =~ /created by /) {
       $entry->{event} = 'created';
     } elsif ($commit->{body} =~ /^id-name association changed by /) {
       $entry->{event} = 'id-name';
@@ -84,9 +84,9 @@ sub _log_from_rcs_path ($$$) {
     $entry->{rev} = $prefix.':'.$rev->number;
     $entry->{time} = $rev->date_as_epoch;
     my $log = $rev->log;
-    if ($log =~ /^updated by /) {
+    if ($log =~ /updated by /) {
       $entry->{event} = 'updated';
-    } elsif ($log =~ /^created by /) {
+    } elsif ($log =~ /created by /) {
       $entry->{event} = 'created';
     } elsif ($log =~ /^id-name association changed by /) {
       $entry->{event} = 'id-name';

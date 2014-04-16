@@ -1,6 +1,7 @@
 package SWE::Warabe::App;
 use strict;
 use warnings;
+use Digest::SHA;
 use Warabe::App;
 use Warabe::App::Role::JSON;
 push our @ISA, qw(Warabe::App Warabe::App::Role::JSON);
@@ -51,6 +52,30 @@ sub parse_path ($) {
   shift @path while @path and $path[0] eq '';
   $self->{path_segments} = \@path;
 } # parse_path
+
+sub requires_editable ($) {
+  my $app = $_[0];
+  my $allowed = $app->config->get_file_json ('edit_basic_auth');
+  my $http = $app->http;
+  my $auth = $http->request_auth;
+  if ($auth->{auth_scheme} and $auth->{auth_scheme} eq 'basic') {
+    if (defined $allowed->{$auth->{userid}} and
+        defined $auth->{password}) {
+      my $pwd = Digest::SHA::sha512_hex ($auth->{password});
+      if ($pwd eq $allowed->{$auth->{userid}}) {
+        return;
+      }
+    }
+  }
+
+  $http->set_status (401);
+  $http->set_response_auth ('basic', realm => 'Edit');
+  $http->set_response_header
+      ('Content-Type' => 'text/plain; charset=us-ascii');
+  $http->send_response_body_as_ref (\'401 Authorization required');
+  $http->close_response_body;
+  $app->throw;
+} # requires_editable
 
 sub name_url ($$;$%) {
   my (undef, $name, $id, %args) = @_;
@@ -124,3 +149,12 @@ sub js_url ($) {
 } # js_url
 
 1;
+
+=head1 LICENSE
+
+Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

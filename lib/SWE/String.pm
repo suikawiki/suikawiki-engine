@@ -4,7 +4,7 @@ use warnings;
 use Exporter::Lite;
 use Encode;
 use Digest::MD5;
-use Char::Normalize::FullwidthHalfwidth;
+use Char::Normalize::FullwidthHalfwidth qw(get_fwhw_normalized);
 
 our @EXPORT;
 
@@ -32,25 +32,22 @@ sub string_hash ($) {
 push @EXPORT, qw(for_unique_words);
 sub for_unique_words (&$) {
   #my ($code, $string) = @_;
-  
-  ## TODO: use mecab
 
-  require Text::Kakasi;
-  my $k = Text::Kakasi->new;
-  
-  ## TODO: support stop words
-  
+  require Text::MeCab;
+  my $mecab = Text::MeCab->new;
+
   my $all_terms = 0;
   my $terms = {};
-  for my $term (split /\s+/, $k->set (qw/-iutf8 -outf8 -w/)->get ($_[1])) {
+  for (my $node = $mecab->parse ($_[1]); $node; $node = $node->next) {
+    ## XXX support stop words
+    ## XXX provide a way to save original representation
 
-    ## TODO: provide a way to save original representation
-
-    ## TODO: more normalization
-    $term = lc $term;
+    my $term = $node->surface;
+    next unless defined $term;
+    $term = lc get_fwhw_normalized decode 'utf-8', $term;
 
     $terms->{$term}++;
-  }
+  } # $term
   
   for my $term (keys %$terms) {
     $_[0]->($term, $terms->{$term});
