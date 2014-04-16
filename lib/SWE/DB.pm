@@ -187,7 +187,16 @@ sub id_data_history ($) {
 sub vc ($) {
   my $self = shift;
   require SWE::DB::VersionControl;
-  return SWE::DB::VersionControl->new (db_dir_name => $self->db_dir_name);
+  return SWE::DB::VersionControl->new_from_root_path ($self->root_path);
 } # vc
 
 1;
+
+=head1 LICENSE
+
+Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
