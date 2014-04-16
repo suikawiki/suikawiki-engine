@@ -70,6 +70,18 @@ sub process ($$) {
         $app->http->close_response_body;
         return $app->throw;
       }
+    } elsif ($path->[0] eq 'images' and $path->[1] =~ /\A[a-z-]+\.(png)\z/ and
+             not defined $app->path_param and not defined $app->path_dollar) {
+      my $ext = $1;
+      my $file_path = $static_root_path->child ('images', $path->[1]);
+      if ($file_path->is_file) {
+        $app->http->add_response_header
+            ('Content-Type' => {png => 'image/png'}->{$ext});
+        $app->http->set_response_last_modified ($file_path->stat->mtime);
+        $app->http->send_response_body_as_ref (\($file_path->slurp));
+        $app->http->close_response_body;
+        return $app->throw;
+      }
     }
   }
 

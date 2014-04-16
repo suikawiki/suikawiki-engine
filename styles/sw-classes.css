@@ -14,11 +14,11 @@ pre.aafig {
 }
 
 .hw {
-  -moz-binding: url(/www/style/text/width.xbl#halfwidth);
+  -moz-binding: url(//suika.suikawiki.org/www/style/text/width.xbl#halfwidth);
 }
 
 .fw {
-  -moz-binding: url(/www/style/text/width.xbl#fullwidth);
+  -moz-binding: url(//suika.suikawiki.org/www/style/text/width.xbl#fullwidth);
 }
 
 /* Code fragments */
@@ -143,9 +143,9 @@ pre.continue.deprecated.example:before {
 /*
 
 Partially taken from
-<http://suika.fam.cx/~wakaba/wiki/sw/n/Wiki++Style++SuikaWiki++HTML++Semantic>.
+<http://suika.suikawiki.org/~wakaba/wiki/sw/n/Wiki++Style++SuikaWiki++HTML++Semantic>.
 
-Copyright 2002-2008 Authors.
+Copyright 2002-2014 Authors.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.1 or
