@@ -5,8 +5,5 @@
 
   "wiki_url_cvs": "http://suika.suikawiki.org/gate/cvs/melon/pub/test/sw5/",
 
-  "auth_edit_realm": "SuikaWiki test",
-  "auth_edit_group": "suikawiki",
-  "auth_edit_htpasswd_path": "/home/wakaba/public_html/pbin/accounts/data/htpasswd",
-  "auth_edit_htgroup_path": "/home/wakaba/public_html/pbin/accounts/data/htgroup"
+  "edit_basic_auth": "editors.json"
 }
