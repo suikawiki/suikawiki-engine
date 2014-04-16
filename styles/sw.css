@@ -64,7 +64,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  background-image: url(//suika.suikawiki.org/~wakaba/-temp/2004/sw) /* 107x59 */;
+  background-image: url(../images/sw.png) /* 107x59 */;
   background-position: middle left;
   background-repeat: no-repeat;
   padding-left: 120px;
