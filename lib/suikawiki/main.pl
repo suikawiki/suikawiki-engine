@@ -556,18 +556,18 @@ if ($path[0] eq 'n' and @path == 2) {
   } elsif ($path[0] eq 'i' and @path == 2 and not defined $app->path_dollar) {
     my $param = $app->path_param;
     unless (defined $param) {
-      $app->requires_request_method ({POST => 1});
-      $app->requires_editable;
-      my $id = $path[1] + 0;
-      
-      ## This must be done before the ID lock.
-      $db->name_inverted_index->lock;
+      if ($app->http->request_method eq 'POST') {
+        $app->requires_editable;
+        my $id = $path[1] + 0;
+        
+        ## This must be done before the ID lock.
+        $db->name_inverted_index->lock;
 
-      my $id_lock = $db->id_lock->get_lock ($id);
-      $id_lock->lock;
-      
-      my $id_prop = $db->id_prop->get_data ($id);
-      if ($id_prop) {
+        my $id_lock = $db->id_lock->get_lock ($id);
+        $id_lock->lock;
+        
+        my $id_prop = $db->id_prop->get_data ($id)
+            or $app->throw_error (404);
         my $ct = get_content_type_parameter ($app) or return; # thrown
 
         my $prev_hash = $app->bare_param ('hash') // '';
@@ -622,9 +622,16 @@ if ($path[0] eq 'n' and @path == 2) {
         }
 
         return $app->throw;
-      } else {
-        return $app->throw_error (404);
+      } else { # GET
+        my $id = $path[1] + 0;
+        my $id_prop = $db->id_prop->get_data ($id)
+            or $app->throw_error (404);
+        my $url = $app->name_url ([keys %{$id_prop->{name} or {}}]->[0], $id);
+        $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
+        $app->send_redirect ($url, status => 302);
+        return $app->throw;
       }
+
     } elsif ($param eq 'edit') {
       my $id = $path[1] + 0;
       
@@ -896,6 +903,8 @@ if ($path[0] eq 'n' and @path == 2) {
 <tr><th scope=col>Revision<th scope=col>Time<th scope=col>Change
 
 <tbody></table></div>]);
+            my $h1_el = $doc->get_elements_by_tag_name ('h1')->[0];
+            $h1_el->text_content ('#' . $id);
             my $links = [];
             push @$links,
                 {rel => 'alternate',
@@ -1201,11 +1210,6 @@ sub set_head_content ($$$;$$$) {
   push @{$links ||= []},
       {rel => 'stylesheet', href => $app->css_url},
       {rel => 'license', href => $app->license_page_url};
-  
-  push @$links, {rel => 'archives',
-                 href => $app->cvs_archive_url ($id),
-                 title => 'CVS log for the page content'}
-      if defined $id;
   
   for my $item (@$links) {
     my $link_el = $doc->create_element ('link');

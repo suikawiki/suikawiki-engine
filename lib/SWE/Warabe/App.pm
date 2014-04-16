@@ -102,14 +102,6 @@ sub help_page_url ($) {
   return $self->name_url ($self->config->get_text ('wiki_page_help'));
 } # help_page_url
 
-sub cvs_archive_url ($$) {
-  my ($self, $id) = @_;
-  return sprintf '%sids/%d/%d.txt',
-      $self->config->get_text ('wiki_url_cvs'),
-      $id / 1000,
-      $id % 1000;
-} # cvs_archive_url
-
 sub id_rev_url ($$$;$) {
   my ($self, $id, $rev, $sw3_name) = @_;
   if ($rev =~ /^6:(.+)$/) {

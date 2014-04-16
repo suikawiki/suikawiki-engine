@@ -45,8 +45,11 @@ sub process ($$) {
       return $app->throw_redirect ($app->home_page_url, status => 302);
     }
   } elsif (@$path == 2) {
-    if ($path->[0] eq 'styles' and $path->[1] =~ /\A[a-z-]+\z/ and
-        not defined $app->path_param and not defined $app->path_dollar) {
+    if ($path->[0] eq 'i' and $path->[1] eq '') {
+      # /i/
+      return $app->throw_redirect ($app->home_page_url, status => 302);
+    } elsif ($path->[0] eq 'styles' and $path->[1] =~ /\A[a-z-]+\z/ and
+             not defined $app->path_param and not defined $app->path_dollar) {
       my $file_path = $static_root_path->child ('styles', $path->[1] . '.css');
       if ($file_path->is_file) {
         $app->http->add_response_header
