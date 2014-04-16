@@ -27,23 +27,16 @@ role L1 => 'iyokan', {
 
 task deploy => sub {
   my ($host, @args) = @_;
+  remote { sudo '' } $host;
   call 'update', $host, @args;
   call 'setup', $host, @args;
+  call 'install', $host, @args;
   call 'restart', $host, @args;
 };
 
 task tail => sub {
   my ($host, @args) = @_;
   call 'web:log:tail', $host, @args;
-};
-
-task deploy_full => sub {
-  my ($host, @args) = @_;
-  remote { sudo '' } $host;
-  call 'update', $host, @args;
-  call 'setup', $host, @args;
-  call 'install', $host, @args;
-  call 'restart', $host, @args;
 };
 
 task update => sub {
