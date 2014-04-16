@@ -29,9 +29,6 @@ if ($path[0] eq 'n' and @path == 2) {
     }
 
     my $format = $app->bare_param ('format') // 'html';
-
-    ## TODO: Is it semantically valid that there is path?format=html
-    ## (200) but no path?format=xml (404)?
     
     require SWE::Object::Document;
     my $docobj = SWE::Object::Document->new (id => $id, db => $db);
@@ -236,7 +233,8 @@ if ($path[0] eq 'n' and @path == 2) {
         $new_nav_el->first_child->set_attribute
             (href => $app->page_create_url ($name));
         $body_el->append_child ($new_nav_el);
-      }
+        $app->http->set_status (404);
+      } # $html_container
 
       my $search_el = $html_doc->create_element ('div');
       $search_el->set_attribute (class => 'nav search');
@@ -343,6 +341,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $p_el = $doc->create_element ('p');
       $p_el->text_content ('No history data.');
       $table_el->parent_node->replace_child ($p_el, $table_el);
+      $app->http->set_status (404);
     }
 
     set_foot_content ($app, $doc);
@@ -575,7 +574,7 @@ if ($path[0] eq 'n' and @path == 2) {
         my $current_hash = $id_prop->{hash} //
             string_hash ${$db->id_content->get_data ($id) // \''};
         unless ($prev_hash eq $current_hash) {
-          ## TODO: conflict
+          ## TODO: conflict message
           return $app->throw_error (409);
         }
 
