@@ -28,7 +28,7 @@
 	track = master
 [submodule "modules/swml-parser"]
 	path = modules/swml-parser
-	url = git://github.com/wakaba/perl-swml-parser
+	url = git://github.com/suikawiki/perl-swml-parser
 	track = master
 [submodule "modules/json-functions-xs"]
 	path = modules/json-functions-xs
