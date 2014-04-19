@@ -1,5 +1,5 @@
 (function () {
-  var samiURL = '/scripts/sami-core.js';
+  var samiURL = '/scripts/sami-core';
   var swSamiURL = '/scripts/sw-sami';
   
   var script = document.createElement ('script');
@@ -193,7 +193,7 @@ function enableHTML5Support () {
   var timeScript = document.createElement ('script');
   timeScript.defer = true;
   timeScript.charset = 'utf-8';
-  timeScript.src = '/scripts/time.js';
+  timeScript.src = '/scripts/time';
   document.documentElement.lastChild.appendChild (timeScript);
 } // enableHTML5Support
 
