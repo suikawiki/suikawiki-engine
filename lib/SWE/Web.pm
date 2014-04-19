@@ -39,10 +39,28 @@ sub process ($$) {
     # /
     return $app->throw_redirect ($app->home_page_url, status => 302);
   } elsif (@$path == 1) {
-    if (@$path == 1 and ($path->[0] eq 'n' or $path->[0] eq 'i')) {
+    if ($path->[0] eq 'n' or $path->[0] eq 'i') {
       # /n
       # /i
       return $app->throw_redirect ($app->home_page_url, status => 302);
+    } elsif ($path->[0] eq 'favicon.ico') {
+      # /favicon.ico
+      my $file_path = $static_root_path->child ('favicon.ico');
+      $app->http->add_response_header
+          ('Content-Type' => 'image/vnd.microsoft.icon');
+      $app->http->set_response_last_modified ($file_path->stat->mtime);
+      $app->http->send_response_body_as_ref (\($file_path->slurp));
+      $app->http->close_response_body;
+      return $app->throw;
+    } elsif ($path->[0] eq 'robots.txt') {
+      # /robots.txt
+      my $file_path = $static_root_path->child ('robots.txt');
+      $app->http->add_response_header
+          ('Content-Type' => 'text/plain; charset=utf-8');
+      $app->http->set_response_last_modified ($file_path->stat->mtime);
+      $app->http->send_response_body_as_ref (\($file_path->slurp));
+      $app->http->close_response_body;
+      return $app->throw;
     }
   } elsif (@$path == 2) {
     if ($path->[0] eq 'i' and $path->[1] eq '') {
