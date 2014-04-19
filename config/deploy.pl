@@ -5,7 +5,7 @@ use Cinnamon::Task::Git;
 use Cinnamon::Task::Daemontools;
 
 set application => 'suikawiki';
-set git_repository => 'http://suika.suikawiki.org/gate/git/bare/suikawiki-driver.git';
+set git_repository => 'git://github.com/suikawiki/suikawiki-driver.git';
 set deploy_dir => '/home/wakaba/server/suikawiki';
 set daemontools_service_dir => '/service';
 set get_daemontools_service_name => sub {
