@@ -8,5 +8,6 @@
   "edit_basic_auth": "editors.json",
 
   "web_port": 7410,
+  "web_has_reverse_proxy": 1,
   "env_WEBUA_DEBUG": 0
 }
