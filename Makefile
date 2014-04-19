@@ -6,7 +6,7 @@ GIT = git
 
 updatenightly: local/bin/pmbp.pl
 	$(CURL) https://gist.githubusercontent.com/motemen/667573/raw/git-submodule-track | sh
-	$(GIT) add modules bin/modules t_deps/modules
+	$(GIT) add modules
 	perl local/bin/pmbp.pl --update
 	$(GIT) add config
 
@@ -48,6 +48,14 @@ install-daemontools-config:
 	mkdir -p /var/log/app
 	chown wakaba.wakaba /var/log/app
 	$(MAKE) --makefile=Makefile.service install $(SERVER_ARGS) SERVER_TYPE=web
+
+## ------ Tests ------
+
+test: test-deps test-main
+
+test-deps: deps
+
+test-main:
 
 ## ------ Deployment ------
 
