@@ -20,7 +20,7 @@ set get_daemontools_log_file_name => sub {
   };
 };
 
-role L1 => 'iyokan', {
+role L1 => 'amanatsu', {
   server_env => 'L1',
   git_branch => 'sw6',
 };
