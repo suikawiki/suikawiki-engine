@@ -148,7 +148,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $h1_el->append_child ($a_el);
       $body_el->append_child ($h1_el);
       
-      if (@$ids) {
+      if (@$ids and not $name eq '(no title)') {
         my $nav_el = $html_doc->create_element ('div');
         $nav_el->set_attribute (class => 'nav swe-ids');
         $nav_el->manakai_append_text
