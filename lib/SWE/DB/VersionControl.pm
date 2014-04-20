@@ -22,6 +22,12 @@ sub _init {
     (system "cd \Q$dir_path\E && git init") == 0 or die $?;
   }
 
+  unless ($dir_path->child ('.gitconfig')->exists) {
+    (system "git config --file $dir_path/.gitconfig user.name wiki") == 0 or die $?;
+    (system "git config --file $dir_path/.gitconfig user.email wiki\@suikawiki.org") == 0 or die $?;
+    $self->add_file ($dir_path->child (".gitconfig"));
+  }
+
   my $ignore_path = $dir_path->child ('.gitignore');
   my @ignore;
   push @ignore, split /\x0D?\x0A/, $ignore_path->slurp if $ignore_path->is_file;
@@ -72,6 +78,7 @@ sub commit_changes ($$) {
   my @file = (keys %{$self->{added_files}}, keys %{$self->{modified_files}});
   if (@file) {
     my $dir_path = $self->root_path;
+    local $ENV{HOME} = ''.$dir_path->absolute;
     (system "cd \Q$dir_path\E && " . join ' ', map { quotemeta $_ } 'git', 'add', map { path ($_)->relative ($dir_path) } @file) == 0 or die $?;
     system "cd \Q$dir_path\E && git commit -m \Q$msg\E";
   }
