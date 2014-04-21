@@ -38,6 +38,7 @@ sub _init {
     *.cacheprops
     *.tfidf
     *.x
+    /names/*/*/*.hi
   );
   my %found;
   @ignore = grep { length $_ and not $found{$_}++ } @ignore;
