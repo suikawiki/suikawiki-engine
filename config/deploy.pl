@@ -6,7 +6,7 @@ use Cinnamon::Task::Cron;
 use Cinnamon::Task::Daemontools;
 
 set application => 'suikawiki';
-set git_repository => 'git://github.com/suikawiki/suikawiki-driver.git';
+set git_repository => 'git://github.com/suikawiki/suikawiki-engine.git';
 set deploy_dir => '/home/wakaba/server/suikawiki';
 set daemontools_service_dir => '/service';
 set get_daemontools_service_name => sub {
@@ -23,7 +23,7 @@ set get_daemontools_log_file_name => sub {
 
 role L1 => 'amanatsu', {
   server_env => 'L1',
-  git_branch => 'sw6',
+  git_branch => 'master',
 };
 
 task deploy => sub {

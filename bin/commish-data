@@ -1,10 +1,11 @@
 #!/bin/sh
 basedir=$(cd $(dirname $0)/.. && pwd)
+datadir=$basedir/../sw-data
 
-export HOME=$basedir/data
+export HOME=$datadir
 export GIT_SSH=$basedir/bin/sshwrapper
 export SSHWRAPPER_KEY_NAME=$basedir/local/keys/L1/id_dsa_datarepo
 
-cd $basedir/data && \
+cd $datadir && \
 git commit -m "updated by (anon)" > /dev/null && \
 git push

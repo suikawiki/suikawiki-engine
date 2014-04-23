@@ -3,8 +3,6 @@
   "wiki_page_license": "WikiPageLicense",
   "wiki_page_help": "HelpPage",
 
-  "wiki_url_cvs": "http://suika.suikawiki.org/gate/cvs/melon/pub/test/sw5/",
-
   "edit_basic_auth": "editors.json",
 
   "web_port": 7410,
