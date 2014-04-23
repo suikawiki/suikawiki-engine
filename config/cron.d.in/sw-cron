@@ -1,0 +1,1 @@
+55,25 * * * * wakaba cd @@ROOT@@ && sh bin/commish-data

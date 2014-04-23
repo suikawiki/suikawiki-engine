@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use Cinnamon::DSL;
 use Cinnamon::Task::Git;
+use Cinnamon::Task::Cron;
 use Cinnamon::Task::Daemontools;
 
 set application => 'suikawiki';
@@ -53,6 +54,7 @@ task setup => sub {
 task install => sub {
   my ($host, @args) = @_;
   call 'app:install', $host, @args;
+  call 'cron:install', $host, @args;
 };
 
 task restart => sub {

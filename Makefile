@@ -21,7 +21,7 @@ git-submodules:
 ## ------ Server configuration ------
 
 # Need SERVER_ENV!
-server-config: daemontools-config
+server-config: daemontools-config batch-server
 
 # Need SERVER_ENV!
 install-server-config: install-daemontools-config
@@ -48,6 +48,12 @@ install-daemontools-config:
 	mkdir -p /var/log/app
 	chown wakaba.wakaba /var/log/app
 	$(MAKE) --makefile=Makefile.service install $(SERVER_ARGS) SERVER_TYPE=web
+
+# Need SERVER_ENV!
+batch-server:
+	mkdir -p local/config/cron.d
+	cd config/cron.d.in && find -type f | \
+            xargs -l1 -i% -- sh -c "cat % | sed 's/@@ROOT@@/$(subst /,\/,$(abspath .))/g' > ../../local/config/cron.d/$(SERVER_ENV)-%"
 
 ## ------ Tests ------
 
