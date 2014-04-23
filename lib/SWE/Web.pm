@@ -34,7 +34,8 @@ sub process ($$) {
   $app->requires_valid_content_length;
   $app->requires_mime_type;
   $app->requires_request_method;
-  $app->requires_same_origin unless $app->http->request_method_is_safe;
+  $app->requires_same_origin_or_referer_origin
+      unless $app->http->request_method_is_safe;
 
   if (@$path == 0) {
     # /
