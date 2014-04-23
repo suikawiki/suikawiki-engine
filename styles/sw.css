@@ -654,6 +654,49 @@ input[name=title] {
   padding: 0;
 }
 
+/* Bookmarklet */
+
+.suikawiki-bookmarklet-post,
+.suikawiki-bookmarklet-post body {
+  margin: 0;
+  padding: 0;
+}
+
+.suikawiki-bookmarklet-post form {
+  border-style: none;
+  padding: 0.3em 0.6em;
+}
+
+.suikawiki-bookmarklet-post h1 {
+  background: none;
+  margin: 0;
+  padding: 0.3em 0.6em;
+  font-weight: bolder;
+  font-size: 100%;
+  text-align: left;
+  color: #004000;
+  line-height: 1.2;
+  min-height: 0;
+}
+
+.suikawiki-bookmarklet-post p {
+  margin: 0;
+  text-align: left;
+  line-height: 1.2;
+}
+
+.suikawiki-bookmarklet-post .buttons { margin-top: 1em; text-align: center }
+
+.suikawiki-bookmarklet-post input:not([type=checkbox]) { width: 100% }
+
+.suikawiki-bookmarklet-post input[name=title-lang] {
+  width: 5em;
+}
+
+.suikawiki-bookmarklet-post button { min-width: 6em }
+.suikawiki-bookmarklet-post .ok { font-weight: bolder }
+.suikawiki-bookmarklet-post .cancel { font-size: smaller }
+
 /* 
 
 Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.

@@ -466,15 +466,9 @@ if ($path[0] eq 'n' and @path == 2) {
           $document->update_tfidf ($doc);
         }
 
-        if ($app->bare_param ('redirect')) {
-          return $app->throw_redirect
-              ($app->name_url ($name, $id, anchor => $anchor),
-               status => 303, reason_phrase => 'Appended');
-        } else {
-          $app->http->set_status (204, 'Appended');
-          $app->http->close_response_body;
-          return $app->throw;
-        }
+        return $app->throw_redirect
+            ($app->name_url ($name, $id, anchor => $anchor),
+             status => 303, reason_phrase => 'Appended');
       }} # APPEND
 
       { ## New document
@@ -536,15 +530,9 @@ if ($path[0] eq 'n' and @path == 2) {
 
         $document->associate_names ($new_names, user => $user, time => $time);
 
-        if ($app->bare_param ('redirect')) {
-          return $app->throw_redirect
-              ($app->name_url ($name, $id, anchor => $anchor),
-               status => 303, reason_phrase => 'Appended');
-        } else {
-          $app->http->set_status (204, 'Appended');
-          $app->http->close_response_body;
-          return $app->throw;
-        }
+        return $app->throw_redirect
+            ($app->name_url ($name, $id, anchor => $anchor),
+             status => 303, reason_phrase => 'Appended');
       }
     } else {
       $name .= '$' . $app->path_dollar if defined $app->path_dollar;

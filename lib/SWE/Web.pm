@@ -4,6 +4,7 @@ use warnings;
 use Path::Tiny;
 use Wanage::HTTP;
 use SWE::Warabe::App;
+use Web::DOM::Document;
 require 'suikawiki/main.pl';
 
 sub psgi_app ($$) {
@@ -61,6 +62,9 @@ sub process ($$) {
       $app->http->send_response_body_as_ref (\($file_path->slurp));
       $app->http->close_response_body;
       return $app->throw;
+    } elsif ($path->[0] eq 'posturl') {
+      # /posturl
+      return $class->get_posturl ($app);
     }
   } elsif (@$path == 2) {
     if ($path->[0] eq 'i' and $path->[1] eq '') {
@@ -105,6 +109,41 @@ sub process ($$) {
 
   return SuikaWiki5::Main->main ($app);
 } # process
+
+
+sub get_posturl ($$) {
+  my ($class, $app) = @_;
+
+  my $doc = new Web::DOM::Document;
+  $doc->manakai_is_html (1);
+  $doc->inner_html (q{
+    <!DOCTYPE html>
+    <html lang=en class=suikawiki-bookmarklet-post>
+      <link rel=stylesheet href=/styles/sw>
+      <h1>Post a URL</h1>
+      <form method=post accept-charset=utf-8 onsubmit="
+        if (this.pageName.value.length == 0) return false;
+        this.action = '/n/' + encodeURIComponent (this.pageName.value) + ';posturl';
+      ">
+        <p><label>Page: <input name=pageName onchange=" form[&quot;submit-button&quot;].disabled = this.value.length == 0 "></label><p><label>URL: <input type=url name=url></label><p><label for=suikawiki-bookmarklet-post-title>Title</label>: (<label>Language: <input name=title-lang></label>) <input name=title id=suikawiki-bookmarklet-post-title><p><label>Credit: <input name=credit></label>
+        <p class=buttons><button type=submit class=ok name=submit-button>OK</button>
+      </form>
+  });
+  my $form = $doc->forms->[0];
+  $form->query_selector ('input[name=url]')->set_attribute
+      (value => $app->text_param ('url') // '');
+  $form->query_selector ('input[name=title]')->set_attribute
+      (value => $app->text_param ('title') // '');
+  $form->query_selector ('input[name=title-lang]')->set_attribute
+      (value => $app->text_param ('title-lang') // '');
+  $form->query_selector ('input[name=credit]')->set_attribute
+      (value => $app->text_param ('credit') // '');
+  
+  $app->http->add_response_header ('Content-Type' => 'text/html; charset=utf-8');
+  $app->http->send_response_body_as_text ($doc->inner_html);
+  $app->http->close_response_body;
+  return $app->throw;
+} # get_posturl
 
 1;
 
