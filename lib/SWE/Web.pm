@@ -71,6 +71,10 @@ sub process ($$) {
       $url = $app->http->url->resolve_string ($url)->get_canon_url->stringify;
       $url =~ s{^[^:]+://[^/]+/~wakaba/wiki/sw}{};
       return $app->throw_redirect ($url, status => 301);
+    } elsif ($path->[0] eq 'google5e610a4166d18843.html') {
+      # For Google
+      $app->send_plain_text ('google-site-verification: google5e610a4166d18843.html');
+      return $app->throw;
     }
   } elsif (@$path == 2) {
     if ($path->[0] eq 'i' and $path->[1] eq '') {
