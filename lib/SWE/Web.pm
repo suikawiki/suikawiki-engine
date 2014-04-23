@@ -65,6 +65,12 @@ sub process ($$) {
     } elsif ($path->[0] eq 'posturl') {
       # /posturl
       return $class->get_posturl ($app);
+    } elsif ($path->[0] eq 'sw5') {
+      # /sw5
+      my $url = $app->http->original_url->{query} // '';
+      $url = $app->http->url->resolve_string ($url)->get_canon_url->stringify;
+      $url =~ s{^[^:]+://[^/]+/~wakaba/wiki/sw}{};
+      return $app->throw_redirect ($url, status => 301);
     }
   } elsif (@$path == 2) {
     if ($path->[0] eq 'i' and $path->[1] eq '') {
