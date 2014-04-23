@@ -48,7 +48,7 @@ sub parse_path ($) {
     $self->{path_dollar} = percent_decode_c ($1);
   }
 
-  my @path = map { percent_decode_c ($_) } split m#/#, $path, -1;
+  my @path = map { s/\+/%2F/g; percent_decode_c ($_) } split m#/#, $path, -1;
   shift @path while @path and $path[0] eq '';
   $self->{path_segments} = \@path;
 } # parse_path
