@@ -5,5 +5,5 @@ export GIT_SSH=$basedir/bin/sshwrapper
 export SSHWRAPPER_KEY_NAME=$basedir/local/keys/L1/id_dsa_datarepo
 
 cd $basedir/data && \
-git commit -m "updated by (anon)" && \
+git commit -m "updated by (anon)" > /dev/null && \
 git push
