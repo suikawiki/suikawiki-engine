@@ -1,8 +1,6 @@
 package SWE::DB::IDDataHistory;
 use strict;
 use warnings;
-use AnyEvent;
-use AnyEvent::Util qw(run_cmd);
 use RCSFormat::File;
 use Git::Parser::Log;
 
@@ -16,39 +14,37 @@ sub _file_names_for_id ($$) {
   return ("ids/$id.txt", "ids/$id.prop", "ids/$id.history");
 } # _file_names_for_id
 
-sub get_data_as_cv ($$) {
+sub get_data ($$) {
   my ($self, $id) = @_;
-  my $cv = AE::cv;
   my $root_path = $self->{root_path};
   my @name = grep { $root_path->child ($_)->is_file }
       $self->_file_names_for_id ($id);
   if (@name) {
-    my $log;
-    run_cmd ("cd \Q$root_path\E && git log --format=raw @{[join ' ', map { quotemeta } @name]}",
-             '>' => \$log)->cb (sub {
-      my $data = {revs => $self->_log_from_git ($log)};
+    open my $log_file, '-|', "cd \Q$root_path\E && git log --format=raw @{[join ' ', map { quotemeta } @name]}"
+        or die "git log: $!";
+    local $/ = undef;
+    my $log = <$log_file>;
+    my $data = {revs => $self->_log_from_git ($log)};
 
-      my $sw4_log_path = $root_path->child
-          (sprintf 'sw4cvs/ids/%d/%d.txt,v', $id / 1000, $id % 1000);
-      push @{$data->{revs}}, @{$self->_log_from_rcs_path ('4', $sw4_log_path)};
+    my $sw4_log_path = $root_path->child
+        (sprintf 'sw4cvs/ids/%d/%d.txt,v', $id / 1000, $id % 1000);
+    push @{$data->{revs}}, @{$self->_log_from_rcs_path ('4', $sw4_log_path)};
 
-      if (@{$data->{revs}} and defined $data->{revs}->[-1]->{sw3_name}) {
-        my $sw3_name = delete $data->{revs}->[-1]->{sw3_name};
-        $data->{sw3_name} = $sw3_name;
-        my $sw3_log_path = $root_path->child
-            (sprintf 'sw3cvs/page/%s,v', $sw3_name);
-        push @{$data->{revs}},
-            @{$self->_log_from_rcs_path ('3', $sw3_log_path)};
-      }
+    if (@{$data->{revs}} and defined $data->{revs}->[-1]->{sw3_name}) {
+      my $sw3_name = delete $data->{revs}->[-1]->{sw3_name};
+      $data->{sw3_name} = $sw3_name;
+      my $sw3_log_path = $root_path->child
+          (sprintf 'sw3cvs/page/%s,v', $sw3_name);
+      push @{$data->{revs}},
+          @{$self->_log_from_rcs_path ('3', $sw3_log_path)};
+    }
 
-      $cv->send ({data => $data,
-                  last_modified => @{$data->{revs}} ? $data->{revs}->[0]->{time} : undef});
-    });
+    return {data => $data,
+            last_modified => @{$data->{revs}} ? $data->{revs}->[0]->{time} : undef};
   } else {
-    AE::postpone { $cv->send ({}) };
+    return {};
   }
-  return $cv;
-} # get_data_as_cv
+} # get_data
 
 sub _log_from_git ($$) {
   my $parsed_log = Git::Parser::Log->parse_format_raw ($_[1]);

@@ -889,8 +889,8 @@ if ($path[0] eq 'n' and @path == 2) {
       # /i/{id};datahistory
       # /i/{id};datahistory.json
       my $id = $path[1] + 0;
-      $db->id_data_history->get_data_as_cv ($id)->cb (sub {
-        my $result = $_[0]->recv;
+      my $result = $db->id_data_history->get_data ($id);
+      {
         if ($result->{data}) {
           $app->http->set_response_last_modified ($result->{last_modified});
           if ($param eq 'datahistory') {
@@ -959,7 +959,7 @@ if ($path[0] eq 'n' and @path == 2) {
         } else {
           $app->send_error (404);
         }
-      });
+      }
       return $app->throw;
     }
   } elsif ($path[0] eq 'new-page' and @path == 1) {
