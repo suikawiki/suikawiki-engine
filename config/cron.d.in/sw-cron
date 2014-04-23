@@ -1,1 +1,2 @@
-55,25 * * * * wakaba cd @@ROOT@@ && sh bin/commish-data
+MAILTO=wakaba@suikawiki.org
+57,27 * * * * wakaba cd @@ROOT@@ && sh bin/commish-data
