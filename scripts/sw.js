@@ -36,7 +36,6 @@ window.onload = function () {
 
   createToolbar ();
   addGoogleSearch ();
-//  initializeHatenaStar();
   enableHTML5Support ();
   addGoogleAnalytics ();
 }; // window.onload
@@ -127,64 +126,6 @@ function createToolbar () {
   }
 } // createToolbar
 
-function initializeHatenaStar () {
-  if (!window.Hatena) {
-    window.Hatena = {};
-  }
-  if (!Hatena.Star) {
-    Hatena.Star = {};
-  }
-  if (!Hatena.Star.onLoadFunctions) {
-    Hatena.Star.onLoadFunctions = [];
-  }
-
-  Hatena.Star.onLoadFunctions.push (function () {
-/*
-    if (Ten.DOM.loaded) {
-      Ten.DOM.loaded = false;
-      Ten.DOM.addObserver ();
-    }
-*/
-
-    Hatena.Star.SiteConfig = {
-      entryNodes: {
-        '' /* body */: {
-          uri: 'h1 a',
-          title: 'h1',
-          container: '.tools' /* .nav.tools */
-        }
-      }
-    };
-
-/*
-    var realLoadNewEntries = Hatena.Star.EntryLoader.loadNewEntries;
-    Hatena.Star.EntryLoader.loadNewEntries = function (node) {
-      if (!node) {
-        node = document.documentElement;
-      }
-      realLoadNewEntries.apply (this, [node]);
-    };
-*/
-    setTimeout (function () {
-      Ten.DOM.dispatchEvent ('onload');
-    }, 1);
-  }); // Hatena.Star.onLoadFunctions.push'ed function
-
-  var hsScript = document.createElement ('script');
-  hsScript.defer = true;
-  hsScript.src = '//s.hatena.ne.jp/js/HatenaStar.js';
-  document.documentElement.lastChild.appendChild (hsScript);
-
-  /*
-    In SuikaWiki, a WikiName can be associated with multiple WikiPages, 
-    while a WikiPage can be associated with multiple WikiNames.  It would
-    be desired to associate Hatena Stars with WikiPages in theory.
-    However, WikiPages do not have permalinks at the moment.
-
-    See <http://suika.fam.cx/%7Ewakaba/wiki/sw/n/%E3%81%AF%E3%81%A6%E3%81%AA%E3%82%B9%E3%82%BF%E3%83%BC#anchor-2>.
-  */
-} // initializeHatenaStar
-
 function enableHTML5Support () {
   window.TEROnLoad = function () {
     new TER.Delta (document.body);
@@ -227,6 +168,13 @@ function addGoogleAnalytics () {
   ga.async = true;
   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
   document.body.appendChild (ga);
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-39820773-5', 'suikawiki.org');
+  ga('send', 'pageview');
 } // addGoogleAnalytics
 
 /* Hack for IE */
