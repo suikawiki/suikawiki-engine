@@ -1,6 +1,7 @@
 #!/bin/sh
 basedir=$(cd $(dirname $0)/.. && pwd)
 
+export HOME=$basedir/data
 export GIT_SSH=$basedir/bin/sshwrapper
 export SSHWRAPPER_KEY_NAME=$basedir/local/keys/L1/id_dsa_datarepo
 

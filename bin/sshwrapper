@@ -1,2 +1,2 @@
 #!/bin/sh
-ssh -i "${SSHWRAPPER_KEY_NAME}" "$*"
+ssh -i "${SSHWRAPPER_KEY_NAME}" -o StrictHostKeyChecking=no "$*"
