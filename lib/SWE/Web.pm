@@ -125,7 +125,7 @@ sub get_posturl ($$) {
         if (this.pageName.value.length == 0) return false;
         this.action = '/n/' + encodeURIComponent (this.pageName.value) + ';posturl';
       ">
-        <p><label>Page: <input name=pageName onchange=" form[&quot;submit-button&quot;].disabled = this.value.length == 0 "></label><p><label>URL: <input type=url name=url></label><p><label for=suikawiki-bookmarklet-post-title>Title</label>: (<label>Language: <input name=title-lang></label>) <input name=title id=suikawiki-bookmarklet-post-title><p><label>Credit: <input name=credit></label>
+        <p><label>Page: <input name=pageName autofocus></label><p><label>URL: <input type=url name=url></label><p><label for=suikawiki-bookmarklet-post-title>Title</label>: (<label>Language: <input name=title-lang></label>) <input name=title id=suikawiki-bookmarklet-post-title><p><label>Credit: <input name=credit></label>
         <p class=buttons><button type=submit class=ok name=submit-button>OK</button>
       </form>
   });
