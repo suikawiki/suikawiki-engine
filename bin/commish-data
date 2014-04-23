@@ -4,6 +4,6 @@ basedir=$(cd $(dirname $0)/.. && pwd)
 export GIT_SSH=$basedir/bin/sshwrapper
 export SSHWRAPPER_KEY_NAME=$basedir/local/keys/L1/id_dsa_datarepo
 
-cd $basedir/modules/SWE/data && \
+cd $basedir/data && \
 git commit -m "updated by (anon)" && \
 git push
