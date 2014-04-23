@@ -105,7 +105,10 @@ sub help_page_url ($) {
 sub id_rev_url ($$$;$) {
   my ($self, $id, $rev, $sw3_name) = @_;
   if ($rev =~ /^6:(.+)$/) {
-    return $1; # XXX
+    return sprintf q<https://github.com/suikawiki/suikawiki-data/blob/%s/ids/%d/%d.txt>,
+        $1,
+        $id / 1000,
+        $id % 1000;
   } elsif ($rev =~ /^4:(.+)$/) {
     return sprintf q<http://suika.suikawiki.org/gate/cvs/melon/pub/suikawiki/sw4data/ids/%d/%d.txt?revision=%s>,
         $id / 1000,
