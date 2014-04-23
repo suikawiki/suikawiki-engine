@@ -60,6 +60,7 @@ task install => sub {
 task restart => sub {
   my ($host, @args) = @_;
   call 'web:restart', $host, @args;
+  call 'cron:reload', $host, @args;
 };
 
 task keys => {
