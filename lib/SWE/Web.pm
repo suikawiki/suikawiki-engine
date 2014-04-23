@@ -70,6 +70,7 @@ sub process ($$) {
       my $url = $app->http->original_url->{query} // '';
       $url = $app->http->url->resolve_string ($url)->get_canon_url->stringify;
       $url =~ s{^[^:]+://[^/]+/~wakaba/wiki/sw}{};
+      $url =~ s{\+}{%2F}g;
       return $app->throw_redirect ($url, status => 301);
     } elsif ($path->[0] eq 'google5e610a4166d18843.html') {
       # For Google

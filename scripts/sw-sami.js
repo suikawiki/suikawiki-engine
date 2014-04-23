@@ -4,19 +4,19 @@ SW.CurrentDocument = new SAMI.Class (function () {
   var self = this;
   var path = location.pathname;
   path = path.replace (/;([^;\/]*)$/, function (_, v) {
-    self.param = decodeURIComponent (v.replace (/\+/g, '%2F'));
+    self.param = decodeURIComponent (v);
     return '';
   });
   path = path.replace (/\$([^$\/]*)$/, function (_, v) {
-    self.dollar = decodeURIComponent (v.replace (/\+/g, '%2F'));
+    self.dollar = decodeURIComponent (v);
     return '';
   });
   path = path.replace (/\/([^\/]*)$/, function (_, v) {
-    self.name = decodeURIComponent (v.replace (/\+/g, '%2F'));
+    self.name = decodeURIComponent (v);
     return '';
   });
   path = path.replace (/\/([^\/]*)$/, function (_, v) {
-    self.area = decodeURIComponent (v.replace (/\+/g, '%2F'));
+    self.area = decodeURIComponent (v);
     return '';
   });
   this.wikiPath = path;
@@ -25,16 +25,16 @@ SW.CurrentDocument = new SAMI.Class (function () {
     var p = this.wikiPath;
 
     area = area || this.area;
-    p += '/' + encodeURIComponent (area).replace (/%2F/g, '+');
+    p += '/' + encodeURIComponent (area);
 
     name = name || this.name;
-    p += '/' + encodeURIComponent (name).replace (/%2F/g, '+');
+    p += '/' + encodeURIComponent (name);
 
     dollar = dollar === undefined ? this.dollar : dollar;
-    if (dollar != null) p += '$' + encodeURIComponent (dollar).replace (/%2F/g, '+');
+    if (dollar != null) p += '$' + encodeURIComponent (dollar);
 
     param = param === undefined ? this.param : param;
-    if (param != null) p += ';' + encodeURIComponent (param).replace (/%2F/g, '+');
+    if (param != null) p += ';' + encodeURIComponent (param);
 
     return p;
   } // constructURL
@@ -191,3 +191,12 @@ SW.init = function () {
   }
 
 }; // init
+
+/* 
+
+Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+*/
