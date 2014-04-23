@@ -81,7 +81,7 @@ sub commit_changes ($$) {
     my $dir_path = $self->root_path;
     local $ENV{HOME} = ''.$dir_path->absolute;
     (system "cd \Q$dir_path\E && " . join ' ', map { quotemeta $_ } 'git', 'add', map { path ($_)->relative ($dir_path) } @file) == 0 or die $?;
-    system "cd \Q$dir_path\E && git commit -m \Q$msg\E";
+    #system "cd \Q$dir_path\E && git commit -m \Q$msg\E";
   }
 } # commit_changes
 
