@@ -84,6 +84,9 @@ if ($path[0] eq 'n' and @path == 2) {
         $docobj->{swml_to_xml} = \&get_xml_data;
         $docobj->{name} = $name;
         $docobj->{get_page_url} = sub {
+          ## When this callback is modified,
+          ## |$SWE::Lang::XML2HTML::ConverterVersion| must be
+          ## incremented.
           return $app->name_url ($_[0]);
         };
 

@@ -1,7 +1,7 @@
 package SWE::Lang::XML2HTML;
 use strict;
 
-our $ConverterVersion = 2;
+our $ConverterVersion = 3;
 
 sub AA_NS () { q<http://pc5.2ch.net/test/read.cgi/hp/1096723178/aavocab#> }
 sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }

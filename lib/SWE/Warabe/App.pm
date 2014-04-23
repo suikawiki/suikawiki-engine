@@ -78,6 +78,8 @@ sub requires_editable ($) {
 } # requires_editable
 
 sub name_url ($$;$%) {
+  ## When this method is modified,
+  ## |$SWE::Lang::XML2HTML::ConverterVersion| must be incremented.
   my (undef, $name, $id, %args) = @_;
   my $url = q</n/> . percent_encode_c $name;
   $url .= ';' . percent_encode_c $args{param} if defined $args{param};
