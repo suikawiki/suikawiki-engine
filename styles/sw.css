@@ -325,6 +325,11 @@ a:hover,
   border-bottom-style: solid;
 }
 
+:hover > .sw-anchor-end {
+  background-color: #FFA;
+  color: #000080;
+}
+
 [rel~=bookmark] {
   border-style: none !important;
   color: inherit !important;
