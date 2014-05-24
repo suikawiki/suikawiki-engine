@@ -160,14 +160,16 @@ function addGoogleSearch () {
 } // addGoogleSearch
 
 function addGoogleAnalytics () {
-  var _gaq = _gaq || [];
-  _gaq.push (['_setAccount', 'UA-39820773-1']);
-  _gaq.push (['_trackPageview']);
-  window._gaq = _gaq;
-  var ga = document.createElement ('script');
-  ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  document.body.appendChild (ga);
+  (function () {
+    var _gaq = _gaq || [];
+    _gaq.push (['_setAccount', 'UA-39820773-1']);
+    _gaq.push (['_trackPageview']);
+    window._gaq = _gaq;
+    var ga = document.createElement ('script');
+    ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    document.body.appendChild (ga);
+  }) ();
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
