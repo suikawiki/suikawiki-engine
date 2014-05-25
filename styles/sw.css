@@ -314,6 +314,10 @@ ins + ins {
   border-bottom-style: none;
 }
 
+.sw-anchor-external {
+  word-break: break-all;
+}
+
 .sw-anchor-end {
   display: block;
   position: absolute;
