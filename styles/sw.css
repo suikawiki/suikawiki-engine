@@ -582,30 +582,66 @@ input[name=title] {
   width: 98%;
 }
 
-/* Advertisements */
+/* Sidebar */
 
-.swe-ad {
-  display: none;
+body > aside {
 }
 
 @media (min-width: 65em) {
-  body {
+  body.swe-has-sidebar {
     max-width: none;
     width: 60em;
     padding-right: 10em;
   }
 
-  .swe-ad {
+  body.swe-has-sidebar > aside {
+    display: block;
+    position: absolute;
+    left: 50em;
+    top: 7em;
+    margin: 0;
+  }
+}
+
+.swe-page-names {
+  display: none;
+  margin: 0;
+  padding: 0 0 0 0.5em;
+  font-size: 70%;
+  line-height: 1.5;
+}
+
+.swe-page-names::before {
+  content: "Names: ";
+  display: block;
+  margin-left: -0.5em;
+  font-weight: bolder;
+  font-size: 120%;
+  color: #004000;
+}
+
+.swe-page-names li {
+  display: block;
+  margin: 0;
+}
+
+@media (min-width: 65em) {
+  .swe-page-names {
     display: block;
   }
 }
 
+/* Advertisements */
+
 .swe-ad {
-  position: absolute;
-  left: 50em;
-  top: 7em;
-  margin: 0;
+  display: none;
   overflow: hidden;
+}
+
+@media (min-width: 65em) {
+  .swe-ad {
+    display: block;
+  }
 }
 
 .swe-ad-amazon {

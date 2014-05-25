@@ -213,22 +213,8 @@ if ($path[0] eq 'n' and @path == 2) {
                $time[2], $time[1], $time[0]);
           $article_el->append_child ($footer_el);
         }
-          
+        
         $body_el->append_child ($article_el);
-
-#        my $ad_el = $html_doc->create_element ('aside');
-#        $ad_el->set_attribute (class => 'swe-ad');
-#        $ad_el->inner_html (q[
-#          <script>
-#            google_ad_client = "pub-6943204637055835";
-#            google_ad_slot = "4290129344";
-#            google_ad_width = 728;
-#            google_ad_height = 90;
-#          </script>
-#          <script src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-#          </script>
-#        ]);
-#        $body_el->append_child ($ad_el);
       } else {
         my $new_nav_el = $html_doc->create_element ('section');
         $new_nav_el->inner_html (q[<a href="">Add a description</a> of <em></em>]);
@@ -244,6 +230,49 @@ if ($path[0] eq 'n' and @path == 2) {
       $search_el->set_attribute (id => 'cse-search-form');
       $body_el->append_child ($search_el);
 
+      if ($html_container) {
+        my $sidebar_el = $html_doc->create_element ('aside');
+
+        my $use_google_ads;
+        my $modified = $id_prop->{modified};
+        if (defined $modified and ((gmtime $modified)[5] + 1900) >= 2013) {
+          $use_google_ads = 1;
+        }
+
+        my $ad_el = $html_doc->create_element ('aside');
+        if ($use_google_ads) {
+          $ad_el->set_attribute (class => 'swe-ad swe-ad-google');
+          $ad_el->inner_html (q{
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <ins class="adsbygoogle"
+                style="display:inline-block;width:160px;height:600px"
+                data-ad-client="ca-pub-6943204637055835"
+                data-ad-slot="3629704714"></ins>
+            <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+          });
+        } else {
+          $ad_el->set_attribute (class => 'swe-ad swe-ad-amazon');
+          $ad_el->inner_html (q{<script>amazon_ad_tag = "wakaba1-22"; amazon_ad_width = "160"; amazon_ad_height = "600"; amazon_ad_logo = "hide"; amazon_ad_border = "hide"; amazon_color_border = "FFFFFF"; amazon_color_link = "004000"; amazon_color_logo = "004000";</script><script src="http://www.assoc-amazon.jp/s/ads.js"></script>});
+        }
+        $sidebar_el->append_child ($ad_el);
+
+        my $ul_el = $html_doc->create_element ('ul');
+        $ul_el->set_attribute (class => 'swe-page-names');
+        for my $name (sort { $a cmp $b } keys %{$id_prop->{name} or {}}) {
+          my $li_el = $html_doc->create_element ('li');
+          $li_el->inner_html (q{<a href=""></a>});
+          $li_el->first_child->text_content ($name);
+          $li_el->first_child->href ($app->name_url ($name, $id));
+          $ul_el->append_child ($li_el);
+        }
+        $sidebar_el->append_child ($ul_el);
+
+        $body_el->append_child ($sidebar_el);
+        $body_el->class_list->add ('swe-has-sidebar');
+      }
+
       my $footer_el = $html_doc->create_element ('footer');
       $footer_el->set_attribute (class => 'footer');
       $footer_el->set_attribute (lang => 'en');
@@ -258,14 +287,6 @@ if ($path[0] eq 'n' and @path == 2) {
       $as->[1]->set_attribute (href => $app->home_page_url);
       $as->[2]->set_attribute (href => $app->help_page_url);
       $as->[3]->set_attribute (href => $app->contact_page_url);
-
-      if ($html_container) {
-        my $ad_el = $html_doc->create_element ('aside');
-        $ad_el->set_attribute (class => 'swe-ad swe-ad-amazon');
-        #$ad_el->inner_html (q{<SCRIPT charset="utf-8" src="http://ws.amazon.co.jp/widgets/q?ServiceVersion=20070822&MarketPlace=JP&ID=V20070822/JP/wakaba1-22/8006/cedb4b02-c1cc-4a6f-86f1-f8fa1c52b252"></SCRIPT>});
-        $ad_el->inner_html (q{<script>amazon_ad_tag = "wakaba1-22"; amazon_ad_width = "160"; amazon_ad_height = "600"; amazon_ad_logo = "hide"; amazon_ad_border = "hide"; amazon_color_border = "FFFFFF"; amazon_color_link = "004000"; amazon_color_logo = "004000";</script><script src="http://www.assoc-amazon.jp/s/ads.js"></script>});
-        $body_el->append_child ($ad_el);
-      }
 
       set_foot_content ($app, $html_doc);
 
