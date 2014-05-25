@@ -8,6 +8,14 @@ html, td {
   line-height: 2.2;
 }
 
+body {
+  position: relative;
+  max-width: 50em;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .nav {
   display: block;
   text-align: right;
@@ -47,10 +55,22 @@ html, td {
 }
 
 .footer {
-  display: block;
+  display: table;
   margin-top: 1em;
   border-top: gray thin solid;
   padding-top: 0.3em;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.footer menu {
+  display: table-cell;
+  margin: 0;
+  padding: 0 1em 0 0;
+  text-align: right;
+  font-size: 80%;
+  position: relative;
+  z-index: 10000;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -110,11 +130,6 @@ del + .article, del + .section {
   margin-top: 2em;
 }
 
-body > .article,
-#cse-search-form {
-  margin-right: 130px;
-}
-
 .article > h1, .section > h1,
 .article > h2, .section > h2,
 .article > h3, .section > h3,
@@ -136,12 +151,6 @@ blockquote {
   padding: 0.2em 0.5em;
   background-color: #f7fff7;
   color: black;
-}
-
-.swe-ad-amazon {
-  position: absolute;
-  right: 0;
-  top: 7em;
 }
 
 /* Paragraph-level blocks */
@@ -572,10 +581,30 @@ input[name=title] {
 /* Advertisements */
 
 .swe-ad {
-  display: block;
-  margin-left: 2em;
-  margin-top: 1em;
+  display: none;
+}
+
+@media (min-width: 65em) {
+  body {
+    max-width: none;
+    width: 60em;
+    padding-right: 10em;
+  }
+
+  .swe-ad {
+    display: block;
+  }
+}
+
+.swe-ad {
+  position: absolute;
+  left: 50em;
+  top: 7em;
+  margin: 0;
   overflow: hidden;
+}
+
+.swe-ad-amazon {
 }
 
 /* Search form */

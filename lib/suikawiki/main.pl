@@ -246,9 +246,19 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $footer_el = $html_doc->create_element ('footer');
       $footer_el->set_attribute (class => 'footer');
-      $footer_el->inner_html (q[<p class=copyright><small>&copy; Authors.  See <a rel=license>license terms</a>.  There might also be additional terms applied for this page.</small>]);
+      $footer_el->set_attribute (lang => 'en');
+      $footer_el->inner_html (q[
+        <p class=copyright><small>&copy; Authors.  See <a rel=license>license terms</a>.  There might also be additional terms applied for this page.</small>
+        <menu><a href="" rel=index>Home</a> <a href="" rel=help>Help</a> <a href="">Contact</a></menu>
+      ]);
       $body_el->append_child ($footer_el);
-      
+
+      my $as = $footer_el->get_elements_by_tag_name ('a');
+      $as->[0]->set_attribute (href => $app->license_page_url);
+      $as->[1]->set_attribute (href => $app->home_page_url);
+      $as->[2]->set_attribute (href => $app->help_page_url);
+      $as->[3]->set_attribute (href => $app->contact_page_url);
+
       if ($html_container) {
         my $ad_el = $html_doc->create_element ('aside');
         $ad_el->set_attribute (class => 'swe-ad swe-ad-amazon');
@@ -256,9 +266,6 @@ if ($path[0] eq 'n' and @path == 2) {
         $ad_el->inner_html (q{<script>amazon_ad_tag = "wakaba1-22"; amazon_ad_width = "160"; amazon_ad_height = "600"; amazon_ad_logo = "hide"; amazon_ad_border = "hide"; amazon_color_border = "FFFFFF"; amazon_color_link = "004000"; amazon_color_logo = "004000";</script><script src="http://www.assoc-amazon.jp/s/ads.js"></script>});
         $body_el->append_child ($ad_el);
       }
-
-      my $a_el = $footer_el->get_elements_by_tag_name ('a')->[0];
-      $a_el->set_attribute (href => $app->license_page_url);
 
       set_foot_content ($app, $html_doc);
 

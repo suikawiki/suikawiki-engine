@@ -104,6 +104,11 @@ sub help_page_url ($) {
   return $self->name_url ($self->config->get_text ('wiki_page_help'));
 } # help_page_url
 
+sub contact_page_url ($) {
+  my $self = $_[0];
+  return $self->name_url ($self->config->get_text ('wiki_page_contact'));
+} # contact_page_url
+
 sub id_rev_url ($$$;$) {
   my ($self, $id, $rev, $sw3_name) = @_;
   if ($rev =~ /^6:(.+)$/) {
