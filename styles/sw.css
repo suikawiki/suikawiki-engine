@@ -24,6 +24,8 @@ body {
 .nav.tools {
   z-index: 600;
   position: relative;
+  margin-right: 0.5em;
+  margin-left: 0.5em;
 }
 
 .nav.tools > * {
