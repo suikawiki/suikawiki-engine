@@ -260,7 +260,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
         my $ul_el = $html_doc->create_element ('ul');
         $ul_el->set_attribute (class => 'swe-page-names');
-        for my $name (sort { (lc $a) cmp (lc $b) } keys %{$id_prop->{name} or {}}) {
+        for my $name (sort { (lc $a) cmp (lc $b) || $a cmp $b } keys %{$id_prop->{name} or {}}) {
           my $li_el = $html_doc->create_element ('li');
           $li_el->inner_html (q{<a href=""></a>});
           $li_el->first_child->text_content ($name);
