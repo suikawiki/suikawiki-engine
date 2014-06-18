@@ -780,12 +780,17 @@ figure.railroad svg.railroad-diagram .text {
   text-anchor: middle;
 }
 
+figure.railroad svg.railroad-diagram text code,
+figure.railroad svg.railroad-diagram .text code {
+  font: 14px monospace;
+}
+
 figure.railroad svg.railroad-diagram text.label {
   text-anchor: start;
 }
 
 figure.railroad svg.railroad-diagram text.comment {
-  font: italic 12px monospace;
+  font: bold 12px monospace;
 }
 
 figure.railroad svg.railroad-diagram rect {

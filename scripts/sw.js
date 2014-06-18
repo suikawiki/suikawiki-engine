@@ -386,6 +386,15 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
         var e = parseItems (li.lastChild.children);
         elements.push (new SW.Figure.Railroad.Optional (new SW.Figure.Railroad.Sequence (e)));
         continue;
+      } else if (type == '=') {
+        var e = parseItems (li.lastChild.children);
+        elements.push (new SW.Figure.Railroad.Sequence (e));
+        continue;
+      } else {
+        var e = parseItems (li.lastChild.children);
+        elements.push (new SW.Figure.Railroad.Comment (type));
+        elements.push (new SW.Figure.Railroad.Sequence (e));
+        continue;
       }
     }
     var span = document.createElement ('span');
