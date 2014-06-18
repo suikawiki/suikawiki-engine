@@ -730,6 +730,70 @@ body > aside {
   padding: 0;
 }
 
+/* Figures */
+
+figure.states svg {
+  height: 15em;
+}
+
+figure.states .edge, #triangle {
+  stroke: gray;
+}
+
+figure.states .edge {
+  stroke-width: 1;
+  marker-end: url(#triangle);
+}
+
+figure.states .node {
+  text-align: center;
+}
+
+figure.states .node rect {
+  fill: transparent;
+  stroke: black;
+  stroke-width: 1;
+}
+
+figure.railroad {
+  margin: 0.8em 0 0.8em 3em;
+  border-style: none;
+  padding-left: 1em;
+  color: black;
+  background-color: #FCFCFC;
+  line-height: 2.0;
+  font-size: 90%;
+}
+
+figure.railroad svg.railroad-diagram {
+}
+
+figure.railroad svg.railroad-diagram path {
+  stroke-width: 3;
+  stroke: black;
+  fill: rgba(0, 0, 0, 0);
+}
+
+figure.railroad svg.railroad-diagram text,
+figure.railroad svg.railroad-diagram .text {
+  font: 14px monospace;
+  text-anchor: middle;
+}
+
+figure.railroad svg.railroad-diagram text.label {
+  text-anchor: start;
+}
+
+figure.railroad svg.railroad-diagram text.comment {
+  font: italic 12px monospace;
+}
+
+figure.railroad svg.railroad-diagram rect {
+  stroke-width: 3;
+  stroke: black;
+  fill: #e0ffe0;
+}
+
 /* Bookmarklet */
 
 .suikawiki-bookmarklet-post,

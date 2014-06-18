@@ -17,7 +17,7 @@
   });
 }) ();
 
-window.onload = function () {
+addEventListener ('DOMContentLoaded', function () {
   document.write = function (html) {
     var div = document.createElement ('div');
     div.innerHTML = html;
@@ -35,10 +35,11 @@ window.onload = function () {
   };
 
   createToolbar ();
+  initFigures (document.body);
   addGoogleSearch ();
   enableHTML5Support ();
   addGoogleAnalytics ();
-}; // window.onload
+}); // DOMContentLoaded
 
 function getElementsByClassName (c) {
   if (document.getElementsByClassName) {
@@ -181,6 +182,245 @@ function addGoogleAnalytics () {
 
 /* Hack for IE */
 document.createElement ('time');
+
+if (!window.SW) window.SW = {};
+if (!SW.Figure) SW.Figure = {};
+
+SW.Figure.States = function (figure) {
+/*
+  This function derived from springyui.js
+  <https://github.com/dhotson/springy/blob/master/springyui.js>.
+
+Copyright (c) 2010 Dennis Hotson
+
+ Permission is hereby granted, free of charge, to any person
+ obtaining a copy of this software and associated documentation
+ files (the "Software"), to deal in the Software without
+ restriction, including without limitation the rights to use,
+ copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following
+ conditions:
+
+ The above copyright notice and this permission notice shall be
+ included in all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ OTHER DEALINGS IN THE SOFTWARE.
+
+*/
+
+  var ul = figure.getElementsByTagName ('ul')[0];
+  if (!ul) return;
+  var list = ul.children;
+
+  var svg = document.createElementNS ('http://www.w3.org/2000/svg', 'svg');
+  svg.innerHTML = '<defs><marker id="triangle" viewBox="0 0 10 10" refX="11" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z"/></marker></defs>';
+  var svgDef = svg.firstChild;
+  ul.parentNode.replaceChild (svg, ul);
+
+  var graph = new Springy.Graph();
+  var nodesByName = {};
+  for (var i = 0; i < list.length; i++) {
+    var item1 = list[i].firstElementChild;
+    if (!item1) next;
+    var item2 = item1.nextElementSibling;
+    if (!nodesByName[item1.textContent]) {
+      nodesByName[item1.textContent] = graph.newNode ({element: item1});
+    }
+    if (item2) {
+      if (!nodesByName[item2.textContent]) {
+        nodesByName[item2.textContent] = graph.newNode ({element: item2});
+      }
+      graph.newEdge (nodesByName[item1.textContent],
+                     nodesByName[item2.textContent]);
+    }
+  }
+
+  var layout = new Springy.Layout.ForceDirected (graph, 400, 400, 0.5);
+  var currentBB = layout.getBoundingBox ();
+  var targetBB = {bottomleft: new Springy.Vector (-2, -2),
+                  topright: new Springy.Vector (2, 2)};
+  Springy.requestAnimationFrame (function adjust () {
+    targetBB = layout.getBoundingBox ();
+    currentBB = {
+      bottomleft: currentBB.bottomleft.add
+                    (targetBB.bottomleft.subtract
+                       (currentBB.bottomleft).divide (10)),
+      topright: currentBB.topright.add
+                    (targetBB.topright.subtract
+                       (currentBB.topright).divide (10))
+    };
+    Springy.requestAnimationFrame (adjust);
+  });
+  var toScreen = function (p) {
+    var size = currentBB.topright.subtract (currentBB.bottomleft);
+    var sx = svg.offsetWidth * 0.05 + p.subtract (currentBB.bottomleft).divide (size.x).x * svg.offsetWidth * 0.9;
+    var sy = svg.offsetHeight * 0.05 + p.subtract (currentBB.bottomleft).divide (size.y).y * svg.offsetHeight * 0.9;
+    return new Springy.Vector (sx, sy);
+  };
+  var fromScreen = function (s) {
+    var size = currentBB.topright.subtract (currentBB.bottomleft);
+    var px = ((s.x - svg.offsetWidth * 0.05) / (svg.offsetWidth * 0.9)) * size.x + currentBB.bottomleft.x;
+    var py = ((s.y - svg.offsetHeight * 0.05) / (svg.offsetHeight * 0.9)) * size.y + currentBB.bottomleft.y;
+    return new Springy.Vector (px, py);
+  };
+
+  var textWidth = 10 * 16;
+  var textHeight = 1 * 16;
+  var lineHeight = 2.0;
+  var renderer = new Springy.Renderer (
+    layout,
+    function clear () {
+      svg.textContent = '';
+      svg.appendChild (svgDef);
+    },
+    function drawEdge (edge, p1, p2) {
+      var line = document.createElementNS (svg.namespaceURI, 'line');
+      line.setAttribute ('class', 'edge');
+      var s1 = toScreen (p1);
+      var s2 = toScreen (p2);
+      if (Math.abs (s2.y - s1.y) < textHeight * 4 &&
+          ! (Math.abs (s2.x - s1.x) < textWidth * 1.0)) {
+        if (s1.x < s2.x) {
+          line.setAttribute ('x1', s1.x + textWidth / 2);
+          line.setAttribute ('x2', s2.x - textWidth / 2);
+        } else {
+          line.setAttribute ('x1', s1.x - textWidth / 2);
+          line.setAttribute ('x2', s2.x + textWidth / 2);
+        }
+        line.setAttribute ('y1', s1.y);
+        line.setAttribute ('y2', s2.y);
+      } else {
+        line.setAttribute ('x1', s1.x);
+        line.setAttribute ('x2', s2.x);
+        if (s1.y < s2.y) {
+          line.setAttribute ('y1', s1.y + textHeight * lineHeight / 2);
+          line.setAttribute ('y2', s2.y - textHeight * lineHeight / 2);
+        } else {
+          line.setAttribute ('y1', s1.y - textHeight * lineHeight / 2);
+          line.setAttribute ('y2', s2.y + textHeight * lineHeight / 2);
+        }
+      }
+      svg.appendChild (line);
+    },
+    function drawNode (node, p) {
+      var s = toScreen (p);
+      var g = node.data.gElement || document.createElementNS (svg.namespaceURI, 'g');
+      node.data.gElement = g;
+      g.setAttribute ('class', 'node');
+      var circle = g.querySelector ('rect') || document.createElementNS (svg.namespaceURI, 'rect');
+      circle.setAttribute ('x', s.x - textWidth / 2);
+      circle.setAttribute ('y', s.y - textHeight * lineHeight / 2);
+      circle.setAttribute ('width', textWidth);
+      circle.setAttribute ('height', textHeight * lineHeight);
+      circle.setAttribute ('rx', 5);
+      circle.setAttribute ('ry', 5);
+      g.appendChild (circle);
+      var text = g.querySelector ('foreignObject') || document.createElementNS (svg.namespaceURI, 'foreignObject');
+      text.appendChild (node.data.element);
+      text.setAttribute ('x', s.x - textWidth / 2);
+      text.setAttribute ('y', s.y - textHeight / 2);
+      text.setAttribute ('width', textWidth);
+      text.setAttribute ('height', textHeight * 10);
+      g.appendChild (text);
+      svg.appendChild (g);
+    }
+  );
+
+  var dragged = null;
+  svg.onmousedown = function (ev) {
+    var p = fromScreen ({x: ev.clientX - svg.offsetLeft, y: ev.clientY - svg.offsetTop});
+    dragged = layout.nearest(p);
+  };
+  svg.onmousemove = function (ev) {
+    var p = fromScreen ({x: ev.clientX - svg.offsetLeft, y: ev.clientY - svg.offsetTop});
+    if (dragged !== null && dragged.node !== null) {
+      dragged.point.p.x = p.x;
+      dragged.point.p.y = p.y;
+    }
+    renderer.start();
+  };
+  window.addEventListener ('mouseup', function () { dragged = null });
+
+  renderer.start();
+}; // SW.Figure.States
+
+SW.Figure.Railroad = function (figure) {
+  var list = figure.querySelector ('ol, ul');
+  if (!list) return;
+  var svg = new SW.Figure.Railroad.Diagram (SW.Figure.Railroad.parseItems (list.children)).toSVG ();
+  list.parentNode.replaceChild (svg, list);
+}; // SW.Figure.Railroad
+
+SW.Figure.Railroad.parseItems = function parseItems (list) {
+  var items = Array.prototype.map.apply (list, [function (t) { return t }]);
+  var elements = [];
+  for (var i = 0; i < items.length; i++) {
+    var li = items[i];
+    if (li.lastChild.nodeType == li.TEXT_NODE &&
+        li.lastChild.data.match (/^\s*$/)) {
+      li.removeChild (li.lastChild);
+    }
+    if (li.childNodes.length == 2 &&
+        li.firstChild.nodeType == li.TEXT_NODE &&
+        li.lastChild.nodeType == li.ELEMENT_NODE &&
+        li.lastChild.localName.match (/^[uo]l$/)) {
+      var type = li.firstChild.data.replace (/\s+/g, '');
+      if (type == '|') {
+        var e = parseItems (li.lastChild.children);
+        elements.push (new SW.Figure.Railroad.Choice (0, e));
+        continue;
+      } else if (type == '*' || type == '+') {
+        var e = parseItems (li.lastChild.children);
+        var f = {'*': SW.Figure.Railroad.ZeroOrMore, '+': SW.Figure.Railroad.OneOrMore}[type];
+        elements.push (new f (new SW.Figure.Railroad.Sequence (e)));
+        continue;
+      } else if (type == '?') {
+        var e = parseItems (li.lastChild.children);
+        elements.push (new SW.Figure.Railroad.Optional (new SW.Figure.Railroad.Sequence (e)));
+        continue;
+      }
+    }
+    var span = document.createElement ('span');
+    span.innerHTML = li.innerHTML;
+    document.body.appendChild (span); // for dimension
+    elements.push (SW.Figure.Railroad.Terminal (span));
+  }
+  return elements;
+}; // parseItems
+
+function initFigures (root) {
+  var figs = root.querySelectorAll ('figure.states');
+  if (figs.length) {
+    var script = document.createElement ('script');
+    script.src = '/scripts/springy';
+    script.onload = function () {
+      for (var i = 0; i < figs.length; i++) {
+        SW.Figure.States (figs[i]);
+      }
+    };
+    document.body.appendChild (script);
+  }
+
+  var rfigs = root.querySelectorAll ('figure.railroad');
+  if (rfigs.length) {
+    var script = document.createElement ('script');
+    script.src = '/scripts/railroad';
+    script.onload = function () {
+      for (var i = 0; i < rfigs.length; i++) {
+        SW.Figure.Railroad (rfigs[i]);
+      }
+    };
+    document.body.appendChild (script);
+  }
+} // initFigures
 
 /* 
 
