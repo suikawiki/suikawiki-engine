@@ -159,16 +159,13 @@ blockquote {
 
 .sw-comment-p {
   display: block;
-  padding-left: 5em;
-  color: #004000;
-  background-color: transparent;
-  text-indent: -1em;
+  margin: 1em 0 1em 5em;
+  padding: 0.5em 1.3em;
+  color: black;
+  background-color: #F5FFF5;
+  text-indent: 0;
   font-size: 90%;
   line-height: 2.2;
-}
-
-.sw-comment-p:before {
-  content: ";; ";
 }
 
 .sw-ed {
@@ -281,7 +278,7 @@ blockquote > del {
 /* Anchors */
 
 :link, :visited {
-  border-bottom: solid 0.1em blue;
+  border-bottom: solid 0.1em #babaff;
   padding-bottom: 0.1em;
   text-decoration: none;
 }
@@ -307,7 +304,7 @@ ins + ins {
 *//* Split border-bottoms */
 
 .sw-anchor:visited {
-  border-bottom-color: purple;
+  border-bottom-color: #EE82EE;
 }
 
 .sw-anchor-internal {
@@ -327,7 +324,13 @@ ins + ins {
   top: auto;
   color: gray;
   text-indent: 0;
-  font-size: smaller;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+figure .sw-anchor-end {
+  left: auto;
+  right: 0.4em;
 }
 
 a:hover,
@@ -343,6 +346,7 @@ a:hover,
 :hover > .sw-anchor-end {
   background-color: #FFA;
   color: #000080;
+  border-style: none;
 }
 
 [rel~=bookmark] {
@@ -358,7 +362,7 @@ figure {
   position: relative;
   margin: 1em 3em;
   border: 1px #004000 solid;
-  padding: 0.3em 1em;
+  padding: 0.3em 2.5em 0.3em 1em;
   line-height: 1.5;
 }
 
@@ -372,6 +376,131 @@ figcaption {
 
 figure > p:first-child {
   text-indent: 0;
+}
+
+figure.list {
+  color: black;
+  background-color: #FCFCFC;
+  border-style: none;
+}
+
+figure.list > ul {
+  padding-left: 2em;
+}
+
+figure.list > ul > li {
+  display: block;
+  margin-left: 0;
+  padding-left: 0;
+  text-indent: -1em;
+}
+
+figure.list > ul > li::before {
+  content: "\25BB  \A0";
+}
+
+figure.quote {
+  margin: 0.5em 0 0.5em 0;
+  border-style: none;
+  border-left: #004000 double 0.3em;
+  padding: 0.2em 3em 0.2em 1em;
+  background-color: #f7fff7;
+  color: black;
+}
+
+figure.quote > figcaption {
+  text-align: left;
+}
+
+figure.quote > figcaption > p {
+  text-indent: 0;
+}
+
+figure.steps {
+  margin-left: 0;
+  margin-right: 0;
+  border-style: none;
+  border-left: #400080 1px solid;
+  padding-left: 0;
+  color: black;
+  background-color: #FCFCFC;
+}
+
+figure.steps ol {
+  margin: 0.3em 0;
+  border-left: #400080 1px solid;
+  padding-left: 3em;
+}
+
+figure.steps > ol {
+  border-left: none;
+}
+
+figure.states svg {
+  height: 15em;
+}
+
+figure.states .edge, #triangle {
+  stroke: gray;
+}
+
+figure.states .edge {
+  stroke-width: 1;
+  marker-end: url(#triangle);
+}
+
+figure.states .node {
+  text-align: center;
+}
+
+figure.states .node rect {
+  fill: transparent;
+  stroke: black;
+  stroke-width: 1;
+}
+
+figure.railroad {
+  margin: 0.8em 0 0.8em 3em;
+  border-style: none;
+  padding-left: 1em;
+  color: black;
+  background-color: #FCFCFC;
+  line-height: 2.0;
+  font-size: 90%;
+}
+
+figure.railroad svg.railroad-diagram {
+}
+
+figure.railroad svg.railroad-diagram path {
+  stroke-width: 3;
+  stroke: black;
+  fill: rgba(0, 0, 0, 0);
+}
+
+figure.railroad svg.railroad-diagram text,
+figure.railroad svg.railroad-diagram .text {
+  font: 14px monospace;
+  text-anchor: middle;
+}
+
+figure.railroad svg.railroad-diagram text code,
+figure.railroad svg.railroad-diagram .text code {
+  font: 14px monospace;
+}
+
+figure.railroad svg.railroad-diagram text.label {
+  text-anchor: start;
+}
+
+figure.railroad svg.railroad-diagram text.comment {
+  font: bold 12px monospace;
+}
+
+figure.railroad svg.railroad-diagram rect {
+  stroke-width: 3;
+  stroke: black;
+  fill: #e0ffe0;
 }
 
 /* Examples */
@@ -396,7 +525,7 @@ code, samp, pre.code {
 /* List of references */
 
 .sw-refs {
-  background-color: #FBF8E6;
+  background-color: #FDFDEC;
   line-height: 1.5;
   padding: 0.3em;
   margin-bottom: 0.5em;
@@ -493,9 +622,19 @@ strong {
 }
 
 em {
+/*
   border-bottom: solid 0.1em;
   padding-bottom: 0.1em;
+*/
   font-style: normal;
+  -webkit-text-emphasis: sesame;
+  text-emphasis: sesame;
+}
+
+em:lang(en) {
+  font-style: italic;
+  -webkit-text-emphasis: none;
+  text-emphasis: none;
 }
 
 .sw-weak {
@@ -507,9 +646,13 @@ em {
 /* Ruby annotations */
 
 ruby {
-  display: inline;
-  ruby-position: inline;
-  position: relative;
+  -webkit-ruby-position: before;
+  ruby-position: before;
+}
+
+ruby.sw-rubyb {
+  -webkit-ruby-position: after;
+  ruby-position: after;
 }
 
 rp {
@@ -517,21 +660,11 @@ rp {
 }
 
 rt {
-  display: block;
-  position: absolute;
-  bottom: 1.7em;
-  left: 0;
-  right: 0;
-  font-size: 70%;
-  line-height: 1.1;
   text-align: center;
-  white-space: nowrap;
-  text-indent: 0;
 }
 
 rt ~ rt, .sw-rubyb > rt {
-  top: 1.7em;
-  bottom: auto;    
+  ruby-position: after; /* XXX */
 }
 
 /* Other inlines */
@@ -540,6 +673,10 @@ dfn {
   font-style: normal;
   font-weight: bolder;
   font-family: sans-serif;
+}
+
+dfn rt {
+  font-weight: normal;
 }
 
 var sub, var sup {
@@ -728,75 +865,6 @@ body > aside {
   list-style: none;
   margin: 0 1em 0;
   padding: 0;
-}
-
-/* Figures */
-
-figure.states svg {
-  height: 15em;
-}
-
-figure.states .edge, #triangle {
-  stroke: gray;
-}
-
-figure.states .edge {
-  stroke-width: 1;
-  marker-end: url(#triangle);
-}
-
-figure.states .node {
-  text-align: center;
-}
-
-figure.states .node rect {
-  fill: transparent;
-  stroke: black;
-  stroke-width: 1;
-}
-
-figure.railroad {
-  margin: 0.8em 0 0.8em 3em;
-  border-style: none;
-  padding-left: 1em;
-  color: black;
-  background-color: #FCFCFC;
-  line-height: 2.0;
-  font-size: 90%;
-}
-
-figure.railroad svg.railroad-diagram {
-}
-
-figure.railroad svg.railroad-diagram path {
-  stroke-width: 3;
-  stroke: black;
-  fill: rgba(0, 0, 0, 0);
-}
-
-figure.railroad svg.railroad-diagram text,
-figure.railroad svg.railroad-diagram .text {
-  font: 14px monospace;
-  text-anchor: middle;
-}
-
-figure.railroad svg.railroad-diagram text code,
-figure.railroad svg.railroad-diagram .text code {
-  font: 14px monospace;
-}
-
-figure.railroad svg.railroad-diagram text.label {
-  text-anchor: start;
-}
-
-figure.railroad svg.railroad-diagram text.comment {
-  font: bold 12px monospace;
-}
-
-figure.railroad svg.railroad-diagram rect {
-  stroke-width: 3;
-  stroke: black;
-  fill: #e0ffe0;
 }
 
 /* Bookmarklet */

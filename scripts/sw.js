@@ -392,7 +392,7 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
         continue;
       } else {
         var e = parseItems (li.lastChild.children);
-        e.unshift (new SW.Figure.Railroad.Comment (type));
+        e.unshift (new SW.Figure.Railroad.Comment (li.firstChild.data));
         elements.push (new SW.Figure.Railroad.Sequence (e));
         continue;
       }
