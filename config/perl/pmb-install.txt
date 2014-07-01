@@ -1,5 +1,5 @@
 Capture::Tiny~0.24
-Pod::Usage~1.63
+Pod::Usage~1.64
 JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.62
@@ -26,7 +26,7 @@ Devel::CheckLib~1.01
 HTML::Entities~3.69
 Parallel::Prefork~0.15
 Algorithm::Diff~1.1902
-Path::Tiny~0.054
+Path::Tiny~0.055
 Net::HTTP~6.06
 URI~1.60
 Plack~1.0030
@@ -53,8 +53,8 @@ AnyEvent::Util
 Digest::SHA~5.92
 Time::Local~1.2300
 Test::SharedFork~0.26
-Try::Tiny~0.22
 Getopt::Long~2.42
+Try::Tiny~0.22
 Term::ANSIColor~4.03
 Server::Starter~0.17
 Exporter::Lite~0.05
