@@ -3,7 +3,6 @@ Pod::Usage~1.64
 JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.62
-HTTP::Headers~6.05
 Data::Dump~1.22
 HTTP::Daemon~6.01
 Module::Build~0.4205
@@ -23,7 +22,6 @@ Unicode::Normalize~1.18
 Filter::Util::Call~1.49
 Thread::SigMask~0.004
 Devel::CheckLib~1.01
-HTML::Entities~3.69
 Parallel::Prefork~0.15
 Algorithm::Diff~1.1902
 Path::Tiny~0.055
@@ -47,7 +45,7 @@ Class::Accessor::Fast~0.34
 Test::NoWarnings~1.04
 File::Listing~6.04
 Stream::Buffered~0.03
-Test::TCP~2.05
+Test::TCP~2.06
 Test::Builder~1.001003
 AnyEvent::Util
 Digest::SHA~5.92
@@ -59,6 +57,7 @@ Term::ANSIColor~4.03
 Server::Starter~0.17
 Exporter::Lite~0.05
 Test::Class~0.43
+HTML::HeadParser~3.71
 Data::Dumper~2.151
 HTTP::Cookies~6.01
 Text::Diff~1.41
@@ -78,5 +77,6 @@ Digest::MD5~2.53
 Class::Data::Inheritable~0.08
 MRO::Compat~0.12
 Hash::MultiValue~0.15
+HTTP::Headers::Util~6.03
 Apache::LogFormat::Compiler~0.32
 HTTP::Date~6.02
