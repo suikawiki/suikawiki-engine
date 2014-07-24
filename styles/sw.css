@@ -384,6 +384,11 @@ figure.list {
   border-style: none;
 }
 
+figure.list.short {
+  -webkit-column-width: 10em;
+  column-width: 10em;
+}
+
 figure.list > ul {
   padding-left: 2em;
 }
@@ -414,6 +419,40 @@ figure.quote > figcaption {
 
 figure.quote > figcaption > p {
   text-indent: 0;
+}
+
+figure.quote > blockquote {
+  border-style: none;
+}
+
+figure.corollary {
+  border-style: none;
+  font-size: 90%;
+  line-height: 2;
+}
+
+figure.corollary::before {
+  display: block;
+  position: absolute;
+  left: -1em;
+  content: "★";
+  font-size: 50%;
+}
+
+figure.important {
+  display: block;
+  margin: 1em 0;
+  border: 0.5em solid;
+  padding: 0.5em 1em 0.5em 2em;
+  border-color: rgb(229, 0, 0);
+  background-color: transparent;
+  color: inherit;
+  text-indent: -1em;
+  line-height: 2.0;
+}
+
+figure.important > p {
+  text-indent: 1em;
 }
 
 figure.steps {
@@ -520,6 +559,10 @@ figure.railroad svg.railroad-diagram rect {
 code, samp, pre.code {
   color: #800000;
   font-family: "Courier New", monospace;
+}
+
+.short code {
+  word-break: break-all;
 }
 
 /* List of references */
