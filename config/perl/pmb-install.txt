@@ -3,6 +3,7 @@ Pod::Usage~1.64
 JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.62
+HTTP::Headers~6.05
 HTTP::Daemon~6.01
 Module::Build~0.4206
 List::MoreUtils~0.33
@@ -60,7 +61,6 @@ HTML::HeadParser~3.71
 Data::Dumper~2.151
 HTTP::Cookies~6.01
 Text::Diff~1.41
-HTTP::Response~6.04
 File::Temp~0.2304
 Signal::Mask~0.007
 Class::Inspector~1.28
