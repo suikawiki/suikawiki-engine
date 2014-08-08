@@ -1,7 +1,6 @@
 Capture::Tiny~0.24
 Pod::Usage~1.64
 JSON::XS~3.01
-HTTP::Status~6.03
 IO::HTML~1.001
 Encode~2.62
 HTTP::Daemon~6.01
@@ -10,13 +9,13 @@ List::MoreUtils~0.33
 IO::File~1.14
 Devel::StackTrace~1.34
 HTTP::Body~1.19
+HTTP::Message~6.06
 POSIX::strftime::Compiler~0.32
 Test::Differences~0.62
 Path::Class~0.33
 common::sense~3.73
 List::Rubyish~0.03
 Text::MeCab~0.20016
-URI::Escape~3.31
 LWP::MediaTypes~6.02
 Types::Serialiser~1.0
 Unicode::Normalize~1.18
@@ -24,8 +23,9 @@ Filter::Util::Call~1.49
 Devel::CheckLib~1.01
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1902
-Path::Tiny~0.055
+Path::Tiny~0.056
 Net::HTTP~6.07
+URI~1.64
 Plack~1.0031
 Test::Tester~0.109
 Class::Accessor::Lite~0.06
@@ -56,8 +56,8 @@ Term::ANSIColor~4.03
 Server::Starter~0.17
 Exporter::Lite~0.06
 Test::Class~0.46
-HTML::HeadParser~3.71
 Data::Dumper~2.151
+HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 Text::Diff~1.41
 File::Temp~0.2304
