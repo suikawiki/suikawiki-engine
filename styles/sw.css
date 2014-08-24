@@ -114,10 +114,16 @@ h6 {
 }
 
 .sw-heading-anchor {
+  display: none;
   float: right;
   font-size: 80%;
   font-weight: normal;
   color: gray;
+}
+
+.section:hover > * > .sw-heading-anchor,
+:target > * > .sw-heading-anchor {
+  display: block;
 }
 
 .article, .section, section {
@@ -187,6 +193,8 @@ blockquote {
 
 .toc > ol li {
   display: block;
+  -webkit-column-break-inside: avoid;
+  column-break-inside: avoid;
 }
 
 .toc > ol ol {
@@ -195,7 +203,12 @@ blockquote {
 }
 
 .toc > ol li li::before {
-  content: "> ";
+  content: "\2798  ";
+}
+
+.toc a {
+  text-decoration: none;
+  border-bottom-style: none;
 }
 
 /* Paragraph-level blocks */

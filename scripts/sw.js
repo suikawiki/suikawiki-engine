@@ -227,8 +227,13 @@ function initTOC (root) {
     var link = document.createElement ('a');
     link.href = a.href;
     link.innerHTML = h.innerHTML;
-    Array.prototype.forEach.apply (link.querySelectorAll ('.sw-heading-anchor'), [function (e) {
+    Array.prototype.forEach.apply (link.querySelectorAll ('.sw-heading-anchor, .sw-anchor-end'), [function (e) {
       e.parentNode.removeChild (e);
+    }]);
+    Array.prototype.forEach.apply (link.querySelectorAll ('a'), [function (e) {
+      var df = document.createDocumentFragment ();
+      Array.prototype.forEach.apply (e.childNodes, [function (n) { df.appendChild (n) }]);
+      e.parentNode.replaceChild (df, e);
     }]);
     li.appendChild (link);
     while (true) {
