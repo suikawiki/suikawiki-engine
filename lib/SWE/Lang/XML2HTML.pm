@@ -1,7 +1,7 @@
 package SWE::Lang::XML2HTML;
 use strict;
 
-our $ConverterVersion = 3;
+our $ConverterVersion = 4;
 
 sub AA_NS () { q<http://pc5.2ch.net/test/read.cgi/hp/1096723178/aavocab#> }
 sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
@@ -28,12 +28,30 @@ $templates->{(HTML_NS)}->{head} = sub { };
 $templates->{(HTML_NS)}->{section} = sub {
   my ($items, $item) = @_;
 
-  my $section_el = $item->{doc}->create_element_ns (HTML_NS, 'div');
+  my $section_el = $item->{doc}->create_element_ns (HTML_NS, 'section');
   $section_el->set_attribute (class => 'section sw-section');
   $item->{parent}->append_child ($section_el);
 
+  my $id;
+  for (@{$item->{node}->children}) {
+    if ($_->local_name eq 'h1') {
+      $id = $_->text_content;
+      last;
+    }
+  }
+  if (defined $id) {
+    $id =~ s/\s+/ /g;
+    $id =~ s/^ //;
+    $id =~ s/ $//;
+    $id =~ s/[\x09\x0A\x0D\x20]/-/g; ## HTML "space character"
+    $id = defined $item->{section_id}
+        ? $item->{section_id} . "\x{2028}" . $id : 'section-' . $id;
+    $section_el->set_attribute (id => $id);
+  }
+
   unshift @$items,
       map {{%$item, node => $_, parent => $section_el,
+            section_id => defined $id ? $id : $item->{section_id},
             heading_level => $item->{heading_level} + 1}}
       @{$item->{node}->child_nodes};
 };

@@ -36,6 +36,8 @@ addEventListener ('DOMContentLoaded', function () {
 
   createToolbar ();
   initFigures (document.body);
+  initHeadings (document.body);
+  initTOC (document.body);
   addGoogleSearch ();
   enableHTML5Support ();
   addGoogleAnalytics ();
@@ -182,6 +184,76 @@ function addGoogleAnalytics () {
 
 /* Hack for IE */
 document.createElement ('time');
+
+function initHeadings (root) {
+  Array.prototype.forEach.apply (root.querySelectorAll ('h1, h2, h3, h4, h5, h6'), [function (h) {
+    var section = h.parentNode;
+    if (!section || section.localName != 'section') return;
+    if (!section.id) return;
+    var a = document.createElement ('a');
+    a.href = '#' + encodeURIComponent (section.id);
+    a.className = 'sw-heading-anchor';
+    a.rel = 'bookmark';
+    a.textContent = '#';
+    h.appendChild (a);
+  }]);
+} // initHeadings
+
+function initTOC (root) {
+  var article = root.querySelector ('.article');
+  if (!article) return;
+
+  var levelOffset = 0;
+  var firstH = article.querySelector
+    ('section > h1, section > h2, section > h3, section > h4, section > h5, section > h6');
+  if (firstH) {
+    levelOffset = parseInt (firstH.localName.replace (/^h/, '')) - 1;
+  }
+
+  var section = document.createElement ('section');
+  section.id = 'toc';
+  section.className = 'toc';
+  var h = document.createElement ('h1');
+  h.textContent = '目次';
+  section.appendChild (h);
+  var ol = document.createElement ('ol');
+  ol.setAttribute ('data-level', 1);
+  section.appendChild (ol);
+
+  Array.prototype.forEach.apply (article.querySelectorAll ('.section > * > .sw-heading-anchor[href]'), [function (a) {
+    var h = a.parentNode;
+    var hLevel = parseInt (h.localName.replace (/^h/, '')) - levelOffset;
+    var li = document.createElement ('li');
+    var link = document.createElement ('a');
+    link.href = a.href;
+    link.innerHTML = h.innerHTML;
+    Array.prototype.forEach.apply (link.querySelectorAll ('.sw-heading-anchor'), [function (e) {
+      e.parentNode.removeChild (e);
+    }]);
+    li.appendChild (link);
+    while (true) {
+      var olLevel = parseInt (ol.getAttribute ('data-level'));
+      if (hLevel < olLevel) {
+        ol = ol.parentNode.parentNode;
+        continue;
+      } else if (hLevel > olLevel) {
+        if (!ol.lastElementChild) {
+          ol.appendChild (document.createElement ('li'));
+        }
+        ol = ol.lastElementChild.appendChild (document.createElement ('ol'));
+        ol.setAttribute ('data-level', olLevel + 1);
+        continue;
+      } else {
+        break;
+      }
+    }
+    ol.appendChild (li);
+  }]);
+    
+  var after = article.querySelector ('section');
+  if (!after) return;
+  after.parentNode.insertBefore (section, after);
+} // initTOC
 
 if (!window.SW) window.SW = {};
 if (!SW.Figure) SW.Figure = {};
