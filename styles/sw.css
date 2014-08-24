@@ -201,6 +201,12 @@ ul, ol, dl {
   line-height: 2;
 }
 
+li li li ul,
+li li li ol,
+li li li dl {
+  font-size: 100%;
+}
+
 ul li, ol li {
 
 }
@@ -786,6 +792,23 @@ input[name=title] {
 body > aside {
 }
 
+@media (min-width: 50em) {
+  body.swe-has-sidebar {
+    max-width: none;
+    width: auto;
+    padding-right: 10em;
+  }
+
+  body.swe-has-sidebar > aside {
+    display: block;
+    position: absolute;
+    top: 7em;
+    right: 0em;
+    width: 10em;
+    margin: 0;
+  }
+}
+
 @media (min-width: 65em) {
   body.swe-has-sidebar {
     max-width: none;
@@ -824,7 +847,7 @@ body > aside {
   margin: 0;
 }
 
-@media (min-width: 65em) {
+@media (min-width: 50em) {
   .swe-page-names {
     display: block;
   }
@@ -837,7 +860,7 @@ body > aside {
   overflow: hidden;
 }
 
-@media (min-width: 65em) {
+@media (min-width: 50em) {
   .swe-ad {
     display: block;
   }
