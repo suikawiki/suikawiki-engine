@@ -13,6 +13,7 @@ POSIX::strftime::Compiler~0.40
 Test::Differences~0.62
 Path::Class~0.33
 common::sense~3.73
+HTTP::Request~6.00
 List::Rubyish~0.03
 Text::MeCab~0.20016
 LWP::MediaTypes~6.02
@@ -59,7 +60,6 @@ Test::Class~0.46
 Data::Dumper~2.151
 HTTP::Cookies~6.01
 Text::Diff~1.41
-HTTP::Response~6.04
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
