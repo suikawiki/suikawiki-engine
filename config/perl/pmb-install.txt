@@ -1,6 +1,7 @@
 Capture::Tiny~0.25
 Pod::Usage~1.64
 JSON::XS~3.01
+HTTP::Status~6.03
 IO::HTML~1.001
 Encode~2.62
 HTTP::Daemon~6.01
@@ -13,7 +14,6 @@ POSIX::strftime::Compiler~0.40
 Test::Differences~0.62
 Path::Class~0.33
 common::sense~3.73
-HTTP::Request~6.00
 List::Rubyish~0.03
 Text::MeCab~0.20016
 LWP::MediaTypes~6.02
