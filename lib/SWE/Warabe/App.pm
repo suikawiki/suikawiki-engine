@@ -143,11 +143,11 @@ sub page_url ($$%) {
 } # page_url
 
 sub css_url ($) {
-  return '/styles/sw';
+  return '/styles/sw?2';
 } # css_url
 
 sub js_url ($) {
-  return '/scripts/sw';
+  return '/scripts/sw?2';
 } # js_url
 
 1;

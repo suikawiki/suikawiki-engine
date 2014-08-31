@@ -482,6 +482,522 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
   return elements;
 }; // parseItems
 
+(function () {
+  if (!self.SW) self.SW = {};
+  if (!SW.Figure) SW.Figure = {};
+  if (!SW.Figure.Sequence) SW.Figure.Sequence = {};
+
+  SW.Figure.Sequence.parseItems = function (container) {
+    var diagram = new SW.Figure.Sequence.DataSet;
+    var actors = {};
+    var addActor = function (name, element) {
+      actors[name] = new SW.Figure.Sequence.Actor
+          ({label: element || document.createElement ('span')});
+      diagram.add (actors[name]);
+    };
+    Array.prototype.forEach.apply (container.querySelectorAll ('dl'), [function (dl) {
+      var lastDT;
+      Array.prototype.forEach.apply (dl.children, [function (el) {
+        if (el.localName === 'dt') {
+          lastDT = el.textContent.replace (/\s+/g, ' ')
+              .replace (/^ /, '').replace (/ $/, '');
+        } else if (el.localName === 'dd') {
+          if (lastDT) {
+            var m;
+            if (m = lastDT.match (/^(.+?) -> (.+)$/)) {
+              if (!actors[m[1]]) addActor (m[1]);
+              if (!actors[m[2]]) addActor (m[2]);
+              diagram.add (new SW.Figure.Sequence.Signal
+                               (actors[m[1]], actors[m[2]], {label: el}));
+            } else if (m = lastDT.match (/^(.+?) ## (.+)$/)) {
+              if (!actors[m[1]]) addActor (m[1]);
+              if (!actors[m[2]]) addActor (m[2]);
+              diagram.add (new SW.Figure.Sequence.Note
+                               ([actors[m[1]], actors[m[2]]], {label: el}));
+            } else if (m = lastDT.match (/^(.+) ?##$/)) {
+              if (!actors[m[1]]) addActor (m[1]);
+              diagram.add (new SW.Figure.Sequence.Note
+                               (actors[m[1]], {label: el, placement: 'right'}));
+            } else if (m = lastDT.match (/^## ?(.+)$/)) {
+              if (!actors[m[1]]) addActor (m[1]);
+              diagram.add (new SW.Figure.Sequence.Note
+                               (actors[m[1]], {label: el, placement: 'left'}));
+            } else if (m = lastDT.match (/^# ?(.+) ?#$/)) {
+              if (!actors[m[1]]) addActor (m[1]);
+              diagram.add (new SW.Figure.Sequence.Note
+                               (actors[m[1]], {label: el, placement: 'over'}));
+            } else {
+              addActor (lastDT, el);
+            }
+            lastDT = null;
+          }
+        }
+      }]);
+    }]);
+    SW.Figure.Sequence.draw (diagram, container);
+  }; // parseItems
+
+  SW.Figure.Sequence.DataSet = function () {
+    this.actors = [];
+    this.signals = [];
+  }; // DataSet
+
+  SW.Figure.Sequence.DataSet.prototype.add = function (obj) {
+    if (obj instanceof SW.Figure.Sequence.Actor) {
+      this.actors.push (obj);
+      obj.index = this.actors.length - 1;
+    } else if (obj instanceof SW.Figure.Sequence.Signal ||
+               obj instanceof SW.Figure.Sequence.Note) {
+      this.signals.push (obj);
+    } else {
+      throw new TypeError ("Unknown object");
+    }
+  }; // add
+
+  SW.Figure.Sequence.Actor = function (opts) {
+    this.label = {element: opts.label,
+                  width: opts.label.offsetWidth,
+                  height: opts.label.offsetHeight};
+    this.index = null;
+  }; // Actor
+
+  SW.Figure.Sequence.Signal = function (actorA, actorB, opts) {
+    opts = opts || {};
+    this.type = "Signal";
+    this.actorA = actorA;
+    this.actorB = actorB;
+    this.label = {element: opts.label,
+                  width: opts.label.offsetWidth,
+                  height: opts.label.offsetHeight};
+  }; // Signal
+
+  SW.Figure.Sequence.Signal.prototype.isSelf = function () {
+    return this.actorA.index == this.actorB.index;
+  }; // isSelf
+
+  SW.Figure.Sequence.Note = function (actor, opts) {
+    opts = opts || {};
+    this.type = "Note";
+    this.placement = opts.placement || 'over'; // over|right|left
+    this.label = {element: opts.label,
+                  width: opts.label.offsetWidth,
+                  height: opts.label.offsetHeight};
+
+    this.actor = actor;
+    if (this.hasManyActors () && actor[0] == actor[1]) {
+      throw new TypeError ("Note should be over two different actors");
+    }
+  }; // Note
+
+  SW.Figure.Sequence.Note.prototype.hasManyActors = function () {
+    return this.actor instanceof Array;
+  }; // hasManyActors
+}) ();
+(function () {
+  /*
+    Derived from js sequence diagrams
+    <http://bramp.github.io/js-sequence-diagrams/> by Andrew Brampton
+    as of August 2013
+    <https://github.com/bramp/js-sequence-diagrams/commit/4c64e16f366367939aa667ab396c02ed1dfef806>,
+    distributed under the simplified BSD license
+    <https://github.com/bramp/js-sequence-diagrams/blob/master/LICENCE>.
+  */
+
+  /** js sequence diagrams
+   *  http://bramp.github.io/js-sequence-diagrams/
+   *  (c) 2012-2013 Andrew Brampton (bramp.net)
+   *  Simplified BSD license.
+   */
+	"use strict";
+
+	// Following the CSS convention
+	// Margin is the gap outside the box
+	// Padding is the gap inside the box
+	// Each object has x/y/width/height properties
+	// The x/y should be top left corner
+	// width/height is with both margin and padding
+
+	// TODO
+	// Image width is wrong, when there is a note in the right hand col
+	// Title box could look better
+	// Note box could look better
+
+	var DIAGRAM_MARGIN = 10;
+
+	var ACTOR_MARGIN   = 10; // Margin around a actor
+	var ACTOR_PADDING  = 10; // Padding inside a actor
+
+	var SIGNAL_MARGIN  = 5; // Margin around a signal
+	var SIGNAL_PADDING = 5; // Padding inside a signal
+
+	var NOTE_MARGIN   = 10; // Margin around a note
+	var NOTE_PADDING  = 5; // Padding inside a note
+	var NOTE_OVERLAP  = 15; // Overlap when using a "note over A,B"
+
+	var TITLE_MARGIN   = 0;
+	var TITLE_PADDING  = 5;
+
+	var SELF_SIGNAL_WIDTH = 20; // How far out a self signal goes
+
+        var SVG = 'http://www.w3.org/2000/svg';
+
+	function getCenterX(box) {
+		return box.x + box.width / 2;
+	}
+
+    var Drawer = function (diagram) {
+      this.diagram = diagram;
+      this._actors_height  = 0;
+      this._signals_height = 0;
+    };
+
+    Drawer.prototype = {
+      _initPaper: function (container) {
+        this._paper = document.createElementNS (SVG, 'svg');
+        this._paper.setAttribute ('width', 300);
+        this._paper.setAttribute ('height', 200);
+
+        var idPrefix = Math.random ();
+        this._paperIDPrefix = idPrefix;
+        var tempEl = document.createElementNS (SVG, 'div');
+        tempEl.innerHTML = '<svg><defs><path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="IDPREFIX-marker-block"></path><marker id="IDPREFIX-marker-endblock" markerHeight="5" markerWidth="5" orient="auto" refX="5" refY="2.5"><use xlink:href="#IDPREFIX-marker-block" transform="rotate(180 2.5 2.5) scale(1,1)" stroke-width="1.0000" fill="#000" stroke="none"></use></marker></defs></svg>'.replace (/IDPREFIX/g, idPrefix);
+        this._paper.appendChild (tempEl.firstChild.firstChild);
+
+        container.appendChild (this._paper);
+      }, // _initPaper
+
+      _drawLine: function (p1, p2, className) {
+        var svg = this._paper;
+        var line = svg.ownerDocument.createElementNS (SVG, 'line');
+        line.setAttribute ('class', className);
+        line.setAttribute ('x1', p1[0]);
+        line.setAttribute ('y1', p1[1]);
+        line.setAttribute ('x2', p2[0]);
+        line.setAttribute ('y2', p2[1]);
+        svg.appendChild (line);
+        return line;
+      }, // _drawLine
+
+      _drawRect: function (p, w, h, r, className) {
+        var svg = this._paper;
+        var rect = svg.ownerDocument.createElementNS (SVG, 'rect');
+        rect.setAttribute ('class', className);
+        rect.setAttribute ('x', p[0]);
+        rect.setAttribute ('y', p[1]);
+        rect.setAttribute ('rx', r || 0);
+        rect.setAttribute ('ry', r || 0);
+        rect.setAttribute ('width', w);
+        rect.setAttribute ('height', h);
+        svg.appendChild (rect);
+        return rect;
+      }, // _drawRect
+
+      _drawText: function (p, className, text) {
+        var svg = this._paper;
+        var t = svg.ownerDocument.createElementNS (SVG, 'foreignObject');
+        t.setAttribute ('class', className + ' text');
+        t.setAttribute ('x', p[0] - text.width / 2);
+        t.setAttribute ('y', p[1] - text.height / 2);
+        t.setAttribute ('width', text.width);
+        t.setAttribute ('height', text.height);
+        Array.prototype.forEach.apply (text.element.childNodes, [function (node) {
+          t.appendChild (node.cloneNode (true));
+        }]);
+        // XXX provide hook for scripts
+        svg.appendChild (t);
+      }, // _drawText
+
+		draw : function(container) {
+		    var diagram = this.diagram;
+		    this._initPaper (container);
+
+			this.layout();
+
+                        this._paper.setAttribute ('width', diagram.width);
+                        this._paper.setAttribute ('height', diagram.height);
+
+			var y = DIAGRAM_MARGIN;
+			this.draw_actors(y);
+			this.draw_signals(y + this._actors_height);
+		},
+
+		layout : function() {
+			// Local copies
+			var diagram = this.diagram;
+			var paper   = this._paper;
+			var actors  = diagram.actors;
+			var signals = diagram.signals;
+
+			diagram.width = 0;  // min width
+			diagram.height = 0; // min width
+
+		        actors.forEach (function(a) {
+			  a.x = 0; a.y = 0;
+			  a.width = a.label.width + (ACTOR_PADDING + ACTOR_MARGIN) * 2;
+			  a.height = a.label.height + (ACTOR_PADDING + ACTOR_MARGIN) * 2;
+
+			  a.distances = [];
+			  a.padding_right = 0;
+			  this._actors_height = Math.max
+                              (a.height, this._actors_height);
+			}, this);
+
+			function actor_ensure_distance(a, b, d) {
+				if (a < 0) {
+					// Ensure b has left margin
+					b = actors[b];
+					b.x = Math.max(d - b.width / 2, b.x);
+				} else if (b >= actors.length) {
+					// Ensure a has right margin
+					a = actors[a];
+					a.padding_right = Math.max(d, a.padding_right);
+				} else {
+					a = actors[a];
+					a.distances[b] = Math.max(d, a.distances[b] ? a.distances[b] : 0);
+				}
+			}
+
+		        signals.forEach (function(s) {
+			  var a, b; // Indexes of the left and right actors involved
+
+                          s.width = s.label.width;
+                          s.height = s.label.height;
+
+				var extra_width = 0;
+
+				if (s.type == "Signal") {
+
+					s.width  += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
+					s.height += (SIGNAL_MARGIN + SIGNAL_PADDING) * 2;
+
+					if (s.isSelf()) {
+						a = s.actorA.index;
+						b = a + 1;
+						s.width += SELF_SIGNAL_WIDTH;
+					} else {
+						a = Math.min(s.actorA.index, s.actorB.index);
+						b = Math.max(s.actorA.index, s.actorB.index);
+					}
+
+				} else if (s.type == "Note") {
+					s.width  += (NOTE_MARGIN + NOTE_PADDING) * 2;
+					s.height += (NOTE_MARGIN + NOTE_PADDING) * 2;
+
+					// HACK lets include the actor's padding
+					extra_width = 2 * ACTOR_MARGIN;
+
+					if (s.placement === "left") {
+						b = s.actor.index;
+						a = b - 1;
+					} else if (s.placement === "right") {
+						a = s.actor.index;
+						b = a + 1;
+					} else if (s.placement === "over" && s.hasManyActors()) {
+						// Over multiple actors
+						a = Math.min(s.actor[0].index, s.actor[1].index);
+						b = Math.max(s.actor[0].index, s.actor[1].index);
+
+						// We don't need our padding, and we want to overlap
+						extra_width = - (NOTE_PADDING * 2 + NOTE_OVERLAP * 2);
+
+					} else if (s.placement === "over") {
+						// Over single actor
+						a = s.actor.index;
+						actor_ensure_distance(a - 1, a, s.width / 2);
+						actor_ensure_distance(a, a + 1, s.width / 2);
+						this._signals_height += s.height;
+
+						return; // Bail out early
+					}
+				} else {
+					throw new Error("Unhandled signal type:" + s.type);
+				}
+
+				actor_ensure_distance(a, b, s.width + extra_width);
+				this._signals_height += s.height;
+			}, this);
+
+			// Re-jig the positions
+			var actors_x = 0;
+			actors.forEach (function(a) {
+				a.x = Math.max(actors_x, a.x);
+
+				// TODO This only works if we loop in sequence, 0, 1, 2, etc
+				a.distances.forEach(function(distance, b) {
+					// lodash (and possibly others) do not like sparse arrays
+					// so sometimes they return undefined
+					if (typeof distance == "undefined")
+						return;
+
+					b = actors[b];
+					distance = Math.max(distance, a.width / 2, b.width / 2);
+					b.x = Math.max(b.x, a.x + a.width/2 + distance - b.width/2);
+				});
+
+				actors_x = a.x + a.width + a.padding_right;
+			}, this);
+
+			diagram.width = Math.max(actors_x, diagram.width);
+
+			// TODO Refactor a little
+			diagram.width  += 2 * DIAGRAM_MARGIN;
+			diagram.height += 2 * DIAGRAM_MARGIN + 2 * this._actors_height + this._signals_height;
+
+			return this;
+		},
+
+		draw_actors : function(offsetY) {
+			var y = offsetY;
+		        this.diagram.actors.forEach (function(a) {
+				// Top box
+				this.draw_actor(a, y, this._actors_height);
+
+				// Bottom box
+				this.draw_actor(a, y + this._actors_height + this._signals_height, this._actors_height);
+
+			    // Veritical line
+			    var aX = getCenterX(a);
+			    var line = this._drawLine
+		                ([aX, y + this._actors_height - ACTOR_MARGIN],
+		                 [aX, y + this._actors_height + ACTOR_MARGIN + this._signals_height],
+                                 'actor-timeline');
+			}, this);
+		},
+
+	    draw_actor: function (actor, offsetY, height) {
+              actor.y = offsetY;
+	      actor.height = height;
+	      this._drawRect
+                  ([actor.x + ACTOR_MARGIN, actor.y + ACTOR_MARGIN],
+                   actor.width - ACTOR_MARGIN * 2,
+                   actor.height - ACTOR_MARGIN * 2,
+                   0,
+                   'actor-label textbox');
+              this._drawText
+                  ([actor.x + ACTOR_MARGIN + ACTOR_PADDING + actor.label.width / 2,
+                    actor.y + ACTOR_MARGIN + ACTOR_PADDING + actor.label.height / 2],
+                   'actor-label', actor.label);
+	    }, // draw_actor
+
+		draw_signals : function (offsetY) {
+			var y = offsetY;
+		        this.diagram.signals.forEach (function(s) {
+				if (s.type == "Signal") {
+					if (s.isSelf()) {
+						this.draw_self_signal(s, y);
+					} else {
+						this.draw_signal(s, y);
+					}
+
+				} else if (s.type == "Note") {
+					this.draw_note(s, y);
+				}
+
+				y += s.height;
+			}, this);
+		},
+
+	    draw_self_signal: function (signal, offsetY) {
+              var aX = getCenterX (signal.actorA);
+              var x = aX + SELF_SIGNAL_WIDTH + SIGNAL_PADDING + signal.label.width / 2;
+	      var y = offsetY + signal.height / 2;
+
+	      this._drawText
+                  ([x, y], 'signal-label self-signal', signal.label);
+
+   	      var attr = {};
+
+	      var y1 = offsetY + SIGNAL_MARGIN;
+	      var y2 = y1 + signal.height - SIGNAL_MARGIN;
+
+	      // Draw three lines, the last one with a arrow
+	      var line;
+	      line = this._drawLine
+                  ([aX, y1], [aX + SELF_SIGNAL_WIDTH, y1],
+                   'signal-arrow-line self-signal');
+	      this._setAttrs (line, attr);
+
+	      line = this._drawLine
+                  ([aX + SELF_SIGNAL_WIDTH, y1], [aX + SELF_SIGNAL_WIDTH, y2],
+                   'signal-arrow-line self-signal');
+	      this._setAttrs (line, attr);
+
+              line = this._drawLine
+                  ([aX + SELF_SIGNAL_WIDTH, y2], [aX, y2],
+                   'signal-arrow self-signal');
+	      this._setAttrs (line, attr);
+	      this._setAttrs (line, {'marker-end': 'url(#' + this._paperIDPrefix + '-marker-endblock)'});
+	    }, // draw_self_signal
+
+	    draw_signal: function (signal, offsetY) {
+	      var aX = getCenterX (signal.actorA);
+	      var bX = getCenterX (signal.actorB);
+
+	      // Mid point between actors
+	      var x = (bX - aX) / 2 + aX;
+	      var y = offsetY + SIGNAL_MARGIN + 2*SIGNAL_PADDING;
+
+	      this._drawText ([x, y], 'signal-label', signal.label);
+
+	      // Draw the line along the bottom of the signal
+              y = offsetY + signal.height - SIGNAL_MARGIN - SIGNAL_PADDING;
+	      var line = this._drawLine
+                  ([aX, y], [bX, y], 'signal-arrow');
+	      this._setAttrs
+                  (line, {'marker-end': 'url(#' + this._paperIDPrefix + '-marker-endblock)'});
+	    }, // draw_signal
+
+	    draw_note: function (note, offsetY) {
+	      note.y = offsetY;
+	      var actorA = note.hasManyActors () ? note.actor[0] : note.actor;
+	      var aX = getCenterX (actorA);
+	      switch (note.placement) {
+	      case "right":
+		note.x = aX + ACTOR_MARGIN;
+		break;
+	      case "left":
+		note.x = aX - ACTOR_MARGIN - note.width;
+		break;
+	      case "over":
+		if (note.hasManyActors ()) {
+		  var bX = getCenterX (note.actor[1]);
+		  var overlap = NOTE_OVERLAP + NOTE_PADDING;
+		  note.x = aX - overlap;
+		  note.width = (bX + overlap) - note.x;
+		} else {
+		  note.x = aX - note.width / 2;
+		}
+		break;
+	      default:
+		throw new Error ("Unhandled note placement:" + note.placement);
+	      }
+
+	      this._drawRect
+                  ([note.x + NOTE_MARGIN, note.y + NOTE_MARGIN],
+                   note.width - NOTE_MARGIN * 2,
+                   note.height - NOTE_MARGIN * 2,
+                   5,
+                   'note-label textbox');
+              this._drawText
+                  ([note.x + NOTE_MARGIN + NOTE_PADDING + note.label.width / 2,
+                    note.y + NOTE_MARGIN + NOTE_PADDING + note.label.height / 2],
+                   'note-label', note.label);
+	    }, // draw_note
+
+            _setAttrs: function (el, obj) {
+              for (var n in obj) {
+                el.setAttribute (n, obj[n]);
+              }
+            }, // _setAttrs
+  }; // Drawer
+
+  SW.Figure.Sequence.draw = function (diagram, container) {
+    container.innerHTML = '';
+    var drawer = new Drawer (diagram);
+    drawer.draw (container);
+  }; // draw
+}());
+
 function initFigures (root) {
   var figs = root.querySelectorAll ('figure.states');
   if (figs.length) {
@@ -506,6 +1022,14 @@ function initFigures (root) {
     };
     document.body.appendChild (script);
   }
+
+  Array.prototype.forEach.apply (root.querySelectorAll ('figure.sequence'), [function (fig) {
+    var caps = fig.querySelectorAll ('figcaption');
+    SW.Figure.Sequence.parseItems (fig);
+    Array.prototype.forEach.apply (caps, [function (n) {
+      fig.appendChild (n);
+    }]);
+  }]);
 } // initFigures
 
 /* 

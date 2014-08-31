@@ -630,6 +630,45 @@ figure.railroad svg.railroad-diagram rect {
   fill: #e0ffe0;
 }
 
+figure.sequence {
+  border-style: none;
+}
+
+figure.sequence > figcaption {
+  text-align: left;
+}
+
+figure.sequence dd {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+figure.sequence line {
+  stroke: black;
+  stroke-width: 2;
+/*  stroke-dasharray: 6, 2; */
+}
+
+figure.sequence .actor-timeline {
+  stroke-width: 1;
+}
+
+figure.sequence .text {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+figure.sequence .textbox {
+  stroke: black;
+  stroke-width: 2;
+  fill: white;
+}
+
+.figure.sequence .note-label.textbox {
+  stroke-width: 1;
+  fill: rgba(255, 255, 255, 0.8);
+}
+
 /* Examples */
 
 .sw-example {
