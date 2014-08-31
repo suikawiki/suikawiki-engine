@@ -646,7 +646,7 @@ figure.sequence dd {
   font-size: 0.9rem;
 }
 
-figure.sequence foreignContent {
+figure.sequence foreignObject {
   font-size: 0.9em;
   font-size: 0.9rem;
 }
