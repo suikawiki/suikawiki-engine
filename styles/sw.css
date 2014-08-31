@@ -646,11 +646,6 @@ figure.sequence dd {
   font-size: 0.9rem;
 }
 
-figure.sequence foreignObject {
-  font-size: 0.9em;
-  font-size: 0.9rem;
-}
-
 figure.sequence line {
   stroke: black;
   stroke-width: 2;
@@ -662,6 +657,8 @@ figure.sequence .actor-timeline {
 }
 
 figure.sequence .text {
+  font-size: 0.9em;
+  font-size: 0.9rem;
   background: rgba(255, 255, 255, 0.8);
 }
 
