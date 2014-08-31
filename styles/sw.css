@@ -646,7 +646,6 @@ figure.sequence dd {
   font-size: 0.9rem;
   line-height: 1.2;
   min-width: 3em;
-  text-align: center;
 }
 
 figure.sequence line {
@@ -663,6 +662,7 @@ figure.sequence .text {
   font-size: 0.9em;
   font-size: 0.9rem;
   background: rgba(255, 255, 255, 0.8);
+  text-align: center;
 }
 
 figure.sequence .textbox {
