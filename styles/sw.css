@@ -609,6 +609,7 @@ figure.railroad svg.railroad-diagram text,
 figure.railroad svg.railroad-diagram .text {
   font: 14px monospace;
   text-anchor: middle;
+  overflow: visible;
 }
 
 figure.railroad svg.railroad-diagram text code,
@@ -639,7 +640,8 @@ figure.sequence > figcaption {
 }
 
 figure.sequence dd {
-  display: inline-block;
+  position: absolute;
+  display: block;
   margin: 0;
   padding: 0;
   font-size: 0.9em;
@@ -663,6 +665,7 @@ figure.sequence .text {
   font-size: 0.9rem;
   background: rgba(255, 255, 255, 0.8);
   text-align: center;
+  overflow: visible;
 }
 
 figure.sequence .textbox {
