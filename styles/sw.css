@@ -645,6 +645,7 @@ figure.sequence dd {
   font-size: 0.9em;
   font-size: 0.9rem;
   line-height: 1.2;
+  min-width: 3em;
 }
 
 figure.sequence line {
