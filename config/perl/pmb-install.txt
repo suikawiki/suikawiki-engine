@@ -20,7 +20,7 @@ LWP::MediaTypes~6.02
 Types::Serialiser~1.0
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
-Devel::CheckLib~1.01
+Devel::CheckLib~1.02
 HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1902
@@ -51,8 +51,8 @@ AnyEvent::Util
 Digest::SHA~5.92
 Time::Local~1.2300
 Test::SharedFork~0.28
-Try::Tiny~0.22
 Getopt::Long~2.42
+Try::Tiny~0.22
 Term::ANSIColor~4.03
 Server::Starter~0.17
 Exporter::Lite~0.06
@@ -66,7 +66,7 @@ Class::Inspector~1.28
 WWW::RobotRules~6.02
 Unicode::Stringprep~1.104
 Test::Requires~0.08
-Scalar::Util~1.39
+Scalar::Util~1.40
 Scope::Guard~0.20
 IPC::Signal~1.00
 Encode::Locale~1.03
