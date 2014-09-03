@@ -113,17 +113,25 @@ h6 {
   font-size: 100%;
 }
 
-.sw-heading-anchor {
+.sw-heading-anchor,
+.sw-heading-link {
   display: none;
   float: right;
+  min-width: 1em;
+  border-style: none;
+  padding: 0.1em;
   font-size: 80%;
   font-weight: normal;
   color: gray;
+  text-align: center;
 }
 
 .section:hover > * > .sw-heading-anchor,
-:target > * > .sw-heading-anchor {
+.section:hover > * > .sw-heading-link,
+:target > * > .sw-heading-anchor,
+:target > * > .sw-heading-link {
   display: block;
+  border-style: none;
 }
 
 .article, .section, section {

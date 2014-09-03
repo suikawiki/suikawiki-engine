@@ -288,7 +288,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $footer_el->set_attribute (class => 'footer');
       $footer_el->set_attribute (lang => 'en');
       $footer_el->inner_html (q[
-        <p class=copyright><small>&copy; Authors.  See <a rel=license>license terms (CC-BY-SA / GFDL)</a>.  There might also be additional terms applied for this page.</small>
+        <p class=copyright><small>&copy; Authors.  See <a rel=license>license terms (CC BY-SA / GFDL)</a>.  There might also be additional terms applied for this page.</small>
         <menu><a href="" rel=index>Home</a> <a href="" rel=help>Help</a> <a href="">Contact</a></menu>
       ]);
       $body_el->append_child ($footer_el);

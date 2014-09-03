@@ -85,9 +85,12 @@ function initEditForm (root) {
     ba.addEventListener ('focus', function () {
       ba.scrollIntoView ();
     }, true);
-    ba.querySelector ('textarea').addEventListener ('keydown', function (ev) {
+    var ta = ba.querySelector ('textarea');
+    ta.addEventListener ('keydown', function (ev) {
       if (ev.keyIdentifier === 'PageDown') {
-        setTimeout (function () { ba.scrollIntoView (); }, 0);
+        if (ta.scrollHeight <= ta.scrollTop + ta.offsetHeight) {
+          ev.preventDefault ();
+        }
       } else if (ev.keyIdentifier === 'PageUp') {
         if (this.scrollTop === 0) {
           ev.preventDefault ();
@@ -95,9 +98,60 @@ function initEditForm (root) {
       }
     });
 
-    setTimeout (function () { ba.scrollIntoView () }, 0);
+    setTimeout (function () {
+      ba.scrollIntoView ();
+      var fragment = decodeURIComponent (location.hash.replace (/^#/, ''));
+      if (/^section-/.test (fragment))  {
+        var sections = fragment.replace (/^section-/, '').split (/\u2028/);
+        var data = ta.value.split (/\u000D?\u000A/);
+        var j = 0;
+        var i = 0;
+        var matchedLine = null;
+        while (i < data.length && j < sections.length) {
+          if (/^\*+\s*/.test (data[i])) {
+            var line = data[i].replace (/^\*+\s*/, '').replace (/\s+$/, '').replace (/\s+/g, '-');
+            if (line === sections[j]) {
+              matchedLine = i;
+              j++;
+              if (j === sections.length) break;
+            }
+          }
+          i++;
+        }
+        if (matchedLine) {
+          scrollByString (ta, data.slice (0, matchedLine).join ("\n"));
+        }
+      } else if (/^anchor-[0-9]+$/.test (fragment)) {
+        var text = '[' + fragment.replace (/^anchor-/, '') + ']';
+        var n = ta.value.indexOf (text);
+        if (n >= 0) {
+          scrollByString (ta, ta.value.substring (0, n));
+        }
+      }
+    }, 0);
+
+    ta.form.addEventListener ('submit', function () {
+      var lastAnchor;
+      ta.value.substring (0, ta.selectionStart).replace (/\[([0-9]+)\]/g, function (_, s) {
+        lastAnchor = s;
+      })
+      if (lastAnchor) {
+        ta.form.action = ta.form.action.replace (/#.*$/, '') + '#anchor-' + lastAnchor;
+      }
+    });
   }]);
 } // initEditForm
+
+function scrollByString (ta, value) {
+  var dummy = document.createElement ('div');
+  dummy.textContent = value;
+  var cs = getComputedStyle (ta, null);
+  "font width whiteSpace".split (/ /).forEach
+      (function (n) { dummy.style[n] = cs[n] });
+  document.body.appendChild (dummy);
+  ta.scrollTop = dummy.offsetHeight;
+  document.body.removeChild (dummy);
+} // scrollByString
 
 function createToolbar (root) {
   var containers = root.getElementsByClassName ('text-toolbar');
@@ -199,16 +253,33 @@ function addGoogleAnalytics () {
 document.createElement ('time');
 
 function initHeadings (root) {
+  var editLink = document.querySelector ('.nav.tools a[rel=edit]');
   Array.prototype.forEach.apply (root.querySelectorAll ('h1, h2, h3, h4, h5, h6'), [function (h) {
     var section = h.parentNode;
     if (!section || section.localName != 'section') return;
     if (!section.id) return;
+
     var a = document.createElement ('a');
     a.href = '#' + encodeURIComponent (section.id);
     a.className = 'sw-heading-anchor';
-    a.rel = 'bookmark';
     a.textContent = '#';
+    a.title = 'この章のパーマリンク';
     h.appendChild (a);
+
+    var a = document.createElement ('a');
+    a.href = editLink.href;
+    a.hash = '#' + encodeURIComponent (section.id);
+    a.className = 'sw-heading-link';
+    a.textContent = '\u270E';
+    a.title = 'この章の編集';
+    h.appendChild (a);
+  }]);
+
+  Array.prototype.forEach.apply (document.querySelectorAll ('.sw-anchor-end'), [function (a) {
+    a.ondblclick = function () {
+      location.href = editLink.href + '#' + this.id;
+      return false;
+    };
   }]);
 } // initHeadings
 
