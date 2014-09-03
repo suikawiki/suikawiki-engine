@@ -150,6 +150,33 @@ sub js_url ($) {
   return '/scripts/sw?2';
 } # js_url
 
+sub htescape ($) {
+  my $s = shift;
+  $s =~ s/&/&amp;/g;
+  $s =~ s/</&lt;/g;
+  $s =~ s/"/&quot;/g;
+  return $s;
+} # htescape
+
+sub throw_manual_redirect ($$;%) {
+  my ($self, $url_as_string, %args) = @_;
+  my $http = $self->http;
+
+  my $location_url = $http->url->resolve_string ('' . $url_as_string)
+      ->get_canon_url;
+  $location_url = $self->redirect_url_filter ($location_url);
+
+  $http->set_status (200, $args{reason_phrase});
+  $http->set_response_header ('Content-Type' => 'text/html; charset=utf-8');
+
+  $http->send_response_body_as_text
+      (sprintf '<!DOCTYPE HTML><title>%s</title><a href="%s">Next</a>',
+           htescape $args{reason_phrase},
+           htescape $location_url->stringify);
+  $http->close_response_body;
+  return $self->throw;
+} # throw_maual_redirect
+
 1;
 
 =head1 LICENSE

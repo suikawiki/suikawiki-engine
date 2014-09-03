@@ -497,7 +497,7 @@ if ($path[0] eq 'n' and @path == 2) {
           $document->update_tfidf ($doc);
         }
 
-        return $app->throw_redirect
+        return $app->throw_manual_redirect
             ($app->name_url ($name, $id, anchor => $anchor),
              status => 303, reason_phrase => 'Appended');
       }} # APPEND
@@ -561,7 +561,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
         $document->associate_names ($new_names, user => $user, time => $time);
 
-        return $app->throw_redirect
+        return $app->throw_manual_redirect
             ($app->name_url ($name, $id, anchor => $anchor),
              status => 303, reason_phrase => 'Appended');
       }
