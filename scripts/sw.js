@@ -68,14 +68,15 @@ function getGlobalDateAndTimeString (date) {
 } // getGlobalDateAndTimeString
 
 function getNextAnchorNumber (s) {
-  var lastId = 0;
+  var found = [];
   s.replace (/\[([0-9]+)\]/g, function (l, n) {
-    var v = parseInt (n);
-    if (v > lastId) {
-      lastId = v;
-    }
+    found[parseInt (n)] = true;
   });
-  return lastId + 1;
+  var i = 1;
+  while (true) {
+    if (!found[i]) return i;
+    i++;
+  }
 } // getNextAnchorNumber
 
 function initEditForm (root) {
@@ -102,7 +103,7 @@ function initEditForm (root) {
       ba.scrollIntoView ();
       var fragment = decodeURIComponent (location.hash.replace (/^#/, ''));
       if (/^section-/.test (fragment))  {
-        var sections = fragment.replace (/^section-/, '').split (/\u2028/);
+        var sections = fragment.replace (/^section-/, '').split (/\u2028/).filter (function (n) { return n.length > 0 });
         var data = ta.value.split (/\u000D?\u000A/);
         var j = 0;
         var i = 0;
