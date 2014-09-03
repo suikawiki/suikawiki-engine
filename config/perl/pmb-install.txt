@@ -3,13 +3,14 @@ Pod::Usage~1.64
 JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.62
-HTTP::Headers~6.05
+CPAN::Meta~2.142060
 HTTP::Daemon~6.01
-Module::Build~0.4208
+Module::Build~0.4210
 List::MoreUtils~0.33
 IO::File~1.14
 Devel::StackTrace~1.34
 HTTP::Body~1.19
+HTTP::Message~6.06
 POSIX::strftime::Compiler~0.40
 Test::Differences~0.62
 Path::Class~0.34
@@ -20,7 +21,7 @@ LWP::MediaTypes~6.02
 Types::Serialiser~1.0
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
-Devel::CheckLib~1.01
+Devel::CheckLib~1.02
 HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1902
@@ -46,7 +47,7 @@ Test::NoWarnings~1.04
 File::Listing~6.04
 Stream::Buffered~0.03
 Test::TCP~2.06
-Test::Builder~1.001003
+Test::Builder~1.001006
 AnyEvent::Util
 Digest::SHA~5.92
 Time::Local~1.2300
@@ -66,7 +67,7 @@ Class::Inspector~1.28
 WWW::RobotRules~6.02
 Unicode::Stringprep~1.104
 Test::Requires~0.08
-Scalar::Util~1.39
+Scalar::Util~1.40
 Scope::Guard~0.20
 IPC::Signal~1.00
 Encode::Locale~1.03
