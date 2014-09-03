@@ -1057,8 +1057,17 @@ body > aside {
   margin: 0;
 }
 
+.swe-page-links {
+  display: none;
+  font-size: 80%;
+}
+
 @media (min-width: 50em) {
   .swe-page-names {
+    display: block;
+  }
+
+  .swe-page-links {
     display: block;
   }
 }

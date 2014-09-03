@@ -269,6 +269,17 @@ if ($path[0] eq 'n' and @path == 2) {
         }
         $sidebar_el->append_child ($ul_el);
 
+        {
+          my $p_el = $html_doc->create_element ('nav');
+          $p_el->class_name ('swe-page-links');
+          my $a_el = $html_doc->create_element ('a');
+          $a_el->href ($app->page_url ($id, param => 'datahistory'));
+          $a_el->rel ('archives');
+          $a_el->text_content ('History');
+          $p_el->append_child ($a_el);
+          $sidebar_el->append_child ($p_el);
+        }
+
         $body_el->append_child ($sidebar_el);
         $body_el->class_list->add ('swe-has-sidebar');
       }
@@ -277,7 +288,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $footer_el->set_attribute (class => 'footer');
       $footer_el->set_attribute (lang => 'en');
       $footer_el->inner_html (q[
-        <p class=copyright><small>&copy; Authors.  See <a rel=license>license terms</a>.  There might also be additional terms applied for this page.</small>
+        <p class=copyright><small>&copy; Authors.  See <a rel=license>license terms (CC-BY-SA / GFDL)</a>.  There might also be additional terms applied for this page.</small>
         <menu><a href="" rel=index>Home</a> <a href="" rel=help>Help</a> <a href="">Contact</a></menu>
       ]);
       $body_el->append_child ($footer_el);
