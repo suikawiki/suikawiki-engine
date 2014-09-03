@@ -279,6 +279,10 @@ function initHeadings (root) {
   }]);
 
   Array.prototype.forEach.apply (document.querySelectorAll ('.sw-anchor-end'), [function (a) {
+    a.onclick = function () {
+      history.pushState ('', '', this.href);
+      return false;
+    };
     a.ondblclick = function () {
       location.href = editLink.href + '#' + this.id;
       return false;
