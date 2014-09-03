@@ -34,7 +34,7 @@ addEventListener ('DOMContentLoaded', function () {
     document.body.appendChild (div);
   };
 
-  createToolbar ();
+  initEditForm (document.body);
   initFigures (document.body);
   initHeadings (document.body);
   initTOC (document.body);
@@ -42,14 +42,6 @@ addEventListener ('DOMContentLoaded', function () {
   enableHTML5Support ();
   addGoogleAnalytics ();
 }); // DOMContentLoaded
-
-function getElementsByClassName (c) {
-  if (document.getElementsByClassName) {
-    return document.getElementsByClassName (c);
-  } else {
-    return [];
-  }
-} // getElementsByClassName
 
 function getAncestorElement (n, t) {
   while (n != null) {
@@ -86,8 +78,29 @@ function getNextAnchorNumber (s) {
   return lastId + 1;
 } // getNextAnchorNumber
 
-function createToolbar () {
-  var containers = getElementsByClassName ('text-toolbar');
+function initEditForm (root) {
+  createToolbar (root);
+
+  Array.prototype.forEach.apply (root.querySelectorAll ('form .body-area'), [function (ba) {
+    ba.addEventListener ('focus', function () {
+      ba.scrollIntoView ();
+    }, true);
+    ba.querySelector ('textarea').addEventListener ('keydown', function (ev) {
+      if (ev.keyIdentifier === 'PageDown') {
+        setTimeout (function () { ba.scrollIntoView (); }, 0);
+      } else if (ev.keyIdentifier === 'PageUp') {
+        if (this.scrollTop === 0) {
+          ev.preventDefault ();
+        }
+      }
+    });
+
+    setTimeout (function () { ba.scrollIntoView () }, 0);
+  }]);
+} // initEditForm
+
+function createToolbar (root) {
+  var containers = root.getElementsByClassName ('text-toolbar');
   for (var i = 0; i < containers.length; i++) {
     var container = containers[i];
 

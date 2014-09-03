@@ -681,8 +681,10 @@ if ($path[0] eq 'n' and @path == 2) {
 <p><label><strong>Page title</strong>:<br>
 <input name=title></label>
 <p><label for=page-body-text><strong>Page body</strong></label>:
-<span class=text-toolbar></span><br>
-<textarea name=text id=page-body-text></textarea>
+<div class=body-area>
+<span class=text-toolbar></span>
+<textarea name=text id=page-body-text autofocus></textarea>
+</div>
 <p><button type=submit>Update</button>
 <input type=hidden name=hash>
 <select name=content-type></select>

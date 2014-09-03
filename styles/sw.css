@@ -901,6 +901,28 @@ input[name=title] {
   width: 98%;
 }
 
+.body-area {
+  display: table;
+  width: 100%;
+}
+
+.body-area > .text-toolbar {
+  display: table-cell;
+  width: 3em;
+  vertical-align: top;
+  text-align: right;
+  line-height: 1.0;
+}
+
+.body-area > .text-toolbar > button {
+  min-width: 3em;
+}
+
+.body-area textarea {
+  box-sizing: border-box;
+  height: 100vh;
+}
+
 /* Sidebar */
 
 body > aside {
