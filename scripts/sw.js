@@ -119,13 +119,16 @@ function initEditForm (root) {
           i++;
         }
         if (matchedLine) {
-          scrollByString (ta, data.slice (0, matchedLine).join ("\n"));
+          var value = data.slice (0, matchedLine).join ("\n");
+          scrollByString (ta, value);
+          ta.setSelectionRange (value.length, value.length);
         }
       } else if (/^anchor-[0-9]+$/.test (fragment)) {
         var text = '[' + fragment.replace (/^anchor-/, '') + ']';
         var n = ta.value.indexOf (text);
         if (n >= 0) {
           scrollByString (ta, ta.value.substring (0, n));
+          ta.setSelectionRange (n, n);
         }
       }
     }, 0);
@@ -311,7 +314,7 @@ function initTOC (root) {
     var link = document.createElement ('a');
     link.href = a.href;
     link.innerHTML = h.innerHTML;
-    Array.prototype.forEach.apply (link.querySelectorAll ('.sw-heading-anchor, .sw-anchor-end'), [function (e) {
+    Array.prototype.forEach.apply (link.querySelectorAll ('.sw-heading-anchor, .sw-heading-link, .sw-anchor-end'), [function (e) {
       e.parentNode.removeChild (e);
     }]);
     Array.prototype.forEach.apply (link.querySelectorAll ('a'), [function (e) {
