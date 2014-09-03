@@ -451,6 +451,8 @@ $templates->{(SW09_NS)}->{'anchor-end'} = sub {
 
   my $id = $item->{node}->get_attribute_ns (SW09_NS, 'anchor') + 0;
   $el->set_attribute (id => 'anchor-' . $id);
+  $el->set_attribute (href => '#anchor-' . $id);
+  $el->set_attribute (rel => 'bookmark');
 
   unshift @$items,
       map {{%$item, node => $_, parent => $el}}

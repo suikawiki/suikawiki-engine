@@ -202,13 +202,18 @@ blockquote {
   padding-left: 1em;
 }
 
-.toc > ol li li::before {
+.toc > ol li li a::before {
   content: "\2798  ";
 }
 
 .toc a {
+  display: block;
+  padding: 0.2em 0.5em;
   text-decoration: none;
-  border-bottom-style: none;
+}
+
+.toc a:not(:hover) {
+  border-bottom-color: transparent;
 }
 
 .toc code {
@@ -388,10 +393,12 @@ ins + ins {
   position: absolute;
   left: 0.4em;
   top: auto;
+  border-style: none;
   color: gray;
   text-indent: 0;
   font-size: 12px;
   font-weight: normal;
+  text-decoration: none;
 }
 
 figure .sw-anchor-end {
@@ -414,13 +421,14 @@ a:hover,
   background-color: #FFA;
 }
 
-:hover > .sw-anchor-end {
+:hover > .sw-anchor-end,
+.sw-anchor-end:target {
   background-color: #FFA;
   color: #000080;
   border-style: none;
 }
 
-[rel~=bookmark] {
+[rel~=bookmark]:not(.sw-anchor-end) {
   border-style: none !important;
   color: inherit !important;
   background-color: transparent !important;
