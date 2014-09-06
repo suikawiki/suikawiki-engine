@@ -21,6 +21,7 @@ Types::Serialiser~1.0
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
 Devel::CheckLib~1.02
+HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1902
 Path::Tiny~0.056
@@ -56,7 +57,6 @@ Term::ANSIColor~4.03
 Server::Starter~0.17
 Exporter::Lite~0.06
 Test::Class~0.46
-HTML::HeadParser~3.71
 Data::Dumper~2.151
 HTTP::Cookies~6.01
 Text::Diff~1.41
@@ -66,7 +66,7 @@ Class::Inspector~1.28
 WWW::RobotRules~6.02
 Unicode::Stringprep~1.105
 Test::Requires~0.08
-Scalar::Util~1.40
+Scalar::Util~1.41
 Scope::Guard~0.20
 IPC::Signal~1.00
 Encode::Locale~1.03
