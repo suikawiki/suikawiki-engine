@@ -10,11 +10,11 @@ List::MoreUtils~0.33
 IO::File~1.14
 Devel::StackTrace~1.34
 HTTP::Body~1.19
+HTTP::Message~6.06
 POSIX::strftime::Compiler~0.40
 Test::Differences~0.62
 Path::Class~0.34
 common::sense~3.73
-HTTP::Request~6.00
 List::Rubyish~0.03
 Text::MeCab~0.20016
 LWP::MediaTypes~6.02
@@ -22,7 +22,6 @@ Types::Serialiser~1.0
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
 Devel::CheckLib~1.02
-HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1902
 Path::Tiny~0.056
@@ -52,13 +51,14 @@ AnyEvent::Util
 Digest::SHA~5.92
 Time::Local~1.2300
 Test::SharedFork~0.28
-Getopt::Long~2.42
 Try::Tiny~0.22
+Getopt::Long~2.42
 Term::ANSIColor~4.03
 Server::Starter~0.17
 Exporter::Lite~0.06
 Test::Class~0.46
 Data::Dumper~2.151
+HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 Text::Diff~1.41
 File::Temp~0.2304
