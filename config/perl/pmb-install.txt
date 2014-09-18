@@ -3,7 +3,6 @@ Pod::Usage~1.64
 JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.62
-HTTP::Headers~6.05
 CPAN::Meta~2.142060
 HTTP::Daemon~6.01
 Module::Build~0.4210
@@ -15,6 +14,7 @@ POSIX::strftime::Compiler~0.40
 Test::Differences~0.62
 Path::Class~0.35
 common::sense~3.73
+HTTP::Request~6.00
 List::Rubyish~0.03
 Text::MeCab~0.20016
 LWP::MediaTypes~6.02
