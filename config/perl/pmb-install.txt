@@ -22,9 +22,10 @@ Types::Serialiser~1.0
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
 Devel::CheckLib~1.02
+HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1902
-Path::Tiny~0.057
+Path::Tiny~0.058
 Net::HTTP~6.07
 URI~1.64
 Plack~1.0031
@@ -58,7 +59,6 @@ Server::Starter~0.17
 Exporter::Lite~0.06
 Test::Class~0.46
 Data::Dumper~2.154
-HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 Text::Diff~1.41
 File::Temp~0.2304
