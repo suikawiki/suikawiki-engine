@@ -1,6 +1,7 @@
 Capture::Tiny~0.25
 Pod::Usage~1.64
 JSON::XS~3.01
+HTTP::Status~6.03
 IO::HTML~1.001
 Encode~2.62
 CPAN::Meta~2.142060
@@ -10,7 +11,6 @@ List::MoreUtils~0.33
 IO::File~1.14
 Devel::StackTrace~1.34
 HTTP::Body~1.19
-HTTP::Message~6.06
 POSIX::strftime::Compiler~0.40
 Test::Differences~0.62
 Path::Class~0.35
@@ -52,8 +52,8 @@ AnyEvent::Util
 Digest::SHA~5.92
 Time::Local~1.2300
 Test::SharedFork~0.29
-Try::Tiny~0.22
 Getopt::Long~2.42
+Try::Tiny~0.22
 Term::ANSIColor~4.03
 Server::Starter~0.17
 Exporter::Lite~0.06
