@@ -10,6 +10,7 @@ List::MoreUtils~0.33
 IO::File~1.14
 Devel::StackTrace~1.34
 HTTP::Body~1.19
+HTTP::Message~6.06
 POSIX::strftime::Compiler~0.40
 Test::Differences~0.62
 Path::Class~0.35
@@ -27,7 +28,7 @@ Algorithm::Diff~1.1902
 Path::Tiny~0.058
 Net::HTTP~6.07
 URI~1.64
-Plack~1.0031
+Plack~1.0032
 Test::Tester~0.109
 Class::Accessor::Lite~0.06
 Exporter~5.70
@@ -60,7 +61,6 @@ Test::Class~0.47
 Data::Dumper~2.154
 HTTP::Cookies~6.01
 Text::Diff~1.41
-HTTP::Response~6.04
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
