@@ -1,9 +1,9 @@
 Capture::Tiny~0.25
 Pod::Usage~1.64
 JSON::XS~3.01
-HTTP::Status~6.03
 IO::HTML~1.001
 Encode~2.62
+HTTP::Headers~6.05
 CPAN::Meta~2.142690
 HTTP::Daemon~6.01
 Module::Build~0.4210
@@ -22,7 +22,6 @@ Types::Serialiser~1.0
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
 Devel::CheckLib~1.02
-HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1902
 Path::Tiny~0.059
@@ -47,7 +46,7 @@ Test::NoWarnings~1.04
 File::Listing~6.04
 Stream::Buffered~0.03
 Test::TCP~2.06
-Test::Builder~1.001006
+Test::Builder~1.001007
 AnyEvent::Util
 Digest::SHA~5.92
 Time::Local~1.2300
@@ -59,6 +58,7 @@ Server::Starter~0.17
 Exporter::Lite~0.06
 Test::Class~0.47
 Data::Dumper~2.154
+HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 Text::Diff~1.41
 File::Temp~0.2304
