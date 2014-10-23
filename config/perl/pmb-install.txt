@@ -4,6 +4,7 @@ JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.63
 HTTP::Headers~6.05
+HTTP::Tiny~0.050
 CPAN::Meta~2.142690
 HTTP::Daemon~6.01
 Module::Build~0.4210
@@ -22,14 +23,15 @@ Types::Serialiser~1.0
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
 Devel::CheckLib~1.02
-HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1902
 Path::Tiny~0.059
 Net::HTTP~6.07
+Parse::CPAN::Meta~1.4414
 URI~1.64
 Plack~1.0032
 Test::Tester~0.109
+CPAN::Meta::YAML~0.012
 Class::Accessor::Lite~0.06
 Exporter~5.70
 Carp~1.3301
@@ -56,9 +58,10 @@ Try::Tiny~0.22
 Getopt::Long~2.42
 Term::ANSIColor~4.03
 Server::Starter~0.17
-Exporter::Lite~0.06
 Test::Class~0.47
+Exporter::Lite~0.06
 Data::Dumper~2.154
+HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 Text::Diff~1.41
 File::Temp~0.2304
@@ -70,6 +73,7 @@ Test::Requires~0.08
 Scalar::Util~1.41
 Scope::Guard~0.20
 IPC::Signal~1.00
+Test::Simple~1.001008
 Encode::Locale~1.03
 HTTP::Negotiate~6.01
 File::ShareDir~1.102
