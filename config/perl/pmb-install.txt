@@ -1,8 +1,9 @@
-Capture::Tiny~0.26
+Capture::Tiny~0.27
 Pod::Usage~1.64
 JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.64
+HTTP::Headers~6.05
 CPAN::Meta~2.142690
 HTTP::Daemon~6.01
 Module::Build~0.4210
@@ -10,7 +11,6 @@ List::MoreUtils~0.33
 IO::File~1.14
 Devel::StackTrace~2.00
 HTTP::Body~1.19
-HTTP::Message~6.06
 POSIX::strftime::Compiler~0.40
 Test::Differences~0.62
 Path::Class~0.35
@@ -26,7 +26,7 @@ Parallel::Prefork~0.17
 Algorithm::Diff~1.1902
 Path::Tiny~0.060
 Net::HTTP~6.07
-URI~1.64
+URI~1.65
 Plack~1.0033
 Test::Tester~0.109
 Class::Accessor::Lite~0.06
