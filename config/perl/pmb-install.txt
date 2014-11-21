@@ -1,10 +1,10 @@
 Capture::Tiny~0.27
 Pod::Usage~1.64
 JSON::XS~3.01
+HTTP::Status~6.03
 IO::HTML~1.001
 Encode~2.64
-HTTP::Headers~6.05
-CPAN::Meta~2.142690
+CPAN::Meta~2.143240
 HTTP::Daemon~6.01
 Module::Build~0.4210
 List::MoreUtils~0.33
@@ -12,7 +12,7 @@ IO::File~1.14
 Devel::StackTrace~2.00
 HTTP::Body~1.19
 POSIX::strftime::Compiler~0.40
-Test::Differences~0.62
+Test::Differences~0.63
 Path::Class~0.35
 common::sense~3.73
 List::Rubyish~0.03
@@ -23,7 +23,6 @@ Module::Runtime~0.014
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
 Devel::CheckLib~1.02
-HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1902
 Path::Tiny~0.061
@@ -57,8 +56,9 @@ Getopt::Long~2.42
 Try::Tiny~0.22
 Term::ANSIColor~4.03
 Server::Starter~0.17
-Test::Class~0.48
 Exporter::Lite~0.06
+Test::Class~0.48
+HTML::HeadParser~3.71
 Data::Dumper~2.154
 HTTP::Cookies~6.01
 Text::Diff~1.41
