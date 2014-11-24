@@ -22,6 +22,7 @@ Module::Runtime~0.014
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
 Devel::CheckLib~1.02
+HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1902
 Path::Tiny~0.061
@@ -55,13 +56,11 @@ Getopt::Long~2.42
 Try::Tiny~0.22
 Term::ANSIColor~4.03
 Server::Starter~0.17
-Exporter::Lite~0.06
 Test::Class~0.48
-HTML::HeadParser~3.71
+Exporter::Lite~0.06
 Data::Dumper~2.154
 HTTP::Cookies~6.01
 Text::Diff~1.41
-HTTP::Response~6.04
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
@@ -78,5 +77,6 @@ Digest::MD5~2.53
 Class::Data::Inheritable~0.08
 MRO::Compat~0.12
 Hash::MultiValue~0.15
+HTTP::Headers::Util~6.03
 Apache::LogFormat::Compiler~0.32
 HTTP::Date~6.02
