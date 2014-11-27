@@ -23,7 +23,7 @@ Unicode::Normalize~1.18
 Filter::Util::Call~1.49
 Devel::CheckLib~1.02
 Parallel::Prefork~0.17
-Algorithm::Diff~1.1902
+Algorithm::Diff~1.1903
 Path::Tiny~0.061
 Net::HTTP~6.07
 URI~1.65
