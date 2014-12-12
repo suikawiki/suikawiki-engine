@@ -1,9 +1,9 @@
 Capture::Tiny~0.27
 Pod::Usage~1.64
 JSON::XS~3.01
+HTTP::Status~6.03
 IO::HTML~1.001
 Encode~2.67
-HTTP::Headers~6.05
 CPAN::Meta~2.143240
 HTTP::Daemon~6.01
 Module::Build~0.4210
@@ -58,8 +58,8 @@ Term::ANSIColor~4.03
 Server::Starter~0.17
 Exporter::Lite~0.06
 Test::Class~0.48
-Data::Dumper~2.154
 HTML::HeadParser~3.71
+Data::Dumper~2.154
 HTTP::Cookies~6.01
 Text::Diff~1.41
 File::Temp~0.2304
