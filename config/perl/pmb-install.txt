@@ -28,7 +28,7 @@ Path::Tiny~0.061
 Net::HTTP~6.07
 URI~1.65
 Plack~1.0033
-Test::Tester~0.112
+Test::Tester~0.114
 Class::Accessor::Lite~0.06
 Exporter~5.70
 Carp~1.3301
@@ -47,7 +47,7 @@ Test::NoWarnings~1.04
 File::Listing~6.04
 Stream::Buffered~0.03
 Test::TCP~2.06
-Test::Builder~1.001012
+Test::Builder~1.001014
 AnyEvent::Util
 Digest::SHA~5.93
 Time::Local~1.2300
