@@ -10,7 +10,7 @@ List::MoreUtils~0.402
 IO::File~1.14
 Devel::StackTrace~2.00
 HTTP::Body~1.19
-POSIX::strftime::Compiler~0.40
+POSIX::strftime::Compiler~0.41
 Test::Differences~0.63
 Path::Class~0.35
 common::sense~3.73
