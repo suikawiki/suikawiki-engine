@@ -446,6 +446,10 @@ a:hover,
 
 /* Figures */
 
+svg {
+  text-indent: 0;
+}
+
 figure {
   display: block;
   position: relative;
@@ -756,9 +760,86 @@ figure.sequence .textbox {
   fill: white;
 }
 
-.figure.sequence .note-label.textbox {
+figure.sequence .note-label.textbox {
   stroke-width: 1;
   fill: rgba(255, 255, 255, 0.8);
+}
+
+figure.packet {
+  border: none;
+}
+
+figure.packet table {
+  margin-left: auto;
+  margin-right: auto;
+  border: none;
+  border-collapse: collapse;
+}
+
+figure.packet table tr:hover {
+  background: transparent;
+}
+
+figure.packet table > thead > tr > th {
+  width: 1em;
+  border: none;
+  padding: 0;
+  line-height: 1.5;
+  font-size: 90%;
+  font-weight: normal;
+  text-align: center;
+  color: gray;
+  transform: rotate(270deg);
+}
+
+figure.packet table > tbody > tr > td {
+  box-sizing: border-box;
+  border: 1px solid black;
+  padding: 0.3em 0.5em;
+  line-height: 1.5;
+  font-size: 90%;
+  text-align: center;
+}
+
+figure.packet table > tbody > tr > td[colspan="1"] {
+  width: 1em;
+  max-width: 1em;
+  text-indent: -0.8em;
+  transform: rotate(270deg);
+}
+figure.packet table > tbody > tr > td[colspan="2"] { width: 2em; max-width: 2em }
+figure.packet table > tbody > tr > td[colspan="3"] { width: 3em; max-width: 3em }
+figure.packet table > tbody > tr > td[colspan="4"] { width: 4em; max-width: 4em }
+figure.packet table > tbody > tr > td[colspan="5"] { width: 5em; max-width: 5em }
+figure.packet table > tbody > tr > td[colspan="6"] { width: 6em; max-width: 6em }
+figure.packet table > tbody > tr > td[colspan="7"] { width: 7em; max-width: 7em }
+figure.packet table > tbody > tr > td[colspan="8"] { width: 8em; max-width: 8em }
+figure.packet table > tbody > tr > td[colspan="9"] { width: 9em; max-width: 9em }
+figure.packet table > tbody > tr > td[colspan="10"] { width: 10em; max-width: 10em }
+figure.packet table > tbody > tr > td[colspan="11"] { width: 11em; max-width: 11em }
+figure.packet table > tbody > tr > td[colspan="12"] { width: 12em; max-width: 12em }
+figure.packet table > tbody > tr > td[colspan="13"] { width: 13em; max-width: 13em }
+figure.packet table > tbody > tr > td[colspan="14"] { width: 14em; max-width: 14em }
+figure.packet table > tbody > tr > td[colspan="15"] { width: 15em; max-width: 15em }
+figure.packet table > tbody > tr > td[colspan="16"] { width: 16em; max-width: 16em }
+figure.packet table > tbody > tr > td[colspan="24"] { width: 24em; max-width: 24em }
+figure.packet table > tbody > tr > td[colspan="32"] { width: 32em; max-width: 32em }
+
+figure.packet table > tbody > tr > td:hover {
+  background: transparent;
+}
+
+figure.packet table .continue {
+  text-align: left;
+  color: gray;
+}
+
+figure.packet table .continue-start {
+  border-left: dashed 1px black;
+}
+
+figure.packet table .continue-end {
+  border-right: dashed 1px black;
 }
 
 /* Examples */

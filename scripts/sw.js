@@ -1090,6 +1090,127 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
   }; // draw
 }());
 
+(function () {
+  SW.Figure.Packet = {};
+
+  SW.Figure.Packet.parse = function (fig) {
+    var ol = fig.querySelector ('ol');
+    if (!ol) return;
+
+    var options = {};
+    var dl = fig.querySelector ('dl');
+    if (dl) {
+      var name = '';
+      Array.prototype.forEach.apply (dl.children, [function (node) {
+        if (node.localName === 'dt') {
+          name = node.textContent.replace (/\s+/g, ' ').replace (/^ /, '').replace (/ $/, '');
+        } else if (node.localName === 'dd') {
+          options[name] = node.textContent.replace (/\s+/g, ' ').replace (/^ /, '').replace (/ $/, '');
+        }
+      }]);
+    }
+    options.width = parseInt (options.width || 16);
+
+    var table = document.createElement ('table');
+    var thead = document.createElement ('thead');
+    var tr = document.createElement ('tr');
+    for (var i = 0; i < options.width; i++) {
+      var th = document.createElement ('th');
+      th.textContent = i;
+      tr.appendChild (th);
+    }
+    thead.appendChild (tr);
+    table.appendChild (thead);
+
+    var tbody = document.createElement ('tbody');
+    table.appendChild (tbody);
+
+    var items = [];
+
+    Array.prototype.forEach.apply (ol.children, [function (li) {
+      if (li.localName !== 'li') return;
+      if (li.firstChild && li.firstChild.nodeType === li.TEXT_NODE) {
+        var item = {container: li};
+        li.firstChild.textContent = li.firstChild.textContent.replace (/^([0-9]+)\s*/, function (_, n) {
+          item.length = parseInt (n);
+          return '';
+        });
+        if (item.length == null) return;
+
+        items.push (item);
+      }
+    }]);
+
+    var tr = document.createElement ('tr');
+    var start = 0;
+    var end = 0;
+    var current = 0;
+    items.forEach (function (item) {
+      tbody.appendChild (tr);
+      var mainTD;
+      var itemWidth = item.length;
+
+      end += itemWidth;
+      var title = start + (start + 1 != end ? '..' + (end-1) : '') + ' (length = ' + item.length + ')';
+
+      if (options.width - current < itemWidth) {
+        mainTD = document.createElement ('td');
+        mainTD.className = 'packet-field continue-end';
+        mainTD.colSpan = options.width - current;
+        itemWidth -= (options.width - current);
+        tr.appendChild (mainTD);
+
+        while (options.width < itemWidth) {
+          tr = document.createElement ('tr');
+          var td = document.createElement ('td');
+          td.className = 'packet-field continue continue-start continue-end';
+          td.colSpan = options.width;
+          itemWidth -= options.width;
+          td.textContent = '(cont.)';
+          td.title = title;
+          tr.appendChild (td);
+          tbody.appendChild (tr);
+        }
+
+        if (itemWidth > 0) {
+          tr = document.createElement ('tr');
+          var td = document.createElement ('td');
+          td.className = 'packet-field continue continue-start';
+          td.colSpan = itemWidth;
+          td.textContent = '(cont.)';
+          td.title = title;
+          tr.appendChild (td);
+          tbody.appendChild (tr);
+          current = itemWidth;
+        } else {
+          tbody.lastChild.lastChild.className = 'packet-field continue-start';
+        }
+      } else {
+        mainTD = document.createElement ('td');
+        mainTD.className = 'packet-field';
+        mainTD.colSpan = itemWidth;
+        current += itemWidth;
+        tr.appendChild (mainTD);
+      }
+
+      mainTD.title = title;
+      Array.prototype.map.apply (item.container.childNodes, [function (_) { return _ }]).forEach (function (node) {
+        mainTD.appendChild (node.cloneNode (true));
+      });
+
+      if (current >= options.width) {
+        tr = document.createElement ('tr');
+        tbody.appendChild (tr);
+        current = 0;
+      }
+      start = end;
+    });
+
+    fig.textContent = '';
+    fig.appendChild (table);
+  }; // parse
+}) (); // SW.Figure.Packet
+
 function initFigures (root) {
   var figs = root.querySelectorAll ('figure.states');
   if (figs.length) {
@@ -1118,6 +1239,14 @@ function initFigures (root) {
   Array.prototype.forEach.apply (root.querySelectorAll ('figure.sequence'), [function (fig) {
     var caps = fig.querySelectorAll ('figcaption');
     SW.Figure.Sequence.parseItems (fig);
+    Array.prototype.forEach.apply (caps, [function (n) {
+      fig.appendChild (n);
+    }]);
+  }]);
+
+  Array.prototype.forEach.apply (root.querySelectorAll ('figure.packet'), [function (fig) {
+    var caps = fig.querySelectorAll ('figcaption');
+    SW.Figure.Packet.parse (fig);
     Array.prototype.forEach.apply (caps, [function (n) {
       fig.appendChild (n);
     }]);
