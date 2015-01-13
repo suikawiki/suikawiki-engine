@@ -842,6 +842,10 @@ figure.packet table .continue-end {
   border-right: dashed 1px black;
 }
 
+figure.packet table .continue-more {
+  border-bottom: dashed 1px black;
+}
+
 /* Examples */
 
 .sw-example {

@@ -1131,8 +1131,9 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
       if (li.localName !== 'li') return;
       if (li.firstChild && li.firstChild.nodeType === li.TEXT_NODE) {
         var item = {container: li};
-        li.firstChild.textContent = li.firstChild.textContent.replace (/^([0-9]+)\s*/, function (_, n) {
+        li.firstChild.textContent = li.firstChild.textContent.replace (/^([0-9]+)(\.\.\.)?\s*/, function (_, n, more) {
           item.length = parseInt (n);
+          item.more = !!more;
           return '';
         });
         if (item.length == null) return;
@@ -1151,8 +1152,9 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
       var itemWidth = item.length;
 
       end += itemWidth;
-      var title = start + (start + 1 != end ? '..' + (end-1) : '') + ' (length = ' + item.length + ')';
+      var title = item.more ? start + '...' : start + (start + 1 != end ? '..' + (end-1) : '') + ' (length = ' + item.length + ')';
 
+      var lastTD;
       if (options.width - current < itemWidth) {
         mainTD = document.createElement ('td');
         mainTD.className = 'packet-field continue-end';
@@ -1162,7 +1164,7 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
 
         while (options.width < itemWidth) {
           tr = document.createElement ('tr');
-          var td = document.createElement ('td');
+          var td = lastTD = document.createElement ('td');
           td.className = 'packet-field continue continue-start continue-end';
           td.colSpan = options.width;
           itemWidth -= options.width;
@@ -1174,7 +1176,7 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
 
         if (itemWidth > 0) {
           tr = document.createElement ('tr');
-          var td = document.createElement ('td');
+          var td = lastTD = document.createElement ('td');
           td.className = 'packet-field continue continue-start';
           td.colSpan = itemWidth;
           td.textContent = '(cont.)';
@@ -1186,11 +1188,18 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
           tbody.lastChild.lastChild.className = 'packet-field continue-start';
         }
       } else {
-        mainTD = document.createElement ('td');
+        mainTD = lastTD = document.createElement ('td');
         mainTD.className = 'packet-field';
         mainTD.colSpan = itemWidth;
         current += itemWidth;
         tr.appendChild (mainTD);
+      }
+      if (item.more) {
+        if (current >= options.width) {
+          lastTD.classList.add ('continue-more');
+        } else {
+          lastTD.classList.add ('continue-end');
+        }
       }
 
       mainTD.title = title;
@@ -1206,8 +1215,8 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
       start = end;
     });
 
-    fig.textContent = '';
-    fig.appendChild (table);
+    dl.parentNode.removeChild (dl);
+    fig.replaceChild (table, ol);
   }; // parse
 }) (); // SW.Figure.Packet
 
