@@ -3,7 +3,6 @@ Pod::Usage~1.64
 JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.67
-HTTP::Headers~6.05
 CPAN::Meta~2.143240
 HTTP::Daemon~6.01
 Module::Build~0.4210
@@ -15,8 +14,10 @@ POSIX::strftime::Compiler~0.41
 Test::Differences~0.63
 Path::Class~0.35
 common::sense~3.73
+HTTP::Request~6.00
 List::Rubyish~0.03
 Text::MeCab~0.20016
+URI::Escape~3.31
 LWP::MediaTypes~6.02
 Types::Serialiser~1.0
 Module::Runtime~0.014
@@ -28,7 +29,6 @@ Parallel::Prefork~0.17
 Algorithm::Diff~1.1903
 Path::Tiny~0.061
 Net::HTTP~6.07
-URI~1.65
 Plack~1.0033
 Test::Tester~0.114
 Class::Accessor::Lite~0.06
@@ -37,7 +37,7 @@ Carp~1.3301
 Proc::Wait3~0.04
 LWP::UserAgent~6.06
 Filesys::Notify::Simple~0.12
-MIME::Base64~3.14
+MIME::Base64~3.15
 Devel::StackTrace::AsHTML~0.14
 HTML::Tagset~3.20
 Exporter::Tiny~0.042
@@ -58,8 +58,8 @@ Getopt::Long~2.42
 Try::Tiny~0.22
 Term::ANSIColor~4.03
 Server::Starter~0.19
-Test::Class~0.48
 Exporter::Lite~0.06
+Test::Class~0.48
 Data::Dumper~2.154
 HTTP::Cookies~6.01
 Text::Diff~1.41
@@ -72,10 +72,10 @@ Test::Requires~0.08
 Scalar::Util~1.41
 Scope::Guard~0.20
 IPC::Signal~1.00
-Encode::Locale~1.03
+Encode::Locale~1.04
 HTTP::Negotiate~6.01
 File::ShareDir~1.102
-Digest::MD5~2.53
+Digest::MD5~2.54
 Class::Data::Inheritable~0.08
 MRO::Compat~0.12
 Hash::MultiValue~0.15
