@@ -1215,7 +1215,7 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
       start = end;
     });
 
-    dl.parentNode.removeChild (dl);
+    if (dl) dl.parentNode.removeChild (dl);
     fig.replaceChild (table, ol);
   }; // parse
 }) (); // SW.Figure.Packet
@@ -1254,11 +1254,7 @@ function initFigures (root) {
   }]);
 
   Array.prototype.forEach.apply (root.querySelectorAll ('figure.packet'), [function (fig) {
-    var caps = fig.querySelectorAll ('figcaption');
     SW.Figure.Packet.parse (fig);
-    Array.prototype.forEach.apply (caps, [function (n) {
-      fig.appendChild (n);
-    }]);
   }]);
 } // initFigures
 
