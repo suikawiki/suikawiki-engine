@@ -851,6 +851,28 @@ figure.packet table .continue-more {
   border-bottom: dashed 1px black;
 }
 
+figure.bookmarklet .sw-anchor-external-container {
+  display: block;
+  overflow: hidden;
+  color: transparent;
+}
+
+figure.bookmarklet .sw-anchor-external-container::before {
+  display: block;
+  content: "Bookmarklet: ";
+  font-weight: bolder;
+  line-height: 1.5;
+  color: #004000;
+  background-color: transparent;
+}
+
+figure.bookmarklet .sw-anchor-external-container > a {
+  white-space: nowrap;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  line-height: 2.0;
+}
+
 /* Examples */
 
 .sw-example {
