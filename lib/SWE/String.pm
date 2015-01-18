@@ -38,16 +38,19 @@ sub for_unique_words (&$) {
 
   my $all_terms = 0;
   my $terms = {};
-  for (my $node = $mecab->parse ($_[1]); $node; $node = $node->next) {
-    ## XXX support stop words
-    ## XXX provide a way to save original representation
+  eval {
+    for (my $node = $mecab->parse ($_[1]); $node; $node = $node->next) {
+      ## XXX support stop words
+      ## XXX provide a way to save original representation
 
-    my $term = $node->surface;
-    next unless defined $term;
-    $term = lc get_fwhw_normalized decode 'utf-8', $term;
+      my $term = $node->surface;
+      next unless defined $term;
+      $term = lc get_fwhw_normalized decode 'utf-8', $term;
 
-    $terms->{$term}++;
-  } # $term
+      $terms->{$term}++;
+    } # $term
+  };
+  warn $@ if $@;
   
   for my $term (keys %$terms) {
     $_[0]->($term, $terms->{$term});
