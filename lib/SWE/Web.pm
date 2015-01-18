@@ -137,8 +137,11 @@ sub get_posturl ($$) {
         if (this.pageName.value.length == 0) return false;
         this.action = '/n/' + encodeURIComponent (this.pageName.value) + ';posturl';
       ">
-        <p><label>Page: <input name=pageName autofocus></label><p><label>URL: <input type=url name=url></label><p><label for=suikawiki-bookmarklet-post-title>Title</label>: (<label>Language: <input name=title-lang></label>) <input name=title id=suikawiki-bookmarklet-post-title><p><label>Credit: <input name=credit></label>
+        <p><label>Page: <input name=pageName autofocus></label>
+        <p><label>URL: (<button type=button onclick=" form.elements.url.value = form.elements.url.value.replace (/#.*$/, '') ">No fragment</button>)<input type=url name=url></label>
+        <p><label for=suikawiki-bookmarklet-post-title>Title</label>: (<label>Language: <input name=title-lang></label>) <input name=title id=suikawiki-bookmarklet-post-title><p><label>Credit: <input name=credit></label>
         <p class=buttons><button type=submit class=ok name=submit-button>OK</button>
+        <p><label>Quotation: <textarea name=quote></textarea></label>
       </form>
   });
   my $form = $doc->forms->[0];
@@ -150,6 +153,8 @@ sub get_posturl ($$) {
       (value => $app->text_param ('title-lang') // '');
   $form->query_selector ('input[name=credit]')->set_attribute
       (value => $app->text_param ('credit') // '');
+  $form->query_selector ('textarea[name=quote]')->text_content
+      ($app->text_param ('quote') // '');
   
   $app->http->add_response_header ('Content-Type' => 'text/html; charset=utf-8');
   $app->http->send_response_body_as_text ($doc->inner_html);

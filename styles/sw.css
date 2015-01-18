@@ -508,10 +508,15 @@ figure.quote {
 
 figure.quote > figcaption {
   text-align: left;
+  font-weight: normal;
 }
 
 figure.quote > figcaption > p {
   text-indent: 0;
+}
+
+figure.quote > figcaption cite {
+  font-weight: bolder;
 }
 
 figure.quote > blockquote {

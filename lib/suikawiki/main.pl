@@ -463,9 +463,18 @@ if ($path[0] eq 'n' and @path == 2) {
           $added_text = $title . "\n" . $added_text;
         }
       }
+      {
+        my $quote = $app->text_param ('quote') // '';
+        if (length $quote) {
+          $quote =~ s/[\x0D\x0A]+/\n> /g;
+          $added_text = qq{[FIG(quote)[\n[FIGCAPTION[\n[%%] $added_text\n]FIGCAPTION]\n\n> $quote\n\n]FIG]\n};
+        } else {
+          $added_text = "[%%] $added_text";
+        }
+      }
       normalize_content (\$added_text);
 
-      my $anchor = 1;
+      my $next_id = 1;
       APPEND: { if (defined $id) { ## Existing document
         ## This must be done before the ID lock.
         $db->name_inverted_index->lock;
@@ -478,13 +487,13 @@ if ($path[0] eq 'n' and @path == 2) {
         last APPEND if $id_prop->{'content-type'} ne 'text/x-suikawiki';
         
         my $textref = $db->id_content->get_data ($id);
-        my $max = 0;
+        my $has_id = {};
         while ($$textref =~ /\[([0-9]+)\]/g) {
-          $max = $1 if $max < $1;
+          $has_id->{0+$1} = 1;
         }
-        $max++;
-        $$textref .= "\n\n[$max] " . $added_text;
-        $anchor = $max;
+        $next_id++ while $has_id->{$next_id};
+        $added_text =~ s/\[%%\]/[$next_id]/;
+        $$textref .= "\n\n" . $added_text;
         
         $id_prop->{modified} = time;
         $id_prop->{hash} = string_hash $$textref;
@@ -509,13 +518,13 @@ if ($path[0] eq 'n' and @path == 2) {
         }
 
         return $app->throw_manual_redirect
-            ($app->name_url ($name, $id, anchor => $anchor),
+            ($app->name_url ($name, $id, anchor => $next_id),
              status => 303, reason_phrase => 'Appended');
       }} # APPEND
 
       { ## New document
         my $new_names = {$name => 1};
-        my $content = '[1] ' . $added_text;
+        $added_text =~ s/\[%%\]/[$next_id]/;
 
         $db->names_lock->lock;
         my $time = time;
@@ -541,7 +550,7 @@ if ($path[0] eq 'n' and @path == 2) {
           my $id_history_db = $db->id_history;
           local $id_history_db->{version_control} = $vc;
           
-          $db->id_content->set_data ($id => \$content);
+          $db->id_content->set_data ($id => \$added_text);
           
           my $id_props = {};
           
@@ -554,7 +563,7 @@ if ($path[0] eq 'n' and @path == 2) {
           }
           
           $id_props->{'content-type'} = 'text/x-suikawiki';
-          $id_props->{hash} = string_hash $content;
+          $id_props->{hash} = string_hash $added_text;
           $db->id_prop->set_data ($id => $id_props);
           
           $vc->commit_changes ("created by $user");
@@ -573,7 +582,7 @@ if ($path[0] eq 'n' and @path == 2) {
         $document->associate_names ($new_names, user => $user, time => $time);
 
         return $app->throw_manual_redirect
-            ($app->name_url ($name, $id, anchor => $anchor),
+            ($app->name_url ($name, $id, anchor => $next_id),
              status => 303, reason_phrase => 'Appended');
       }
     } else {
@@ -1271,7 +1280,7 @@ sub set_foot_content ($$) {
 
 =head1 LICENSE
 
-Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2015 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
