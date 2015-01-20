@@ -3,10 +3,9 @@ Pod::Usage~1.64
 JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.67
-HTTP::Headers~6.05
 CPAN::Meta~2.143240
 HTTP::Daemon~6.01
-Module::Build~0.4210
+Module::Build~0.4211
 List::MoreUtils~0.402
 IO::File~1.14
 Devel::StackTrace~2.00
@@ -58,8 +57,8 @@ Getopt::Long~2.43
 Try::Tiny~0.22
 Term::ANSIColor~4.03
 Server::Starter~0.19
-Test::Class~0.48
 Exporter::Lite~0.06
+Test::Class~0.48
 Data::Dumper~2.154
 HTTP::Cookies~6.01
 Text::Diff~1.41
@@ -79,5 +78,6 @@ Digest::MD5~2.54
 Class::Data::Inheritable~0.08
 MRO::Compat~0.12
 Hash::MultiValue~0.15
+HTTP::Headers::Util~6.03
 Apache::LogFormat::Compiler~0.32
 HTTP::Date~6.02
