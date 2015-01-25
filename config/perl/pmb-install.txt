@@ -1,9 +1,9 @@
 Capture::Tiny~0.27
 Pod::Usage~1.64
 JSON::XS~3.01
+HTTP::Status~6.03
 IO::HTML~1.001
 Encode~2.68
-HTTP::Headers~6.05
 CPAN::Meta~2.143240
 HTTP::Daemon~6.01
 Module::Build~0.4211
@@ -43,7 +43,7 @@ HTML::Tagset~3.20
 Exporter::Tiny~0.042
 Starlet~0.24
 File::ShareDir::Install~0.10
-IO::CaptureOutput~1.1103
+IO::CaptureOutput~1.1104
 Class::Accessor::Fast~0.34
 Test::NoWarnings~1.04
 File::Listing~6.04
