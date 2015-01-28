@@ -143,6 +143,8 @@ sub name ($) {
 ## ------ Indexing ------
 
 sub update_tfidf ($$) {
+return; # XXX
+
   my ($self, $doc) = @_; ## TODO: $doc should not be an argument
 
   ## It is REQUIRED to lock the $id before the invocation of this
