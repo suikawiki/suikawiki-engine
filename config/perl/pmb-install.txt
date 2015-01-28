@@ -2,11 +2,11 @@ Capture::Tiny~0.27
 Pod::Usage~1.64
 JSON::XS~3.01
 IO::HTML~1.001
-Encode~2.67
+Encode~2.68
 HTTP::Headers~6.05
 CPAN::Meta~2.143240
 HTTP::Daemon~6.01
-Module::Build~0.4210
+Module::Build~0.4211
 List::MoreUtils~0.402
 IO::File~1.14
 Devel::StackTrace~2.00
@@ -21,8 +21,9 @@ LWP::MediaTypes~6.02
 Types::Serialiser~1.0
 Module::Runtime~0.014
 Unicode::Normalize~1.18
-Filter::Util::Call~1.53
+Filter::Util::Call~1.54
 Devel::CheckLib~1.03
+HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1903
 Path::Tiny~0.061
@@ -42,12 +43,12 @@ HTML::Tagset~3.20
 Exporter::Tiny~0.042
 Starlet~0.24
 File::ShareDir::Install~0.10
-IO::CaptureOutput~1.1103
+IO::CaptureOutput~1.1104
 Class::Accessor::Fast~0.34
 Test::NoWarnings~1.04
 File::Listing~6.04
 Stream::Buffered~0.03
-Test::TCP~2.06
+Test::TCP~2.07
 Test::Builder~1.001014
 AnyEvent::Util
 Digest::SHA~5.95
@@ -60,7 +61,6 @@ Server::Starter~0.19
 Exporter::Lite~0.06
 Test::Class~0.48
 Data::Dumper~2.154
-HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 Text::Diff~1.41
 File::Temp~0.2304
