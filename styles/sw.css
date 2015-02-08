@@ -471,10 +471,15 @@ figure > p:first-child {
   text-indent: 0;
 }
 
-figure.list {
+figure.list,
+figure.notes {
   color: black;
   background-color: #FCFCFC;
   border-style: none;
+}
+
+figure.notes {
+  color: green;
 }
 
 figure.list.short {
@@ -482,11 +487,19 @@ figure.list.short {
   column-width: 10em;
 }
 
-figure.list > ul {
+figure.list.members {
+  border: solid 1px #ccc;
+  border-bottom-left-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
+}
+
+figure.list > ul,
+figure.notes > ul {
   padding-left: 2em;
 }
 
-figure.list > ul > li {
+figure.list > ul > li,
+figure.notes > ul > li {
   display: block;
   margin-left: 0;
   padding-left: 0;
@@ -495,6 +508,65 @@ figure.list > ul > li {
 
 figure.list > ul > li::before {
   content: "\25BB  \A0";
+}
+
+figure.notes > ul > li::before {
+  content: "※\A0";
+}
+
+figure.list dl {
+}
+
+figure.list dt {
+  display: inline;
+  margin-right: 0;
+  font-weight: bolder;
+}
+
+figure.list dt::before {
+  content: "\25BB  \A0";
+}
+
+figure.list dt::after {
+  content: ": ";
+}
+
+figure.list.members dt::after {
+  content: " := ";
+  font-family: "Courier New", monospace;
+}
+
+figure.list dd {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+figure.list dd::after {
+  display: block;
+  content: "";
+}
+
+figure.list figure.nested {
+  margin: 0 -2.5em 0 1.5em;
+}
+
+figure.list figure.nested.members {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+
+figure.list.members > figcaption {
+  margin: 0 -2.5em 0.5em -1em;
+  border-bottom: 1px #ccc solid;
+  padding: 0 1em 0.2em;
+  text-align: left;
+}
+
+figure.list.members > figcaption > p {
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
 }
 
 figure.quote {
@@ -1049,7 +1121,8 @@ dfn {
   font-family: sans-serif;
 }
 
-dfn rt {
+dfn rt, strong rt,
+h1 rt, h2 rt, h3 rt, h4 rt, h5 rt, h6 rt {
   font-weight: normal;
 }
 
