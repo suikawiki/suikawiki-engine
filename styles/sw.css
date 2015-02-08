@@ -547,11 +547,12 @@ figure.list dd::after {
   content: "";
 }
 
-figure.list figure.nested {
+figure.list figure.list,
+figure.list figure.notes {
   margin: 0 -2.5em 0 1.5em;
 }
 
-figure.list figure.nested.members {
+figure.list figure.list.members {
   margin-top: 0.4em;
   margin-bottom: 0.4em;
 }
