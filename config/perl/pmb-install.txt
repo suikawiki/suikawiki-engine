@@ -3,6 +3,7 @@ Pod::Usage~1.64
 JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.70
+HTTP::Headers~6.05
 CPAN::Meta~2.143240
 HTTP::Daemon~6.01
 Module::Build~0.4211
@@ -10,7 +11,6 @@ List::MoreUtils~0.404
 IO::File~1.14
 Devel::StackTrace~2.00
 HTTP::Body~1.22
-HTTP::Message~6.06
 POSIX::strftime::Compiler~0.41
 Test::Differences~0.63
 Path::Class~0.35
@@ -23,7 +23,6 @@ Module::Runtime~0.014
 Unicode::Normalize~1.18
 Filter::Util::Call~1.54
 Devel::CheckLib~1.03
-HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1903
 Path::Tiny~0.061
@@ -60,6 +59,7 @@ Term::ANSIColor~4.03
 Server::Starter~0.19
 Test::Class~0.48
 Exporter::Lite~0.06
+HTML::HeadParser~3.71
 Data::Dumper~2.154
 HTTP::Cookies~6.01
 Text::Diff~1.41
