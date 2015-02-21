@@ -63,7 +63,7 @@ SW.SearchResult = new SAMI.Class (function (source) {
   parse: function (source) {
     this.entries = new SAMI.List (source.split (/\x0D?\x0A/)).map (function (v) {
       if (v == '') return;
-      return new SW.SearchResult.Entry (v.split (/\t/, 3));
+      return new SW.SearchResult.Entry (v.split (/\t/, 4));
     }).grep (function (v) { return v });
   }, // parse
 
@@ -81,6 +81,7 @@ SW.SearchResult.Entry = new SAMI.Class (function (v) {
   this.score = v[0];
   this.docId = v[1];
   this.docName = v[2];
+  this.docTitle = v[3];
 }, {
   toLI: function () {
     var self = this;
@@ -89,7 +90,7 @@ SW.SearchResult.Entry = new SAMI.Class (function (v) {
     li.innerHTML = '<a href="">xxx</a>';
 
     var a = li.firstChild;
-    a.firstChild.data = this.docName;
+    a.firstChild.data = this.docTitle;
     a.href = SW.CurrentDocument.getInstance ().constructURL
         ('n', this.docName, this.docId);
 

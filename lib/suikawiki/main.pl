@@ -428,9 +428,10 @@ if ($path[0] eq 'n' and @path == 2) {
       my $id_found = {};
       for my $item (@$searched) {
         my $id_prop = $db->id_prop->get_data ($item->{id});
-        my $name = $item->{title} // [keys %{$id_prop->{name}}]->[0] // $item->{id};
+        my $name = [keys %{$id_prop->{name}}]->[0] // '';
+        my $title = $item->{title} // $name;
         $app->http->send_response_body_as_text
-            (join '', $item->{score}, "\t", $item->{id}, "\t", $name, "\x0A");
+            (join '', $item->{score}, "\t", $item->{id}, "\t", $name, "\t", $title, "\x0A");
         $id_found->{$item->{id}}++;
       }
 

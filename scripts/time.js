@@ -281,6 +281,9 @@ TER.Delta.Text.en = {
   after: function (s) {
     return 'in ' + s;
   },
+  now: function () {
+    return 'just now';
+  },
   sep: function () {
     return ' ';
   }
@@ -304,6 +307,9 @@ TER.Delta.Text.ja = {
   },
   after: function (s) {
     return s + '後';
+  },
+  now: function () {
+    return '今';
   },
   sep: function () {
     return '';
@@ -368,7 +374,7 @@ is a willful violation to the current HTML Living Standard.
 */
 
 /* ***** BEGIN LICENSE BLOCK *****
- * Copyright 2008-2011 Wakaba <w@suika.fam.cx>.  All rights reserved.
+ * Copyright 2008-2015 Wakaba <wakaba@suikawiki.org>.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or 
  * modify it under the same terms as Perl itself.
@@ -405,7 +411,7 @@ is a willful violation to the current HTML Living Standard.
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Wakaba <w@suika.fam.cx>
+ *   Wakaba <wakaba@suikawiki.org>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
