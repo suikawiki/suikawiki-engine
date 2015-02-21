@@ -47,3 +47,6 @@
 [submodule "modules/web-css"]
 	path = modules/web-css
 	url = git://github.com/manakai/perl-web-css
+[submodule "modules/web-ua"]
+	path = modules/web-ua
+	url = git://github.com/wakaba/perl-web-useragent-functions

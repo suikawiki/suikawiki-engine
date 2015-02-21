@@ -9,3 +9,4 @@
 - "../../modules/swml-parser" tests build
 - "../../modules/charclass" tests build
 - "../../modules/vcutils" tests anyevent viewvc
+- "../../modules/web-ua" tests oauth wsse testws cli curl anyeventsocks
