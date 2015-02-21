@@ -4,5 +4,9 @@
   "wiki_page_help": "HelpPage",
   "wiki_page_contact": "ContactPage",
 
-  "edit_basic_auth": "editors.json"
+  "edit_basic_auth": "editors.json",
+
+  "es_index_url": "es_index_url.txt",
+  "es_user": "es_user.txt",
+  "es_password": "es_password.txt"
 }

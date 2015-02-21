@@ -23,7 +23,7 @@ sub db_root_path ($;$) {
 
 sub db ($) {
   require SWE::DB;
-  return $_[0]->{db} ||= SWE::DB->new_from_root_path ($_[0]->db_root_path);
+  return $_[0]->{db} ||= SWE::DB->new_from_root_path_and_config ($_[0]->db_root_path, $_[0]->config);
 } # db
 
 sub path_segments ($) {

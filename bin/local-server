@@ -1,6 +1,6 @@
 basename=`dirname $0`/..
 SW_DB_DIR=$basename/local/testdata \
 KARASUMA_CONFIG_JSON=$basename/config/local.json \
-KARASUMA_CONFIG_FILE_DIR_NAME=$basename/local/keys/L1 \
+KARASUMA_CONFIG_FILE_DIR_NAME=$basename/local/keys/local \
 exec $basename/plackup $basename/bin/server.psgi \
     -p 5012 -s Starlet

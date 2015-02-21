@@ -420,15 +420,28 @@ if ($path[0] eq 'n' and @path == 2) {
       }
     }
 
+      my $searched = $db->es->search ($name);
+
       $app->http->add_response_header
           ('Content-Type' => 'text/plain; charset=utf-8');
       
-      for my $id (sort {$index->{$b} <=> $index->{$a}} keys %$index) {
+      my $id_found = {};
+      for my $item (@$searched) {
+        my $id_prop = $db->id_prop->get_data ($item->{id});
+        my $name = $item->{title} // [keys %{$id_prop->{name}}]->[0] // $item->{id};
+        $app->http->send_response_body_as_text
+            (join '', $item->{score}, "\t", $item->{id}, "\t", $name, "\x0A");
+        $id_found->{$item->{id}}++;
+      }
+
+      # XXX old
+      for my $id (sort {$index->{$b} <=> $index->{$a}} grep { not $id_found->{$_} } keys %$index) {
         my $id_prop = $db->id_prop->get_data ($id);
         my $name = [keys %{$id_prop->{name}}]->[0] // $id;
         $app->http->send_response_body_as_text
             (join '', $index->{$id}, "\t", $id, "\t", $name, "\x0A");
       }
+
       $app->http->close_response_body;
       return $app->throw;
     } elsif ($param eq 'posturl') {
@@ -511,10 +524,11 @@ if ($path[0] eq 'n' and @path == 2) {
         my $cache_prop = $db->id_cache_prop->get_data ($id);
         my $doc = $id_prop ? get_xml_data ($db, $id, $id_prop, $cache_prop) : undef;
         if (defined $doc) {
-          require SWE::Object::Document;
-          my $document = SWE::Object::Document->new (db => $db, id => $id);
-          $document->{name_prop_db} = $db->name_prop;
-          $document->update_tfidf ($doc);
+          #require SWE::Object::Document;
+          #my $document = SWE::Object::Document->new (db => $db, id => $id);
+          #$document->{name_prop_db} = $db->name_prop;
+          #$document->update_tfidf ($doc);
+          $db->es->update ($id, $id_prop->{title}, $doc);
         }
 
         return $app->throw_manual_redirect
@@ -573,7 +587,8 @@ if ($path[0] eq 'n' and @path == 2) {
           my $doc = $id_props ? get_xml_data ($db, $id, $id_props, $cache_prop) : undef;
           
           if (defined $doc) {
-            $document->update_tfidf ($doc);
+            #$document->update_tfidf ($doc);
+            $db->es->update ($id, $id_props->{title}, $doc);
           }
           
           $id_lock->unlock;
@@ -654,10 +669,11 @@ if ($path[0] eq 'n' and @path == 2) {
         }
 
         if (defined $doc) {
-          require SWE::Object::Document;
-          my $document = SWE::Object::Document->new (db => $db, id => $id);
-          $document->{name_prop_db} = $db->name_prop;
-          $document->update_tfidf ($doc);
+          #require SWE::Object::Document;
+          #my $document = SWE::Object::Document->new (db => $db, id => $id);
+          #$document->{name_prop_db} = $db->name_prop;
+          #$document->update_tfidf ($doc);
+          $db->es->update ($id, $title, $doc);
         }
 
         return $app->throw;
@@ -1068,7 +1084,8 @@ if ($path[0] eq 'n' and @path == 2) {
       my $doc = $id_prop ? get_xml_data ($db, $id, $id_prop, $cache_prop) : undef;
       
       if (defined $doc) {
-        $document->update_tfidf ($doc);
+        #$document->update_tfidf ($doc);
+        $db->es->update ($id, $id_prop->{title}, $doc);
       }
       
       $id_lock->unlock;

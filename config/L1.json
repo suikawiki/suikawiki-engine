@@ -6,6 +6,10 @@
 
   "edit_basic_auth": "editors.json",
 
+  "es_index_url": "es_index_url.txt",
+  "es_user": "es_user.txt",
+  "es_password": "es_password.txt",
+
   "web_port": 7410,
   "web_has_reverse_proxy": 1,
   "env_WEBUA_DEBUG": 0

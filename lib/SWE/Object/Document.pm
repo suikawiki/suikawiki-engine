@@ -142,6 +142,7 @@ sub name ($) {
 
 ## ------ Indexing ------
 
+# XXX obsolete
 sub update_tfidf ($$) {
 return; # XXX
 

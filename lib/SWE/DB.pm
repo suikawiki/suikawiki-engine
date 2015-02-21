@@ -2,8 +2,8 @@ package SWE::DB;
 use strict;
 use warnings;
 
-sub new_from_root_path ($$) {
-  my $self = bless {root_path => $_[1]}, $_[0];
+sub new_from_root_path_and_config ($$$) {
+  my $self = bless {root_path => $_[1], config => $_[2]}, $_[0];
   ($self->{ids_path} = $self->{root_path}->child ('ids'))->mkpath;
   ($self->{names_path} = $self->{root_path}->child ('names'))->mkpath;
   return $self;
@@ -12,6 +12,10 @@ sub new_from_root_path ($$) {
 sub root_path ($) {
   return $_[0]->{root_path};
 } # root_path
+
+sub config ($) {
+  return $_[0]->{config};
+} # config
 
 ## DEPRECATED
 sub db_dir_name ($) {
@@ -190,11 +194,17 @@ sub vc ($) {
   return SWE::DB::VersionControl->new_from_root_path ($self->root_path);
 } # vc
 
+sub es ($) {
+  my $self = $_[0];
+  require SWE::DB::ES;
+  return SWE::DB::ES->new_from_config ($self->config);
+} # es
+
 1;
 
 =head1 LICENSE
 
-Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2015 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
