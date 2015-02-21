@@ -440,7 +440,7 @@ if ($path[0] eq 'n' and @path == 2) {
         my $id_prop = $db->id_prop->get_data ($id);
         my $name = [keys %{$id_prop->{name}}]->[0] // $id;
         $app->http->send_response_body_as_text
-            (join '', $index->{$id}, "\t", $id, "\t", $name, "\x0A");
+            (join '', $index->{$id}, "\t", $id, "\t", $name, "\t", $name, "\x0A");
       }
 
       $app->http->close_response_body;
