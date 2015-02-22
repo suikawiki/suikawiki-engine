@@ -19,9 +19,31 @@ sub basic_auth ($) {
           $_[0]->{config}->get_file_base64_text ('es_password')];
 } # basic_auth
 
+sub _tc ($) {
+  my @node = ($_[0]);
+  my @result;
+  while (@node) {
+    my $node = shift @node;
+    my $ln = $node->local_name;
+    if (defined $ln) {
+      if ({map { $_ => 1 } qw(
+        p dt dd li insert delete h1 td th pre rt comment-p ed nsuri
+      )}->{$ln}) {
+        push @result, "\n";
+        unshift @node, $node->child_nodes->to_list;
+      } else {
+        unshift @node, $node->child_nodes->to_list;
+      }
+    } elsif ($node->node_type == $node->TEXT_NODE) {
+      push @result, $node->text_content;
+    }
+  }
+  return join "", @result;
+} # _tc
+
 sub update ($$$$) {
   my ($self, $id, $title, $doc) = @_;
-  my $text = ($title // '') . "\n" . $doc->document_element->text_content;
+  my $text = ($title // '') . "\n" . _tc $doc->document_element;
   katakana_to_hiragana $text;
   undef $title unless defined $title and length $title;
 
@@ -43,6 +65,12 @@ sub update ($$$$) {
 sub search ($$) {
   my ($self, $word) = @_;
   katakana_to_hiragana $word;
+  $word =~ s/\s+/ /g;
+  $word =~ s/^ //;
+  $word =~ s/ $//;
+
+  ## <http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html>
+  $word =~ s{([+\-=&|><!(){}\[\]^"~*?:\\/])}{\\$1}g;
 
   my $url_prefix = $self->url_prefix;
   my $cv = AE::cv;
@@ -51,10 +79,10 @@ sub search ($$) {
       basic_auth => $self->basic_auth,
       content => perl2json_bytes {
         query => {
-          match => {content => {
+          query_string => {
             query => $word,
-            operator => 'and',
-          }},
+            default_field => 'content',
+          },
         },
       },
       anyevent => 1,

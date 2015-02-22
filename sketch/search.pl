@@ -51,9 +51,17 @@ http_post
     basic_auth => $auth,
     content => perl2json_bytes {
       query => {
-        match => {
-                 content => {query => "えあう", operator => 'and'},
-                },
+#        match => {
+#                 content => {query => "えあう", operator => 'and'},
+#                },
+#        terms => {
+#          content => ['bc', 'def', 'え', 'あ', 'う'],
+#          minimum_should_match => 2,
+#        },
+        query_string => {
+          default_field => 'content',
+          query => '"bc あ う"',
+        },
       },
     },
     cb => sub {
