@@ -71,6 +71,7 @@ sub search ($$) {
 
   ## <http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html>
   $word =~ s{([+\-=&|><!(){}\[\]^"~*?:\\/])}{\\$1}g;
+  $word = qq{"$word"};
 
   my $url_prefix = $self->url_prefix;
   my $cv = AE::cv;
