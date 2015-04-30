@@ -1400,6 +1400,7 @@ body > aside {
 
 .swe-links li::after {
   content: " ";
+  padding-right: 0.5em;
 }
 
 /* Bookmarklet */
