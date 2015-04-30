@@ -139,7 +139,7 @@ if ($path[0] eq 'n' and @path == 2) {
       }
       my @meta;
       push @meta, {name => 'ROBOTS', content => 'NOINDEX'} unless defined $id;
-      push @meta, {name => 'viewport', content => 'width=device-width'};
+      push @meta, {name => 'viewport', content => 'width=device-width,initial-scale=1'};
       set_head_content ($app, \@path, $html_doc, $id, \@link, \@meta);
       
       my $body_el = $html_doc->last_child->last_child;
