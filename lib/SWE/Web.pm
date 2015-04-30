@@ -16,6 +16,11 @@ sub psgi_app ($$) {
     my $app = SWE::Warabe::App->new_from_http ($http);
     $app->config ($config);
     $app->db_root_path ($db_path);
+
+    # XXX accesslog
+    warn sprintf "Access: [%s] %s %s\n",
+        scalar gmtime, $app->http->request_method, $app->http->url->stringify;
+
     return $http->send_response (onready => sub {
       $app->execute (sub {
         SWE::Web->process ($app);

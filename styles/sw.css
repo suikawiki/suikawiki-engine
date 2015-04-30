@@ -75,6 +75,26 @@ body {
   z-index: 10000;
 }
 
+@media (max-width: 30em) {
+  .footer .copyright {
+    margin: 1em;
+    text-indent: 0;
+    line-height: 1.3;
+  }
+
+  .footer menu {
+    display: table-row;
+  }
+
+  .footer menu > a {
+    display: block;
+    margin-bottom: 0.3em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    text-align: left;
+  }
+}
+
 h1, h2, h3, h4, h5, h6 {
   margin: 0 0 0.5em 0;
   padding: 0.1em 0.2em;
@@ -459,6 +479,13 @@ figure {
   line-height: 1.5;
 }
 
+@media (max-width: 30em) {
+  figure {
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+}
+
 figcaption {
   display: block;
   margin: 0;
@@ -658,6 +685,12 @@ figure.pull-quote > figcaption > p::before {
   content: "\2015\2015";
   white-space: pre;
   padding-right: 0.5em;
+}
+
+figure.pull-quote::after {
+  display: block;
+  content: "";
+  clear: both;
 }
 
 figure.corollary {
