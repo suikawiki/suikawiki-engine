@@ -1224,7 +1224,7 @@ SW.Figure.Amazon = {};
 
 SW.Figure.Amazon.extLink = function (a) {
   var url = a.href;
-  var match = url.match (/^http:\/\/www.amazon.co.jp\/(?:[^\/]+\/dp|gp\/product|exec\/obidos\/ASIN)\/([A-Z0-9]{10})/);
+  var match = url.match (/^http:\/\/www.amazon.co.jp\/(?:[^\/]+\/dp|dp|gp\/product|exec\/obidos\/ASIN)\/([A-Z0-9]{10})/);
   if (match) {
     var asin = match[1];
     var xhr = new XMLHttpRequest;
