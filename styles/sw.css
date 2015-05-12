@@ -1007,11 +1007,12 @@ figure.bookmarklet .sw-anchor-external-container > a {
 }
 
 .amazon-item cite {
-  display: block;
+  display: inline;
   font-weight: bolder;
 }
 
 .amazon-item .authors {
+  display: block;
   margin-left: 1em;
   font-size: 80%;
 }
