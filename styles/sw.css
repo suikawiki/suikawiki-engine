@@ -75,6 +75,10 @@ body {
   z-index: 10000;
 }
 
+.footer .copyright .amazon {
+  display: block;
+}
+
 @media (max-width: 30em) {
   .footer .copyright {
     margin: 1em;
@@ -985,6 +989,37 @@ figure.bookmarklet .sw-anchor-external-container > a {
   line-height: 2.0;
 }
 
+.amazon-item {
+  display: block;
+  cursor: pointer;
+  margin: 1em 2em;
+}
+
+.amazon-item::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.amazon-item > img {
+  float: left;
+  margin-right: 1em;
+}
+
+.amazon-item cite {
+  display: block;
+  font-weight: bolder;
+}
+
+.amazon-item .authors {
+  margin-left: 1em;
+  font-size: 80%;
+}
+
+.amazon-item .authors > a {
+  margin-right: 0.5em;
+}
+
 /* Examples */
 
 .sw-example {
@@ -1072,6 +1107,7 @@ cite:after {
 
 .sw-src {
   font-style: normal;
+  font-weight: normal;
   color: gray;
 }
 

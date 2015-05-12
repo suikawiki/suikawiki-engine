@@ -1220,6 +1220,55 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
   }; // parse
 }) (); // SW.Figure.Packet
 
+SW.Figure.Amazon = {};
+
+SW.Figure.Amazon.extLink = function (a) {
+  var url = a.href;
+  var match = url.match (/^http:\/\/www.amazon.co.jp\/(?:[^\/]+\/dp|gp\/product|exec\/obidos\/ASIN)\/([A-Z0-9]{10})/);
+  if (match) {
+    var asin = match[1];
+    var xhr = new XMLHttpRequest;
+    xhr.open ('GET', 'https://asw-swapp.rhcloud.com/amazon/items?q=' + encodeURIComponent (asin), true);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          var json = JSON.parse (xhr.responseText);
+
+          var item = json.items[0];
+          if (!item) return;
+          var fig = document.createElement ('span');
+          fig.className = 'amazon-item';
+          fig.setAttribute ('onclick', ' querySelector ("a").click () ');
+          fig.innerHTML = '<img src alt> <a href><cite class=title></cite></a> <span class=authors></span>';
+          fig.querySelector ('.title').textContent = item.Title;
+          fig.querySelector ('a').href = item.short_url;
+          fig.querySelector ('img').src = item.SmallImage;
+          var authorContainer = fig.querySelector ('.authors');
+          [item.Artist, item.Author, item.Director, item.Creator, item.Manufacturer].forEach (function (list) {
+            (list || []).forEach (function (x) {
+              var a = document.createElement ('a');
+              a.href = '/n/' + encodeURIComponent (x);
+              a.textContent = x;
+              authorContainer.appendChild (a);
+            });
+          });
+          a.parentNode.parentNode.replaceChild (fig, a.parentNode);
+
+          var footer = document.querySelector ('footer.footer .copyright small') || document.body;
+          var amazon = footer.querySelector ('.amazon');
+          if (!amazon) {
+            amazon = document.createElement ('span');
+            amazon.className = 'amazon';
+            footer.appendChild (amazon);
+          }
+          amazon.textContent = json.credit;
+        }
+      }
+    };
+    xhr.send (null);
+  }
+}; // extLink
+
 function initFigures (root) {
   var figs = root.querySelectorAll ('figure.states');
   if (figs.length) {
@@ -1256,6 +1305,10 @@ function initFigures (root) {
   Array.prototype.forEach.apply (root.querySelectorAll ('figure.packet'), [function (fig) {
     SW.Figure.Packet.parse (fig);
   }]);
+
+  Array.prototype.forEach.call (root.querySelectorAll ('.sw-anchor-external-container a[href^="http://www.amazon.co.jp/"]'), function (a) {
+    SW.Figure.Amazon.extLink (a);
+  });
 } // initFigures
 
 /* 
