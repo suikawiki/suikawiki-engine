@@ -1222,27 +1222,22 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
 
 SW.Figure.Amazon = {};
 
-SW.Figure.Amazon.extLink = function (a) {
-  var url = a.href;
-  var match = url.match (/^http:\/\/www.amazon.co.jp\/(?:[^\/]+\/dp|dp|gp\/product|exec\/obidos\/ASIN)\/([A-Z0-9]{10})/);
-  if (match) {
-    var asin = match[1];
-    var xhr = new XMLHttpRequest;
-    xhr.open ('GET', 'https://asw-swapp.rhcloud.com/amazon/items?q=' + encodeURIComponent (asin), true);
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          var json = JSON.parse (xhr.responseText);
-
-          var item = json.items[0];
-          if (!item) return;
+SW.Figure.Amazon.createItems = function (q, code) {
+  var xhr = new XMLHttpRequest;
+  xhr.open ('GET', 'https://asw-swapp.rhcloud.com/amazon/items?q=' + encodeURIComponent (q), true);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var json = JSON.parse (xhr.responseText);
+        var df = document.createDocumentFragment ();
+        json.items.forEach (function (item) {
           var fig = document.createElement ('span');
           fig.className = 'amazon-item';
           fig.setAttribute ('onclick', ' querySelector ("a").click () ');
           fig.innerHTML = '<img src alt> <a href><cite class=title></cite></a> <span class=authors></span>';
           fig.querySelector ('.title').textContent = item.Title;
           fig.querySelector ('a').href = item.short_url;
-          fig.querySelector ('img').src = item.SmallImage;
+          fig.querySelector ('img').src = item.SmallImage || '';
           var authorContainer = fig.querySelector ('.authors');
           [item.Artist, item.Author, item.Director, item.Creator, item.Manufacturer].forEach (function (list) {
             (list || []).forEach (function (x) {
@@ -1252,22 +1247,41 @@ SW.Figure.Amazon.extLink = function (a) {
               authorContainer.appendChild (a);
             });
           });
-          a.parentNode.parentNode.replaceChild (fig, a.parentNode);
+          df.appendChild (fig);
+        });
+        code (df);
 
-          var footer = document.querySelector ('footer.footer .copyright small') || document.body;
-          var amazon = footer.querySelector ('.amazon');
-          if (!amazon) {
-            amazon = document.createElement ('span');
-            amazon.className = 'amazon';
-            footer.appendChild (amazon);
-          }
-          amazon.textContent = json.credit;
+        var footer = document.querySelector ('footer.footer .copyright small') || document.body;
+        var amazon = footer.querySelector ('.amazon');
+        if (!amazon) {
+          amazon = document.createElement ('span');
+          amazon.className = 'amazon';
+          footer.appendChild (amazon);
         }
+        amazon.textContent = json.credit;
       }
-    };
-    xhr.send (null);
+    }
+  };
+  xhr.send (null);
+}; // createOtems
+
+SW.Figure.Amazon.extLink = function (a) {
+  var url = a.href;
+  var match = url.match (/^http:\/\/www.amazon.co.jp\/(?:[^\/]+\/dp|dp|gp\/product|exec\/obidos\/ASIN)\/([A-Z0-9]{10})/);
+  if (match) {
+    var asin = match[1];
+    SW.Figure.Amazon.createItems (asin, function (items) {
+      a.parentNode.parentNode.replaceChild (items, a.parentNode);
+    });
   }
 }; // extLink
+
+SW.Figure.Amazon.itemList = function (a) {
+  SW.Figure.Amazon.createItems (a.textContent, function (items) {
+    a.textContent = "";
+    a.appendChild (items);
+  });
+}; // itemList
 
 function initFigures (root) {
   var figs = root.querySelectorAll ('figure.states');
@@ -1308,6 +1322,10 @@ function initFigures (root) {
 
   Array.prototype.forEach.call (root.querySelectorAll ('.sw-anchor-external-container a[href^="http://www.amazon.co.jp/"]'), function (a) {
     SW.Figure.Amazon.extLink (a);
+  });
+
+  Array.prototype.forEach.call (root.querySelectorAll ('figure.amazon'), function (a) {
+    SW.Figure.Amazon.itemList (a);
   });
 } // initFigures
 
