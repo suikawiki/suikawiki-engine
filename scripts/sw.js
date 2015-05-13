@@ -1239,7 +1239,7 @@ SW.Figure.Amazon.createItems = function (q, code) {
           fig.querySelector ('a').href = item.short_url;
           fig.querySelector ('img').src = item.SmallImage || '';
           var authorContainer = fig.querySelector ('.authors');
-          [item.Artist, item.Author, item.Director, item.Creator, item.Manufacturer].forEach (function (list) {
+          [item.Artist, item.Actor, item.Author, item.Director, item.Creator, item.Manufacturer].forEach (function (list) {
             (list || []).forEach (function (x) {
               var a = document.createElement ('a');
               a.href = '/n/' + encodeURIComponent (x);
