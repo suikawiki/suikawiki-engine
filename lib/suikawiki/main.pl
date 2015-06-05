@@ -774,6 +774,8 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $historical_field = $form_el->get_elements_by_tag_name ('input')->[2];
       $historical_field->set_attribute (checked => '') if $id_prop->{historical};
+      my $legal_field = $form_el->get_elements_by_tag_name ('input')->[3];
+      $legal_field->set_attribute (checked => '') if $id_prop->{legal};
 
       my $ct = $id_prop->{'content-type'} // 'text/x-suikawiki';
       set_content_type_options
