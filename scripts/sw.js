@@ -38,6 +38,7 @@ addEventListener ('DOMContentLoaded', function () {
   initFigures (document.body);
   initHeadings (document.body);
   initTOC (document.body);
+  initWarnings (document.body);
   addGoogleSearch ();
   enableHTML5Support ();
   addGoogleAnalytics ();
@@ -312,6 +313,7 @@ function initTOC (root) {
   ol.setAttribute ('data-level', 1);
   section.appendChild (ol);
 
+  var hasSection = false;
   Array.prototype.forEach.apply (article.querySelectorAll ('.section > * > .sw-heading-anchor[href]'), [function (a) {
     var h = a.parentNode;
     var hLevel = parseInt (h.localName.replace (/^h/, '')) - levelOffset;
@@ -328,6 +330,7 @@ function initTOC (root) {
       e.parentNode.replaceChild (df, e);
     }]);
     li.appendChild (link);
+    hasSection = true;
     while (true) {
       var olLevel = parseInt (ol.getAttribute ('data-level'));
       if (hLevel < olLevel) {
@@ -346,11 +349,43 @@ function initTOC (root) {
     }
     ol.appendChild (li);
   }]);
-    
-  var after = article.querySelector ('section');
-  if (!after) return;
-  after.parentNode.insertBefore (section, after);
+
+  if (hasSection) insertBeforeFirstSection (article, section);
 } // initTOC
+
+function initWarnings (root) {
+  var article = root.querySelector ('.article');
+  if (!article) return;
+
+  var warn = function (flagName) {
+    if (root.hasAttribute ('data-' + flagName)) {
+      var xhr = new XMLHttpRequest;
+      xhr.open ('GET', '/n/' + encodeURIComponent ("Wiki//warning//" + flagName));
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var div = document.createElement ('div');
+          div.innerHTML = xhr.responseText;
+          var fig = div.querySelector ('.article > figure');
+          if (fig) {
+            insertBeforeFirstSection (root, fig);
+          }
+        }
+      };
+      xhr.send (null);
+    }
+  };
+  warn ("historical");
+  warn ("legal");
+} // initWarnings
+
+function insertBeforeFirstSection (root, element) {
+  var after = root.querySelector ('section') || root.querySelector ('h2 + *');
+  if (after) {
+    after.parentNode.insertBefore (element, after);
+  } else {
+    root.insertBefore (element, root.firstChild);
+  }
+} // insertBeforeFirstSection
 
 if (!window.SW) window.SW = {};
 if (!SW.Figure) SW.Figure = {};

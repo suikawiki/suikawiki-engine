@@ -144,6 +144,9 @@ if ($path[0] eq 'n' and @path == 2) {
       
       my $body_el = $html_doc->last_child->last_child;
 
+      $body_el->set_attribute ('data-historical' => '') if $id_prop->{historical};
+      $body_el->set_attribute ('data-legal' => '') if $id_prop->{legal};
+
       my $h1_el = $html_doc->create_element ('h1');
       my $a_el = $html_doc->create_element ('a');
       $a_el->set_attribute (href => $app->name_url ($name));
@@ -648,6 +651,20 @@ if ($path[0] eq 'n' and @path == 2) {
           $id_prop->{'title-type'} = 'text/plain'; ## TODO: get_parameter
         }
 
+        my $historical = $app->text_param ('historical');
+        if ($historical) {
+          $id_prop->{historical} = 1;
+        } else {
+          delete $id_prop->{historical};
+        }
+
+        my $legal = $app->text_param ('legal');
+        if ($legal) {
+          $id_prop->{legal} = 1;
+        } else {
+          delete $id_prop->{legal};
+        }
+
         my $vc = $db->vc;
         local $db->id_content->{version_control} = $vc;
         local $db->id_prop->{version_control} = $vc;
@@ -726,6 +743,8 @@ if ($path[0] eq 'n' and @path == 2) {
 <p><button type=submit>Update</button>
 <input type=hidden name=hash>
 <select name=content-type></select>
+<label><input type=checkbox name=historical> Historical</label>
+<label><input type=checkbox name=legal> Legal</label>
 [<a rel=help>Help</a> / <a rel=license>License</a>]
 </form>
 
@@ -752,6 +771,9 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $hash_field = $form_el->get_elements_by_tag_name ('input')->[1];
       $hash_field->set_attribute (value => $hash);
+
+      my $historical_field = $form_el->get_elements_by_tag_name ('input')->[2];
+      $historical_field->set_attribute (checked => '') if $id_prop->{historical};
 
       my $ct = $id_prop->{'content-type'} // 'text/x-suikawiki';
       set_content_type_options
