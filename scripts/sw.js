@@ -219,7 +219,7 @@ function addGoogleSearch () {
 
   var search = document.createElement ('p');
   search.className = 'google-search-link';
-  search.innerHTML = '<a>Search by Google: <bdi></bdi></a>';
+  search.innerHTML = '<a>Google search: <bdi></bdi></a>';
   var word = (document.querySelector ('h1') || document.querySelector ('title')).textContent;
   search.firstChild.href = 'https://www.google.com/search?ie=UTF-8&q=' + encodeURIComponent (word);
   search.firstChild.lastChild.textContent = word;
