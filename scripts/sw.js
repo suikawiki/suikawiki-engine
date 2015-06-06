@@ -217,6 +217,14 @@ function addGoogleSearch () {
   var placeholder = document.getElementById ('cse-search-form');
   if (!placeholder) return;
 
+  var search = document.createElement ('p');
+  search.className = 'google-search-link';
+  search.innerHTML = '<a>Search by Google: <bdi></bdi></a>';
+  var word = (document.querySelector ('h1') || document.querySelector ('title')).textContent;
+  search.firstChild.href = 'https://www.google.com/search?ie=UTF-8&q=' + encodeURIComponent (word);
+  search.firstChild.lastChild.textContent = word;
+  placeholder.parentNode.insertBefore (search, placeholder);
+
   var script = document.createElement ('script');
   script.src = '//www.google.co.jp/jsapi';
   script.onload = function () {

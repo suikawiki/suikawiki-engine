@@ -1360,6 +1360,11 @@ body > aside {
 
 /* Search form */
 
+.google-search-link {
+  margin-left: 2em;
+  font-size: 90%;
+}
+
 #cse-search-form {
   margin-left: 2em;
 }
