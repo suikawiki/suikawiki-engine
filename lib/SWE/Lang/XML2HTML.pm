@@ -91,7 +91,7 @@ $templates->{(HTML_NS)}->{p} = sub {
 };
 $templates->{(HTML_NS)}->{$_} = $templates->{(HTML_NS)}->{p}
     for qw/
-      ul ol dl li dt dd table tbody tr td blockquote pre
+      ul ol dl li dt dd table tbody tr td th blockquote pre
       abbr cite code dfn kbd ruby samp span sub sup time var em strong
     /;
 

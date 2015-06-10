@@ -320,8 +320,9 @@ ul li, ol li {
 table {
   margin: 0 0.5em;
   border: 1px solid gray;
-  border-spacing: 0;
+  border-collapse: collapse;
   font-size: 90%;
+  box-shadow: 0.3em 0.3em #ccc;
 }
 
 thead, tfoot, th {
@@ -330,11 +331,16 @@ thead, tfoot, th {
 }
 
 td, th {
-  padding: 0.1em 0.2em;
-  border: 1px solid #E0E0E0;
+  padding: 0.1em 0.5em;
+  border: 1px solid gray;
   empty-cells: show;
   text-indent: 0;
   line-height: 2;
+}
+
+th {
+  color: #004000;
+  background-color: transparent;
 }
 
 th[scope="row"], th[scope="rowgroup"] {
@@ -351,7 +357,7 @@ tr:hover {
   color: black;
 }
 
-td:hover {
+th:hover, td:hover {
   background-color: #f4fffa;
   color: black;
 }
@@ -895,6 +901,7 @@ figure.packet table {
   margin-right: auto;
   border: none;
   border-collapse: collapse;
+  box-shadow: none;
 }
 
 figure.packet table tr:hover {
