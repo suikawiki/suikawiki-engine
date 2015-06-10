@@ -1326,6 +1326,72 @@ SW.Figure.Amazon.itemList = function (a) {
   });
 }; // itemList
 
+SW.Figure.Table = function (figure) {
+  var caption;
+  var rows = [];
+  Array.prototype.forEach.call (figure.children, function (el) {
+    if (el.localName === 'dl') {
+      rows.push (el);
+    } else if (el.localName === 'figcaption') {
+      caption = caption || el;
+    }
+  });
+
+  var table = document.createElement ('table');
+  if (caption) {
+    var c = document.createElement ('caption');
+    while (caption.firstChild) c.appendChild (caption.firstChild);
+    table.appendChild (c);
+  }
+  var header = {};
+  var k = 0;
+  if (rows.length > 0) {
+    var headerRow = rows.shift ();
+    var thead = document.createElement ('thead');
+    var tr = document.createElement ('tr');
+    var lastKey = null;
+    Array.prototype.forEach.call (headerRow.children, function (el) {
+      if (el.localName === 'dt') {
+        lastKey = el.textContent.replace (/\s+/g, ' ').replace (/^ /, '').replace (/ $/, '');
+      } else if (el.localName === 'dd') {
+        header[lastKey] = k++;
+        var th = document.createElement ('th');
+        th.scope = 'column';
+        while (el.firstChild) th.appendChild (el.firstChild);
+        tr.appendChild (th);
+      }
+    });
+    thead.appendChild (tr);
+    table.appendChild (thead);
+  }
+
+  var tbody = document.createElement ('tbody');
+  rows.forEach (function (row) {
+    var key = null;
+    var rowData = [];
+    Array.prototype.forEach.call (row.children, function (el) {
+      if (el.localName === 'dt') {
+        key = el.textContent.replace (/\s+/g, ' ').replace (/^ /, '').replace (/ $/, '');
+      } else if (el.localName === 'dd') {
+        rowData[header[key]] = el;
+      }
+    });
+
+    var tr = document.createElement ('tr');
+    for (var i = 0; i < k; i++) {
+      var td = document.createElement ('td');
+      if (rowData[i]) {
+        while (rowData[i].firstChild) td.appendChild (rowData[i].firstChild);
+      }
+      tr.appendChild (td);
+    }
+    tbody.appendChild (tr);
+  });
+  table.appendChild (tbody);    
+
+  figure.parentNode.replaceChild (table, figure);
+}; // SW.Figure.Table
+
 function initFigures (root) {
   var figs = root.querySelectorAll ('figure.states');
   if (figs.length) {
@@ -1365,6 +1431,10 @@ function initFigures (root) {
 
   Array.prototype.forEach.call (root.querySelectorAll ('.sw-anchor-external-container a[href^="http://www.amazon.co.jp/"]'), function (a) {
     SW.Figure.Amazon.extLink (a);
+  });
+
+  Array.prototype.forEach.call (root.querySelectorAll ('figure.table'), function (a) {
+    SW.Figure.Table (a);
   });
 
   Array.prototype.forEach.call (root.querySelectorAll ('figure.amazon'), function (a) {
