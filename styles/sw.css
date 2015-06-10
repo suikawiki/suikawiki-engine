@@ -177,6 +177,13 @@ del + .article, del + .section {
   margin-top: 2em;
 }
 
+section[id="section-歴史"],
+section[id$="\2028歴史"] {
+  border: 0.3em gray;
+  border-style: none solid;
+  background: #f1f1f1;
+}
+
 .article > h1, .section > h1,
 .article > h2, .section > h2,
 .article > h3, .section > h3,
@@ -325,6 +332,12 @@ table {
   box-shadow: 0.3em 0.3em #ccc;
 }
 
+caption {
+  color: #004000;
+  background-color: transparent;
+  font-weight: bolder;
+}
+
 thead, tfoot, th {
   font-weight: bolder;
   font-family: sans-serif;
@@ -440,6 +453,8 @@ ins + ins {
   top: auto;
   border-style: none;
   color: gray;
+  background: white;
+  line-height: 1.0;
   text-indent: 0;
   font-size: 12px;
   font-weight: normal;
