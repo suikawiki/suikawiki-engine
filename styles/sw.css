@@ -907,6 +907,18 @@ figure.sequence .note-label.textbox {
   fill: rgba(255, 255, 255, 0.8);
 }
 
+figure.flow path {
+  fill: transparent;
+  stroke: currentcolor;
+  stroke-width: 1px;
+}
+
+figure.flow .text,
+.figure-flow-measure {
+  padding: 0.2em 0.5em;
+  line-height: 1.5;
+}
+
 figure.packet {
   border: none;
 }

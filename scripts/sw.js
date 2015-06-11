@@ -1392,6 +1392,211 @@ SW.Figure.Table = function (figure) {
   figure.parentNode.replaceChild (table, figure);
 }; // SW.Figure.Table
 
+(function () {
+  var Flow = function () {
+    var svg = document.createElementNS ('http://www.w3.org/2000/svg', 'svg');
+    svg.innerHTML = "<marker id=flow-arrow-end viewBox='0 0 8 8' refX=8 refY=4 markerWidth=8 markerHeight=8 orient=auto><path d='M 0 0 L 8 4 L 0 8'/></marker>";
+    this.ctx = {parentNode: svg, top: 0, left: 0, height: 0, width: 0};
+    this.slots = new SlotSet;
+    this.element = svg;
+  };
+
+  var div = document.createElement ('div');
+  div.className = 'figure-flow-measure';
+  div.style.display = 'none';
+  document.body.appendChild (div);
+  Flow.prototype.createText = function (data) {
+    var text = document.createElementNS
+      ('http://www.w3.org/2000/svg', 'foreignObject');
+    text.setAttribute ('class', 'text');
+    div.style.display = 'inline-block';
+    if (data.container) {
+      div.textContent = '';
+      while (data.container.firstChild) div.appendChild (data.container.firstChild);
+    } else {
+      div.textContent = data.textContent;
+    }
+    var height = div.offsetHeight;
+    var width = div.offsetWidth;
+    text.setAttribute ('width', width);
+    text.setAttribute ('height', height);
+    div.style.display = 'none';
+    while (div.firstChild) text.appendChild (div.firstChild);
+    return {element: text, width: width, height: height};
+  } // createText
+
+  var usedHLineSlots = {};
+  var usedVLineSlots = {};
+
+  Flow.prototype.drawLine = function (objA, objB) {
+    var path = document.createElementNS
+        ('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute ('marker-end', 'url(#flow-arrow-end)');
+    var p = [];
+    var rL = 6;
+    if (objB.top + objB.height < objA.top) {
+      p.push ('M', objA.left + objA.width / 2, objA.top + objA.height);
+      var hLineSlot = objA.top + objA.height + rL;
+      while (usedHLineSlots[hLineSlot]) hLineSlot += 4;
+      usedHLineSlots[hLineSlot] = true;
+      p.push ('V', hLineSlot - rL);
+      p.push ('q', 0, rL, rL, rL);
+      if (objA.left + objA.width < objB.left + objB.width) {
+        p.push ('H', objB.left + objB.width);
+      } else {
+        p.push ('H', objA.left + objA.width);
+      }
+      p.push ('q', rL, 0, rL, -rL);
+      var hLineSlot = objB.top - rL;
+      while (usedHLineSlots[hLineSlot]) hLineSlot -= 4;
+      usedHLineSlots[hLineSlot] = true;
+      p.push ('V', hLineSlot);
+      p.push ('q', 0, -rL, -rL, -rL);
+      p.push ('H', objB.left + objB.width / 2 + rL);
+      p.push ('q', -rL, 0, -rL, rL);
+      p.push ('L', objB.left + objB.width / 2, objB.top);
+    } else if (objA.top + objA.height < objB.top) {
+      p.push ('M', objA.left + objA.width / 2, objA.top + objA.height);
+      var bLeft = objB.left + objB.width / 2;
+      if (objA.left + objA.width + rL+rL < bLeft &&
+          objA.top + objA.height + rL+rL < objB.top) {
+        var hLineSlot = objA.top + objA.height + rL;
+        var vLineSlot = bLeft;
+        while (usedHLineSlots[hLineSlot]) hLineSlot += 4;
+        //while (usedVLineSlots[vLineSlot]) vLineSlot += 4;
+        usedHLineSlots[hLineSlot] = true;
+        usedVLineSlots[vLineSlot] = true;
+        var x = hLineSlot - (objA.top + objA.height);
+        bLeft = vLineSlot;
+        p.push ('v', x - rL);
+        p.push ('q', 0, rL, rL, rL);
+        p.push ('H', bLeft - rL);
+        p.push ('q', rL, 0, rL, rL);
+      }
+      p.push ('L', bLeft, objB.top);
+    } else {
+      if (objB.left + objB.width < objA.left) {
+        var objC = objA;
+        objA = objB;
+        objB = objC;
+      }
+      p.push ('M', objA.left + objA.width, objA.top + objA.height / 2);
+      p.push ('L', objB.left, objB.top + objB.height / 2);
+    }
+    path.setAttribute ('d', p.join (' '));
+    this.ctx.parentNode.appendChild (path);
+  } // deawLine
+
+  function SlotSet () {
+    this.slotWidth = [];
+    this.slotHeight = [];
+    this.slots = [];
+  } // SlotSet
+
+  SlotSet.prototype.insert = function (x, y, obj) {
+    this.slots[x] = this.slots[x] || [];
+    this.slots[x][y] = obj;
+    this.slotWidth[x] = this.slotWidth[x] || 0;
+    this.slotHeight[y] = this.slotHeight[y] || 0;
+    if (this.slotWidth[x] < obj.width) this.slotWidth[x] = obj.width;
+    if (this.slotHeight[y] < obj.height) this.slotHeight[y] = obj.height;
+    return obj;
+  } // insert
+
+  Flow.prototype.drawSlots = function (args) {
+    var width = 0;
+    var height = 0;
+    var maxHeight = height;
+    var sX = args.slotSpacingX || 0;
+    var sY = args.slotSpacingY || 0;
+    var slots = this.slots;
+    for (var x = 0; x < slots.slots.length; x++) {
+      var slotWidth = slots.slotWidth[x] || 0;
+      height = 0;
+      for (var y = 0; y < (slots.slots[x] || []).length; y++) {
+        var slot = slots.slots[x][y];
+        var slotHeight = slots.slotHeight[y] || 0;
+        if (slot) {
+          slot.top = this.ctx.top + height;
+          slot.left = this.ctx.left + width;
+          if (true) {
+            slot.top += (slotHeight - slot.height) / 2;
+            slot.left += (slotWidth - slot.width) / 2;
+          }
+          slot.element.setAttribute ('x', slot.left);
+          slot.element.setAttribute ('y', slot.top);
+          this.ctx.parentNode.appendChild (slot.element);
+        }
+        height += slotHeight;
+        height += sY;
+      }
+      width += slotWidth;
+      width += sX;
+      if (height > maxHeight) maxHeight = height;
+    }
+    if (width > 0) width -= sX;
+    if (maxHeight > 0) maxHeight -= sY;
+    if (this.ctx.width < width) this.ctx.width = width;
+    if (this.ctx.height < maxHeight) this.ctx.height = maxHeight;
+    this.ctx.parentNode.setAttribute ('height', this.ctx.height);
+    this.ctx.parentNode.setAttribute ('width', this.ctx.width);
+  } // drawSlots
+
+Flow.fromContainer = function (source) {
+  var nextY = 0;
+  var nodes = [];
+  var edges = [];
+  Array.prototype.forEach.call (source.children, function (dl) {
+    if (dl.localName !== 'dl') return;
+    var data = [];
+    Array.prototype.forEach.call (dl.children, function (d) {
+      if (d.localName === 'dt') {
+        data.push ([d.textContent, null]);
+      } else if (d.localName === 'dd') {
+        if (data.length) data[data.length-1][1] = d;
+      }
+    });
+    if (data.length && data[0][1]) {
+      var node = {id: data[0][0].replace (/\s+/g, ' ').replace (/^ /, '').replace (/ $/, ''), label: data[0][1], x: 0, y: nextY};
+      data.shift ();
+      data.forEach (function (kv) {
+        if (kv[0] === '>>') {
+          node.x += parseInt (kv[1].textContent);
+          node.y--;
+        } else if (kv[0] === '->') {
+          edges.push ([node.id, kv[1].textContent.replace (/\s+/g, ' ').replace (/^ /, '').replace (/ $/, '')]);
+        } else if (kv[0] === 'v') {
+          node.y++;
+          nextY++;
+        }
+      });
+      if (node.x === 0) nextY++;
+      nodes.push (node);
+    }
+  });
+
+  var flow = new Flow;
+
+  var nodeIdToObject = {};
+  nodes.forEach (function (node) {
+    nodeIdToObject[node.id] = flow.slots.insert (node.x, node.y, flow.createText ({container: node.label}));
+  });
+
+  flow.drawSlots ({slotSpacingX: 10, slotSpacingY: 30});
+
+  edges.forEach (function (edge) {
+    var objA = nodeIdToObject[edge[0]];
+    var objB = nodeIdToObject[edge[1]];
+    if (objA && objB) flow.drawLine (objA, objB);
+  });
+
+  source.textContent = '';
+  source.appendChild (flow.element);
+}; // fromContainer
+
+  window.SW.Figure.Flow = Flow;
+}) ();
+
 function initFigures (root) {
   var figs = root.querySelectorAll ('figure.states');
   if (figs.length) {
@@ -1420,6 +1625,14 @@ function initFigures (root) {
   Array.prototype.forEach.apply (root.querySelectorAll ('figure.sequence'), [function (fig) {
     var caps = fig.querySelectorAll ('figcaption');
     SW.Figure.Sequence.parseItems (fig);
+    Array.prototype.forEach.apply (caps, [function (n) {
+      fig.appendChild (n);
+    }]);
+  }]);
+
+  Array.prototype.forEach.apply (root.querySelectorAll ('figure.flow'), [function (fig) {
+    var caps = fig.querySelectorAll ('figcaption');
+    SW.Figure.Flow.fromContainer (fig);
     Array.prototype.forEach.apply (caps, [function (n) {
       fig.appendChild (n);
     }]);
