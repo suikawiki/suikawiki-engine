@@ -1396,7 +1396,7 @@ SW.Figure.Table = function (figure) {
   var Flow = function () {
     var svg = document.createElementNS ('http://www.w3.org/2000/svg', 'svg');
     svg.innerHTML = "<marker id=flow-arrow-end viewBox='0 0 8 8' refX=8 refY=4 markerWidth=8 markerHeight=8 orient=auto><path d='M 0 0 L 8 4 L 0 8'/></marker>";
-    this.ctx = {parentNode: svg, top: 0, left: 0, height: 0, width: 0};
+    this.ctx = {parentNode: svg, top: 6, left: 6, height: 12, width: 12, rL: 6};
     this.slots = new SlotSet;
     this.element = svg;
   };
@@ -1433,24 +1433,30 @@ SW.Figure.Table = function (figure) {
         ('http://www.w3.org/2000/svg', 'path');
     path.setAttribute ('marker-end', 'url(#flow-arrow-end)');
     var p = [];
-    var rL = 6;
+    var rL = this.ctx.rL;
     if (objB.top + objB.height < objA.top) {
       p.push ('M', objA.left + objA.width / 2, objA.top + objA.height);
       var hLineSlot = objA.top + objA.height + rL;
       while (usedHLineSlots[hLineSlot]) hLineSlot += 4;
       usedHLineSlots[hLineSlot] = true;
       p.push ('V', hLineSlot - rL);
+      if (hLineSlot + rL > this.ctx.height) this.ctx.height = hLineSlot + rL;
       p.push ('q', 0, rL, rL, rL);
       if (objA.left + objA.width < objB.left + objB.width) {
         p.push ('H', objB.left + objB.width);
+        if (objB.left + objB.width + rL > this.ctx.width)
+          this.ctx.width = objB.left + objB.width + rL;
       } else {
         p.push ('H', objA.left + objA.width);
+        if (objA.left + objA.width + rL > this.ctx.width)
+          this.ctx.width = objA.left + objA.width + rL;
       }
       p.push ('q', rL, 0, rL, -rL);
       var hLineSlot = objB.top - rL;
       while (usedHLineSlots[hLineSlot]) hLineSlot -= 4;
       usedHLineSlots[hLineSlot] = true;
       p.push ('V', hLineSlot);
+      if (hLineSlot + rL > this.ctx.height) this.ctx.height = hLineSlot + rL;
       p.push ('q', 0, -rL, -rL, -rL);
       p.push ('H', objB.left + objB.width / 2 + rL);
       p.push ('q', -rL, 0, -rL, rL);
@@ -1536,10 +1542,10 @@ SW.Figure.Table = function (figure) {
     }
     if (width > 0) width -= sX;
     if (maxHeight > 0) maxHeight -= sY;
+    width += this.ctx.rL;
+    maxHeight += this.ctx.rL;
     if (this.ctx.width < width) this.ctx.width = width;
     if (this.ctx.height < maxHeight) this.ctx.height = maxHeight;
-    this.ctx.parentNode.setAttribute ('height', this.ctx.height);
-    this.ctx.parentNode.setAttribute ('width', this.ctx.width);
   } // drawSlots
 
 Flow.fromContainer = function (source) {
@@ -1590,9 +1596,12 @@ Flow.fromContainer = function (source) {
     if (objA && objB) flow.drawLine (objA, objB);
   });
 
-  source.textContent = '';
-  source.appendChild (flow.element);
-}; // fromContainer
+    flow.ctx.parentNode.setAttribute ('height', flow.ctx.height);
+    flow.ctx.parentNode.setAttribute ('width', flow.ctx.width);
+
+    source.textContent = '';
+    source.appendChild (flow.element);
+  }; // fromContainer
 
   window.SW.Figure.Flow = Flow;
 }) ();
