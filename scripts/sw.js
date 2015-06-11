@@ -1484,7 +1484,7 @@ SW.Figure.Table = function (figure) {
       p.push ('L', objB.left, objB.top + objB.height / 2);
     }
     path.setAttribute ('d', p.join (' '));
-    this.ctx.parentNode.appendChild (path);
+    this.ctx.parentNode.insertBefore (path, this.ctx.parentNode.firstChild);
   } // deawLine
 
   function SlotSet () {
