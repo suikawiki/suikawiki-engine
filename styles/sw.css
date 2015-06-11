@@ -913,7 +913,11 @@ figure.flow path {
   stroke-width: 1px;
 }
 
-figure.flow .text,
+figure.flow .text {
+  padding: 0.15em 0.45em;
+  line-height: 1.5;
+}
+
 .figure-flow-measure {
   padding: 0.2em 0.5em;
   line-height: 1.5;
