@@ -1434,7 +1434,7 @@ SW.Figure.Table = function (figure) {
     path.setAttribute ('marker-end', 'url(#flow-arrow-end)');
     var p = [];
     var rL = this.ctx.rL;
-    if (objB.top + objB.height < objA.top) {
+    if (objB.top < objA.top + objA.height) {
       p.push ('M', objA.left + objA.width / 2, objA.top + objA.height);
       var hLineSlot = objA.top + objA.height + rL;
       while (usedHLineSlots[hLineSlot]) hLineSlot += 4;
@@ -1464,7 +1464,8 @@ SW.Figure.Table = function (figure) {
     } else if (objA.top + objA.height < objB.top) {
       p.push ('M', objA.left + objA.width / 2, objA.top + objA.height);
       var bLeft = objB.left + objB.width / 2;
-      if (objA.left + objA.width + rL+rL < bLeft &&
+        if ((objA.left + objA.width / 2 + rL+rL < bLeft ||
+             bLeft + rL+rL < objA.left + objA.width / 2) &&
           objA.top + objA.height + rL+rL < objB.top) {
         var hLineSlot = objA.top + objA.height + rL;
         var vLineSlot = bLeft;
@@ -1475,9 +1476,15 @@ SW.Figure.Table = function (figure) {
         var x = hLineSlot - (objA.top + objA.height);
         bLeft = vLineSlot;
         p.push ('v', x - rL);
-        p.push ('q', 0, rL, rL, rL);
-        p.push ('H', bLeft - rL);
-        p.push ('q', rL, 0, rL, rL);
+        if (objA.left < objB.left) {
+          p.push ('q', 0, rL, rL, rL)
+          p.push ('H', bLeft - rL);
+          p.push ('q', rL, 0, rL, rL)
+        } else {
+          p.push ('q', 0, rL, -rL, rL);
+          p.push ('H', bLeft + rL);
+          p.push ('q', -rL, 0, -rL, rL);
+        }
       }
       p.push ('L', bLeft, objB.top);
     } else {
