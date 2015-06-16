@@ -200,6 +200,12 @@ sub es ($) {
   return SWE::DB::ES->new_from_config ($self->config);
 } # es
 
+sub feed ($) {
+  my $self = $_[0];
+  require SWE::DB::Feed;
+  return SWE::DB::Feed->new_from_config ($self->config);
+} # feed
+
 1;
 
 =head1 LICENSE
