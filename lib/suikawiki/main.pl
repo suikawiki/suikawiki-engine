@@ -679,7 +679,8 @@ if ($path[0] eq 'n' and @path == 2) {
         my $cache_prop = $db->id_cache_prop->get_data ($id);
         my $doc = $id_prop ? get_xml_data ($db, $id, $id_prop, $cache_prop) : undef;
 
-        my $url = $app->name_url ([keys %{$id_prop->{name} or {}}]->[0], $id);
+        my $url_title = [keys %{$id_prop->{name} or {}}]->[0];
+        my $url = $app->name_url ($url_title, $id);
         $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
         if ($app->bare_param ('no-redirect')) {
           $app->send_redirect ($url, status => 201, reason_phrase => 'Saved');
@@ -695,7 +696,8 @@ if ($path[0] eq 'n' and @path == 2) {
           $db->es->update ($id, $title, $doc);
 
           $db->feed->post
-              ($app->http->url->resolve_string ($url)->stringify, $title);
+              ($app->http->url->resolve_string ($url)->stringify,
+               defined $title && length $title ? $title : $url_title);
         }
 
         return $app->throw;
