@@ -183,6 +183,7 @@ section[id$="\2028歴史"],
   border: 0.3em gray;
   border-style: none solid;
   background: #f1f1f1;
+  padding: 0 0.8em;
 }
 
 .article > h1, .section > h1,
@@ -1234,6 +1235,10 @@ rt ~ rt, .sw-rubyb > rt {
 math[class~=sw-frac] {
   margin-left: 0.3rem;
   margin-right: 0.3rem;
+}
+
+mfrac {
+  line-height: 1.0;
 }
 
 mi {
