@@ -178,7 +178,8 @@ del + .article, del + .section {
 }
 
 section[id="section-歴史"],
-section[id$="\2028歴史"] {
+section[id$="\2028歴史"],
+.sw-history {
   border: 0.3em gray;
   border-style: none solid;
   background: #f1f1f1;
