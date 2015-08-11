@@ -211,6 +211,13 @@ function enableHTML5Support () {
   timeScript.charset = 'utf-8';
   timeScript.src = '/scripts/time';
   document.documentElement.lastChild.appendChild (timeScript);
+
+  // MathML
+  var script = document.createElement ('script');
+  script.async = true;
+  script.defer = true;
+  script.src = 'https://fred-wang.github.io/mathml.css/mspace.js';
+  document.documentElement.lastChild.appendChild (script);
 } // enableHTML5Support
 
 function addGoogleSearch () {

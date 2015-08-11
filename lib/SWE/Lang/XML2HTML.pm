@@ -8,6 +8,7 @@ sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
 sub SW09_NS () { q<urn:x-suika-fam-cx:markup:suikawiki:0:9:> }
 sub SW10_NS () { q<urn:x-suika-fam-cx:markup:suikawiki:0:10:> }
 sub XML_NS () { q<http://www.w3.org/XML/1998/namespace> }
+sub MATH_NS () { q<http://www.w3.org/1998/Math/MathML> }
 
 my $templates = {};
 
@@ -188,6 +189,24 @@ $templates->{(HTML_NS)}->{figcaption} = sub {
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
 }; # figcaption
+
+$templates->{(SW09_NS)}->{history} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'div');
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class') // '';
+  $class .= ' sw-history';
+  $el->set_attribute (class => $class);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+}; # history
 
 $templates->{(SW10_NS)}->{'comment-p'} = sub {
   my ($items, $item) = @_;
@@ -387,6 +406,44 @@ $templates->{(SW09_NS)}->{rubyb} = sub {
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
 };
+
+$templates->{(MATH_NS)}->{mfrac} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (MATH_NS, 'math');
+  $item->{parent}->append_child ($el);
+  $el->set_attribute (class => 'sw-frac');
+
+  my $el2 = $item->{doc}->create_element_ns (MATH_NS, 'mfrac');
+  $el->append_child ($el2);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $el2->set_attribute (class => $class) if defined $class;
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el2->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el2}}
+      @{$item->{node}->child_nodes};
+}; # mfrac
+
+$templates->{(MATH_NS)}->{mi} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (MATH_NS, 'mi');
+  $item->{parent}->append_child ($el);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  my $el2 = $item->{doc}->create_element_ns (HTML_NS, 'span');
+  $el->append_child ($el2);
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el2}}
+      @{$item->{node}->child_nodes};
+}; # mi
 
 $templates->{(SW09_NS)}->{anchor} = sub {
   my ($items, $item) = @_;

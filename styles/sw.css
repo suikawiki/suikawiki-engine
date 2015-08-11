@@ -1228,6 +1228,27 @@ rt ~ rt, .sw-rubyb > rt {
   ruby-position: after; /* XXX */
 }
 
+/* Math */
+
+math[class~=sw-frac] {
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
+}
+
+mi {
+  min-width: 1em;
+  box-sizing: border-box;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  text-align: center;
+  line-height: 1.4;
+}
+
+mi > span {
+  font-style: normal;
+  font-size: smaller;
+}
+
 /* Other inlines */
 
 dfn {
