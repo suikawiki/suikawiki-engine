@@ -11,6 +11,7 @@ List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.00
 HTTP::Body~1.22
+HTTP::Message~6.10
 Canary::Stability~2006
 POSIX::strftime::Compiler~0.41
 Test::Differences~0.63
@@ -18,6 +19,7 @@ Path::Class~0.35
 common::sense~3.74
 List::Rubyish~0.03
 Text::MeCab~0.20016
+URI::Escape~3.31
 Types::Serialiser~1.0
 LWP::MediaTypes~6.02
 Module::Runtime~0.014
@@ -65,11 +67,9 @@ Server::Starter~0.31
 Exporter::Lite~0.06
 Test::Class~0.50
 Data::Dumper~2.154
-HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 AnyEvent::HTTP~2.22
-HTTP::Request::Common~6.10
-Text::Diff~1.42
+Text::Diff~1.43
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
