@@ -9,7 +9,9 @@ HTTP::Daemon~6.01
 List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.00
+Net::HTTPS~6.09
 HTTP::Body~1.22
+HTTP::Message~6.10
 Canary::Stability~2006
 POSIX::strftime::Compiler~0.41
 Test::Differences~0.63
@@ -86,8 +88,7 @@ Class::Data::Inheritable~0.08
 MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.017
-HTTP::Headers::Util~6.10
 Apache::LogFormat::Compiler~0.32
 Time::HiRes~1.9726
 HTTP::Date~6.02
-Mozilla::CA~20141217
+Mozilla::CA~20150826
