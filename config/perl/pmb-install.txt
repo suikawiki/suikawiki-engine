@@ -1,4 +1,4 @@
-Net::SSLeay~1.70
+Net::SSLeay~1.71
 Capture::Tiny~0.30
 Pod::Usage~1.67
 JSON::XS~3.01
@@ -9,9 +9,7 @@ HTTP::Daemon~6.01
 List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.00
-Net::HTTPS~6.09
 HTTP::Body~1.22
-HTTP::Message~6.11
 Canary::Stability~2006
 POSIX::strftime::Compiler~0.41
 Test::Differences~0.63
@@ -20,9 +18,8 @@ common::sense~3.74
 HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
-URI::Escape~3.31
-LWP::MediaTypes~6.02
 Types::Serialiser~1.0
+LWP::MediaTypes~6.02
 Module::Runtime~0.014
 Unicode::Normalize~1.19
 Filter::Util::Call~1.55
@@ -53,8 +50,8 @@ Test::NoWarnings~1.04
 File::Listing~6.04
 Stream::Buffered~0.03
 Test::TCP~2.13
-Test::Builder~1.001014
 AnyEvent::Util
+Test::Builder~1.001014
 Digest::SHA~5.95
 Crypt::SSLeay~0.72
 Time::Local~1.2300
@@ -90,6 +87,7 @@ MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.019
 Apache::LogFormat::Compiler~0.32
+HTTP::Headers::Util~6.11
 Time::HiRes~1.9726
 HTTP::Date~6.02
 Mozilla::CA~20150826
