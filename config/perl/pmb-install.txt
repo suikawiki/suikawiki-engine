@@ -68,7 +68,6 @@ Data::Dumper~2.154
 HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 AnyEvent::HTTP~2.22
-HTTP::Request::Common~6.11
 Text::Diff~1.43
 File::Temp~0.2304
 Signal::Mask~0.008
