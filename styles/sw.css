@@ -798,6 +798,18 @@ figure.steps > ol {
   border-left: none;
 }
 
+figure.steps ol ol,
+figure.steps ol ul,
+figure.steps ol dl {
+  font-size: 100%;
+}
+
+figure.steps figure.list:not(.members) {
+  margin: 0.5em 0;
+  border-left: 1px dashed #400080;
+  padding: 0 0.25em;
+}
+
 figure.states svg {
   height: 15em;
 }
@@ -1271,6 +1283,14 @@ dfn {
 dfn rt, strong rt,
 h1 rt, h2 rt, h3 rt, h4 rt, h5 rt, h6 rt {
   font-weight: normal;
+}
+
+var {
+  margin: 0 0.25em;
+  padding: 0.2em 0.25em;
+  background-color: #efefce;
+  color: black;
+  font-size: 90%;
 }
 
 var sub, var sup {
