@@ -16,17 +16,15 @@ POSIX::strftime::Compiler~0.41
 Test::Differences~0.63
 Path::Class~0.35
 common::sense~3.74
-HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
-LWP::MediaTypes~6.02
 Types::Serialiser~1.0
+LWP::MediaTypes~6.02
 Module::Runtime~0.014
 Unicode::Normalize~1.21
 Filter::Util::Call~1.55
 Cookie::Baker~0.06
 Devel::CheckLib~1.05
-HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1903
 Path::Tiny~0.072
@@ -52,8 +50,8 @@ Test::NoWarnings~1.04
 File::Listing~6.04
 Stream::Buffered~0.03
 Test::TCP~2.14
-Test::Builder~1.001014
 AnyEvent::Util
+Test::Builder~1.001014
 Digest::SHA~5.95
 Crypt::SSLeay~0.72
 Time::Local~1.2300
@@ -69,6 +67,7 @@ Data::Dumper~2.154
 HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 AnyEvent::HTTP~2.22
+HTTP::Request::Common~6.11
 Text::Diff~1.43
 HTTP::Response~6.11
 File::Temp~0.2304
