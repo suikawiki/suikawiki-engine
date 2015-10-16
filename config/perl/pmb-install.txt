@@ -5,8 +5,8 @@ JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.78
 HTTP::Headers~6.11
-HTTP::Daemon~6.01
 Module::Build~0.4214
+HTTP::Daemon~6.01
 List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.00
@@ -18,6 +18,7 @@ Path::Class~0.35
 common::sense~3.74
 List::Rubyish~0.03
 Text::MeCab~0.20016
+URI::Escape~3.31
 Types::Serialiser~1.0
 LWP::MediaTypes~6.02
 Module::Runtime~0.014
@@ -25,6 +26,7 @@ Unicode::Normalize~1.21
 Filter::Util::Call~1.55
 Cookie::Baker~0.06
 Devel::CheckLib~1.05
+HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1903
 Path::Tiny~0.072
@@ -58,16 +60,17 @@ Time::Local~1.2300
 Test::SharedFork~0.34
 Getopt::Long~2.47
 Try::Tiny~0.22
-Term::ANSIColor~4.03
 AnyEvent~7.11
+Term::ANSIColor~4.03
 Server::Starter~0.32
 Exporter::Lite~0.06
 Test::Class~0.50
-Data::Dumper~2.154
 HTML::HeadParser~3.71
+Data::Dumper~2.154
 HTTP::Cookies~6.01
 AnyEvent::HTTP~2.22
 Text::Diff~1.43
+HTTP::Response~6.11
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
