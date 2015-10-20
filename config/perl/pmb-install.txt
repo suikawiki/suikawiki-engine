@@ -9,6 +9,7 @@ HTTP::Daemon~6.01
 List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.00
+Net::HTTPS~6.09
 HTTP::Body~1.22
 Canary::Stability~2006
 POSIX::strftime::Compiler~0.41
@@ -63,11 +64,9 @@ Term::ANSIColor~4.03
 Server::Starter~0.32
 Exporter::Lite~0.06
 Test::Class~0.50
-HTML::HeadParser~3.71
 Data::Dumper~2.154
 HTTP::Cookies~6.01
 AnyEvent::HTTP~2.22
-HTTP::Request::Common~6.11
 Text::Diff~1.43
 HTTP::Response~6.11
 File::Temp~0.2304
@@ -89,6 +88,7 @@ MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.020
 Apache::LogFormat::Compiler~0.32
+HTTP::Headers::Util~6.11
 Time::HiRes~1.9726
 HTTP::Date~6.02
 Mozilla::CA~20150826
