@@ -4,6 +4,7 @@ Pod::Usage~1.67
 JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.78
+HTTP::Headers~6.11
 Module::Build~0.4214
 HTTP::Daemon~6.01
 List::MoreUtils~0.413
@@ -25,6 +26,7 @@ Unicode::Normalize~1.21
 Filter::Util::Call~1.55
 Cookie::Baker~0.06
 Devel::CheckLib~1.05
+HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1903
 Path::Tiny~0.072
@@ -67,8 +69,8 @@ Data::Dumper~2.154
 HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 AnyEvent::HTTP~2.22
+HTTP::Request::Common~6.11
 Text::Diff~1.43
-HTTP::Response~6.11
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
@@ -87,7 +89,6 @@ Class::Data::Inheritable~0.08
 MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.020
-HTTP::Headers::Util~6.11
 Apache::LogFormat::Compiler~0.32
 Time::HiRes~1.9726
 HTTP::Date~6.02
