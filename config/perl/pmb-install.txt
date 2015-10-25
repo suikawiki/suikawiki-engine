@@ -2,11 +2,12 @@ Net::SSLeay~1.72
 Capture::Tiny~0.30
 Pod::Usage~1.67
 JSON::XS~3.01
+HTTP::Status~6.11
 IO::HTML~1.001
 Encode~2.78
 HTTP::Headers~6.11
-Module::Build~0.4214
 HTTP::Daemon~6.01
+Module::Build~0.4214
 List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.00
@@ -26,7 +27,6 @@ Unicode::Normalize~1.21
 Filter::Util::Call~1.55
 Cookie::Baker~0.06
 Devel::CheckLib~1.05
-HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1903
 Path::Tiny~0.072
@@ -60,8 +60,8 @@ Time::Local~1.2300
 Test::SharedFork~0.34
 Getopt::Long~2.47
 Try::Tiny~0.22
-AnyEvent~7.11
 Term::ANSIColor~4.03
+AnyEvent~7.11
 Server::Starter~0.32
 Exporter::Lite~0.06
 Test::Class~0.50
@@ -69,7 +69,6 @@ Data::Dumper~2.154
 HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 AnyEvent::HTTP~2.22
-HTTP::Request::Common~6.11
 Text::Diff~1.43
 File::Temp~0.2304
 Signal::Mask~0.008
