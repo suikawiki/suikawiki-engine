@@ -2,12 +2,11 @@ Net::SSLeay~1.72
 Capture::Tiny~0.30
 Pod::Usage~1.67
 JSON::XS~3.01
-HTTP::Status~6.11
 IO::HTML~1.001
 Encode~2.78
 HTTP::Headers~6.11
-HTTP::Daemon~6.01
 Module::Build~0.4214
+HTTP::Daemon~6.01
 List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.00
@@ -23,7 +22,7 @@ Text::MeCab~0.20016
 Types::Serialiser~1.0
 LWP::MediaTypes~6.02
 Module::Runtime~0.014
-Unicode::Normalize~1.21
+Unicode::Normalize~1.23
 Filter::Util::Call~1.55
 Cookie::Baker~0.06
 Devel::CheckLib~1.05
@@ -36,7 +35,7 @@ Plack~1.0037
 Class::Accessor::Lite~0.08
 Exporter~5.72
 Carp~1.36
-Proc::Wait3~0.04
+Proc::Wait3~0.05
 Filesys::Notify::Simple~0.12
 LWP::UserAgent~6.13
 MIME::Base64~3.15
@@ -58,10 +57,10 @@ Digest::SHA~5.95
 Crypt::SSLeay~0.72
 Time::Local~1.2300
 Test::SharedFork~0.34
-Getopt::Long~2.47
+Getopt::Long~2.48
 Try::Tiny~0.22
-Term::ANSIColor~4.03
 AnyEvent~7.11
+Term::ANSIColor~4.03
 Server::Starter~0.32
 Exporter::Lite~0.06
 Test::Class~0.50
@@ -70,6 +69,7 @@ HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 AnyEvent::HTTP~2.22
 Text::Diff~1.43
+HTTP::Response~6.11
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
