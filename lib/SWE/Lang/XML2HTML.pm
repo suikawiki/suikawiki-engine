@@ -347,6 +347,25 @@ $templates->{(SW09_NS)}->{weak} = sub {
       @{$item->{node}->child_nodes};
 };
 
+$templates->{(SW09_NS)}->{f} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'span');
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $class //= '';
+  $class .= ' sw-f';
+  $el->set_attribute (class => $class);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+};
+
 $templates->{(SW10_NS)}->{title} = sub {
   my ($items, $item) = @_;
 

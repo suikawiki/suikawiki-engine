@@ -1101,6 +1101,27 @@ code, samp, pre.code {
   word-break: break-all;
 }
 
+
+var {
+  margin: 0 0.25em;
+  padding: 0.2em 0.25em;
+  background-color: #efefce;
+  color: black;
+  font-size: 95%;
+}
+
+var sub, var sup {
+  font-style: normal;
+}
+
+.sw-f {
+  margin: 0 0.25em;
+  padding: 0.2em 0.25em;
+  background-color: #effed9;
+  color: black;
+  font-size: 95%;
+}
+
 /* List of references */
 
 .sw-refs {
@@ -1283,18 +1304,6 @@ dfn {
 dfn rt, strong rt,
 h1 rt, h2 rt, h3 rt, h4 rt, h5 rt, h6 rt {
   font-weight: normal;
-}
-
-var {
-  margin: 0 0.25em;
-  padding: 0.2em 0.25em;
-  background-color: #efefce;
-  color: black;
-  font-size: 90%;
-}
-
-var sub, var sup {
-  font-style: normal;
 }
 
 /* Entity references (obsolete) */
