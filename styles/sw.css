@@ -319,6 +319,11 @@ ul, ol, dl {
   line-height: 2;
 }
 
+li, dt {
+  -webkit-column-break-inside: avoid;
+  column-break-inside: avoid;
+}
+
 li li li ul,
 li li li ol,
 li li li dl {
@@ -552,6 +557,11 @@ figure.list.short {
   column-width: 10em;
 }
 
+figure.list.middle {
+  -webkit-column-width: 14em;
+  column-width: 14em;
+}
+
 figure.list.members {
   border: solid 1px #ccc;
   border-bottom-left-radius: 0.5em;
@@ -615,6 +625,12 @@ figure.list dd::after {
 figure.list figure.list,
 figure.list figure.notes {
   margin: 0 -2.5em 0 1.5em;
+}
+
+figure.steps li > figure.list.members {
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 figure.list figure.list.members {
@@ -810,6 +826,41 @@ figure.steps figure.list:not(.members) {
   padding: 0 0.25em;
 }
 
+figure.steps figure.list.members > dl > dd > figure.steps {
+  margin-top: 0;
+  margin-left: 3em;
+}
+
+figure.switch {
+  margin-left: 0;
+  margin-right: 0;
+  border-style: none;
+  padding-left: 0;
+  color: black;
+  background-color: #FCFCFC;
+}
+
+figure.steps li > figure.switch {
+  margin-top: 0;
+}
+
+figure.switch > dl > dt {
+  font-weight: bolder;
+}
+
+figure.switch > dl > dt:before {
+  content: "\21AA";
+  padding: 0 0.5em 0 0;
+  display: inline-block;
+  width: 1em;
+  text-align: right;
+  line-height: 0.5em;
+}
+
+figure.switch > dl > dd > figure.steps {
+  margin-top: 0;
+}
+
 figure.states svg {
   height: 15em;
 }
@@ -861,7 +912,8 @@ figure.railroad svg.railroad-diagram .text {
 
 figure.railroad svg.railroad-diagram text code,
 figure.railroad svg.railroad-diagram .text code {
-  font: 14px monospace;
+  font-family: monospace;
+  font-size: 14px;
 }
 
 figure.railroad svg.railroad-diagram text.label {
@@ -1046,6 +1098,11 @@ figure.bookmarklet .sw-anchor-external-container > a {
   line-height: 2.0;
 }
 
+figure.math {
+  border-color: #ddd;
+  text-align: center;
+}
+
 .amazon-item {
   display: block;
   cursor: pointer;
@@ -1114,6 +1171,11 @@ var sub, var sup {
   font-style: normal;
 }
 
+.math var {
+  margin: 0 0.05em;
+  background-color: transparent;
+}
+
 .sw-f {
   margin: 0 0.25em;
   padding: 0.2em 0.25em;
@@ -1121,6 +1183,11 @@ var sub, var sup {
   color: black;
   font-size: 95%;
 }
+
+.sw-f.s::before { content: "[" }
+.sw-f.s::after { content: "]" }
+.sw-f.ss::before { content: "[[" }
+.sw-f.ss::after { content: "]]" }
 
 /* List of references */
 
@@ -1277,6 +1344,7 @@ math[class~=sw-frac] {
 
 mfrac {
   line-height: 1.0;
+  text-align: center;
 }
 
 mi {
