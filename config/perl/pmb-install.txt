@@ -69,6 +69,7 @@ HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 AnyEvent::HTTP~2.22
 Text::Diff~1.43
+HTTP::Response~6.11
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
@@ -88,7 +89,6 @@ MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.021
 Apache::LogFormat::Compiler~0.32
-HTTP::Headers::Util~6.11
 Time::HiRes~1.9728
 HTTP::Date~6.02
 Mozilla::CA~20150826
