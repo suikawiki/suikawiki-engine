@@ -27,7 +27,7 @@ sub psgi_app ($$) {
             $app->http->url->{host} eq 'wiki.suikawiki.org') {
           my $url = $app->http->url->clone;
           $url->{scheme} = 'https';
-          $app->http->send_redirect ($url->stringify, status => 301);
+          $app->send_redirect ($url->stringify, status => 301);
         } else {
           SWE::Web->process ($app);
         }
