@@ -258,7 +258,7 @@ if ($path[0] eq 'n' and @path == 2) {
           });
         } else {
           $ad_el->set_attribute (class => 'swe-ad swe-ad-amazon');
-          $ad_el->inner_html (q{<script>amazon_ad_tag = "wakaba1-22"; amazon_ad_width = "160"; amazon_ad_height = "600"; amazon_ad_logo = "hide"; amazon_ad_border = "hide"; amazon_color_border = "FFFFFF"; amazon_color_link = "004000"; amazon_color_logo = "004000";</script><script src="http://www.assoc-amazon.jp/s/ads.js"></script>});
+          $ad_el->inner_html (q{<script>amazon_ad_tag = "wakaba1-22"; amazon_ad_width = "160"; amazon_ad_height = "600"; amazon_ad_logo = "hide"; amazon_ad_border = "hide"; amazon_color_border = "FFFFFF"; amazon_color_link = "004000"; amazon_color_logo = "004000";</script><script src="https://www.assoc-amazon.jp/s/ads.js"></script>});
         }
         $sidebar_el->append_child ($ad_el);
 
