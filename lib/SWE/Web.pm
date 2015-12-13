@@ -24,7 +24,7 @@ sub psgi_app ($$) {
     return $http->send_response (onready => sub {
       $app->execute (sub {
         if ($app->http->url->{scheme} eq 'http' and
-            $app->http->url->{hostname} eq 'wiki.suikawiki.org') {
+            $app->http->url->{host} eq 'wiki.suikawiki.org') {
           my $url = $app->http->url->clone;
           $url->{scheme} = 'https';
           $app->http->send_redirect ($url->stringify, status => 301);
