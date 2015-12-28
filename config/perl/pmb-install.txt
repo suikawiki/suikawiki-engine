@@ -4,14 +4,14 @@ Pod::Usage~1.67
 JSON::XS~3.01
 IO::HTML~1.001
 Encode~2.78
-Module::Build~0.4214
+HTTP::Headers~6.11
 HTTP::Daemon~6.01
+Module::Build~0.4214
 List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.00
 Net::HTTPS~6.09
 HTTP::Body~1.22
-HTTP::Message~6.11
 Canary::Stability~2006
 POSIX::strftime::Compiler~0.41
 Test::Differences~0.64
@@ -59,8 +59,8 @@ Time::Local~1.2300
 Test::SharedFork~0.35
 Getopt::Long~2.48
 Try::Tiny~0.24
-AnyEvent~7.11
 Term::ANSIColor~4.04
+AnyEvent~7.11
 Server::Starter~0.32
 Exporter::Lite~0.07
 Test::Class~0.50
@@ -88,7 +88,6 @@ MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.022
 Apache::LogFormat::Compiler~0.32
-HTTP::Headers::Util~6.11
 Time::HiRes~1.9728
 HTTP::Date~6.02
 Mozilla::CA~20150826
