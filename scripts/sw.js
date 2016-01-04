@@ -1394,7 +1394,43 @@ SW.Figure.Table = function (figure) {
     }
     tbody.appendChild (tr);
   });
-  table.appendChild (tbody);    
+
+  if (thead && figure.classList.contains ('col')) {
+    var thead = table.tHead;
+    thead.parentNode.removeChild (thead);
+
+    var trs = [];
+    Array.prototype.forEach.call (thead.rows, function (row) {
+      var i = 0;
+      Array.prototype.slice.call (row.cells).forEach (function (cell) {
+        trs[i] = document.createElement ('tr');
+        if (cell.scope === 'column') {
+          cell.scope = 'row';
+        }
+        trs[i].appendChild (cell);
+        i++;
+      });
+    });
+
+    Array.prototype.forEach.call (tbody.rows, function (row) {
+      var i = 0;
+      Array.prototype.slice.call (row.cells).forEach (function (cell) {
+        if (cell.scope === 'column') {
+          cell.scope = 'row';
+        }
+        trs[i].appendChild (cell);
+        i++;
+      });
+    });
+
+    var tb = document.createElement ('tbody');
+    trs.forEach (function (tr) {
+      tb.appendChild (tr);
+    });
+    table.appendChild (tb);
+  } else {
+    table.appendChild (tbody);
+  }
 
   figure.parentNode.replaceChild (table, figure);
 }; // SW.Figure.Table
@@ -1680,7 +1716,7 @@ function initFigures (root) {
 
 /* 
 
-Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2015 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
