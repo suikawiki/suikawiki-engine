@@ -1371,6 +1371,8 @@ SW.Figure.Table = function (figure) {
   });
 
   var table = document.createElement ('table');
+  table.className = figure.className + ' fig';
+
   if (caption) {
     var c = document.createElement ('caption');
     while (caption.firstChild) c.appendChild (caption.firstChild);

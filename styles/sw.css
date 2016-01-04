@@ -1098,12 +1098,12 @@ figure.bookmarklet .sw-anchor-external-container > a {
   line-height: 2.0;
 }
 
-figure.table.col > table > tbody > tr > th {
+table.fig.col > table > tbody > tr > th {
   text-align: right;
   vertical-align: top;
 }
 
-figure.table.col > table > tbody > tr > td {
+table.fig.col > table > tbody > tr > td {
   vertical-align: top;
 }
 
