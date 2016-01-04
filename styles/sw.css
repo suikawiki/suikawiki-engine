@@ -1098,6 +1098,15 @@ figure.bookmarklet .sw-anchor-external-container > a {
   line-height: 2.0;
 }
 
+figure.table.col > table > tbody > tr > th {
+  text-align: right;
+  vertical-align: top;
+}
+
+figure.table.col > table > tbody > tr > td {
+  vertical-align: top;
+}
+
 figure.math {
   border-color: #ddd;
   text-align: center;
@@ -1663,7 +1672,7 @@ body > aside {
 
 /* 
 
-Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2016 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
