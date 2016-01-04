@@ -31,9 +31,6 @@ sub psgi_app ($$) {
         } else {
           $app->http->set_response_header
               ('Strict-Transport-Security' => 'max-age=10886400; includeSubDomains; preload');
-          ## For compat with MathML style sheet :-<
-          $app->http->add_response_header
-              ('Content-Security-Policy' => 'upgrade-insecure-requests');
           SWE::Web->process ($app);
         }
       });
