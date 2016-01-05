@@ -3,6 +3,7 @@ Capture::Tiny~0.30
 Pod::Usage~1.68
 Pod::Text~4.04
 JSON::XS~3.01
+HTTP::Status~6.11
 IO::HTML~1.001
 Encode~2.78
 HTTP::Headers~6.11
@@ -11,7 +12,6 @@ Module::Build~0.4214
 List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.00
-Net::HTTPS~6.09
 HTTP::Body~1.22
 Canary::Stability~2006
 POSIX::strftime::Compiler~0.41
@@ -27,6 +27,7 @@ Unicode::Normalize~1.25
 Filter::Util::Call~1.55
 Cookie::Baker~0.06
 Devel::CheckLib~1.05
+HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1903
 Path::Tiny~0.076
@@ -70,7 +71,6 @@ Data::Dumper~2.154
 AnyEvent::HTTP~2.22
 HTTP::Cookies~6.01
 Text::Diff~1.43
-HTTP::Response~6.11
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
@@ -92,4 +92,4 @@ IO::Socket::SSL~2.022
 Apache::LogFormat::Compiler~0.32
 Time::HiRes~1.9728
 HTTP::Date~6.02
-Mozilla::CA~20150826
+Mozilla::CA~20160104
