@@ -1,9 +1,8 @@
 Net::SSLeay~1.72
 Capture::Tiny~0.30
 Pod::Usage~1.68
-Pod::Text~4.04
+Pod::Text~4.05
 JSON::XS~3.01
-HTTP::Status~6.11
 IO::HTML~1.001
 Encode~2.78
 HTTP::Daemon~6.01
@@ -17,6 +16,7 @@ POSIX::strftime::Compiler~0.41
 Test::Differences~0.64
 Path::Class~0.35
 common::sense~3.74
+HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
 Types::Serialiser~1.0
@@ -68,7 +68,6 @@ HTML::HeadParser~3.71
 Data::Dumper~2.154
 AnyEvent::HTTP~2.22
 HTTP::Cookies~6.01
-HTTP::Request::Common~6.11
 Text::Diff~1.43
 File::Temp~0.2304
 Signal::Mask~0.008
