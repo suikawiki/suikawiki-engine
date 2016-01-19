@@ -10,7 +10,9 @@ Module::Build~0.4214
 List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.00
+Net::HTTPS~6.09
 HTTP::Body~1.22
+HTTP::Message~6.11
 Canary::Stability~2006
 POSIX::strftime::Compiler~0.41
 Test::Differences~0.64
