@@ -3,6 +3,7 @@ Capture::Tiny~0.30
 Pod::Usage~1.68
 Pod::Text~4.05
 JSON::XS~3.01
+HTTP::Status~6.11
 IO::HTML~1.001
 Encode~2.78
 HTTP::Daemon~6.01
@@ -12,7 +13,6 @@ IO::File~1.14
 Devel::StackTrace~2.00
 Net::HTTPS~6.09
 HTTP::Body~1.22
-HTTP::Message~6.11
 Canary::Stability~2006
 POSIX::strftime::Compiler~0.41
 Test::Differences~0.64
@@ -28,6 +28,7 @@ Unicode::Normalize~1.25
 Filter::Util::Call~1.55
 Cookie::Baker~0.06
 Devel::CheckLib~1.05
+HTML::Entities~3.69
 Parallel::Prefork~0.17
 Algorithm::Diff~1.1903
 Path::Tiny~0.076
