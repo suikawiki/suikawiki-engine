@@ -7,7 +7,7 @@ HTTP::Status~6.11
 IO::HTML~1.001
 Encode~2.78
 HTTP::Daemon~6.01
-Module::Build~0.4214
+Module::Build~0.4216
 List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.00
@@ -18,7 +18,6 @@ POSIX::strftime::Compiler~0.41
 Test::Differences~0.64
 Path::Class~0.35
 common::sense~3.74
-HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
 Types::Serialiser~1.0
@@ -91,6 +90,7 @@ MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.022
 Apache::LogFormat::Compiler~0.32
+HTTP::Headers::Util~6.11
 Time::HiRes~1.9728
 HTTP::Date~6.02
 Mozilla::CA~20160104
