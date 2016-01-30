@@ -88,8 +88,8 @@ function initEditForm (root) {
     ba.addEventListener ('focus', function () {
       ba.scrollIntoView ();
     }, true);
-/*
     var ta = ba.querySelector ('textarea');
+/*
     ta.addEventListener ('keydown', function (ev) {
       if (ev.keyIdentifier === 'PageDown') {
         if (ta.scrollHeight <= ta.scrollTop + ta.offsetHeight) {
