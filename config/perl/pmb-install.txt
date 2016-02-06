@@ -3,7 +3,6 @@ Capture::Tiny~0.30
 Pod::Usage~1.68
 Pod::Text~4.06
 JSON::XS~3.01
-HTTP::Status~6.11
 IO::HTML~1.001
 Encode~2.80
 HTTP::Headers~6.11
@@ -71,6 +70,7 @@ Data::Dumper~2.154
 AnyEvent::HTTP~2.22
 HTTP::Cookies~6.01
 Text::Diff~1.43
+HTTP::Response~6.11
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
