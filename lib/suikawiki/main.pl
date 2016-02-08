@@ -534,6 +534,10 @@ if ($path[0] eq 'n' and @path == 2) {
           #$document->{name_prop_db} = $db->name_prop;
           #$document->update_tfidf ($doc);
           $db->es->update ($id, $id_prop->{title}, $doc);
+
+          my $url = $app->name_url ($name, $id);
+          $db->feed->post
+              ($app->http->url->resolve_string ($url)->stringify, $name);
         }
 
         return $app->throw_manual_redirect
