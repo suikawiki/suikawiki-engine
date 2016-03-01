@@ -1455,7 +1455,7 @@ body > aside {
     padding-right: 10em;
   }
 
-  body.swe-has-sidebar > aside {
+  body.swe-has-sidebar > aside:not(.swe-ad) {
     display: block;
     position: absolute;
     top: 7em;
@@ -1472,7 +1472,7 @@ body > aside {
     padding-right: 10em;
   }
 
-  body.swe-has-sidebar > aside {
+  body.swe-has-sidebar > aside:not(.swe-ad) {
     display: block;
     position: absolute;
     left: 50em;
@@ -1521,12 +1521,19 @@ body > aside {
 /* Advertisements */
 
 .swe-ad {
+  text-align: center;
+}
+
+aside .swe-ad {
   display: none;
   overflow: hidden;
 }
 
 @media (min-width: 50em) {
-  .swe-ad {
+  body > .swe-ad {
+    display: none;
+  }
+  aside .swe-ad {
     display: block;
   }
 }

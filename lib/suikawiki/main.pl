@@ -256,6 +256,19 @@ if ($path[0] eq 'n' and @path == 2) {
               (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
           });
+
+          my $ad2_el = $html_doc->create_element ('aside');
+          $ad2_el->set_attribute (class => 'swe-ad swe-ad-google');
+          $ad2_el->inner_html (q{
+            <script>
+              google_ad_client = "ca-pub-6943204637055835";
+              google_ad_slot = "1478788718";
+              google_ad_width = 300;
+              google_ad_height = 250;
+            </script>
+            <script src="https://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+          });
+          $body_el->insert_before ($ad2_el, $search_el);
         } else {
           $ad_el->set_attribute (class => 'swe-ad swe-ad-amazon');
           $ad_el->inner_html (q{<script>amazon_ad_tag = "wakaba1-22"; amazon_ad_width = "160"; amazon_ad_height = "600"; amazon_ad_logo = "hide"; amazon_ad_border = "hide"; amazon_color_border = "FFFFFF"; amazon_color_link = "004000"; amazon_color_logo = "004000";</script><script src="https://www.assoc-amazon.jp/s/ads.js"></script>});
