@@ -12,6 +12,8 @@ sub MATH_NS () { q<http://www.w3.org/1998/Math/MathML> }
 
 my $templates = {};
 
+my $IsImplicitLinkElement = {};
+
 $templates->{''}->{''} = sub {
   my ($items, $item) = @_;
 
@@ -70,7 +72,61 @@ $templates->{(HTML_NS)}->{h1} = sub {
       @{$item->{node}->child_nodes};
 };
 
-$templates->{(HTML_NS)}->{p} = sub {
+$templates->{(HTML_NS)}->{$_} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns
+      (HTML_NS, $item->{node}->manakai_local_name);
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $el->set_attribute (class => $class) if defined $class;
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+} for qw/
+  p ul ol dl li dt dd table tbody tr blockquote pre
+  dfn ruby samp span sub sup time var em strong
+/;
+
+$templates->{(HTML_NS)}->{$_} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns
+      (HTML_NS, $item->{node}->manakai_local_name);
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $el->set_attribute (class => $class) if defined $class;
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  my $parent = $el;
+  if ($item->{node}->has_attribute ('data-implicit-link')) {
+    $parent = $item->{doc}->create_element ('a');
+    $parent->set_attribute (class => 'sw-anchor');
+    my $name = $item->{node}->text_content;
+    my $url = $item->{name_to_url}->($name);
+    $parent->href ($url);
+    $el->append_child ($parent);
+  }
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $parent}}
+      @{$item->{node}->child_nodes};
+} for qw/
+  code abbr cite kbd
+/;
+$IsImplicitLinkElement->{(HTML_NS)}->{$_} = 1 for qw/
+  code abbr cite kbd
+/;
+
+$templates->{(HTML_NS)}->{$_} = sub {
   my ($items, $item) = @_;
 
   my $el = $item->{doc}->create_element_ns
@@ -89,12 +145,7 @@ $templates->{(HTML_NS)}->{p} = sub {
   unshift @$items,
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
-};
-$templates->{(HTML_NS)}->{$_} = $templates->{(HTML_NS)}->{p}
-    for qw/
-      ul ol dl li dt dd table tbody tr td th blockquote pre
-      abbr cite code dfn kbd ruby samp span sub sup time var em strong
-    /;
+} for qw/th td/;
 
 $templates->{(HTML_NS)}->{rt} = sub {
   my ($items, $item) = @_;
@@ -285,10 +336,21 @@ $templates->{(SW10_NS)}->{key} = sub {
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
+  my $parent = $el;
+  if ($item->{node}->has_attribute ('data-implicit-link')) {
+    $parent = $item->{doc}->create_element ('a');
+    $parent->set_attribute (class => 'sw-anchor');
+    my $name = $item->{node}->text_content;
+    my $url = $item->{name_to_url}->($name);
+    $parent->href ($url);
+    $el->append_child ($parent);
+  }
+
   unshift @$items,
-      map {{%$item, node => $_, parent => $el}}
+      map {{%$item, node => $_, parent => $parent}}
       @{$item->{node}->child_nodes};
 };
+$IsImplicitLinkElement->{(SW10_NS)}->{key} = 1;
 
 $templates->{(SW10_NS)}->{qn} = sub {
   my ($items, $item) = @_;
@@ -361,10 +423,21 @@ $templates->{(SW09_NS)}->{f} = sub {
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
+  my $parent = $el;
+  if ($item->{node}->has_attribute ('data-implicit-link')) {
+    $parent = $item->{doc}->create_element ('a');
+    $parent->set_attribute (class => 'sw-anchor');
+    my $name = $item->{node}->text_content;
+    my $url = $item->{name_to_url}->($name);
+    $parent->href ($url);
+    $el->append_child ($parent);
+  }
+
   unshift @$items,
-      map {{%$item, node => $_, parent => $el}}
+      map {{%$item, node => $_, parent => $parent}}
       @{$item->{node}->child_nodes};
 };
+$IsImplicitLinkElement->{(SW09_NS)}->{f} = 1;
 
 $templates->{(SW10_NS)}->{title} = sub {
   my ($items, $item) = @_;
@@ -628,6 +701,33 @@ sub convert ($$$$$$) {
 
   my $df = $doc->create_document_fragment;
 
+  my @node = ([$swml->document_element, {}]);
+  while (@node) {
+    my ($node, $flags) = @{shift @node};
+    if (not defined $node) {
+      unless ($flags->{has_link}) {
+        $flags->{end_of}->set_attribute ('data-implicit-link', '');
+        $flags->{parent_flags}->{has_link} = 1;
+      }
+      next;
+    }
+    my $nt = $node->node_type;
+    if ($nt == 1) { # ELEMENT_NODE
+      my $ln = $node->local_name;
+      if ($ln eq 'anchor' and $node->namespace_uri eq SW09_NS) {
+        $flags->{has_link} = 1;
+      } elsif ($IsImplicitLinkElement->{$node->namespace_uri}->{$ln}) {
+        my $f = {end_of => $node, parent_flags => $flags};
+        unshift @node, [undef, $f];
+        unshift @node, map { [$_, $f] } $node->child_nodes->to_list;
+      } else {
+        unshift @node, map { [$_, $flags] } $node->child_nodes->to_list;
+      }
+    #} elsif ($nt == 3) { # TEXT_NODE
+    #
+    }
+  }
+
   my @items = map {{doc => $doc,
                     name_to_url => $name_to_url,
                     heading_level => $heading_level, name => $name,
@@ -641,15 +741,15 @@ sub convert ($$$$$$) {
   }
 
   return $df;
-} # convert_swml_to_html
+} # convert
+
+1;
 
 =head1 LICENSE
 
-Copyright 2008-2011 Wakaba <w@suika.fam.cx>.
+Copyright 2008-2016 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
-
-1;
