@@ -1,5 +1,6 @@
 package SWE::Lang::XML2HTML;
 use strict;
+use Wanage::URL qw(percent_encode_c);
 
 our $ConverterVersion = 4;
 
@@ -90,7 +91,7 @@ $templates->{(HTML_NS)}->{$_} = sub {
       @{$item->{node}->child_nodes};
 } for qw/
   p ul ol dl li dt dd table tbody tr blockquote pre
-  dfn ruby samp span sub sup time var em strong
+  dfn ruby samp span sub sup var em strong
 /;
 
 $templates->{(HTML_NS)}->{$_} = sub {
@@ -107,10 +108,11 @@ $templates->{(HTML_NS)}->{$_} = sub {
   $el->set_attribute (lang => $lang) if defined $lang;
 
   my $parent = $el;
-  if ($item->{node}->has_attribute ('data-implicit-link')) {
+  my $ilink = $item->{node}->get_attribute ('data-implicit-link');
+  if (defined $ilink) {
     $parent = $item->{doc}->create_element ('a');
     $parent->set_attribute (class => 'sw-anchor');
-    my $name = $item->{node}->text_content;
+    my $name = length $ilink ? $ilink : $item->{node}->text_content;
     my $url = $item->{name_to_url}->($name);
     $parent->href ($url);
     $el->append_child ($parent);
@@ -337,10 +339,11 @@ $templates->{(SW10_NS)}->{key} = sub {
   $el->set_attribute (lang => $lang) if defined $lang;
 
   my $parent = $el;
-  if ($item->{node}->has_attribute ('data-implicit-link')) {
+  my $ilink = $item->{node}->get_attribute ('data-implicit-link');
+  if (defined $ilink) {
     $parent = $item->{doc}->create_element ('a');
     $parent->set_attribute (class => 'sw-anchor');
-    my $name = $item->{node}->text_content;
+    my $name = length $ilink ? $ilink : $item->{node}->text_content;
     my $url = $item->{name_to_url}->($name);
     $parent->href ($url);
     $el->append_child ($parent);
@@ -424,10 +427,11 @@ $templates->{(SW09_NS)}->{f} = sub {
   $el->set_attribute (lang => $lang) if defined $lang;
 
   my $parent = $el;
-  if ($item->{node}->has_attribute ('data-implicit-link')) {
+  my $ilink = $item->{node}->get_attribute ('data-implicit-link');
+  if (defined $ilink) {
     $parent = $item->{doc}->create_element ('a');
     $parent->set_attribute (class => 'sw-anchor');
-    my $name = $item->{node}->text_content;
+    my $name = length $ilink ? $ilink : $item->{node}->text_content;
     my $url = $item->{name_to_url}->($name);
     $parent->href ($url);
     $el->append_child ($parent);
@@ -439,11 +443,96 @@ $templates->{(SW09_NS)}->{f} = sub {
 };
 $IsImplicitLinkElement->{(SW09_NS)}->{f} = 1;
 
-$templates->{(SW10_NS)}->{title} = sub {
+for my $x (
+  [SW09_NS, 'n', 'https://data.suikawiki.org/number/'],
+  [SW09_NS, 'tz', 'https://data.suikawiki.org/tzoffset/'],
+  [SW09_NS, 'lat', 'https://data.suikawiki.org/lat/'],
+  [SW09_NS, 'lon', 'https://data.suikawiki.org/lon/'],
+  [HTML_NS, 'time', 'https://data.suikawiki.org/datetime/'],
+) {
+$templates->{$x->[0]}->{$x->[1]} = sub {
   my ($items, $item) = @_;
 
+  my $el = $item->{doc}->create_element_ns
+      (HTML_NS, $x->[1] eq 'time' ? 'time' : 'data');
+
+  my $class = $item->{node}->get_attribute ('class');
+  $class //= '';
+  $class .= ' sw-'.$x->[1];
+  $el->set_attribute (class => $class);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  my $ilink = $item->{node}->get_attribute ('data-implicit-link');
+  if (defined $ilink) {
+    my $link = $item->{doc}->create_element ('a');
+    $link->set_attribute (class => 'sw-anchor');
+    my $name = length $ilink ? $ilink : $item->{node}->text_content;
+    if (ref $x->[2]) {
+      $link->href ($x->[2]->($name));
+    } else {
+      $link->href ($x->[2] . percent_encode_c $name);
+    }
+    $link->append_child ($el);
+    $item->{parent}->append_child ($link);
+  } else {
+    $item->{parent}->append_child ($el);
+  }
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+};
+$IsImplicitLinkElement->{$x->[0]}->{$x->[1]} = 1;
+}
+
+for my $kwd (qw(MUST SHOULD MAY)) {$templates->{(SW09_NS)}->{$kwd} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'em');
+  $el->title ($kwd);
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $class //= '';
+  $class .= ' rfc2119 sw-'.$kwd;
+  $el->set_attribute (class => $class);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  my $parent = $item->{doc}->create_element ('a');
+  $parent->class_name ('sw-anchor');
+  $parent->href ($item->{name_to_url}->($kwd));
+  $el->append_child ($parent);
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $parent}}
+      @{$item->{node}->child_nodes};
+}}
+
+$templates->{(SW10_NS)}->{title} = sub {
+  my ($items, $item) = @_;
   unless ($item->{parent}->has_attribute ('title')) {
     $item->{parent}->set_attribute (title => $item->{node}->text_content);
+  }
+};
+
+$templates->{(SW10_NS)}->{attrvalue} = sub {
+  my ($items, $item) = @_;
+  if (defined $item->{data_element}) {
+    if ($item->{data_element}->local_name eq 'time') {
+      if (not $item->{data_element}->has_attribute ('datetime')) {
+        $item->{data_element}->set_attribute
+            (datetime => $item->{node}->text_content);
+      }
+    } else {
+      if (not $item->{data_element}->has_attribute ('value')) {
+        $item->{data_element}->set_attribute
+            (value => $item->{node}->text_content);
+      }
+    }
   }
 };
 
@@ -543,22 +632,36 @@ $templates->{(SW09_NS)}->{anchor} = sub {
   my $el = $item->{doc}->create_element_ns (HTML_NS, 'a');
   $item->{parent}->append_child ($el);
   $el->set_attribute (class => 'sw-anchor');
-  
-  my $name = $item->{node}->text_content;
-  if ($name eq '//') {
-    $name = 'HomePage'; ## Don't use $homepage_name - this is not configurable
-  } elsif ($name =~ s!^\.//!!) {
-    $name = $item->{name} . '//' . $name;
-  } elsif ($name =~ s!^\.\.//!!) {
-    my $pname = $item->{name};
-    $pname =~ s<//(?:(?!//).)+$><>;
-    $name = $pname . '//' . $name;
-  }
 
-  $name =~ s/\s+/ /g;
-  $name =~ s/^ //;
-  $name =~ s/ $//;
-  $name = 'HomePage' unless length $name;
+  my $name;
+
+  my @child = @{$item->{node}->child_nodes};
+  for my $node (@child) {
+    if ($node->node_type == 1 and
+        $node->local_name eq 'title' and
+        $node->namespace_uri eq SW10_NS) {
+      $name = $node->text_content;
+      last;
+    }
+  }
+  
+  if (not defined $name) {
+    $name = $item->{node}->text_content;
+    if ($name eq '//') {
+      $name = 'HomePage'; ## Don't use $homepage_name - this is not configurable
+    } elsif ($name =~ s!^\.//!!) {
+      $name = $item->{name} . '//' . $name;
+    } elsif ($name =~ s!^\.\.//!!) {
+      my $pname = $item->{name};
+      $pname =~ s<//(?:(?!//).)+$><>;
+      $name = $pname . '//' . $name;
+    }
+
+    $name =~ s/\s+/ /g;
+    $name =~ s/^ //;
+    $name =~ s/ $//;
+    $name = 'HomePage' unless length $name;
+  }
 
   my $url = $item->{name_to_url}->($name);
 
@@ -572,8 +675,7 @@ $templates->{(SW09_NS)}->{anchor} = sub {
   $el->set_attribute (href => $url);
 
   unshift @$items,
-      map {{%$item, node => $_, parent => $el}}
-      @{$item->{node}->child_nodes};
+      map {{%$item, node => $_, parent => $el}} @child;
 };
 
 $templates->{(SW09_NS)}->{'anchor-internal'} = sub {
@@ -706,7 +808,8 @@ sub convert ($$$$$$) {
     my ($node, $flags) = @{shift @node};
     if (not defined $node) {
       unless ($flags->{has_link}) {
-        $flags->{end_of}->set_attribute ('data-implicit-link', '');
+        $flags->{end_of}->set_attribute
+            ('data-implicit-link', $flags->{title} // '');
         $flags->{parent_flags}->{has_link} = 1;
       }
       next;
@@ -714,12 +817,18 @@ sub convert ($$$$$$) {
     my $nt = $node->node_type;
     if ($nt == 1) { # ELEMENT_NODE
       my $ln = $node->local_name;
-      if ($ln eq 'anchor' and $node->namespace_uri eq SW09_NS) {
+      if (($ln eq 'anchor' or
+           $ln eq 'MUST' or
+           $ln eq 'SHOULD' or
+           $ln eq 'MAY') and $node->namespace_uri eq SW09_NS) {
         $flags->{has_link} = 1;
       } elsif ($IsImplicitLinkElement->{$node->namespace_uri}->{$ln}) {
         my $f = {end_of => $node, parent_flags => $flags};
         unshift @node, [undef, $f];
         unshift @node, map { [$_, $f] } $node->child_nodes->to_list;
+      } elsif (($ln eq 'title' or
+                $ln eq 'attrvalue') and $node->namespace_uri eq SW10_NS) {
+        $flags->{title} = $node->text_content;
       } else {
         unshift @node, map { [$_, $flags] } $node->child_nodes->to_list;
       }

@@ -1314,6 +1314,17 @@ em:lang(en) {
   text-emphasis: none;
 }
 
+.rfc2119 {
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-style: normal;
+  text-decoration: none;
+  font-weight: bolder;
+  font-family: sans-serif;
+  -webkit-text-emphasis: none;
+  text-emphasis: none;
+}
+
 .sw-weak {
   font-size: smaller;
   color: gray;
