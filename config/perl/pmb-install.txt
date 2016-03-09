@@ -12,12 +12,12 @@ IO::File~1.14
 Devel::StackTrace~2.01
 Net::HTTPS~6.09
 HTTP::Body~1.22
-HTTP::Message~6.11
 Canary::Stability~2006
 POSIX::strftime::Compiler~0.41
 Test::Differences~0.64
 Path::Class~0.36
 common::sense~3.74
+HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
 Types::Serialiser~1.0
@@ -66,12 +66,11 @@ Term::ANSIColor~4.04
 Server::Starter~0.32
 Test::Class~0.50
 Exporter::Lite~0.08
-HTML::HeadParser~3.71
 Data::Dumper~2.154
 AnyEvent::HTTP~2.22
 HTTP::Cookies~6.01
+HTTP::Request::Common~6.11
 Text::Diff~1.44
-HTTP::Response~6.11
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
