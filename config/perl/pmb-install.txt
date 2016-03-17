@@ -21,6 +21,7 @@ common::sense~3.74
 HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
+URI::Escape~3.31
 Types::Serialiser~1.0
 LWP::MediaTypes~6.02
 Module::Runtime~0.014
@@ -28,6 +29,7 @@ Unicode::Normalize~1.25
 Filter::Util::Call~1.55
 Cookie::Baker~0.06
 Devel::CheckLib~1.06
+HTML::Entities~3.69
 Parallel::Prefork~0.18
 Algorithm::Diff~1.1903
 Path::Tiny~0.084
