@@ -747,6 +747,7 @@ if ($path[0] eq 'n' and @path == 2) {
       my $html_doc = new Web::DOM::Document;
       $html_doc->manakai_is_html (1);
       $html_doc->inner_html (q[<!DOCTYPE HTML><title>Edit</title>
+<body onbeforeunload="return 'Really?'">
 <h1>Edit</h1>
 <div class="nav swe-names"></div>
 
@@ -1162,6 +1163,7 @@ if ($path[0] eq 'n' and @path == 2) {
     my $doc = new Web::DOM::Document;
     $doc->manakai_is_html (1);
     $doc->inner_html (q[<!DOCTYPE HTML><title>New page</title>
+<body onbeforeunload="return 'Really?'">
 <h1>New page</h1>
 <form action=new-page method=post accept-charset=utf-8>
 <p><button type=submit>Save</button>
