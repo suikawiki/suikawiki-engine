@@ -754,7 +754,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <div class=section>
 <h2>Page</h2>
 
-<form method=post accept-charset=utf-8>
+<form method=post accept-charset=utf-8 onsubmit="document.body.onbeforeunload = null">
 <p><button type=submit>Update</button>
 <p><label><strong>Page title</strong>:<br>
 <input name=title></label>
@@ -1165,7 +1165,7 @@ if ($path[0] eq 'n' and @path == 2) {
     $doc->inner_html (q[<!DOCTYPE HTML><title>New page</title>
 <body onbeforeunload="return 'Really?'">
 <h1>New page</h1>
-<form action=new-page method=post accept-charset=utf-8>
+<form action=new-page method=post accept-charset=utf-8 onsubmit="document.body.onbeforeunload=null">
 <p><button type=submit>Save</button>
 <p><label><strong>Page name(s)</strong>:<br>
 <textarea name=names></textarea></label>
