@@ -1,15 +1,17 @@
 Net::SSLeay~1.72
 Capture::Tiny~0.36
 Pod::Usage~1.68
-Pod::Text~4.06
+Pod::Text~4.07
 JSON::XS~3.02
 IO::HTML~1.001
 Encode~2.82
+HTTP::Headers~6.11
 HTTP::Daemon~6.01
 Module::Build~0.4216
 List::MoreUtils~0.413
 IO::File~1.14
 Devel::StackTrace~2.01
+Net::HTTPS~6.09
 HTTP::Body~1.22
 Canary::Stability~2011
 POSIX::strftime::Compiler~0.41
@@ -25,6 +27,7 @@ Unicode::Normalize~1.25
 Filter::Util::Call~1.55
 Cookie::Baker~0.06
 Devel::CheckLib~1.06
+HTML::Entities~3.69
 Parallel::Prefork~0.18
 Algorithm::Diff~1.1903
 Path::Tiny~0.084
@@ -59,7 +62,7 @@ Test::SharedFork~0.35
 Try::Tiny~0.24
 Getopt::Long~2.48
 AnyEvent~7.12
-Term::ANSIColor~4.04
+Term::ANSIColor~4.05
 Server::Starter~0.32
 Test::Class~0.50
 Exporter::Lite~0.08
@@ -67,7 +70,6 @@ HTML::HeadParser~3.71
 Data::Dumper~2.154
 AnyEvent::HTTP~2.22
 HTTP::Cookies~6.01
-HTTP::Request::Common~6.11
 Text::Diff~1.44
 File::Temp~0.2304
 Signal::Mask~0.008
@@ -87,8 +89,8 @@ Class::Data::Inheritable~0.08
 MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.024
-HTTP::Headers::Util~6.11
 Apache::LogFormat::Compiler~0.33
+HTTP::Headers::Util~6.11
 Time::HiRes~1.9732
 HTTP::Date~6.02
 Mozilla::CA~20160104
