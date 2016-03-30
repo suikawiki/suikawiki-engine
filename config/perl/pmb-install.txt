@@ -5,6 +5,7 @@ Pod::Text~4.07
 JSON::XS~3.02
 IO::HTML~1.001
 Encode~2.83
+HTTP::Headers~6.11
 HTTP::Daemon~6.01
 Module::Build~0.4216
 List::MoreUtils~0.413
@@ -12,12 +13,12 @@ IO::File~1.14
 Devel::StackTrace~2.01
 Net::HTTPS~6.09
 HTTP::Body~1.22
-HTTP::Message~6.11
 Canary::Stability~2011
 POSIX::strftime::Compiler~0.41
 Test::Differences~0.64
 Path::Class~0.36
 common::sense~3.74
+HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
 Types::Serialiser~1.0
@@ -66,7 +67,6 @@ Term::ANSIColor~4.05
 Server::Starter~0.32
 Test::Class~0.50
 Exporter::Lite~0.08
-HTML::HeadParser~3.71
 Data::Dumper~2.154
 AnyEvent::HTTP~2.22
 HTTP::Cookies~6.01
@@ -90,7 +90,6 @@ MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.024
 Apache::LogFormat::Compiler~0.33
-HTTP::Headers::Util~6.11
 Time::HiRes~1.9732
 HTTP::Date~6.02
 Mozilla::CA~20160104
