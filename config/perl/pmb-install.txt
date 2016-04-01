@@ -5,7 +5,6 @@ Pod::Text~4.07
 JSON::XS~3.02
 IO::HTML~1.001
 Encode~2.83
-HTTP::Headers~6.11
 HTTP::Daemon~6.01
 Module::Build~0.4216
 List::MoreUtils~0.413
@@ -13,14 +12,15 @@ IO::File~1.14
 Devel::StackTrace~2.01
 Net::HTTPS~6.09
 HTTP::Body~1.22
+HTTP::Message~6.11
 Canary::Stability~2011
 POSIX::strftime::Compiler~0.41
 Test::Differences~0.64
 Path::Class~0.36
 common::sense~3.74
-HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
+URI::Escape~3.31
 Types::Serialiser~1.0
 LWP::MediaTypes~6.02
 Module::Runtime~0.014
@@ -70,6 +70,7 @@ Exporter::Lite~0.08
 Data::Dumper~2.154
 AnyEvent::HTTP~2.22
 HTTP::Cookies~6.01
+HTTP::Request::Common~6.11
 Text::Diff~1.44
 File::Temp~0.2304
 Signal::Mask~0.008
