@@ -1,3 +1,6 @@
+git:
+  submodules: false
+language: perl
 before_install: git submodule update --init
 install: "make test-deps"
 script: "make test"
@@ -6,7 +9,7 @@ notifications:
     - wakaba@suikawiki.org
   irc:
     channels:
-      - "irc.suikawiki.org#mechanize"
+      - "ircs://irc.suikawiki.org:6697#mechanize"
     use_notice: true
 env:
   global:
