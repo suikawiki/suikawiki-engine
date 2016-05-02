@@ -245,6 +245,18 @@ if ($path[0] eq 'n' and @path == 2) {
 
         my $ad_el = $html_doc->create_element ('aside');
         if ($use_google_ads) {
+          my $df = $html_doc->create_document_fragment;
+          $df->inner_html (q{
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-6943204637055835",
+    enable_page_level_ads: true
+  });
+</script>
+          });
+          $html_doc->head->append_child ($df);
+
           $ad_el->set_attribute (class => 'swe-ad swe-ad-google');
           $ad_el->inner_html (q{
             <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
