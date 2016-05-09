@@ -3,9 +3,9 @@ Capture::Tiny~0.36
 Pod::Usage~1.68
 Pod::Text~4.07
 JSON::XS~3.02
+HTTP::Status~6.11
 IO::HTML~1.001
 Encode~2.84
-HTTP::Headers~6.11
 HTTP::Daemon~6.01
 Module::Build~0.4218
 List::MoreUtils~0.415
@@ -18,7 +18,6 @@ POSIX::strftime::Compiler~0.41
 Test::Differences~0.64
 Path::Class~0.36
 common::sense~3.74
-HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
 Types::Serialiser~1.0
@@ -89,6 +88,7 @@ Class::Data::Inheritable~0.08
 MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.027
+HTTP::Headers::Util~6.11
 Apache::LogFormat::Compiler~0.33
 Time::HiRes~1.9733
 HTTP::Date~6.02
