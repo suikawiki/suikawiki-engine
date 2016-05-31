@@ -16,7 +16,6 @@ Test::Differences~0.64
 Path::Class~0.36
 common::sense~3.74
 List::Rubyish~0.03
-HTTP::Request~6.11
 Text::MeCab~0.20016
 Types::Serialiser~1.0
 LWP::MediaTypes~6.02
@@ -51,8 +50,8 @@ Test::NoWarnings~1.04
 File::Listing~6.04
 Stream::Buffered~0.03
 Test::TCP~2.16
-Test::Builder~1.302019
 AnyEvent::Util
+Test::Builder~1.302022
 Digest::SHA~5.95
 Crypt::SSLeay~0.72
 Time::Local~1.2300
@@ -65,9 +64,11 @@ Server::Starter~0.32
 Exporter::Lite~0.08
 Test::Class~0.50
 Data::Dumper~2.154
+HTML::HeadParser~3.71
 HTTP::Cookies~6.01
 AnyEvent::HTTP~2.22
 Text::Diff~1.44
+HTTP::Response~6.11
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
@@ -86,6 +87,7 @@ Class::Data::Inheritable~0.08
 MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.027
+HTTP::Headers::Util~6.11
 Apache::LogFormat::Compiler~0.33
 Time::HiRes~1.9733
 HTTP::Date~6.02
