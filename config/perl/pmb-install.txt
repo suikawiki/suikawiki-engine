@@ -1,5 +1,5 @@
 Net::SSLeay~1.74
-Capture::Tiny~0.40
+Capture::Tiny~0.42
 Pod::Usage~1.69
 JSON::XS~3.02
 IO::HTML~1.001
@@ -9,6 +9,7 @@ HTTP::Daemon~6.01
 List::MoreUtils~0.415
 IO::File~1.14
 Devel::StackTrace~2.01
+Net::HTTPS~6.09
 HTTP::Body~1.22
 Canary::Stability~2011
 POSIX::strftime::Compiler~0.41
@@ -87,7 +88,6 @@ Class::Data::Inheritable~0.08
 MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.027
-HTTP::Headers::Util~6.11
 Apache::LogFormat::Compiler~0.33
 Time::HiRes~1.9733
 HTTP::Date~6.02
