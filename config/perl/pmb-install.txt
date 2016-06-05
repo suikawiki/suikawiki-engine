@@ -2,15 +2,14 @@ Net::SSLeay~1.74
 Capture::Tiny~0.42
 Pod::Usage~1.69
 JSON::XS~3.02
+HTTP::Status~6.11
 IO::HTML~1.001
 Encode~2.84
-HTTP::Headers~6.11
 HTTP::Daemon~6.01
 Module::Build~0.4218
 List::MoreUtils~0.415
 IO::File~1.14
 Devel::StackTrace~2.01
-Net::HTTPS~6.09
 HTTP::Body~1.22
 Canary::Stability~2011
 POSIX::strftime::Compiler~0.41
@@ -26,7 +25,6 @@ Unicode::Normalize~1.25
 Filter::Util::Call~1.55
 Cookie::Baker~0.06
 Devel::CheckLib~1.07
-HTML::Entities~3.69
 Parallel::Prefork~0.18
 Algorithm::Diff~1.1903
 Path::Tiny~0.094
@@ -52,8 +50,8 @@ Test::NoWarnings~1.04
 File::Listing~6.04
 Stream::Buffered~0.03
 Test::TCP~2.16
-AnyEvent::Util
 Test::Builder~1.302022
+AnyEvent::Util
 Digest::SHA~5.95
 Crypt::SSLeay~0.72
 Time::Local~1.2300
