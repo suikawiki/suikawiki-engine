@@ -16,6 +16,7 @@ POSIX::strftime::Compiler~0.41
 Test::Differences~0.64
 Path::Class~0.36
 common::sense~3.74
+HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
 Types::Serialiser~1.0
