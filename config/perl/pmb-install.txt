@@ -16,7 +16,6 @@ POSIX::strftime::Compiler~0.41
 Test::Differences~0.64
 Path::Class~0.36
 common::sense~3.74
-HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
 Types::Serialiser~1.0
@@ -53,7 +52,7 @@ File::Listing~6.04
 Stream::Buffered~0.03
 Test::TCP~2.16
 AnyEvent::Util
-Test::Builder~1.302026
+Test::Builder~1.302031
 Digest::SHA~5.95
 Crypt::SSLeay~0.72
 Time::Local~1.2300
@@ -89,7 +88,8 @@ Class::Data::Inheritable~0.08
 MRO::Compat~0.12
 Hash::MultiValue~0.16
 IO::Socket::SSL~2.027
+HTTP::Headers::Util~6.11
 Apache::LogFormat::Compiler~0.33
-Time::HiRes~1.9733
+Time::HiRes~1.9736
 HTTP::Date~6.02
 Mozilla::CA~20160104
