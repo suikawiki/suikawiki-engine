@@ -4,12 +4,12 @@ Pod::Usage~1.69
 JSON::XS~3.02
 IO::HTML~1.001
 Encode~2.84
-HTTP::Headers~6.11
 HTTP::Daemon~6.01
 Module::Build~0.4218
 List::MoreUtils~0.416
 IO::File~1.14
 Devel::StackTrace~2.01
+Net::HTTPS~6.09
 HTTP::Body~1.22
 Canary::Stability~2011
 POSIX::strftime::Compiler~0.42
@@ -20,8 +20,8 @@ HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
 XSLoader~0.22
-Types::Serialiser~1.0
 LWP::MediaTypes~6.02
+Types::Serialiser~1.0
 Module::Runtime~0.014
 Unicode::Normalize~1.25
 Filter::Util::Call~1.55
@@ -53,8 +53,8 @@ Class::Accessor::Fast~0.34
 File::Listing~6.04
 Stream::Buffered~0.03
 Test::TCP~2.16
-AnyEvent::Util
 Test::Builder~1.302045
+AnyEvent::Util
 Digest::SHA~5.95
 Crypt::SSLeay~0.72
 Time::Local~1.2300
@@ -71,6 +71,7 @@ Data::Dumper~2.161
 AnyEvent::HTTP~2.22
 HTTP::Cookies~6.01
 Text::Diff~1.44
+HTTP::Response~6.11
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
