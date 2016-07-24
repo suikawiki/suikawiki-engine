@@ -4,6 +4,7 @@ Pod::Usage~1.69
 JSON::XS~3.02
 IO::HTML~1.001
 Encode~2.84
+HTTP::Headers~6.11
 HTTP::Daemon~6.01
 Module::Build~0.4218
 List::MoreUtils~0.416
@@ -16,7 +17,6 @@ POSIX::strftime::Compiler~0.42
 Test::Differences~0.64
 Path::Class~0.36
 common::sense~3.74
-HTTP::Request~6.11
 List::Rubyish~0.03
 Text::MeCab~0.20016
 XSLoader~0.22
@@ -27,7 +27,6 @@ Unicode::Normalize~1.25
 Filter::Util::Call~1.55
 Cookie::Baker~0.06
 Devel::CheckLib~1.07
-HTML::Entities~3.69
 Parallel::Prefork~0.18
 Algorithm::Diff~1.1903
 Path::Tiny~0.096
@@ -53,7 +52,7 @@ Class::Accessor::Fast~0.34
 File::Listing~6.04
 Stream::Buffered~0.03
 Test::TCP~2.16
-Test::Builder~1.302045
+Test::Builder~1.302047
 AnyEvent::Util
 Digest::SHA~5.95
 Crypt::SSLeay~0.72
