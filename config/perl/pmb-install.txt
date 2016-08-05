@@ -4,7 +4,7 @@ AnyEvent::HTTP~2.22
 AnyEvent::Util
 Apache::LogFormat::Compiler~0.33
 Canary::Stability~2011
-Capture::Tiny~0.42
+Capture::Tiny~0.44
 Carp~1.38
 Class::Accessor::Fast~0.34
 Class::Accessor::Lite~0.08
@@ -39,8 +39,8 @@ HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Headers~6.11
 HTTP::Headers::Fast~0.20
-HTTP::Headers::Util~6.11
 HTTP::Negotiate~6.01
+HTTP::Response~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
 IO::File~1.14
