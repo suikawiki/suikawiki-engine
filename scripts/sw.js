@@ -351,10 +351,53 @@ function initTOC (root) {
   section.className = 'toc';
   var h = document.createElement ('h1');
   h.textContent = '目次';
+  var button = document.createElement ('a');
+  button.className = 'sw-heading-link';
+  button.title = '隠す';
+  button.href = 'javascript:';
+  button.onclick = function () {
+    this.parentNode.parentNode.removeAttribute ('data-open');
+  };
+  button.textContent = '◀';
+  h.appendChild (button);
   section.appendChild (h);
   var ol = document.createElement ('ol');
   ol.setAttribute ('data-level', 1);
   section.appendChild (ol);
+
+  setTimeout (function () {
+    var originalTop;
+    var resize = function (ev) {
+      var delta = document.body.getClientRects () [0].top + document.body.scrollTop;
+      var top = document.body.scrollTop - delta;
+      if (top < originalTop) top = originalTop;
+      section.style.top = top + "px";
+      section.style.height = innerHeight - top - delta + document.body.scrollTop + "px";
+    }; // resize
+    var match = matchMedia ('(min-width: 80em)');
+    var install = function () {
+      if (match.matches) {
+        section.style.top = '';
+        originalTop = section.offsetTop;
+        window.addEventListener ('scroll', resize);
+        resize ();
+      } else {
+        window.removeEventListener ('scroll', resize);
+      }
+    }; // install
+    match.addListener (install);
+    install ();
+  }, 0);
+
+  var showButton = document.createElement ('a');
+  showButton.className = 'show-toc-button';
+  showButton.href = 'javascript:';
+  showButton.onclick = function () {
+    section.setAttribute ('data-open', '');
+  };
+  showButton.textContent = '▶';
+  showButton.title = '目次を表示';
+  document.body.appendChild (showButton);
 
   var hasSection = false;
   Array.prototype.forEach.apply (article.querySelectorAll ('.section > * > .sw-heading-anchor[href]'), [function (a) {
@@ -393,7 +436,10 @@ function initTOC (root) {
     ol.appendChild (li);
   }]);
 
-  if (hasSection) insertBeforeFirstSection (article, section);
+  if (hasSection) {
+    //insertBeforeFirstSection (article, section);
+    document.body.appendChild (section);
+  }
 } // initTOC
 
 function initWarnings (root) {
