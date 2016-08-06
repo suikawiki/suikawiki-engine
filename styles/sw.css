@@ -214,15 +214,9 @@ blockquote {
   color: black;
 }
 
-/* TOC */
+/* Sidebar menu */
 
-.toc {
-  margin-top: 1em;
-  margin-left: -1em;
-  margin-bottom: 1em;
-}
-
-.toc[data-open] {
+.side-menu[data-open] {
   position: fixed;
   top: 0;
   left: 0;
@@ -236,6 +230,99 @@ blockquote {
   overflow: auto;
 }
 
+@media (max-width: 80em) {
+  .side-menu:not([data-open]) {
+    display: none;
+  }
+
+  a.show-side-menu-button {
+    display: block;
+    position: fixed;
+    top: 2em;
+    left: 0;
+    width: 1em;
+    height: 1em;
+    border-style: none;
+    padding: 0;
+    text-align: center;
+    line-height: 1.0;
+    font-size: 200%;
+    text-decoration: none;
+  }
+}
+
+@media (min-width: 80em) {
+  .side-menu {
+    position: absolute;
+    top: 7em;
+    left: 0;
+    width: 15em;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+  }
+
+  .side-menu .hide-side-menu-button {
+    display: none;
+  }
+}
+
+.show-side-menu-button {
+  display: none;
+}
+
+.side-menu[data-open] ~ .show-side-menu-button {
+  display: none;
+}
+
+.side-menu > nav a {
+  display: inline-block;
+  min-width: 2em;
+  margin: .2rem;
+  border-style: none none hidden none;
+  padding: .2rem;
+  line-height: 1.0;
+  text-decoration: none;
+  text-align: center;
+}
+
+.side-menu > nav a:not(:hover) {
+  color: inherit;
+  background: transparent;
+}
+
+.side-menu > nav a.active {
+  border-bottom-style: solid;
+  font-weight: bolder;
+}
+
+.side-menu > nav a.hide-side-menu-button {
+  float: right;
+  min-width: 1em;
+}
+
+.side-menu > section {
+  margin: 0;
+  padding: 0 0.5em;
+}
+
+.side-menu > section:not(.active) {
+  display: none;
+}
+
+.side-menu > section > h1 {
+  display: none;
+}
+
+/* TOC */
+
+.toc {
+  margin-top: 1em;
+  margin-left: -1em;
+  margin-bottom: 1em;
+}
+
 .toc > h1 {
   margin-left: -1em;
   padding: 0.1em 0.2em;
@@ -243,10 +330,6 @@ blockquote {
   font-size: 150%;
   min-height: 0;
   line-height: 1.5;
-}
-
-.toc[data-open] > h1 {
-  margin-left: 0;
 }
 
 .toc > ol {
@@ -285,50 +368,18 @@ blockquote {
   word-break: break-all;
 }
 
-@media (min-width: 80em) {
-  .toc {
-    position: absolute;
-    top: 7em;
-    left: 0;
-    width: 15em;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    overflow: auto;
-  }
-
-  .toc > h1 {
-    margin-left: 0;
-  }
-
-  .toc .sw-heading-link {
-    display: none;
-  }
+#side-defs ol {
+  padding: 0;
 }
 
-.show-toc-button {
-  display: none;
+#side-defs ol > li {
+  display: block;
 }
 
-@media (max-width: 80em) {
-  .toc:not([data-open]) {
-    display: none;
-  }
-
-  a.show-toc-button {
-    display: block;
-    position: fixed;
-    top: 2em;
-    left: 0;
-    width: 1em;
-    height: 1em;
-    border-style: none;
-    padding: 0;
-    text-align: center;
-    line-height: 1.0;
-    font-size: 200%;
-    text-decoration: none;
-  }
+#side-defs ol > li > a {
+  display: block;
+  border-bottom: none;
+  line-height: 1.5;
 }
 
 /* Paragraph-level blocks */

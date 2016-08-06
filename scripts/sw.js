@@ -339,6 +339,11 @@ function initTOC (root) {
   var article = root.querySelector ('.article');
   if (!article) return;
 
+  var container = document.createElement ('nav');
+  container.className = 'side-menu';
+
+  // TOC
+
   var levelOffset = 0;
   var firstH = article.querySelector
     ('section > h1, section > h2, section > h3, section > h4, section > h5, section > h6');
@@ -351,15 +356,6 @@ function initTOC (root) {
   section.className = 'toc';
   var h = document.createElement ('h1');
   h.textContent = '目次';
-  var button = document.createElement ('a');
-  button.className = 'sw-heading-link';
-  button.title = '隠す';
-  button.href = 'javascript:';
-  button.onclick = function () {
-    this.parentNode.parentNode.removeAttribute ('data-open');
-  };
-  button.textContent = '◀';
-  h.appendChild (button);
   section.appendChild (h);
   var ol = document.createElement ('ol');
   ol.setAttribute ('data-level', 1);
@@ -389,15 +385,17 @@ function initTOC (root) {
     install ();
   }, 0);
 
-  var showButton = document.createElement ('a');
-  showButton.className = 'show-toc-button';
-  showButton.href = 'javascript:';
-  showButton.onclick = function () {
-    section.setAttribute ('data-open', '');
-  };
-  showButton.textContent = '▶';
-  showButton.title = '目次を表示';
-  document.body.appendChild (showButton);
+  var copyText = function (src, dest) {
+    dest.innerHTML = src.innerHTML;
+    Array.prototype.forEach.apply (dest.querySelectorAll ('.sw-heading-anchor, .sw-heading-link, .sw-anchor-end'), [function (e) {
+      e.parentNode.removeChild (e);
+    }]);
+    Array.prototype.forEach.apply (dest.querySelectorAll ('a'), [function (e) {
+      var df = document.createDocumentFragment ();
+      Array.prototype.forEach.apply (e.childNodes, [function (n) { df.appendChild (n) }]);
+      e.parentNode.replaceChild (df, e);
+    }]);
+  }; // copyText
 
   var hasSection = false;
   Array.prototype.forEach.apply (article.querySelectorAll ('.section > * > .sw-heading-anchor[href]'), [function (a) {
@@ -406,15 +404,7 @@ function initTOC (root) {
     var li = document.createElement ('li');
     var link = document.createElement ('a');
     link.href = a.href;
-    link.innerHTML = h.innerHTML;
-    Array.prototype.forEach.apply (link.querySelectorAll ('.sw-heading-anchor, .sw-heading-link, .sw-anchor-end'), [function (e) {
-      e.parentNode.removeChild (e);
-    }]);
-    Array.prototype.forEach.apply (link.querySelectorAll ('a'), [function (e) {
-      var df = document.createDocumentFragment ();
-      Array.prototype.forEach.apply (e.childNodes, [function (n) { df.appendChild (n) }]);
-      e.parentNode.replaceChild (df, e);
-    }]);
+    copyText (h, link);
     li.appendChild (link);
     hasSection = true;
     while (true) {
@@ -436,10 +426,97 @@ function initTOC (root) {
     ol.appendChild (li);
   }]);
 
-  //if (hasSection) {
-    //insertBeforeFirstSection (article, section);
-    document.body.appendChild (section);
-  //}
+  container.appendChild (section);
+  if (hasSection) insertBeforeFirstSection (article, section.cloneNode (true));
+  section.id = 'side-toc';
+
+  // Definitions
+  {
+    var section = document.createElement ('section');
+    section.id = 'side-defs';
+    var h = document.createElement ('h1');
+    h.textContent = '定義';
+    section.appendChild (h);
+
+    var list = document.createElement ('ol');
+    Array.prototype.map.call (article.querySelectorAll ('dfn'), function (dfn) {
+      var li = document.createElement ('li');
+      var a = document.createElement ('a');
+      a.href = dfn.id ? '#' + encodeURIComponent (dfn.id) : 'javascript:';
+      a.onclick = function () {
+        dfn.scrollIntoViewIfNeeded ();
+      };
+      copyText (dfn, a);
+      li.appendChild (a);
+      return [li, li.textContent];
+    }).sort (function (a, b) {
+      return a[1] > b[1] ? 1 : -1;
+    }).forEach (function (x) {
+      list.appendChild (x[0]);
+    });
+    section.appendChild (list);
+
+    container.appendChild (section);
+  }
+
+  var nav = document.createElement ('nav');
+  var selectSection = function (id) {
+    var firstSection;
+    var firstButton;
+    Array.prototype.forEach.call (container.children, function (s) {
+      if (s.localName === 'section') {
+        firstSection = firstSection || s;
+        s.classList.toggle ('active', s.id === id);
+      }
+    });
+    Array.prototype.forEach.call (nav.children, function (a) {
+      var href = a.getAttribute ('href');
+      if (/^#/.test (href)) {
+        firstButton = firstButton || a;
+        a.classList.toggle ('active', href === '#' + id);
+      }
+    });
+    if (!id) {
+      firstSection.classList.add ('active');
+      firstButton.classList.add ('active');
+    }
+  };
+
+  Array.prototype.forEach.call (container.querySelectorAll ('h1'), function (h) {
+    var section = h.parentNode;
+    var a = document.createElement ('a');
+    a.href = '#' + section.id;
+    a.onclick = function () {
+      selectSection (section.id);
+      return false;
+    };
+    copyText (h, a);
+    nav.appendChild (a);
+  });
+
+  var hideButton = document.createElement ('a');
+  hideButton.className = 'hide-side-menu-button';
+  hideButton.title = '隠す';
+  hideButton.href = 'javascript:';
+  hideButton.onclick = function () {
+    container.removeAttribute ('data-open');
+  };
+  hideButton.textContent = '◀';
+  nav.appendChild (hideButton);
+  container.insertBefore (nav, container.firstChild);
+
+  document.body.appendChild (container);
+  selectSection (null);
+
+  var showButton = document.createElement ('a');
+  showButton.className = 'show-side-menu-button';
+  showButton.href = 'javascript:';
+  showButton.onclick = function () {
+    container.setAttribute ('data-open', '');
+  };
+  showButton.textContent = '▶';
+  showButton.title = '目次を表示';
+  document.body.appendChild (showButton);
 } // initTOC
 
 function initWarnings (root) {
