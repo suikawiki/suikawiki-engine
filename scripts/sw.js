@@ -376,8 +376,8 @@ function initTOC (root) {
     }; // resize
     var match = matchMedia ('(min-width: 80em)');
     var install = function () {
+      section.style.top = '';
       if (match.matches) {
-        section.style.top = '';
         originalTop = section.offsetTop;
         window.addEventListener ('scroll', resize);
         resize ();
@@ -436,10 +436,10 @@ function initTOC (root) {
     ol.appendChild (li);
   }]);
 
-  if (hasSection) {
+  //if (hasSection) {
     //insertBeforeFirstSection (article, section);
     document.body.appendChild (section);
-  }
+  //}
 } // initTOC
 
 function initWarnings (root) {

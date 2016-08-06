@@ -318,7 +318,7 @@ blockquote {
   a.show-toc-button {
     display: block;
     position: fixed;
-    top: 0;
+    top: 2em;
     left: 0;
     width: 1em;
     height: 1em;
