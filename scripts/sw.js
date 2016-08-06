@@ -361,30 +361,6 @@ function initTOC (root) {
   ol.setAttribute ('data-level', 1);
   section.appendChild (ol);
 
-  setTimeout (function () {
-    var originalTop;
-    var resize = function (ev) {
-      var delta = document.body.getClientRects () [0].top + document.body.scrollTop;
-      var top = document.body.scrollTop - delta;
-      if (top < originalTop) top = originalTop;
-      section.style.top = top + "px";
-      section.style.height = innerHeight - top - delta + document.body.scrollTop + "px";
-    }; // resize
-    var match = matchMedia ('(min-width: 80em)');
-    var install = function () {
-      section.style.top = '';
-      if (match.matches) {
-        originalTop = section.offsetTop;
-        window.addEventListener ('scroll', resize);
-        resize ();
-      } else {
-        window.removeEventListener ('scroll', resize);
-      }
-    }; // install
-    match.addListener (install);
-    install ();
-  }, 0);
-
   var copyText = function (src, dest) {
     dest.innerHTML = src.innerHTML;
     Array.prototype.forEach.apply (dest.querySelectorAll ('.sw-heading-anchor, .sw-heading-link, .sw-anchor-end'), [function (e) {
@@ -517,6 +493,30 @@ function initTOC (root) {
   showButton.textContent = '▶';
   showButton.title = '目次を表示';
   document.body.appendChild (showButton);
+
+  setTimeout (function () {
+    var originalTop;
+    var resize = function (ev) {
+      var delta = document.body.getClientRects () [0].top + document.body.scrollTop;
+      var top = document.body.scrollTop - delta;
+      if (top < originalTop) top = originalTop;
+      container.style.top = top + "px";
+      container.style.height = innerHeight - top - delta + document.body.scrollTop + "px";
+    }; // resize
+    var match = matchMedia ('(min-width: 80em)');
+    var install = function () {
+      container.style.top = '';
+      if (match.matches) {
+        originalTop = container.offsetTop;
+        window.addEventListener ('scroll', resize);
+        resize ();
+      } else {
+        window.removeEventListener ('scroll', resize);
+      }
+    }; // install
+    match.addListener (install);
+    install ();
+  }, 0);
 } // initTOC
 
 function initWarnings (root) {
