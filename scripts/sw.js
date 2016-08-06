@@ -533,7 +533,7 @@ function initWarnings (root) {
           div.innerHTML = xhr.responseText;
           var fig = div.querySelector ('.article > figure');
           if (fig) {
-            insertBeforeFirstSection (root, fig);
+            insertBeforeFirstSection (root.querySelector ('.article') || root, fig);
           }
         }
       };
