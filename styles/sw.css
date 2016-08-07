@@ -616,6 +616,11 @@ a:hover,
   border-style: none;
 }
 
+dfn:target {
+  background-color: #FFA;
+  color: #000080;
+}
+
 [rel~=bookmark]:not(.sw-anchor-end) {
   border-style: none !important;
   color: inherit !important;

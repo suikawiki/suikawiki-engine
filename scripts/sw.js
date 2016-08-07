@@ -415,13 +415,32 @@ function initTOC (root) {
     section.appendChild (h);
 
     var list = document.createElement ('ol');
+    var hasDfn = {};
     Array.prototype.map.call (article.querySelectorAll ('dfn'), function (dfn) {
       var li = document.createElement ('li');
       var a = document.createElement ('a');
-      a.href = dfn.id ? '#' + encodeURIComponent (dfn.id) : 'javascript:';
-      a.onclick = function () {
-        dfn.scrollIntoViewIfNeeded ();
-      };
+      if (dfn.id) {
+        hasDfn[dfn.id] = dfn;
+      } else {
+        var id;
+        if (dfn.title) {
+          id = 'dfn-' + dfn.title;
+        } else {
+          var text = dfn.cloneNode (true);
+          Array.prototype.slice.call (text.querySelectorAll ('script, style, template, rp, rt')).forEach (function (x) {
+            x.parentNode.removeChild (x);
+          });
+          id = 'dfn-' + text.textContent;
+        }
+        var dId = id;
+        var d = 2;
+        while (hasDfn[dId]) {
+          dId = id + '-' + d++;
+        }
+        dfn.id = dId;
+        hasDfn[dId] = dfn;
+      }
+      a.href = '#' + encodeURIComponent (dfn.id);
       copyText (dfn, a);
       li.appendChild (a);
       return [li, li.textContent];
@@ -433,6 +452,20 @@ function initTOC (root) {
     section.appendChild (list);
 
     container.appendChild (section);
+
+    if (location.hash === '') {
+      var pageName = document.querySelector ('body > h1 > a[rel~=bookmark]');
+      if (pageName) {
+        pageName = pageName.textContent;
+        var id = 'dfn-' + pageName;
+        if (hasDfn[id]) {
+          setTimeout (function () {
+            //history.replaceState (null, null, '#' + encodeURIComponent (id));
+            hasDfn[id].scrollIntoViewIfNeeded ();
+          }, 0);
+        }
+      }
+    }
   }
 
   var nav = document.createElement ('nav');
