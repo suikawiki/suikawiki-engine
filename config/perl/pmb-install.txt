@@ -40,10 +40,10 @@ HTTP::Body~1.22
 HTTP::Cookies~6.01
 HTTP::Daemon~6.01
 HTTP::Date~6.02
+HTTP::Headers~6.11
 HTTP::Headers::Fast~0.20
 HTTP::Message~6.11
 HTTP::Negotiate~6.01
-HTTP::Response~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
 IO::File~1.14
