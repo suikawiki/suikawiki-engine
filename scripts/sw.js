@@ -441,6 +441,7 @@ function initTOC (root) {
         hasDfn[dId] = dfn;
       }
       a.href = '#' + encodeURIComponent (dfn.id);
+      a.title = dfn.title;
       copyText (dfn, a);
       li.appendChild (a);
       return [li, li.textContent];
@@ -1558,6 +1559,7 @@ SW.Figure.Table = function (figure) {
     table.appendChild (thead);
   }
 
+  var valueToCells = {};
   var tbody = document.createElement ('tbody');
   rows.forEach (function (row) {
     var key = null;
@@ -1575,6 +1577,12 @@ SW.Figure.Table = function (figure) {
       var td = document.createElement ('td');
       if (rowData[i]) {
         while (rowData[i].firstChild) td.appendChild (rowData[i].firstChild);
+
+        var clone = td.cloneNode (true);
+        Array.prototype.slice.call (clone.querySelectorAll ('style, script, rt, rp, .sw-weak')).forEach (function (x) { x.parentNode.removeChild (x) });
+        var value = clone.textContent.replace (/\s+/g, ' ').replace (/^ /, '').replace (/ $/, '');
+        valueToCells[value] = valueToCells[value] || [];
+        valueToCells[value].push (td);
       }
       tr.appendChild (td);
     }
@@ -1617,6 +1625,16 @@ SW.Figure.Table = function (figure) {
   } else {
     table.appendChild (tbody);
   }
+
+  var values = Object.keys (valueToCells);
+  var i = 0;
+  var sorted = values.map (function (v) { return [valueToCells[v], valueToCells[v].length] }).sort (function (a, b) { return b - a }).map (function (x) { return x[0] }).forEach (function (v) {
+    if (v.length <= 1) return;
+    i++;
+    v.forEach (function (el) {
+      el.classList.add ('pattern-' + i);
+    });
+  });
 
   figure.parentNode.replaceChild (table, figure);
 }; // SW.Figure.Table
