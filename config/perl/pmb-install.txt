@@ -40,10 +40,10 @@ HTTP::Body~1.22
 HTTP::Cookies~6.01
 HTTP::Daemon~6.01
 HTTP::Date~6.02
+HTTP::Headers~6.11
 HTTP::Headers::Fast~0.20
 HTTP::Negotiate~6.01
-HTTP::Response~6.11
-HTTP::Status~6.11
+HTTP::Request::Common~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
 IO::File~1.14
@@ -67,7 +67,7 @@ Net::HTTPS~6.09
 Net::SSLeay~1.78
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
-Path::Class~0.36
+Path::Class~0.37
 Path::Tiny~0.096
 Plack~1.0039
 Pod::Usage~1.69
@@ -79,7 +79,7 @@ Signal::Mask~0.008
 Starlet~0.30
 Stream::Buffered~0.03
 Term::ANSIColor~4.05
-Test::Builder~1.302049
+Test::Builder~1.302052
 Test::Class~0.50
 Test::Differences~0.64
 Test::NoWarnings~1.04
@@ -89,11 +89,10 @@ Test::TCP~2.16
 Text::Diff~1.44
 Text::MeCab~0.20016
 Time::HiRes~1.9739
-Time::Local~1.2300
+Time::Local~1.24
 Try::Tiny~0.24
 Types::Serialiser~1.0
 URI~1.71
-Unicode::Normalize~1.25
 Unicode::Stringprep~1.105
 WWW::RobotRules~6.02
 XSLoader~0.22
