@@ -43,6 +43,7 @@ HTTP::Date~6.02
 HTTP::Headers~6.11
 HTTP::Headers::Fast~0.20
 HTTP::Negotiate~6.01
+HTTP::Request~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
 IO::File~1.14
