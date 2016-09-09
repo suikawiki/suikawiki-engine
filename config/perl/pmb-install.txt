@@ -24,7 +24,7 @@ Exporter~5.72
 Exporter::Lite~0.08
 Exporter::Tiny~0.042
 ExtUtils::Config~0.008
-ExtUtils::Helpers~0.025
+ExtUtils::Helpers~0.026
 ExtUtils::InstallPaths~0.011
 File::Listing~6.04
 File::ShareDir~1.102
@@ -33,15 +33,15 @@ File::Temp~0.2304
 Filesys::Notify::Simple~0.12
 Filter::Util::Call~1.55
 Getopt::Long~2.49
-HTML::HeadParser~3.71
+HTML::Entities~3.69
 HTML::Tagset~3.20
 HTTP::Body~1.22
 HTTP::Cookies~6.01
 HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Headers::Fast~0.20
+HTTP::Headers::Util~6.11
 HTTP::Negotiate~6.01
-HTTP::Request::Common~6.11
 HTTP::Status~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
