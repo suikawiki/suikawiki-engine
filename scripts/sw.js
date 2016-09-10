@@ -1581,8 +1581,8 @@ SW.Figure.Table = function (figure) {
         var clone = td.cloneNode (true);
         Array.prototype.slice.call (clone.querySelectorAll ('style, script, rt, rp, .sw-weak')).forEach (function (x) { x.parentNode.removeChild (x) });
         var value = clone.textContent.replace (/\s+/g, ' ').replace (/^ /, '').replace (/ $/, '');
-        valueToCells[value] = valueToCells[value] || [];
-        valueToCells[value].push (td);
+        valueToCells["k"+value] = valueToCells["k"+value] || [];
+        valueToCells["k"+value].push (td);
       }
       tr.appendChild (td);
     }
@@ -1626,9 +1626,9 @@ SW.Figure.Table = function (figure) {
     table.appendChild (tbody);
   }
 
-  var values = Object.keys (valueToCells);
+  var keys = Object.keys (valueToCells);
   var i = 0;
-  var sorted = values.map (function (v) { return [valueToCells[v], valueToCells[v].length] }).sort (function (a, b) { return b - a }).map (function (x) { return x[0] }).forEach (function (v) {
+  keys.map (function (v) { return [valueToCells[v], valueToCells[v].length] }).sort (function (a, b) { return b - a }).map (function (x) { return x[0] }).forEach (function (v) {
     if (v.length <= 1) return;
     i++;
     v.forEach (function (el) {
