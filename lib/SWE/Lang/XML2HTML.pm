@@ -367,6 +367,20 @@ $templates->{(SW10_NS)}->{qn} = sub {
       @{$item->{node}->child_nodes};
 };
 
+$templates->{(HTML_NS)}->{hr} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'hr');
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $el->set_attribute (class => $class) if defined $class;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+};
+
 $templates->{(SW10_NS)}->{src} = sub {
   my ($items, $item) = @_;
 

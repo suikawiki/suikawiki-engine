@@ -214,6 +214,10 @@ blockquote {
   color: black;
 }
 
+hr {
+  visibility: hidden;
+}
+
 /* Sidebar menu */
 
 .side-menu[data-open] {
