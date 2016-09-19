@@ -214,8 +214,26 @@ blockquote {
   color: black;
 }
 
-hr {
+hr:not(.blank) {
+  border-style: none;
+  text-align: center;
+}
+
+hr::after {
+  content: "* * *";
+  color: #004000;
+  background: transparent;
+  font-weight: bolder;
+  font-size: 80%;
+  letter-spacing: 1em;
+}
+
+hr.blank {
   visibility: hidden;
+}
+
+hr.blank::after {
+  display: none;
 }
 
 /* Sidebar menu */
