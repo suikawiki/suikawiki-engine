@@ -382,9 +382,9 @@ blockquote {
   line-height: 1.5;
 }
 
-/* Paragraph-level blocks */
+/* Note blocks */
 
-.sw-comment-p {
+.sw-note-block {
   display: block;
   margin: 1em 0 1em 5em;
   padding: 0.5em 1.3em;
@@ -395,9 +395,22 @@ blockquote {
   line-height: 2.2;
 }
 
+.sw-preamble {
+  margin-right: 5em;
+  background: #f0e3f1;
+  color: black;
+}
+
+.sw-postamble {
+  margin-right: 5em;
+  background: #ffe0c5;
+  color: black;
+}
+
 @media (max-width: 30em) {
-  .sw-comment-p {
+  .sw-note-block {
     margin-left: 1em;
+    margin-right: 1em;
   }
 }
 
@@ -414,6 +427,8 @@ blockquote {
 .sw-ed:before {
   content: "@@ ";
 }
+
+/* Paragraphs */
 
 p {
   margin: 0;
@@ -1323,7 +1338,7 @@ var sub, var sup {
 .sw-refs {
   background-color: #FDFDEC;
   line-height: 1.5;
-  padding: 0.3em;
+  padding: 0.3em .8em;
   margin-bottom: 0.5em;
 }
 
@@ -1332,7 +1347,7 @@ var sub, var sup {
   padding-left: 0;
 }
 
-.sw-refs li {
+.sw-refs > ul > li {
   display: block;
   margin-left: 0;
   padding-left: 0;

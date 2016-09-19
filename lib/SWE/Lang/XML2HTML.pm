@@ -10,6 +10,7 @@ sub SW09_NS () { q<urn:x-suika-fam-cx:markup:suikawiki:0:9:> }
 sub SW10_NS () { q<urn:x-suika-fam-cx:markup:suikawiki:0:10:> }
 sub XML_NS () { q<http://www.w3.org/XML/1998/namespace> }
 sub MATH_NS () { q<http://www.w3.org/1998/Math/MathML> }
+sub HTML3_NS () { q<urn:x-suika-fam-cx:markup:ietf:html:3:draft:00:> }
 
 my $templates = {};
 
@@ -261,24 +262,16 @@ $templates->{(SW09_NS)}->{history} = sub {
       @{$item->{node}->child_nodes};
 }; # history
 
-$templates->{(SW10_NS)}->{'comment-p'} = sub {
+$templates->{(HTML3_NS)}->{'note'} =
+$templates->{(SW10_NS)}->{'comment-p'} =
+$templates->{(SW09_NS)}->{'preamble'} =
+$templates->{(SW09_NS)}->{'postamble'} =
+$templates->{(SW10_NS)}->{'ed'} = sub {
   my ($items, $item) = @_;
 
   my $el = $item->{doc}->create_element_ns (HTML_NS, 'div');
   $item->{parent}->append_child ($el);
-  $el->set_attribute (class => 'sw-comment-p');
-
-  unshift @$items,
-      map {{%$item, node => $_, parent => $el}}
-      @{$item->{node}->child_nodes};
-};
-
-$templates->{(SW10_NS)}->{ed} = sub {
-  my ($items, $item) = @_;
-
-  my $el = $item->{doc}->create_element_ns (HTML_NS, 'div');
-  $item->{parent}->append_child ($el);
-  $el->set_attribute (class => 'sw-ed');
+  $el->set_attribute (class => 'sw-note-block sw-' . $item->{node}->local_name);
 
   unshift @$items,
       map {{%$item, node => $_, parent => $el}}
