@@ -93,6 +93,7 @@ Time::Local~1.24
 Try::Tiny~0.27
 Types::Serialiser~1.0
 URI~1.71
+URI::Escape~3.31
 Unicode::Stringprep~1.105
 WWW::RobotRules~6.02
 XSLoader~0.24
