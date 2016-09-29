@@ -1628,7 +1628,7 @@ SW.Figure.Table = function (figure) {
 
   var keys = Object.keys (valueToCells);
   var i = 0;
-  keys.map (function (v) { return [valueToCells[v], valueToCells[v].length] }).sort (function (a, b) { return b - a }).map (function (x) { return x[0] }).forEach (function (v) {
+  keys.map (function (v) { return [valueToCells[v], valueToCells[v].length] }).sort (function (a, b) { return b[1] - a[1] }).map (function (x) { return x[0] }).forEach (function (v) {
     if (v.length <= 1) return;
     i++;
     v.forEach (function (el) {
