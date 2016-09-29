@@ -271,7 +271,48 @@ $templates->{(SW10_NS)}->{'ed'} = sub {
 
   my $el = $item->{doc}->create_element_ns (HTML_NS, 'div');
   $item->{parent}->append_child ($el);
-  $el->set_attribute (class => 'sw-note-block sw-' . $item->{node}->local_name);
+
+  my $class = $item->{node}->get_attribute ('class') // '';
+  $class .= ' sw-' . $item->{node}->local_name;
+  $el->set_attribute (class => $class);
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+};
+
+$templates->{(SW09_NS)}->{'talk'} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns
+      (HTML_NS, 'sw-' . $item->{node}->local_name);
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class') // '';
+  $el->set_attribute (class => $class);
+
+  my @child = @{$item->{node}->child_nodes};
+  my $has_speaker = 0;
+  for (@child) {
+    if ($_->node_type == $_->ELEMENT_NODE and $_->local_name eq 'speaker') {
+      $has_speaker = 1;
+    }
+  }
+  $el->class_list->add ('sw-talk-no-speaker') unless $has_speaker;
+
+  unshift @$items, map {{%$item, node => $_, parent => $el}} @child;
+};
+
+$templates->{(SW09_NS)}->{'dialogue'} =
+$templates->{(SW09_NS)}->{'speaker'} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns
+      (HTML_NS, 'sw-' . $item->{node}->local_name);
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class') // '';
+  $el->set_attribute (class => $class);
 
   unshift @$items,
       map {{%$item, node => $_, parent => $el}}

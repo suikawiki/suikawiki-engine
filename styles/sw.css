@@ -236,6 +236,57 @@ hr.blank::after {
   display: none;
 }
 
+sw-dialogue {
+  display: table;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  width: 100%;
+  background: rgb(255, 250, 250);
+  color: black;
+}
+
+sw-talk {
+  display: table-row;
+}
+
+sw-talk::after {
+  display: block;
+  content: "";
+  clear: both;
+}
+
+sw-speaker {
+  display: table-cell;
+  width: 8em;
+  text-align: right;
+  font-weight: bolder;
+  color: #004000;
+  background-color: transparent;
+}
+
+sw-speaker::after {
+  content: " :\A0\A0";
+  font-weight: normal;
+  color: black;
+  background: transparent;
+}
+
+sw-talk.sw-talk-no-speaker {
+  margin-left: 1em;
+  font-style: italic;
+}
+
+sw-talk.sw-talk-no-speaker::before {
+  content: "\2014\2014\A0";
+  display: table-cell;
+  width: 8em;
+  text-align: right;
+}
+
+sw-talk > p:first-of-type {
+  text-indent: 0;
+}
+
 /* Sidebar menu */
 
 .side-menu[data-open] {
@@ -1873,6 +1924,12 @@ aside .swe-ad {
   .pattern-10 { background-color: #ADD8E6 }
   .pattern-11 { background-color: #F0E68C }
   .pattern-12 { background-color: #FFA07A }
+
+.p1 sw-speaker { color: red; background: transparent }
+.p2 sw-speaker { color: green; background: transparent }
+.p3 sw-speaker { color: blue; background: transparent }
+.p4 sw-speaker { color: orangered; background: transparent }
+.p5 sw-speaker { color: purple; background: transparent }
 
 /* 
 
