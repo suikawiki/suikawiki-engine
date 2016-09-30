@@ -273,7 +273,7 @@ $templates->{(SW10_NS)}->{'ed'} = sub {
   $item->{parent}->append_child ($el);
 
   my $class = $item->{node}->get_attribute ('class') // '';
-  $class .= ' sw-' . $item->{node}->local_name;
+  $class .= ' sw-note-block sw-' . $item->{node}->local_name;
   $el->set_attribute (class => $class);
 
   unshift @$items,
