@@ -272,13 +272,13 @@ if ($path[0] eq 'n' and @path == 2) {
           my $ad2_el = $html_doc->create_element ('aside');
           $ad2_el->set_attribute (class => 'swe-ad swe-ad-google');
           $ad2_el->inner_html (q{
+            <ins class="adsbygoogle"
+                style="display:inline-block;width:300px;height:250px"
+                data-ad-client="ca-pub-6943204637055835"
+                data-ad-slot="1478788718"></ins>
             <script>
-              google_ad_client = "ca-pub-6943204637055835";
-              google_ad_slot = "1478788718";
-              google_ad_width = 300;
-              google_ad_height = 250;
+              (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
-            <script src="https://pagead2.googlesyndication.com/pagead/show_ads.js" async></script>
           });
           $body_el->insert_before ($ad2_el, $search_el);
         } else {
