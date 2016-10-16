@@ -278,7 +278,7 @@ if ($path[0] eq 'n' and @path == 2) {
               google_ad_width = 300;
               google_ad_height = 250;
             </script>
-            <script src="https://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+            <script src="https://pagead2.googlesyndication.com/pagead/show_ads.js" async></script>
           });
           $body_el->insert_before ($ad2_el, $search_el);
         } else {
@@ -785,7 +785,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
 </div>
 
-<div class=section>
+<div class="section page-names">
 <h2>Page name(s)</h2>
 
 <form method=post accept-charset=utf-8>
