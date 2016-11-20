@@ -10,7 +10,7 @@ Class::Accessor::Lite~0.08
 Class::Data::Inheritable~0.08
 Class::Inspector~1.28
 Cookie::Baker~0.07
-Cpanel::JSON::XS~3.0223
+Cpanel::JSON::XS~3.0224
 Crypt::SSLeay~0.72
 Data::Dumper~2.161
 Devel::CheckLib~1.07
@@ -42,13 +42,13 @@ HTTP::Date~6.02
 HTTP::Entity::Parser~0.18
 HTTP::Headers~6.11
 HTTP::Headers::Fast~0.20
-HTTP::Message~6.11
 HTTP::MultiPartParser~0.01
 HTTP::Negotiate~6.01
 HTTP::Request~6.11
+HTTP::Status~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
-IO::Dir~1.07
+IO::File~1.14
 IO::HTML~1.001
 IO::Socket::SSL~2.038
 IPC::Signal~1.00
@@ -82,10 +82,10 @@ Signal::Mask~0.008
 Starlet~0.30
 Stream::Buffered~0.03
 Term::ANSIColor~4.06
-Test::Builder~1.302062
 Test::Class~0.50
 Test::Deep~1.124
 Test::Differences~0.64
+Test::More~1.302062
 Test::Requires~0.10
 Test::SharedFork~0.35
 Test::TCP~2.17
