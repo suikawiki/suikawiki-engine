@@ -18,7 +18,7 @@ Devel::StackTrace~2.01
 Devel::StackTrace::AsHTML~0.15
 Digest::MD5~2.55
 Digest::SHA~5.96
-Encode~2.87
+Encode~2.88
 Encode::Locale~1.05
 Exporter~5.72
 Exporter::Lite~0.08
@@ -45,12 +45,11 @@ HTTP::Headers::Util~6.11
 HTTP::Message~6.11
 HTTP::MultiPartParser~0.01
 HTTP::Negotiate~6.01
-HTTP::Request::Common~6.11
-HTTP::Response~6.11
+HTTP::Request~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
+IO::File~1.14
 IO::HTML~1.001
-IO::Handle~1.28
 IO::Socket::SSL~2.039
 IPC::Signal~1.00
 JSON::MaybeXS~1.003008
@@ -67,7 +66,6 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.014
 Mozilla::CA~20160104
 Net::HTTP~6.09
-Net::HTTPS~6.09
 Net::SSLeay~1.78
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
