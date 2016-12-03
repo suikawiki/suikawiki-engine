@@ -41,11 +41,11 @@ HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.18
 HTTP::Headers::Fast~0.20
+HTTP::Headers::Util~6.11
 HTTP::Message~6.11
 HTTP::MultiPartParser~0.01
 HTTP::Negotiate~6.01
 HTTP::Response~6.11
-HTTP::Status~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
 IO::File~1.14
