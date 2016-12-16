@@ -1,7 +1,6 @@
 Algorithm::Diff~1.1903
 AnyEvent~7.13
 AnyEvent::HTTP~2.23
-AnyEvent::Util
 Apache::LogFormat::Compiler~0.33
 Canary::Stability~2012
 Capture::Tiny~0.44
@@ -46,10 +45,10 @@ HTTP::Message~6.11
 HTTP::MultiPartParser~0.01
 HTTP::Negotiate~6.01
 HTTP::Request~6.11
-HTTP::Response~6.11
+HTTP::Request::Common~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
-IO::File~1.14
+IO::Dir~1.07
 IO::HTML~1.001
 IO::Socket::SSL~2.039
 IPC::Signal~1.00
@@ -67,6 +66,7 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.014
 Mozilla::CA~20160104
 Net::HTTP~6.09
+Net::HTTPS~6.09
 Net::SSLeay~1.78
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
