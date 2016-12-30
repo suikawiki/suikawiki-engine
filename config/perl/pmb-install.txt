@@ -1,6 +1,7 @@
 Algorithm::Diff~1.1903
 AnyEvent~7.13
 AnyEvent::HTTP~2.23
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.33
 Canary::Stability~2012
 Capture::Tiny~0.44
@@ -34,17 +35,16 @@ Filesys::Notify::Simple~0.12
 Filter::Util::Call~1.55
 Getopt::Long~2.49
 HTML::Entities~3.69
-HTML::HeadParser~3.71
 HTML::Tagset~3.20
 HTTP::Cookies~6.01
 HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.18
 HTTP::Headers::Fast~0.20
+HTTP::Message~6.11
 HTTP::MultiPartParser~0.01
 HTTP::Negotiate~6.01
-HTTP::Request~6.11
-HTTP::Response~6.11
+HTTP::Request::Common~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
 IO::Dir~1.07
@@ -65,7 +65,6 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.014
 Mozilla::CA~20160104
 Net::HTTP~6.09
-Net::HTTPS~6.09
 Net::SSLeay~1.78
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
@@ -81,10 +80,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~4.06
-Test::Builder~1.302073
 Test::Class~0.50
 Test::Deep~1.124
 Test::Differences~0.64
+Test::More~1.302073
 Test::Requires~0.10
 Test::SharedFork~0.35
 Test::TCP~2.17
@@ -95,6 +94,7 @@ Time::Local~1.25
 Try::Tiny~0.27
 Types::Serialiser~1.0
 URI~1.71
+URI::Escape~3.31
 WWW::Form::UrlEncoded~0.23
 WWW::RobotRules~6.02
 XSLoader~0.24
