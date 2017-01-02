@@ -34,6 +34,7 @@ Filesys::Notify::Simple~0.12
 Filter::Util::Call~1.55
 Getopt::Long~2.49
 HTML::Entities~3.69
+HTML::HeadParser~3.71
 HTML::Tagset~3.20
 HTTP::Cookies~6.01
 HTTP::Daemon~6.01
@@ -44,11 +45,11 @@ HTTP::Message~6.11
 HTTP::MultiPartParser~0.01
 HTTP::Negotiate~6.01
 HTTP::Request~6.11
-HTTP::Response~6.11
+HTTP::Request::Common~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
+IO::File~1.14
 IO::HTML~1.001
-IO::Handle~1.28
 IO::Socket::SSL~2.040
 IPC::Signal~1.00
 JSON::MaybeXS~1.003008
@@ -95,7 +96,6 @@ Time::Local~1.25
 Try::Tiny~0.27
 Types::Serialiser~1.0
 URI~1.71
-URI::Escape~3.31
 WWW::Form::UrlEncoded~0.23
 WWW::RobotRules~6.02
 XSLoader~0.24
