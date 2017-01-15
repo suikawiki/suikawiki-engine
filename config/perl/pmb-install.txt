@@ -1,6 +1,7 @@
 Algorithm::Diff~1.1903
 AnyEvent~7.13
 AnyEvent::HTTP~2.23
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.33
 Canary::Stability~2012
 Capture::Tiny~0.44
@@ -40,10 +41,11 @@ HTTP::Cookies~6.01
 HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.18
-HTTP::Headers~6.11
 HTTP::Headers::Fast~0.20
+HTTP::Message~6.11
 HTTP::MultiPartParser~0.01
 HTTP::Negotiate~6.01
+HTTP::Request~6.11
 HTTP::Request::Common~6.11
 HTTP::Response~6.11
 Hash::MultiValue~0.16
@@ -66,11 +68,12 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.014
 Mozilla::CA~20160104
 Net::HTTP~6.12
+Net::HTTPS~6.12
 Net::SSLeay~1.80
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
 Path::Class~0.37
-Path::Tiny~0.098
+Path::Tiny~0.100
 Plack~1.0042
 Pod::Usage~1.69
 Proc::Wait3~0.05
@@ -95,6 +98,7 @@ Time::Local~1.25
 Try::Tiny~0.28
 Types::Serialiser~1.0
 URI~1.71
+URI::Escape~3.31
 WWW::Form::UrlEncoded~0.23
 WWW::RobotRules~6.02
 XSLoader~0.24
