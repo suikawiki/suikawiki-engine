@@ -46,11 +46,11 @@ HTTP::Headers::Fast~0.21
 HTTP::Headers::Util~6.11
 HTTP::MultiPartParser~0.01
 HTTP::Negotiate~6.01
-HTTP::Request::Common~6.11
 HTTP::Response~6.11
+HTTP::Status~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
-IO::Dir~1.07
+IO::File~1.14
 IO::HTML~1.001
 IO::Socket::SSL~2.047
 IPC::Signal~1.00
