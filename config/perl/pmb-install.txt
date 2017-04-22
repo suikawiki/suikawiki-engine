@@ -18,7 +18,7 @@ Devel::StackTrace~2.02
 Devel::StackTrace::AsHTML~0.15
 Digest::MD5~2.55
 Digest::SHA~5.96
-Encode~2.88
+Encode~2.89
 Encode::Locale~1.05
 Exporter~5.72
 Exporter::Lite~0.08
@@ -34,18 +34,17 @@ Filesys::Notify::Simple~0.12
 Filter::Util::Call~1.57
 Getopt::Long~2.49
 HTML::Entities~3.69
-HTML::HeadParser~3.71
 HTML::Tagset~3.20
 HTTP::Cookies~6.03
 HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.19
 HTTP::Headers::Fast~0.21
-HTTP::Headers::Util~6.11
+HTTP::Message~6.11
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.11
-HTTP::Response~6.11
+HTTP::Status~6.11
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
 IO::Dir~1.07
@@ -97,7 +96,6 @@ Time::Local~1.25
 Try::Tiny~0.28
 Types::Serialiser~1.0
 URI~1.71
-URI::Escape~3.31
 WWW::Form::UrlEncoded~0.24
 WWW::RobotRules~6.02
 common::sense~3.74
