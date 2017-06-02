@@ -168,6 +168,7 @@ function createToolbar (root) {
 
     var form = getAncestorElement (container, 'FORM');
     var ta = form.elements.text;
+
     var insertText = function (added) {
       var st = ta.scrollTop;
       var ss = ta.selectionStart;
@@ -182,7 +183,7 @@ function createToolbar (root) {
       ta.scrollTop = st;
       ta.focus ();
     }; // insertText
-    
+
     var addButton = function (labelHTML, title, onclick) {
       var button = document.createElement ('button');
       button.setAttribute ('type', 'button');

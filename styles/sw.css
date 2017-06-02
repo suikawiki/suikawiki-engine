@@ -325,6 +325,13 @@ sw-talk > p:first-of-type {
 }
 
 @media (min-width: 80em) {
+  body:not(.swe-has-sidebar) {
+    width: 65em;
+    max-width: none;
+    padding-left: 15em;
+    padding-right: 0;
+  }
+
   .side-menu {
     position: absolute;
     top: 7em;
@@ -1719,8 +1726,8 @@ body > aside {
 }
 
 .swe-page-names {
-  display: none;
-  margin: 0;
+  display: block;
+  margin: 0 0 0 2rem;
   padding: 0 0 0 0.5em;
   font-size: 70%;
   line-height: 1.5;
@@ -1741,24 +1748,20 @@ body > aside {
 }
 
 .swe-page-links {
-  display: none;
+  display: block;
+  margin-left: 2rem;
   font-size: 80%;
-}
-
-@media (min-width: 50em) {
-  .swe-page-names {
-    display: block;
-  }
-
-  .swe-page-links {
-    display: block;
-  }
 }
 
 /* Advertisements */
 
 .swe-ad {
+  display: block;
   text-align: center;
+}
+
+body > .swe-ad {
+  margin-left: 2em;
 }
 
 aside .swe-ad {
@@ -1767,12 +1770,16 @@ aside .swe-ad {
 }
 
 @media (min-width: 50em) {
-  body > .swe-ad {
-    display: none;
-  }
   aside .swe-ad {
     display: block;
   }
+}
+
+.swe-ad > ins {
+  background: transparent;
+  color: inherit;
+  border: none;
+  padding: 0;
 }
 
 .swe-ad-amazon {

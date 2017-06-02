@@ -235,7 +235,6 @@ if ($path[0] eq 'n' and @path == 2) {
       $body_el->append_child ($search_el);
 
       if ($html_container) {
-        my $sidebar_el = $html_doc->create_element ('aside');
 
         my $use_google_ads;
         my $modified = $id_prop->{modified};
@@ -243,7 +242,6 @@ if ($path[0] eq 'n' and @path == 2) {
           $use_google_ads = 1;
         }
 
-        my $ad_el = $html_doc->create_element ('aside');
         if ($use_google_ads) {
           my $df = $html_doc->create_document_fragment;
           $df->inner_html (q{
@@ -257,35 +255,27 @@ if ($path[0] eq 'n' and @path == 2) {
           });
           $html_doc->head->append_child ($df);
 
-          $ad_el->set_attribute (class => 'swe-ad swe-ad-google');
-          $ad_el->inner_html (q{
-            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-            <ins class="adsbygoogle"
-                style="display:inline-block;width:160px;height:600px"
-                data-ad-client="ca-pub-6943204637055835"
-                data-ad-slot="3629704714"></ins>
-            <script>
-              (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-          });
-
           my $ad2_el = $html_doc->create_element ('aside');
           $ad2_el->set_attribute (class => 'swe-ad swe-ad-google');
           $ad2_el->inner_html (q{
-            <ins class="adsbygoogle"
-                style="display:inline-block;width:300px;height:250px"
-                data-ad-client="ca-pub-6943204637055835"
-                data-ad-slot="1478788718"></ins>
-            <script>
-              (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6943204637055835"
+     data-ad-slot="7192705117"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
           });
           $body_el->insert_before ($ad2_el, $search_el);
         } else {
-          $ad_el->set_attribute (class => 'swe-ad swe-ad-amazon');
-          $ad_el->inner_html (q{<script>amazon_ad_tag = "wakaba1-22"; amazon_ad_width = "160"; amazon_ad_height = "600"; amazon_ad_logo = "hide"; amazon_ad_border = "hide"; amazon_color_border = "FFFFFF"; amazon_color_link = "004000"; amazon_color_logo = "004000";</script><script src="https://www.assoc-amazon.jp/s/ads.js"></script>});
+          #my $sidebar_el = $html_doc->create_element ('aside');
+          #my $ad_el = $html_doc->create_element ('aside');
+          #$ad_el->set_attribute (class => 'swe-ad swe-ad-amazon');
+          #$ad_el->inner_html (q{<script>amazon_ad_tag = "wakaba1-22"; amazon_ad_width = "160"; amazon_ad_height = "600"; amazon_ad_logo = "hide"; amazon_ad_border = "hide"; amazon_color_border = "FFFFFF"; amazon_color_link = "004000"; amazon_color_logo = "004000";</script><script src="https://www.assoc-amazon.jp/s/ads.js"></script>});
+          #$sidebar_el->append_child ($ad_el);
+          #$body_el->class_list->add ('swe-has-sidebar');
         }
-        $sidebar_el->append_child ($ad_el);
 
         my $ul_el = $html_doc->create_element ('ul');
         $ul_el->set_attribute (class => 'swe-page-names');
@@ -296,7 +286,7 @@ if ($path[0] eq 'n' and @path == 2) {
           $li_el->first_child->href ($app->name_url ($name, $id));
           $ul_el->append_child ($li_el);
         }
-        $sidebar_el->append_child ($ul_el);
+        $body_el->append_child ($ul_el);
 
         {
           my $p_el = $html_doc->create_element ('nav');
@@ -306,11 +296,8 @@ if ($path[0] eq 'n' and @path == 2) {
           $a_el->rel ('archives');
           $a_el->text_content ('History');
           $p_el->append_child ($a_el);
-          $sidebar_el->append_child ($p_el);
+          $body_el->append_child ($p_el);
         }
-
-        $body_el->append_child ($sidebar_el);
-        $body_el->class_list->add ('swe-has-sidebar');
       }
 
       my $footer_el = $html_doc->create_element ('footer');
