@@ -378,20 +378,36 @@ sw-talk > p:first-of-type {
 }
 
 .side-menu > nav a.hide-side-menu-button {
-  float: right;
-  min-width: 1em;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: 0;
+  font-size: 30%;
+  line-height: 100vh;
+  min-width: 0;
+  text-align: center;
 }
 
-.side-menu > section {
+.side-menu > section-group {
+  display: block;
+  position: absolute;
+  top: 2em;
+  bottom: 0;
+  width: 14.3em;
+  overflow: auto;
+}
+
+.side-menu > section-group > section {
   margin: 0;
   padding: 0 0.5em;
 }
 
-.side-menu > section:not(.active) {
+.side-menu > section-group > section:not(.active) {
   display: none;
 }
 
-.side-menu > section > h1 {
+.side-menu > section-group > section > h1 {
   display: none;
 }
 

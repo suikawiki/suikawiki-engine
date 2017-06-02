@@ -343,6 +343,8 @@ function initTOC (root) {
   var container = document.createElement ('nav');
   container.className = 'side-menu';
 
+  var sectionContainer = document.createElement ('section-group');
+
   // TOC
 
   var levelOffset = 0;
@@ -403,7 +405,7 @@ function initTOC (root) {
     ol.appendChild (li);
   }]);
 
-  container.appendChild (section);
+  sectionContainer.appendChild (section);
   if (hasSection) insertBeforeFirstSection (article, section.cloneNode (true));
   section.id = 'side-toc';
 
@@ -453,7 +455,7 @@ function initTOC (root) {
     });
     section.appendChild (list);
 
-    container.appendChild (section);
+    sectionContainer.appendChild (section);
 
     if (location.hash === '') {
       var pageName = document.querySelector ('body > h1 > a[rel~=bookmark]');
@@ -474,7 +476,7 @@ function initTOC (root) {
   var selectSection = function (id) {
     var firstSection;
     var firstButton;
-    Array.prototype.forEach.call (container.children, function (s) {
+    Array.prototype.forEach.call (sectionContainer.children, function (s) {
       if (s.localName === 'section') {
         firstSection = firstSection || s;
         s.classList.toggle ('active', s.id === id);
@@ -493,7 +495,7 @@ function initTOC (root) {
     }
   };
 
-  Array.prototype.forEach.call (container.querySelectorAll ('h1'), function (h) {
+  Array.prototype.forEach.call (sectionContainer.querySelectorAll ('h1'), function (h) {
     var section = h.parentNode;
     var a = document.createElement ('a');
     a.href = '#' + section.id;
@@ -514,7 +516,9 @@ function initTOC (root) {
   };
   hideButton.textContent = '◀';
   nav.appendChild (hideButton);
-  container.insertBefore (nav, container.firstChild);
+
+  container.appendChild (nav);
+  container.appendChild (sectionContainer);
 
   document.body.appendChild (container);
   selectSection (null);
@@ -525,7 +529,7 @@ function initTOC (root) {
   showButton.onclick = function () {
     container.setAttribute ('data-open', '');
   };
-  showButton.textContent = '▶';
+  showButton.textContent = '三';
   showButton.title = '目次を表示';
   document.body.appendChild (showButton);
 
