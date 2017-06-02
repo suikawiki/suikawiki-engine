@@ -466,6 +466,7 @@ sw-talk > p:first-of-type {
   text-indent: 0;
   font-size: 90%;
   line-height: 2.2;
+  column-span: all;
 }
 
 .sw-preamble {
@@ -743,6 +744,7 @@ figcaption {
   text-align: center;
   font-weight: bolder;
   font-family: sans-serif;
+  column-span: all;
 }
 
 figure > p:first-child {
