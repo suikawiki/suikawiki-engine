@@ -261,21 +261,19 @@ function addGoogleSearch () {
   search.firstChild.lastChild.textContent = word;
   placeholder.parentNode.insertBefore (search, placeholder);
 
-  var script = document.createElement ('script');
-  script.src = '//www.google.co.jp/jsapi';
-  script.onload = function () {
-    google.load('search', '1');
-    setTimeout (function () {
-    //google.setOnLoadCallback(function() {
-      var customSearchControl = new google.search.CustomSearchControl('partner-pub-6943204637055835:1339232282');
-      customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
-      var options = new google.search.DrawOptions();
-      options.setAutoComplete(true);
-      customSearchControl.draw('cse-search-form', options);
-    //}, true);
-    }, 1000);
-  }; // onload
-  document.body.appendChild (script);
+  (function() {
+    var cx = 'partner-pub-6943204637055835:1339232282';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+  var div = document.createElement ('div');
+  div.className = 'gcse-search';
+  div.setAttribute ('data-linktarget', '_self');
+  placeholder.appendChild (div);
 } // addGoogleSearch
 
 function addGoogleAnalytics () {
