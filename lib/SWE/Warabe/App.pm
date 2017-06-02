@@ -143,11 +143,11 @@ sub page_url ($$%) {
 } # page_url
 
 sub css_url ($) {
-  return '/styles/sw?2';
+  return '/styles/sw?3';
 } # css_url
 
 sub js_url ($) {
-  return '/scripts/sw?2';
+  return '/scripts/sw?3';
 } # js_url
 
 sub htescape ($) {
@@ -181,7 +181,7 @@ sub throw_manual_redirect ($$;%) {
 
 =head1 LICENSE
 
-Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2017 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
