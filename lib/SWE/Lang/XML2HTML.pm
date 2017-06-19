@@ -64,9 +64,9 @@ $templates->{(HTML_NS)}->{section} = sub {
 $templates->{(HTML_NS)}->{h1} = sub {
   my ($items, $item) = @_;
 
-  my $h_el = $item->{doc}->create_element_ns
-      (HTML_NS,
-       'h' . ($item->{heading_level} > 6 ? '6' : $item->{heading_level}));
+  my $h_el = $item->{doc}->create_element_ns (HTML_NS, 'h1');
+  $h_el->set_attribute (id => "header-$item->{section_id}")
+      if defined $item->{section_id};
   $item->{parent}->append_child ($h_el);
 
   unshift @$items,

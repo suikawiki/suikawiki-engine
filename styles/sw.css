@@ -109,7 +109,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: sans-serif;
 }
 
-h1 {
+body > h1 {
   background-image: url(../images/sw.png) /* 107x59 */;
   background-position: middle left;
   background-repeat: no-repeat;
@@ -119,21 +119,25 @@ h1 {
   font-size: 150%;
 }
 
-h2, h3 {
+h2, h3,
+section h1 {
   font-size: 150%;
 }
 
-h4 {
+h4,
+section section section > h1 {
   font-size: 120%;
-  border-bottom: solid 0.1em;
+  border-bottom: solid 1px;
   padding-bottom: 0.1em;
 }
 
-h5 {
+h5,
+section section section section h1 {
   font-size: 120%;
 }
 
-h6 {
+h6,
+section section section section section h1 {
   font-size: 100%;
 }
 
@@ -618,7 +622,7 @@ th:hover, td:hover {
 /* Edits */
 
 ins {
-  border-bottom: solid 0.1em;
+  border-bottom: solid 1px;
   padding-bottom: 0.1em;
   background-color: rgb(255, 255, 153);
   color: black;
@@ -646,7 +650,7 @@ blockquote > del {
 /* Anchors */
 
 :link, :visited {
-  border-bottom: solid 0.1em #babaff;
+  border-bottom: solid 1px #babaff;
   padding-bottom: 0.1em;
   text-decoration: none;
 }
