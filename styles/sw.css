@@ -125,19 +125,19 @@ section h1 {
 }
 
 h4,
-section section section > h1 {
+section section > h1 {
   font-size: 120%;
   border-bottom: solid 1px;
   padding-bottom: 0.1em;
 }
 
 h5,
-section section section section h1 {
+section section section h1 {
   font-size: 120%;
 }
 
 h6,
-section section section section section h1 {
+section section section section h1 {
   font-size: 100%;
 }
 
