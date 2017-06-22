@@ -395,7 +395,7 @@ function initTOC (root) {
         if (sublist) li.appendChild (sublist);
 
         list.appendChild (li);
-      } else if (node.localName === 'h1') {
+      } else if (/^h[1-6]$/.test (node.localName)) {
         if (header) copyText (node, header);
       }
       nodes = Array.prototype.slice.call (node.children).concat (nodes);
