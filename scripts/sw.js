@@ -400,8 +400,9 @@ function initTOC (root) {
       } else if (node.localName === 'figure' ||
                  node.localName === 'blockquote') {
         //
+      } else {
+        nodes = Array.prototype.slice.call (node.children).concat (nodes);
       }
-      nodes = Array.prototype.slice.call (node.children).concat (nodes);
     }
     return list.hasChildNodes () ? list : null;
   }; // createList
