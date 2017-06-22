@@ -344,67 +344,70 @@ function initTOC (root) {
   var sectionContainer = document.createElement ('section-group');
 
   // TOC
-
-  var levelOffset = 0;
-  var firstH = article.querySelector
-    ('section > h1, section > h2, section > h3, section > h4, section > h5, section > h6');
-  if (firstH) {
-    levelOffset = parseInt (firstH.localName.replace (/^h/, '')) - 1;
-  }
-
   var section = document.createElement ('section');
   section.id = 'toc';
   section.className = 'toc';
   var h = document.createElement ('h1');
   h.textContent = '目次';
   section.appendChild (h);
-  var ol = document.createElement ('ol');
-  ol.setAttribute ('data-level', 1);
-  section.appendChild (ol);
 
   var copyText = function (src, dest) {
-    dest.innerHTML = src.innerHTML;
-    Array.prototype.forEach.apply (dest.querySelectorAll ('.sw-heading-anchor, .sw-heading-link, .sw-anchor-end'), [function (e) {
+    var copy = document.createDocumentFragment ();
+    Array.prototype.forEach.call (src.childNodes, function (e) {
+      copy.appendChild (e.cloneNode (true));
+    });
+    Array.prototype.forEach.apply (copy.querySelectorAll ('.sw-heading-anchor, .sw-heading-link, .sw-anchor-end'), [function (e) {
       e.parentNode.removeChild (e);
     }]);
-    Array.prototype.forEach.apply (dest.querySelectorAll ('a'), [function (e) {
+    Array.prototype.forEach.apply (copy.querySelectorAll ('a, dfn'), [function (e) {
       var df = document.createDocumentFragment ();
       Array.prototype.forEach.apply (e.childNodes, [function (n) { df.appendChild (n) }]);
       e.parentNode.replaceChild (df, e);
     }]);
+    if (copy.hasChildNodes ()) {
+      dest.textContent = '';
+      dest.appendChild (copy);
+    }
   }; // copyText
 
-  var hasSection = false;
-  Array.prototype.forEach.apply (article.querySelectorAll ('.section > * > .sw-heading-anchor[href]'), [function (a) {
-    var h = a.parentNode;
-    var hLevel = parseInt (h.localName.replace (/^h/, '')) - levelOffset;
-    var li = document.createElement ('li');
-    var link = document.createElement ('a');
-    link.href = a.href;
-    copyText (h, link);
-    li.appendChild (link);
-    hasSection = true;
-    while (true) {
-      var olLevel = parseInt (ol.getAttribute ('data-level'));
-      if (hLevel < olLevel) {
-        ol = ol.parentNode.parentNode;
-        continue;
-      } else if (hLevel > olLevel) {
-        if (!ol.lastElementChild) {
-          ol.appendChild (document.createElement ('li'));
+  var createList = function (container, header) {
+    var list = document.createElement ('ol');
+    var nodes = [];
+    nodes = nodes.concat (Array.prototype.slice.call (container.children));
+    while (nodes.length) {
+      var node = nodes.shift ();
+      if (node.localName === 'section' ||
+          (node.localName === 'div' && node.classList.contains ('section'))) {
+        var li = document.createElement ('li');
+        var a = document.createElement ('a');
+        if (node.id && document.getElementById (node.id) === node) {
+          a.href = '#' + encodeURIComponent (node.id);
+        } else {
+          a.href = 'javascript:';
+          (function (node) {
+            a.onclick = function () { node.scrollIntoViewIfNeeded (true) };
+          }) (node);
         }
-        ol = ol.lastElementChild.appendChild (document.createElement ('ol'));
-        ol.setAttribute ('data-level', olLevel + 1);
-        continue;
-      } else {
-        break;
+        a.textContent = '§';
+        li.appendChild (a);
+
+        var sublist = createList (node, a);
+        if (sublist) li.appendChild (sublist);
+
+        list.appendChild (li);
+      } else if (node.localName === 'h1') {
+        if (header) copyText (node, header);
       }
+      nodes = Array.prototype.slice.call (node.children).concat (nodes);
     }
-    ol.appendChild (li);
-  }]);
+    return list.hasChildNodes () ? list : null;
+  }; // createList
+
+  var list = createList (article, null);
+  if (list) section.appendChild (list);
 
   sectionContainer.appendChild (section);
-  if (hasSection) insertBeforeFirstSection (article, section.cloneNode (true));
+  if (list) insertBeforeFirstSection (article, section.cloneNode (true));
   section.id = 'side-toc';
 
   // Definitions
