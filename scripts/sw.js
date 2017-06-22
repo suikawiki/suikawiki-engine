@@ -397,6 +397,9 @@ function initTOC (root) {
         list.appendChild (li);
       } else if (/^h[1-6]$/.test (node.localName)) {
         if (header) copyText (node, header);
+      } else if (node.localName === 'figure' ||
+                 node.localName === 'blockquote') {
+        //
       }
       nodes = Array.prototype.slice.call (node.children).concat (nodes);
     }
