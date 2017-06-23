@@ -195,15 +195,28 @@ section[id$="\2028歴史"],
   padding: 0 0.8em;
 }
 
-.article > h1, .section > h1,
-.article > h2, .section > h2,
-.article > h3, .section > h3,
-.article > h4, .section > h4,
-.article > h5, .section > h5,
-.article > h6, .section > h6,
+.section > h1,
+.section > h2,
+.section > h3,
+.section > h4,
+.section > h5,
+.section > h6,
+.article > header > h1,
 .article > .article, .article > .section,
 .section > .article, .section > .section {
-  margin-left: -1em;
+  margin-left: -1rem;
+}
+
+.article > header > .breadcrumb {
+  margin-left: -1rem;
+  font-size: 75%;
+  line-height: 1.2;
+  color: gray;
+  background: transparent;
+}
+
+.article > header > h1 {
+  font-size: 150%;
 }
 
 .article:last-child, .section:last-child {

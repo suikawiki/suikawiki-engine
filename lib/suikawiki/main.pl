@@ -196,10 +196,18 @@ if ($path[0] eq 'n' and @path == 2) {
         my $article_el = $html_doc->create_element ('div');
         $article_el->set_attribute (class => 'article');
 
-        my $h2_el = $html_doc->create_element ('h2');
-        $h2_el->text_content (length $title_text ? $title_text : $name);
+        my $header = $html_doc->create_element ('header');
+        $header->inner_html (q{
+          <nav class=breadcrumb>
+            <a href=https://suikawiki.org>SuikaWiki</a> >
+            <a href=/>Wiki</a> >
+          </nav>
+          <h1></h1>
+        });
+        $header->last_element_child
+            ->text_content (length $title_text ? $title_text : $name);
             ## TODO: {'title-type'};
-        $article_el->append_child ($h2_el);
+        $article_el->append_child ($header);
         
         while (@{$html_container->child_nodes}) {
           $article_el->append_child ($html_container->first_child);
