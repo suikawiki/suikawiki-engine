@@ -1,6 +1,7 @@
 package SuikaWiki5::Main;
 use strict;
 use SWE::String;
+use Web::URL::Encoding;
 use Web::DOM::Document;
 use SWML::Parser;
 use SWE::Lang qw/@ContentMediaType/;
@@ -208,6 +209,15 @@ if ($path[0] eq 'n' and @path == 2) {
             ->text_content (length $title_text ? $title_text : $name);
             ## TODO: {'title-type'};
         $article_el->append_child ($header);
+        if (defined $id_prop->{parent}) {
+          my $nav = $header->first_element_child;
+          my $link = $html_doc->create_element ('a');
+          $link->text_content ($id_prop->{parent});
+          $link->set_attribute (href => '/n/' . percent_encode_c $id_prop->{parent});
+          $nav->append_child ($link);
+          my $text = $html_doc->create_text_node (' > ');
+          $nav->append_child ($text);
+        }
         
         while (@{$html_container->child_nodes}) {
           $article_el->append_child ($html_container->first_child);
@@ -689,6 +699,13 @@ if ($path[0] eq 'n' and @path == 2) {
           delete $id_prop->{legal};
         }
 
+        my $parent = $app->text_param ('parent');
+        if (defined $parent and length $parent) {
+          $id_prop->{parent} = $parent;
+        } else {
+          delete $id_prop->{parent};
+        }
+
         my $vc = $db->vc;
         local $db->id_content->{version_control} = $vc;
         local $db->id_prop->{version_control} = $vc;
@@ -775,6 +792,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <select name=content-type></select>
 <label><input type=checkbox name=historical> Historical</label>
 <label><input type=checkbox name=legal> Legal</label>
+<label>Parent: <input name=parent></label>
 [<a rel=help>Help</a> / <a rel=license>License</a>]
 </form>
 
@@ -806,6 +824,10 @@ if ($path[0] eq 'n' and @path == 2) {
       $historical_field->set_attribute (checked => '') if $id_prop->{historical};
       my $legal_field = $form_el->get_elements_by_tag_name ('input')->[3];
       $legal_field->set_attribute (checked => '') if $id_prop->{legal};
+
+      my $parent_field = $form_el->get_elements_by_tag_name ('input')->[4];
+      $parent_field->set_attribute (value => $id_prop->{parent})
+          if defined $id_prop->{parent};
 
       my $ct = $id_prop->{'content-type'} // 'text/x-suikawiki';
       set_content_type_options
