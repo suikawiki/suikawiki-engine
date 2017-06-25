@@ -44,7 +44,8 @@ HTTP::Headers::Fast~0.21
 HTTP::Message~6.13
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.13
+HTTP::Request::Common~6.13
+HTTP::Status~6.13
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
 IO::File~1.14
