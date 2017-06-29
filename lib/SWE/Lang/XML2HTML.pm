@@ -2,7 +2,7 @@ package SWE::Lang::XML2HTML;
 use strict;
 use Wanage::URL qw(percent_encode_c);
 
-our $ConverterVersion = 5;
+our $ConverterVersion = 6;
 
 sub AA_NS () { q<http://pc5.2ch.net/test/read.cgi/hp/1096723178/aavocab#> }
 sub HTML_NS () { q<http://www.w3.org/1999/xhtml> }
@@ -116,6 +116,9 @@ $templates->{(HTML_NS)}->{$_} = sub {
     my $name = length $ilink ? $ilink : $item->{node}->text_content;
     my $url = $item->{name_to_url}->($name);
     $parent->href ($url);
+    if ($item->{node}->local_name eq 'cite') {
+      $parent->rel ('nofollow');
+    }
     $el->append_child ($parent);
   }
 
