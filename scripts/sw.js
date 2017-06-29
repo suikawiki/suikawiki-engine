@@ -300,7 +300,7 @@ function addGoogleAnalytics () {
 document.createElement ('time');
 
 function initHeadings (root) {
-  var editLink = document.querySelector ('.nav.tools a[rel=edit]');
+  var editLink = document.querySelector ('.nav.tools a[rel~=edit]');
   Array.prototype.forEach.apply (root.querySelectorAll ('h1, h2, h3, h4, h5, h6'), [function (h) {
     var section = h.parentNode;
     if (!section || section.localName != 'section') return;
