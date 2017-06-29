@@ -1,6 +1,7 @@
 Algorithm::Diff~1.1903
 AnyEvent~7.14
 AnyEvent::HTTP~2.23
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.35
 Canary::Stability~2012
 Capture::Tiny~0.46
@@ -27,7 +28,7 @@ ExtUtils::Config~0.008
 ExtUtils::Helpers~0.026
 ExtUtils::InstallPaths~0.011
 File::Listing~6.04
-File::ShareDir~1.102
+File::ShareDir~1.104
 File::ShareDir::Install~0.11
 File::Temp~0.2304
 Filesys::Notify::Simple~0.12
@@ -42,15 +43,15 @@ HTTP::Date~6.02
 HTTP::Entity::Parser~0.19
 HTTP::Headers~6.13
 HTTP::Headers::Fast~0.21
-HTTP::Message~6.13
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
+HTTP::Request~6.13
 HTTP::Response~6.13
 HTTP::Status~6.13
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
+IO::Dir~1.07
 IO::HTML~1.001
-IO::Handle~1.28
 IO::Socket::SSL~2.049
 IPC::Signal~1.00
 JSON::MaybeXS~1.003009
@@ -83,10 +84,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~4.06
+Test::Builder~1.302086
 Test::Class~0.50
 Test::Deep~1.127
 Test::Differences~0.64
-Test::More~1.302086
 Test::Requires~0.10
 Test::SharedFork~0.35
 Test::TCP~2.19
