@@ -180,7 +180,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $nav_el = $html_doc->create_element ('div');
       $nav_el->set_attribute (class => 'nav tools');
-      $nav_el->inner_html (q[<a rel=edit>Edit</a> <a>New</a>]);
+      $nav_el->inner_html (q[<a rel="edit nofollow">Edit</a> <a rel=nofollow>New</a>]);
       $nav_el->last_child->href ($app->page_create_url);
       if (defined $id) {
         $nav_el->first_child->set_attribute
