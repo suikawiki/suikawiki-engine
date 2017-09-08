@@ -4,11 +4,19 @@ WGET = wget
 CURL = curl
 GIT = git
 
-updatenightly: local/bin/pmbp.pl
+updatenightly: local/bin/pmbp.pl clean build
 	$(CURL) https://gist.githubusercontent.com/motemen/667573/raw/git-submodule-track | sh
 	$(GIT) add modules
 	perl local/bin/pmbp.pl --update
-	$(GIT) add config
+	$(GIT) add config scripts/time.js
+
+clean:
+	rm -f scripts/time.js
+
+build: scripts/time.js
+
+scripts/time.js:
+	$(WGET) -O $@ https://raw.githubusercontent.com/wakaba/timejs/master/src/time.js
 
 ## ------ Setup ------
 
