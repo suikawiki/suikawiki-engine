@@ -10,9 +10,6 @@ TER.globalDateAndTimeStringPattern = /^([0-9]{4,})-([0-9]{2})-([0-9]{2})(?:[\u00
 /* HTML5 "date string" */
 TER.dateStringPattern = /^([0-9]{4,})-([0-9]{2})-([0-9]{2})$/;
 
-/* HTML5 "time string" */
-TER.timeStringPattern = /^([0-9]{2}):([0-9]{2})(?::([0-9]{2})(?:\.([0-9]+))?)?$/;
-
 TER.prototype._initialize = function () {
   var els = this.container.getElementsByTagName ('time');
   var elsL = els.length;
@@ -42,14 +39,6 @@ TER.prototype._replaceTimeContent = function (el) {
       this._setDateAttr (el, date);
     }
     this._setDateContent (el, date);
-  } else if (date.hasTime) {
-    if (!el.getAttribute ('title')) {
-      el.setAttribute ('title', el.textContent || this._getTextContent (el));
-    }
-    if (!el.getAttribute ('datetime')) {
-      this._setTimeAttr (el, date);
-    }
-    this._setTimeContent (el, date);
   }
 }; // TER.prototype._replaceTimeContent
 
@@ -58,24 +47,11 @@ TER.prototype._setDateTimeContent = function (el, date) {
 }; // TER.prototype._setDateTimeContent
 
 TER.prototype._setDateContent = function (el, date) {
-  this._setTextContent (el, this._getLocal (date).toLocaleDateString ());
+  this._setTextContent (el, date.toLocaleDateString (navigator.language, {"timeZone": "UTC"}));
 }; // TER.prototype._setDateContent
 
-TER.prototype._setTimeContent = function (el, date) {
-  this._setTextContent (el, this._getLocal (date).toLocaleTimeString ());
-}; // TER.prototype._setTimeContent
-
 TER.prototype._setDateTimeAttr = function (el, date) {
-  var r = '';
-  r = date.getUTCFullYear (); // JS does not support years 0001-0999
-  r += '-' + ('0' + (date.getUTCMonth () + 1)).slice (-2);
-  r += '-' + ('0' + date.getUTCDate ()).slice (-2);
-  r += 'T' + ('0' + date.getUTCHours ()).slice (-2);
-  r += ':' + ('0' + date.getUTCMinutes ()).slice (-2);
-  r += ':' + ('0' + date.getUTCSeconds ()).slice (-2);
-  r += '.' + (date.getUTCMilliseconds () + '00').slice (2);
-  r += 'Z';
-  el.setAttribute ('datetime', r);
+  el.setAttribute ('datetime', date.toISOString ());
 }; // TER.prototype._setDateTimeAttr
 
 TER.prototype._setDateAttr = function (el, date) {
@@ -85,22 +61,6 @@ TER.prototype._setDateAttr = function (el, date) {
   r += '-' + ('0' + date.getUTCDate ()).slice (-2);
   el.setAttribute ('datetime', r);
 }; // TER.prototype._setDateAttr
-
-TER.prototype._setTimeAttr = function (el, date) {
-  var r = '';
-  r = ('0' + date.getUTCHours ()).slice (-2);
-  r += ':' + ('0' + date.getUTCMinutes ()).slice (-2);
-  r += ':' + ('0' + date.getUTCSeconds ()).slice (-2);
-  r += '.' + (date.getUTCMilliseconds () + '00').slice (2);
-  el.setAttribute ('datetime', r);
-}; // TER.prototype._setTimeAttr
-
-TER.prototype._getLocal = function (d) {
-  /* Return a Date with same numbers of date/time, but in local timezone */
-  return new Date (d.getUTCFullYear (), d.getUTCMonth (), d.getUTCDate (),
-      d.getUTCHours (), d.getUTCMinutes (), d.getUTCSeconds (),
-      d.getUTCMilliseconds ());
-}; // TER.prototype._getLocal
 
 TER.prototype._getDate = function (el) {
   var datetime = el.getAttribute ('datetime');
@@ -146,26 +106,15 @@ TER.prototype._getDate = function (el) {
     if (m[1] < 100) {
       return new Date (NaN);
     }
-    var d = new Date (Date.UTC (m[1], m[2] - 1, m[3], 0, 0, 0));
+    // For old browsers (which don't support the options parameter of `toLocaleDateString` method)
+    // the time value is set to 12:00, so that most cases are covered.
+    var d = new Date (Date.UTC (m[1], m[2] - 1, m[3], 12, 0, 0));
     if (m[1] != d.getUTCFullYear () ||
         m[2] != d.getUTCMonth () + 1 ||
         m[3] != d.getUTCDate ()) {
       return new Date (NaN); // bad date error.
     }
     d.hasDate = true;
-    return d;
-  } else if (m = datetime.match (TER.timeStringPattern)) {
-    var d = new Date (Date.UTC (1970, 1 - 1, 1, m[1], m[2], m[3] || 0));
-    if (m[1] != d.getUTCHours () ||
-        m[2] != d.getUTCMinutes () ||
-        (m[3] || 0) != d.getUTCSeconds ()) {
-      return new Date (NaN); // bad time error.
-    }
-    if (m[4]) {
-      var ms = (m[4] + "000").substring (0, 3);
-      d.setMilliseconds (ms);
-    }
-    d.hasTime = true;
     return d;
   } else {
     return new Date (NaN);
@@ -338,7 +287,7 @@ Usage:
       new TER (document.body);
     };
   </script>
-  <script src="http://suika.fam.cx/www/style/ui/time.js.u8" charset=utf-8></script>
+  <script src="time.js" charset=utf-8></script>
   
   <time>2008-12-20T23:27+09:00</time>
   <!-- Will be rendered appropriately in the user's locale -->
@@ -350,22 +299,19 @@ Usage:
       new TER.Delta (document.body);
     };
   </script>
-  <script src="http://suika.fam.cx/www/style/ui/time.js.u8" charset=utf-8></script>
+  <script src="time.js" charset=utf-8></script>
   
   <time>2008-12-20T23:27+09:00</time>
   <!-- Will be rendered like "2 minutes ago" in English or Japanese -->
 
-If you'd like to load this script AFTER |time| elements are parsed,
-invoke |document.createElement ('time')| before they are used,
-otherwise they cannot be parsed appropriately in WinIE.
+Repository:
 
-Latest version of this script is available at
-<http://suika.fam.cx/www/style/ui/time.js.u8>.  Old versions of this
-script are available from
-<http://suika.fam.cx/www/style/ui/time.js.u8,cvslog>.
+Latest version of this script is available in Git repository
+<https://github.com/wakaba/timejs>.
 
-This script supports the HTML |time| element, which is a willful
-violation to the HTML Living Standard as of October 30, 2011.
+Specification:
+
+HTML Standard <https://html.spec.whatwg.org/#the-time-element>.
 
 This script interprets "global date and time string" using older
 parsing rules as defined in previous versions of the HTML spec, which
@@ -374,7 +320,8 @@ is a willful violation to the current HTML Living Standard.
 */
 
 /* ***** BEGIN LICENSE BLOCK *****
- * Copyright 2008-2015 Wakaba <wakaba@suikawiki.org>.  All rights reserved.
+ * Copyright 2008-2017 Wakaba <wakaba@suikawiki.org>.  All rights reserved.
+ * Copyright 2017 Hatena <http://hatenacorp.jp/>.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or 
  * modify it under the same terms as Perl itself.
@@ -412,6 +359,7 @@ is a willful violation to the current HTML Living Standard.
  *
  * Contributor(s):
  *   Wakaba <wakaba@suikawiki.org>
+ *   Hatena <http://hatenacorp.jp/>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
