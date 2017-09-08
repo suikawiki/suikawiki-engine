@@ -284,7 +284,7 @@ function addGoogleAnalytics () {
     window._gaq = _gaq;
     var ga = document.createElement ('script');
     ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    ga.src = 'https://ssl.google-analytics.com/ga.js';
     document.body.appendChild (ga);
   }) ();
 
@@ -1472,7 +1472,7 @@ SW.Figure.Amazon = {};
 
 SW.Figure.Amazon.createItems = function (q, code) {
   var xhr = new XMLHttpRequest;
-  xhr.open ('GET', 'https://asw-swapp.rhcloud.com/amazon/items?q=' + encodeURIComponent (q), true);
+  xhr.open ('GET', 'https://asw.suikawiki.org/amazon/items?q=' + encodeURIComponent (q), true);
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4) {
       if (xhr.status === 200) {
@@ -1515,7 +1515,7 @@ SW.Figure.Amazon.createItems = function (q, code) {
 
 SW.Figure.Amazon.extLink = function (a) {
   var url = a.href;
-  var match = url.match (/^http:\/\/www.amazon.co.jp\/(?:[^\/]+\/dp|dp|gp\/product|exec\/obidos\/ASIN)\/([A-Z0-9]{10})/);
+  var match = url.match (/^https?:\/\/www.amazon.co.jp\/(?:[^\/]+\/dp|dp|gp\/product|exec\/obidos\/ASIN)\/([A-Z0-9]{10})/);
   if (match) {
     var asin = match[1];
     SW.Figure.Amazon.createItems (asin, function (items) {
