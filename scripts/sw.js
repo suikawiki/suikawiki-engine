@@ -1918,7 +1918,7 @@ function initFigures (root) {
     SW.Figure.Packet.parse (fig);
   }]);
 
-  Array.prototype.forEach.call (root.querySelectorAll ('.sw-anchor-external-container a[href^="http://www.amazon.co.jp/"]'), function (a) {
+  Array.prototype.forEach.call (root.querySelectorAll ('.sw-anchor-external-container a[href^="http://www.amazon.co.jp/"], .sw-anchor-external-container a[href^="https://www.amazon.co.jp/"]'), function (a) {
     SW.Figure.Amazon.extLink (a);
   });
 
@@ -1933,7 +1933,7 @@ function initFigures (root) {
 
 /* 
 
-Copyright 2002-2015 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2017 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
