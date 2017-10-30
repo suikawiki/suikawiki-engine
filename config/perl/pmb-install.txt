@@ -42,7 +42,6 @@ HTTP::Date~6.02
 HTTP::Entity::Parser~0.20
 HTTP::Headers~6.13
 HTTP::Headers::Fast~0.21
-HTTP::Message~6.13
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.13
