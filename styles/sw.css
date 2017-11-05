@@ -304,6 +304,50 @@ sw-talk > p:first-of-type {
   text-indent: 0;
 }
 
+sw-box:not([hidden]) {
+  display: block;
+}
+
+sw-box.set:not([hidden]) {
+  display: flex;
+}
+
+sw-box.set > sw-box {
+  flex-grow: 1;
+  text-indent: 0;
+}
+
+sw-box.set > sw-box + sw-box {
+  text-align: right;
+  order: 2;
+}
+
+sw-box.set > sw-box + sw-box + sw-box {
+  text-align: center;
+  order: 1;
+}
+
+sw-box.center {
+  text-align: center;
+}
+
+sw-box.right {
+  text-align: right;
+}
+
+sw-box.indent {
+  -webkit-margin-start: 2em;
+}
+
+sw-box.vertical {
+  writing-mode: vertical-rl;
+  height: 20em;
+  min-height: 10em;
+  max-height: 80vh;
+  width: 100%;
+  overflow: auto;
+}
+
 /* Sidebar menu */
 
 .side-menu[data-open] {
@@ -716,6 +760,7 @@ ins + ins {
   font-weight: normal;
   font-style: normal;
   text-decoration: none;
+  text-combine-upright: all;
 }
 
 figure .sw-anchor-end {
@@ -1449,7 +1494,7 @@ var sub, var sup {
 .sw-f.ss::before { content: "[[" }
 .sw-f.ss::after { content: "]]" }
 
-/* List of references */
+/* Quotations and citations */
 
 .sw-refs {
   background-color: #FDFDEC;
@@ -1484,8 +1529,6 @@ var sub, var sup {
   padding-bottom: 0;
   text-decoration: underline;
 }
-
-/* Citations */
 
 cite {
   font-style: normal;
@@ -1525,8 +1568,6 @@ cite:after {
   content: "] ";
 }
 
-/* Inline quotations */
-
 q:before {
   content: " 「";
 }
@@ -1541,6 +1582,22 @@ q q:before {
 
 q q:after {
   content: "』 ";
+}
+
+ins.sw-snip {
+  margin: 0.2em 0.4em;
+  border: none;
+  padding: 0.1em;
+  line-height: 1;
+  vertical-align: middle;
+  font-size: 70%;
+  background: rgba(255, 217, 217, 1);
+  color: gray;
+  text-decoration: none;
+}
+
+ins.sw-snip:empty::after {
+  content: "...";
 }
 
 /* Emphases and important words */
@@ -1582,16 +1639,70 @@ em:lang(en) {
   background-color: transparent;
 }
 
-/* Ruby annotations */
+mark.sw-asis:not([hidden]) {
+  display: inline-flex;
+  flex-direction: column-reverse;
+  background: transparent;
+  color: inherit;
+  text-indent: 0;
+  line-height: 1.0;
+}
+
+mark.sw-asis:not([hidden]).after {
+  flex-direction: column;
+}
+
+mark.sw-asis:hover {
+  background: #ecffcc;
+  color: black;
+}
+
+mark.sw-asis::after {
+  display: block;
+  content: "(ママ)";
+  line-height: 1.0;
+  color: #f72121;
+  background: transparent;
+  font-size: 30%;
+  text-align: right;
+}
+
+mark.sw-asis:lang(en)::after {
+  content: "(sic)";
+}
+
+mark.sw-asis[title]::after {
+  content: attr(title);
+}
+
+mark.sw-asis:hover::after {
+  color: red;
+  background: transparent;
+}
+
+/* Inline structures */
 
 ruby {
   -webkit-ruby-position: before;
   ruby-position: before;
+  line-height: 1.0;
+}
+
+sw-box.vertical ruby {
+  vertical-align: middle;
+  vertical-align: -webkit-baseline-middle;
 }
 
 ruby.sw-rubyb {
   -webkit-ruby-position: after;
   ruby-position: after;
+}
+
+ruby.sw-ruby-both {
+  display: inline-flex;
+  flex-direction: column-reverse;
+  text-align: center;
+  vertical-align: middle;
 }
 
 rp {
@@ -1600,15 +1711,40 @@ rp {
 
 rt {
   text-align: center;
+  line-height: 1;
 }
 
-rt ~ rt, .sw-rubyb > rt {
-  ruby-position: after; /* XXX */
+ruby.sw-ruby > rt,
+ruby.sw-rubyb > rt {
+  line-height: 2;
 }
 
-/* Math */
+rt ~ rt {
+  order: -1;
+}
 
-math[class~=sw-frac] {
+ruby.sw-okuri rt {
+  text-align: left;
+}
+
+ruby.sw-okuri:not(.sw-ruby-both) > rt:not([hidden]) {
+  display: inline;
+  vertical-align: 1.5em;
+}
+
+ruby.sw-okuri.sw-ruby-both > rt:first-of-type {
+  -webkit-margin-after: 1em;
+}
+
+ruby.sw-okuri.sw-ruby-both > rt:last-of-type {
+  -webkit-margin-before: 1em;
+}
+
+math[class~=sw-frac],
+math[class~=sw-root],
+math[class~=sw-sqrt],
+math[class~=sw-under],
+math[class~=sw-underover] {
   margin-left: 0.3rem;
   margin-right: 0.3rem;
 }
@@ -1618,7 +1754,15 @@ mfrac {
   text-align: center;
 }
 
-mi {
+msqrt::before {
+  line-height: 1;
+}
+
+mroot::before {
+  line-height: 1;
+}
+
+mtext {
   min-width: 1em;
   box-sizing: border-box;
   padding-left: 0.25em;
@@ -1627,9 +1771,115 @@ mi {
   line-height: 1.4;
 }
 
-mi > span {
+mroot > mtext:nth-child(2) {
+  line-height: 1.0;
+}
+
+mtext > span {
   font-style: normal;
   font-size: smaller;
+}
+
+math[class~=sw-under] > munder > mtext:first-child > span,
+math[class~=sw-underover] > munderover > mtext:first-child > span {
+  font-size: 100%;
+}
+
+ruby.sw-dotabove > rt {
+  line-height: 1.0;
+}
+
+sw-subsup:not([hidden]) {
+  display: inline-flex;
+  flex-direction: column-reverse;
+  vertical-align: middle;
+}
+
+sw-box.vertical sw-subsup {
+  vertical-align: middle;
+  vertical-align: -webkit-baseline-middle;
+}
+
+sw-box.vertical sub,
+sw-box.vertical sup {
+  font-size: 50%;
+  line-height: 1.0;
+}
+
+sw-box.vertical sub {
+  vertical-align: -.5em;
+}
+
+sw-box.vertical sup {
+  vertical-align: .5em;
+}
+
+sw-subsup.before {
+  text-align: right;
+}
+
+sw-subsup > sub,
+sw-subsup > sup {
+  vertical-align: middle;
+  font-size: 50%;
+  line-height: 1.0;
+  text-indent: 0;
+}
+
+sw-lines:not([hidden]) {
+  display: inline-block;
+  vertical-align: middle;
+  text-indent: 0;
+}
+
+sw-lines > sw-line:not([hidden]) {
+  display: block;
+  line-height: 1.4;
+}
+
+sw-fenced:not([hidden]) {
+  display: inline-block;
+  --fence-size: 100%;
+  vertical-align: middle;
+  text-indent: 0;
+}
+
+sw-fenced[data-fence-size="2"] { --fence-size: 200% }
+sw-fenced[data-fence-size="3"] { --fence-size: 300% }
+sw-fenced[data-fence-size="4"] { --fence-size: 400% }
+sw-fenced[data-fence-size="5"] { --fence-size: 500% }
+sw-fenced[data-fence-size="6"] { --fence-size: 600% }
+sw-fenced[data-fence-size="7"] { --fence-size: 700% }
+sw-fenced[data-fence-size="8"] { --fence-size: 800% }
+sw-fenced[data-fence-size="9"] { --fence-size: 900% }
+
+sw-fenced > sw-openfence,
+sw-fenced > sw-closefence {
+  font-size: var(--fence-size);
+  vertical-align: middle;
+}
+
+/* Physical annotations */
+
+b {
+  font-weight: bolder;
+}
+
+i {
+  font-style: italic;
+}
+
+u {
+  text-decoration: underline;
+}
+
+sw-smallcaps {
+  text-transform: lowercase;
+  font-variant: small-caps;
+}
+
+sw-yoko {
+  text-combine-upright: all;
 }
 
 /* Other inlines */
@@ -1976,7 +2226,7 @@ aside .swe-ad {
 
 /* 
 
-Copyright 2002-2016 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2017 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -1,3 +1,42 @@
+/* Emphasis styles */
+
+em.sesame {
+  font-style: normal;
+  -webkit-text-emphasis: sesame;
+}
+em.open-sesame {
+  font-style: normal;
+  -webkit-text-emphasis: open sesame;
+}
+em.dot {
+  font-style: normal;
+  -webkit-text-emphasis: dot;
+}
+em.open-dot {
+  font-style: normal;
+  -webkit-text-emphasis: open dot;
+}
+em.triangle {
+  font-style: normal;
+  -webkit-text-emphasis: triangle;
+}
+em.open-triangle {
+  font-style: normal;
+  -webkit-text-emphasis: open triangle;
+}
+em.double-circle {
+  font-style: normal;
+  -webkit-text-emphasis: double-circle;
+}
+em.open-double-circle {
+  font-style: normal;
+  -webkit-text-emphasis: open double-circle;
+}
+em.italic {
+  font-style: italic;
+  -webkit-text-emphasis: none;
+}
+
 /* Character arts (AA) */
 
 /* span.aa: AA element */ /* Default: For 2ch style AAs */ span.aa, pre.aa {
@@ -143,15 +182,15 @@ pre.continue.deprecated.example:before {
 /*
 
 Partially taken from
-<http://suika.suikawiki.org/~wakaba/wiki/sw/n/Wiki++Style++SuikaWiki++HTML++Semantic>.
+<https://suika.suikawiki.org/~wakaba/wiki/sw/n/Wiki++Style++SuikaWiki++HTML++Semantic>.
 
-Copyright 2002-2014 Authors.
+Copyright 2002-2017 Authors.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.1 or
 any later version published by the Free Software Foundation; with no
 Invariant Sections, with no Front-Cover Texts, and no Back-Cover
 Texts. A copy of the license is available from
-<http://suika.fam.cx/c/gnu/fdl>.
+<https://suika.suikawiki.org/c/gnu/fdl>.
 
 */

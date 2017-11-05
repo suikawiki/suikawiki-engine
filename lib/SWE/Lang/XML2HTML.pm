@@ -92,7 +92,8 @@ $templates->{(HTML_NS)}->{$_} = sub {
       @{$item->{node}->child_nodes};
 } for qw/
   p ul ol dl li dt dd table tbody tr blockquote pre
-  dfn ruby samp span sub sup var em strong
+  dfn samp span sub sup var em strong
+  b i u
 /;
 
 $templates->{(HTML_NS)}->{$_} = sub {
@@ -131,6 +132,101 @@ $templates->{(HTML_NS)}->{$_} = sub {
 $IsImplicitLinkElement->{(HTML_NS)}->{$_} = 1 for qw/
   code abbr cite kbd
 /;
+
+$templates->{(SW09_NS)}->{asis} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'mark');
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $class = defined $class ? 'sw-asis ' . $class : 'sw-asis';
+  $el->set_attribute (class => $class);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+}; # asis
+
+$templates->{(SW09_NS)}->{dotabove} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'ruby');
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $class = defined $class ? 'sw-dotabove ' . $class : 'sw-dotabove';
+  $el->set_attribute (class => $class);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  my $rt = $item->{doc}->create_element_ns (HTML_NS, 'rt');
+  $rt->text_content ("\x{30FB}");
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes}, $rt;
+}; # dotabove
+
+$templates->{(SW09_NS)}->{vector} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'ruby');
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $class = defined $class ? 'sw-vector ' . $class : 'sw-vector';
+  $el->set_attribute (class => $class);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  my $rt = $item->{doc}->create_element_ns (HTML_NS, 'rt');
+  $rt->text_content ("\x{2192}");
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes}, $rt;
+}; # vector
+
+$templates->{(SW09_NS)}->{snip} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'ins');
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $class = defined $class ? 'sw-snip ' . $class : 'sw-snip';
+  $el->set_attribute (class => $class);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+}; # snip
+
+$templates->{(SW09_NS)}->{emph} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'em');
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $el->set_attribute (class => $class) if defined $class;
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+}; # emph
 
 $templates->{(HTML_NS)}->{$_} = sub {
   my ($items, $item) = @_;
@@ -307,7 +403,16 @@ $templates->{(SW09_NS)}->{'talk'} = sub {
 };
 
 $templates->{(SW09_NS)}->{'dialogue'} =
-$templates->{(SW09_NS)}->{'speaker'} = sub {
+$templates->{(SW09_NS)}->{'speaker'} =
+$templates->{(SW09_NS)}->{'smallcaps'} =
+$templates->{(SW09_NS)}->{'lines'} =
+$templates->{(SW09_NS)}->{'line'} =
+$templates->{(SW09_NS)}->{'openfence'} =
+$templates->{(SW09_NS)}->{'fencedtext'} =
+$templates->{(SW09_NS)}->{'closefence'} =
+$templates->{(SW09_NS)}->{'box'} =
+$templates->{(SW09_NS)}->{'yoko'} =
+$templates->{(SW09_NS)}->{'subsup'} = sub {
   my ($items, $item) = @_;
 
   my $el = $item->{doc}->create_element_ns
@@ -317,9 +422,45 @@ $templates->{(SW09_NS)}->{'speaker'} = sub {
   my $class = $item->{node}->get_attribute ('class') // '';
   $el->set_attribute (class => $class);
 
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
   unshift @$items,
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
+};
+
+$templates->{(SW09_NS)}->{'fenced'} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns
+      (HTML_NS, 'sw-' . $item->{node}->local_name);
+  $item->{parent}->append_child ($el);
+
+  my @children = @{$item->{node}->child_nodes};
+  my $max_lines = 0;
+  for (@children) {
+    if ($_->node_type == $_->ELEMENT_NODE and
+        $_->local_name eq 'fencedtext') {
+      for (grep { $_->local_name eq 'lines' } @{$_->children}) {
+        my $lines = 0;
+        for (@{$_->children}) {
+          $lines++ if $_->local_name eq 'line';
+        }
+        $max_lines = $lines if $max_lines < $lines;
+      }
+    }
+  }
+  $el->set_attribute ('data-fence-size' => $max_lines);
+
+  my $class = $item->{node}->get_attribute ('class') // '';
+  $el->set_attribute (class => $class);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}} @children;
 };
 
 $templates->{(AA_NS)}->{aa} = sub {
@@ -462,6 +603,34 @@ $templates->{(SW09_NS)}->{weak} = sub {
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
 };
+
+$templates->{(SW09_NS)}->{subscript} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'sub');
+  $item->{parent}->append_child ($el);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+}; # subscript
+
+$templates->{(SW09_NS)}->{superscript} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'sup');
+  $item->{parent}->append_child ($el);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+}; # superscript
 
 $templates->{(SW09_NS)}->{f} = sub {
   my ($items, $item) = @_;
@@ -620,6 +789,29 @@ $templates->{(HTML_NS)}->{q} = sub {
 $templates->{(HTML_NS)}->{del} = $templates->{(HTML_NS)}->{q};
 $templates->{(HTML_NS)}->{ins} = $templates->{(HTML_NS)}->{q};
 
+$templates->{(HTML_NS)}->{ruby} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'ruby');
+  $item->{parent}->append_child ($el);
+
+  my @children = @{$item->{node}->child_nodes};
+  my @rt = grep { ($_->local_name || '') eq 'rt' } @children;
+  my $both = @rt >= 2;
+
+  my $class = $item->{node}->get_attribute ('class');
+  $class //= '';
+  $class .= ' sw-ruby';
+  $class .= ' sw-ruby-both' if $both;
+  $el->set_attribute (class => $class);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}} @children;
+}; # ruby
+
 $templates->{(SW09_NS)}->{rubyb} = sub {
   my ($items, $item) = @_;
 
@@ -637,16 +829,39 @@ $templates->{(SW09_NS)}->{rubyb} = sub {
   unshift @$items,
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
-};
+}; # rubyb
 
-$templates->{(MATH_NS)}->{mfrac} = sub {
+$templates->{(SW09_NS)}->{okuri} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'ruby');
+  $item->{parent}->append_child ($el);
+
+  my @children = @{$item->{node}->child_nodes};
+  my @rt = grep { ($_->local_name || '') eq 'rt' } @children;
+  my $both = @rt >= 2;
+
+  my $class = $item->{node}->get_attribute ('class');
+  $class //= '';
+  $class .= ' sw-okuri';
+  $class .= ' sw-ruby-both' if $both;
+  $el->set_attribute (class => $class);
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}} @children;
+}; # okuri
+
+$templates->{(MATH_NS)}->{$_} = sub {
   my ($items, $item) = @_;
 
   my $el = $item->{doc}->create_element_ns (MATH_NS, 'math');
   $item->{parent}->append_child ($el);
-  $el->set_attribute (class => 'sw-frac');
+  $el->set_attribute (class => 'sw-' . substr $item->{node}->local_name, 1);
 
-  my $el2 = $item->{doc}->create_element_ns (MATH_NS, 'mfrac');
+  my $el2 = $item->{doc}->create_element_ns (MATH_NS, $item->{node}->local_name);
   $el->append_child ($el2);
 
   my $class = $item->{node}->get_attribute ('class');
@@ -658,12 +873,12 @@ $templates->{(MATH_NS)}->{mfrac} = sub {
   unshift @$items,
       map {{%$item, node => $_, parent => $el2}}
       @{$item->{node}->child_nodes};
-}; # mfrac
+} for qw(mfrac mroot msqrt munderover munder);
 
-$templates->{(MATH_NS)}->{mi} = sub {
+$templates->{(MATH_NS)}->{mtext} = sub {
   my ($items, $item) = @_;
 
-  my $el = $item->{doc}->create_element_ns (MATH_NS, 'mi');
+  my $el = $item->{doc}->create_element_ns (MATH_NS, 'mtext');
   $item->{parent}->append_child ($el);
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
@@ -675,7 +890,7 @@ $templates->{(MATH_NS)}->{mi} = sub {
   unshift @$items,
       map {{%$item, node => $_, parent => $el2}}
       @{$item->{node}->child_nodes};
-}; # mi
+}; # mtext
 
 $templates->{(SW09_NS)}->{anchor} = sub {
   my ($items, $item) = @_;
@@ -907,7 +1122,7 @@ sub convert ($$$$$$) {
 
 =head1 LICENSE
 
-Copyright 2008-2016 Wakaba <wakaba@suikawiki.org>.
+Copyright 2008-2017 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
