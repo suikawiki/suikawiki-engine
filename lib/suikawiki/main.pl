@@ -260,6 +260,7 @@ if ($path[0] eq 'n' and @path == 2) {
         if (defined $modified and ((gmtime $modified)[5] + 1900) >= 2013) {
           $use_google_ads = 1;
         }
+        $use_google_ads = 0 if $id_prop->{sensitive};
 
         if ($use_google_ads) {
           my $df = $html_doc->create_document_fragment;
