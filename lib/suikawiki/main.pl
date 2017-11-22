@@ -147,6 +147,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       $body_el->set_attribute ('data-historical' => '') if $id_prop->{historical};
       $body_el->set_attribute ('data-legal' => '') if $id_prop->{legal};
+      $body_el->set_attribute ('data-sensitive' => '') if $id_prop->{sensitive};
 
       my $h1_el = $html_doc->create_element ('h1');
       my $a_el = $html_doc->create_element ('a');
@@ -699,6 +700,13 @@ if ($path[0] eq 'n' and @path == 2) {
           delete $id_prop->{legal};
         }
 
+        my $sensitive = $app->text_param ('sensitive');
+        if ($sensitive) {
+          $id_prop->{sensitive} = 1;
+        } else {
+          delete $id_prop->{sensitive};
+        }
+
         my $parent = $app->text_param ('parent');
         if (defined $parent and length $parent) {
           $id_prop->{parent} = $parent;
@@ -792,6 +800,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <select name=content-type></select>
 <label><input type=checkbox name=historical> Historical</label>
 <label><input type=checkbox name=legal> Legal</label>
+<label><input type=checkbox name=sensitive> Sensitive</label>
 <label>Parent: <input name=parent></label>
 [<a rel=help>Help</a> / <a rel=license>License</a>]
 </form>
@@ -822,10 +831,14 @@ if ($path[0] eq 'n' and @path == 2) {
 
       my $historical_field = $form_el->get_elements_by_tag_name ('input')->[2];
       $historical_field->set_attribute (checked => '') if $id_prop->{historical};
+
       my $legal_field = $form_el->get_elements_by_tag_name ('input')->[3];
       $legal_field->set_attribute (checked => '') if $id_prop->{legal};
 
-      my $parent_field = $form_el->get_elements_by_tag_name ('input')->[4];
+      my $sensitive_field = $form_el->get_elements_by_tag_name ('input')->[4];
+      $sensitive_field->set_attribute (checked => '') if $id_prop->{sensitive};
+
+      my $parent_field = $form_el->get_elements_by_tag_name ('input')->[5];
       $parent_field->set_attribute (value => $id_prop->{parent})
           if defined $id_prop->{parent};
 
