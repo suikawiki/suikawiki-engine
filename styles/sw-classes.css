@@ -32,9 +32,16 @@ em.open-double-circle {
   font-style: normal;
   -webkit-text-emphasis: open double-circle;
 }
-em.italic {
+
+em.italic,
+cite.italic {
   font-style: italic;
   -webkit-text-emphasis: none;
+}
+
+cite.italic::before,
+cite.italic::after {
+  content: "";
 }
 
 /* Character arts (AA) */

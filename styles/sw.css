@@ -339,6 +339,10 @@ sw-box.indent {
   -webkit-margin-start: 2em;
 }
 
+sw-box.spacing1 {
+  letter-spacing: 1em;
+}
+
 sw-box.vertical {
   writing-mode: vertical-rl;
   height: 20em;
