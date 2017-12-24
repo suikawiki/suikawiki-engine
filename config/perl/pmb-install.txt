@@ -44,11 +44,12 @@ HTTP::Headers::Fast~0.21
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request::Common~6.14
+HTTP::Response~6.14
 HTTP::Status~6.14
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
+IO::Dir~1.07
 IO::HTML~1.001
-IO::Handle~1.28
 IO::Socket::SSL~2.052
 IPC::Signal~1.00
 JSON::MaybeXS~1.003009
