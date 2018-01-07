@@ -41,10 +41,12 @@ HTTP::Cookies~6.04
 HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.20
-HTTP::Headers~6.14
 HTTP::Headers::Fast~0.21
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
+HTTP::Request~6.14
+HTTP::Request::Common~6.14
+HTTP::Response~6.14
 HTTP::Status~6.14
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
