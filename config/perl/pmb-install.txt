@@ -33,7 +33,6 @@ File::Temp~0.2304
 Filesys::Notify::Simple~0.12
 Filter::Util::Call~1.58
 Getopt::Long~2.5
-HTML::Entities~3.69
 HTML::HeadParser~3.71
 HTML::Tagset~3.20
 HTTP::Cookies~6.04
@@ -41,17 +40,17 @@ HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.20
 HTTP::Headers::Fast~0.21
+HTTP::Message~6.14
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~6.14
-HTTP::Status~6.14
+HTTP::Request~6.14
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
 IO::HTML~1.001
 IO::Handle~1.28
 IO::Socket::SSL~2.054
 IPC::Signal~1.00
-JSON::MaybeXS~1.003009
+JSON::MaybeXS~1.003010
 JSON::XS~3.04
 LWP::MediaTypes~6.02
 LWP::Protocol::https~6.07
@@ -96,7 +95,6 @@ Time::Local~1.25
 Try::Tiny~0.30
 Types::Serialiser~1.0
 URI~1.73
-URI::Escape~3.31
 WWW::Form::UrlEncoded~0.24
 WWW::RobotRules~6.02
 common::sense~3.74
