@@ -28,7 +28,7 @@ ExtUtils::Helpers~0.026
 ExtUtils::InstallPaths~0.011
 File::Listing~6.04
 File::ShareDir~1.104
-File::ShareDir::Install~0.11
+File::ShareDir::Install~0.12
 File::Temp~0.2304
 Filesys::Notify::Simple~0.13
 Filter::Util::Call~1.58
@@ -41,15 +41,13 @@ HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
 HTTP::Headers::Fast~0.21
-HTTP::Message~6.16
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.16
 HTTP::Status~6.16
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
 IO::HTML~1.001
-IO::Handle~1.28
+IO::Handle~1.39
 IO::Socket::SSL~2.056
 IPC::Signal~1.00
 JSON::MaybeXS~1.004000
@@ -68,6 +66,7 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20180117
 Net::HTTP~6.17
+Net::HTTPS~6.17
 Net::SSLeay~1.85
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
@@ -97,7 +96,6 @@ Time::Local~1.25
 Try::Tiny~0.30
 Types::Serialiser~1.0
 URI~1.73
-URI::Escape~3.31
 WWW::Form::UrlEncoded~0.24
 WWW::RobotRules~6.02
 common::sense~3.74
