@@ -1,7 +1,6 @@
 Algorithm::Diff~1.1903
 AnyEvent~7.14
 AnyEvent::HTTP~2.23
-AnyEvent::Util
 Apache::LogFormat::Compiler~0.35
 Canary::Stability~2012
 Capture::Tiny~0.48
@@ -41,14 +40,14 @@ HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
 HTTP::Headers::Fast~0.21
+HTTP::Headers::Util~6.16
 HTTP::Message~6.16
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.16
-HTTP::Response~6.16
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
-IO::File~1.39
+IO::Dir~1.39
 IO::HTML~1.001
 IO::Socket::SSL~2.056
 IPC::Signal~1.00
