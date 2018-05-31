@@ -1,7 +1,6 @@
 Algorithm::Diff~1.1903
 AnyEvent~7.14
 AnyEvent::HTTP~2.23
-AnyEvent::Util
 Apache::LogFormat::Compiler~0.35
 Canary::Stability~2012
 Capture::Tiny~0.48
@@ -14,7 +13,7 @@ Cookie::Baker~0.09
 Cpanel::JSON::XS~4.02
 Crypt::SSLeay~0.72
 Data::Dumper~2.161
-Devel::CheckLib~1.11
+Devel::CheckLib~1.12
 Devel::StackTrace~2.03
 Devel::StackTrace::AsHTML~0.15
 Digest::MD5~2.55
@@ -42,15 +41,15 @@ HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
 HTTP::Headers::Fast~0.21
-HTTP::Message~6.16
+HTTP::Headers::Util~6.16
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.16
 HTTP::Response~6.16
+HTTP::Status~6.16
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
+IO::Dir~1.39
 IO::HTML~1.001
-IO::Handle~1.39
 IO::Socket::SSL~2.056
 IPC::Signal~1.00
 JSON::MaybeXS~1.004000
@@ -69,6 +68,7 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20180117
 Net::HTTP~6.18
+Net::HTTPS~6.18
 Net::SSLeay~1.85
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
