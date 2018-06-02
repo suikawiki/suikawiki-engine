@@ -41,14 +41,15 @@ HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
 HTTP::Headers::Fast~0.21
+HTTP::Message~6.16
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~6.16
+HTTP::Request::Common~6.16
 HTTP::Status~6.16
 Hash::MultiValue~0.16
 IO::CaptureOutput~1.1104
+IO::Dir~1.39
 IO::HTML~1.001
-IO::Handle~1.39
 IO::Socket::SSL~2.056
 IPC::Signal~1.00
 JSON::MaybeXS~1.004000
