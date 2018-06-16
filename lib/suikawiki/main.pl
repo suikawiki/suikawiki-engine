@@ -43,6 +43,8 @@ if ($path[0] eq 'n' and @path == 2) {
       $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
       $app->http->add_response_header
           ('Content-Type' => $docobj->to_text_media_type . '; charset=utf-8');
+      $app->http->add_response_header
+          ('x-content-type-options', 'nosniff');
       my $modified = $id_prop->{modified};
       $app->http->set_response_last_modified ($modified) if $modified;
       $app->http->send_response_body_as_text (${$docobj->to_text});
@@ -60,6 +62,8 @@ if ($path[0] eq 'n' and @path == 2) {
       if ($xmldoc) {
         $app->http->add_response_header
             ('Content-Type' => $docobj->to_xml_media_type . '; charset=utf-8');
+        $app->http->add_response_header
+            ('content-security-policy', 'sandbox');
         my $id_prop = $db->id_prop->get_data ($id);
         $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
         my $modified = $id_prop->{modified};
