@@ -22,7 +22,7 @@ Encode~2.98
 Encode::Locale~1.05
 Exporter~5.72
 Exporter::Lite~0.08
-Exporter::Tiny~1.000000
+Exporter::Tiny~1.002001
 ExtUtils::Config~0.008
 ExtUtils::Helpers~0.026
 ExtUtils::InstallPaths~0.012
@@ -41,10 +41,9 @@ HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
 HTTP::Headers::Fast~0.21
-HTTP::Headers::Util~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.18
+HTTP::Response~6.18
 HTTP::Status~6.18
 Hash::MultiValue~0.16
 IO::File~1.39
@@ -96,7 +95,6 @@ Time::Local~1.28
 Try::Tiny~0.30
 Types::Serialiser~1.0
 URI~1.74
-URI::Escape~3.31
 WWW::Form::UrlEncoded~0.24
 WWW::RobotRules~6.02
 common::sense~3.74
