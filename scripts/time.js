@@ -25,7 +25,7 @@ TER.prototype._replaceTimeContent = function (el) {
   if (isNaN (date.valueOf ())) return;
   if (date.hasTimezone) { /* full date */
     if (!el.getAttribute ('title')) {
-      el.setAttribute ('title', el.textContent || this._getTextContent (el));
+      el.setAttribute ('title', el.textContent);
     }
     if (!el.getAttribute ('datetime')) {
       this._setDateTimeAttr (el, date);
@@ -33,7 +33,7 @@ TER.prototype._replaceTimeContent = function (el) {
     this._setDateTimeContent (el, date);
   } else if (date.hasDate) {
     if (!el.getAttribute ('title')) {
-      el.setAttribute ('title', el.textContent || this._getTextContent (el));
+      el.setAttribute ('title', el.textContent);
     }
     if (!el.getAttribute ('datetime')) {
       this._setDateAttr (el, date);
@@ -43,11 +43,24 @@ TER.prototype._replaceTimeContent = function (el) {
 }; // TER.prototype._replaceTimeContent
 
 TER.prototype._setDateTimeContent = function (el, date) {
-  this._setTextContent (el, date.toLocaleString ());
+  var tzoffset = el.getAttribute ('data-tzoffset');
+  if (tzoffset !== null) {
+    tzoffset = parseFloat (tzoffset);
+    el.textContent = new Date (date.valueOf () + date.getTimezoneOffset () * 60 * 1000 + tzoffset * 1000).toLocaleString ({
+      year: true,
+      month: true,
+      day: true,
+      hour: true,
+      minute: true,
+      second: true,
+    });
+  } else {
+    el.textContent = date.toLocaleString ();
+  }
 }; // TER.prototype._setDateTimeContent
 
 TER.prototype._setDateContent = function (el, date) {
-  this._setTextContent (el, date.toLocaleDateString (navigator.language, {"timeZone": "UTC"}));
+  el.textContent = date.toLocaleDateString (navigator.language, {"timeZone": "UTC"});
 }; // TER.prototype._setDateContent
 
 TER.prototype._setDateTimeAttr = function (el, date) {
@@ -67,7 +80,7 @@ TER.prototype._getDate = function (el) {
   if (datetime) { /* NOTE: IE7 does not have hasAttribute */
     datetime = el.getAttribute ('datetime');
   } else {
-    datetime = el.textContent || this._getTextContent (el);
+    datetime = el.textContent;
     datetime = this._trimWhiteSpace (datetime);
   }
 
@@ -121,26 +134,6 @@ TER.prototype._getDate = function (el) {
   }
 }; // TER.prototype._getDate
 
-TER.prototype._getTextContent = function (el) {
-  var r = '';
-  var elC = el.childNodes;
-  var elCL = elC.length;
-  for (var i = 0; i < elCL; i++) {
-    var child = elC[i];
-    if (child.nodeType == 3 || child.nodeType == 4) {
-      r += child.data;
-    } else if (child.nodeType == 1) {
-      r += this._getTextContent (child);
-    }
-  }
-  return r;
-}; // TER.prototype._getTextContent
-
-TER.prototype._setTextContent = function (el, s) {
-  el.innerText = s;
-  el.textContent = s;
-}; // TER.prototype._setTextContent
-
 TER.prototype._trimWhiteSpace = function (s) {
   /* Unicode 5.1.0 White_Space */
   return s.replace
@@ -153,7 +146,6 @@ TER.Delta = function (c) {
   TER.apply (this, [c]);
 }; // TER.Delta
 
-/* Don't delete createElement('time') - this is a hack to support IE */
 TER.Delta.prototype = new TER (document.createElement ('time'));
 
 TER.Delta.prototype._setDateTimeContent = function (el, date) {
@@ -164,7 +156,7 @@ TER.Delta.prototype._setDateTimeContent = function (el, date) {
   if (diff < 0) diff = -diff;
 
   if (diff == 0) {
-    this._setTextContent (el, this.text.now ());
+    el.textContent = this.text.now ();
     return;
   }
 
@@ -194,7 +186,7 @@ TER.Delta.prototype._setDateTimeContent = function (el, date) {
           f -= diff * 24;
           if (f > 0) v += this.text.sep () + this.text.hour (f);
         } else {
-          this._setTextContent (el, date.toLocaleString ());
+          el.textContent = date.toLocaleString ();
           return;
         }
       }
@@ -206,7 +198,7 @@ TER.Delta.prototype._setDateTimeContent = function (el, date) {
   } else {
     v = this.text.after (v);
   }
-  this._setTextContent (el, v);
+  el.textContent = v;
 }; // TER.Delta.prototype._setDateTimeContent
 
 TER.Delta.Text = {};
@@ -266,7 +258,7 @@ TER.Delta.Text.ja = {
 };
 
 (function () {
-  var lang = navigator.browserLanguage || navigator.language || navigator.userLanguage || '';
+  var lang = navigator.language;
   if (lang.match (/^[jJ][aA](?:-|$)/)) {
     TER.Delta.prototype.text = TER.Delta.Text.ja;
   } else {
@@ -287,7 +279,7 @@ Usage:
       new TER (document.body);
     };
   </script>
-  <script src="time.js" charset=utf-8></script>
+  <script src="time.js"></script>
   
   <time>2008-12-20T23:27+09:00</time>
   <!-- Will be rendered appropriately in the user's locale -->
@@ -299,7 +291,7 @@ Usage:
       new TER.Delta (document.body);
     };
   </script>
-  <script src="time.js" charset=utf-8></script>
+  <script src="time.js"></script>
   
   <time>2008-12-20T23:27+09:00</time>
   <!-- Will be rendered like "2 minutes ago" in English or Japanese -->
@@ -320,7 +312,9 @@ is a willful violation to the current HTML Living Standard.
 */
 
 /* ***** BEGIN LICENSE BLOCK *****
- * Copyright 2008-2017 Wakaba <wakaba@suikawiki.org>.  All rights reserved.
+ *
+ * Copyright 2008-2018 Wakaba <wakaba@suikawiki.org>.  All rights reserved.
+ *
  * Copyright 2017 Hatena <http://hatenacorp.jp/>.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or 
@@ -344,7 +338,7 @@ is a willful violation to the current HTML Living Standard.
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- * <http://www.mozilla.org/MPL/>
+ * <https://www.mozilla.org/MPL/>
  *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
