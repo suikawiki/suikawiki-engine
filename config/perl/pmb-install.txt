@@ -40,11 +40,11 @@ HTTP::Cookies~6.04
 HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
-HTTP::Headers~6.18
 HTTP::Headers::Fast~0.21
 HTTP::Message~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
+HTTP::Request::Common~6.18
 Hash::MultiValue~0.16
 IO::File~1.39
 IO::HTML~1.001
@@ -65,7 +65,6 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20180117
 Net::HTTP~6.18
-Net::HTTPS~6.18
 Net::SSLeay~1.85
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
