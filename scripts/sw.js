@@ -147,6 +147,39 @@ function initEditForm (root) {
         ta.form.action = ta.form.action.replace (/#.*$/, '') + '#anchor-' + lastAnchor;
       }
     });
+
+    var errorSection = document.createElement ('section');
+    errorSection.innerHTML = '<h1>Errors</h1><ul></ul>';
+    errorSection.hidden = true;
+    errorSection.className = 'errors';
+    ta.form.appendChild (errorSection);
+
+    ta.addEventListener ('change', function () {
+      var defined = {};
+      var errors = [];
+      ta.value.match (/\[[0-9]+\]/g).forEach (function (_) {
+        var v = _.replace (/[\[\]]/g, '');
+        if (defined[v]) {
+          errors.push ('Duplicate [' + v + ']');
+        } else {
+          defined[v] = true;
+        }
+      });
+      ta.value.match (/>>[0-9]+/g).forEach (function (_) {
+        var v = _.replace (/^>>/g, '');
+        if (!defined[v]) {
+          errors.push ('[' + v + '] not defined');
+        }
+      });
+      errorSection.hidden = errors.length === 0;
+      var list = errorSection.querySelector ('ul');
+      list.textContent = '';
+      errors.forEach (function (_) {
+        var li = document.createElement ('li');
+        li.textContent = _;
+        list.appendChild (li);
+      });
+    });
   }]);
 } // initEditForm
 
@@ -1933,7 +1966,7 @@ function initFigures (root) {
 
 /* 
 
-Copyright 2002-2017 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

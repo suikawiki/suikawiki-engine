@@ -162,7 +162,7 @@ section section section section h1 {
   border-style: none;
 }
 
-.article, .section, section {
+.article, .section, section:not([hidden]) {
   display: block;
   margin: 0 0 2em 0;
   padding: 0 1em 0 2em;
@@ -1957,6 +1957,38 @@ input[name=title] {
 .body-area textarea {
   box-sizing: border-box;
   height: 100vh;
+}
+
+section.errors {
+  margin: 0;
+  padding: 0;
+  font-size: 70%;
+  line-height: 1.0;
+}
+
+section.errors h1 {
+  display: inline;
+  margin: 0 1em 0 0;
+  font-size: 100%;
+}
+
+section.errors h1::after {
+  content: ":";
+}
+
+.errors ul {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.errors li {
+  display: inline-block;
+  margin: 0 1em 0 0;
+}
+
+.errors li::after {
+  content: ";";
 }
 
 /* Sidebar */
