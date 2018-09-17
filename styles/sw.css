@@ -1,4 +1,5 @@
 @import 'sw-classes';
+@import url('https://fonts.googleapis.com/css?family=Cedarville+Cursive');
 
 html {
   padding: 0.5em;
@@ -748,6 +749,14 @@ ins + ins {
 
 .sw-anchor-external {
   word-break: break-all;
+}
+
+.sw-anchor-external::before {
+  content: "<";
+}
+
+.sw-anchor-external::after {
+  content: ">";
 }
 
 .sw-anchor-end {
@@ -1526,12 +1535,22 @@ var sub, var sup {
 }
 
 .sw-refs .sw-anchor-external-container {
-  font-size: 70%;
+  display: block;
+  line-height: 1.1;
+  font-size: 60%;
 }
 
 .sw-refs .sw-anchor-external-container a {
+  display: block;
   border-style: none;
   padding-bottom: 0;
+  min-height: 2em;
+  text-decoration: none;
+}
+
+.sw-refs .sw-anchor-external-container a:focus,
+.sw-refs .sw-anchor-external-container a:active,
+.sw-refs .sw-anchor-external-container a:hover {
   text-decoration: underline;
 }
 
@@ -1562,7 +1581,9 @@ cite:after {
 .sw-src {
   font-style: normal;
   font-weight: normal;
+  font-size: 60%;
   color: gray;
+  vertical-align: super;
 }
 
 .sw-src:before {
@@ -1685,6 +1706,25 @@ mark.sw-asis:hover::after {
   background: transparent;
 }
 
+sw-cursive {
+  font-family: 'Cedarville Cursive', cursive;
+}
+
+sw-see {
+  margin: 0 1em;
+  background: transparent;
+  font-size: 80%;
+}
+
+sw-see:not(:hover) {
+  opacity: 0.7;
+}
+
+sw-see::before {
+  content: "\01F449  ";
+}
+
+
 /* Inline structures */
 
 ruby {
@@ -1792,6 +1832,10 @@ math[class~=sw-underover] > munderover > mtext:first-child > span {
 
 ruby.sw-dotabove > rt {
   line-height: 1.0;
+}
+
+sw-macron {
+  text-decoration: overline;
 }
 
 sw-subsup:not([hidden]) {

@@ -430,6 +430,25 @@ $templates->{(SW09_NS)}->{'subsup'} = sub {
       @{$item->{node}->child_nodes};
 };
 
+$templates->{(SW09_NS)}->{'sw-see'} =
+$templates->{(SW09_NS)}->{'sw-macron'} =
+$templates->{(SW09_NS)}->{'sw-cursive'} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, $item->{node}->local_name);
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $el->set_attribute (class => $class) if defined $class;
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el}}
+      @{$item->{node}->child_nodes};
+}; # sw-see
+
 $templates->{(SW09_NS)}->{'fenced'} = sub {
   my ($items, $item) = @_;
 
@@ -982,13 +1001,13 @@ $templates->{(SW09_NS)}->{'anchor-external'} = sub {
   my $container = $item->{doc}->create_element_ns (HTML_NS, 'span');
   $container->set_attribute (class => 'sw-anchor-external-container');
 
-  $container->manakai_append_text ('<');
+  #$container->manakai_append_text ('<');
 
   my $el = $item->{doc}->create_element_ns (HTML_NS, 'a');
   $container->append_child ($el);
   $el->set_attribute (class => 'sw-anchor-external');
 
-  $container->manakai_append_text ('>');
+  #$container->manakai_append_text ('>');
 
   my $scheme = $item->{node}->get_attribute_ns (SW09_NS, 'resScheme');
   if ($scheme eq 'URI' or $scheme eq 'URL') {
@@ -1122,7 +1141,7 @@ sub convert ($$$$$$) {
 
 =head1 LICENSE
 
-Copyright 2008-2017 Wakaba <wakaba@suikawiki.org>.
+Copyright 2008-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

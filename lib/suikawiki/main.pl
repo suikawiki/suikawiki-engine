@@ -214,14 +214,20 @@ if ($path[0] eq 'n' and @path == 2) {
             ->text_content (length $title_text ? $title_text : $name);
             ## TODO: {'title-type'};
         $article_el->append_child ($header);
+        my $nav = $header->first_element_child;
         if (defined $id_prop->{parent}) {
-          my $nav = $header->first_element_child;
           my $link = $html_doc->create_element ('a');
           $link->text_content ($id_prop->{parent});
           $link->set_attribute (href => '/n/' . percent_encode_c $id_prop->{parent});
           $nav->append_child ($link);
           my $text = $html_doc->create_text_node (' > ');
           $nav->append_child ($text);
+        }
+        {
+          my $link = $html_doc->create_element ('a');
+          $link->text_content (length $title_text ? $title_text : $name);
+          $link->set_attribute (href => '');
+          $nav->append_child ($link);
         }
         
         while (@{$html_container->child_nodes}) {
