@@ -35,12 +35,15 @@ addEventListener ('DOMContentLoaded', function () {
   };
 
   initEditForm (document.body);
-  initFigures (document.body);
+  enableHTML5Support (function () {
+    setTimeout (function () {
+      initFigures (document.body);
+    }, 0);
+  });
   initHeadings (document.body);
   initTOC (document.body);
   initWarnings (document.body);
   addGoogleSearch ();
-  enableHTML5Support ();
   enableMathMLSupport ();
   addGoogleAnalytics ();
 }); // DOMContentLoaded
@@ -238,9 +241,10 @@ function createToolbar (root) {
   }
 } // createToolbar
 
-function enableHTML5Support () {
+function enableHTML5Support (onload) {
   window.TEROnLoad = function () {
     new TER.Delta (document.body);
+    onload ();
   }; // window.TEROnLoad
 
   var timeScript = document.createElement ('script');
@@ -854,6 +858,107 @@ SW.Figure.Railroad.parseItems = function parseItems (list) {
   }
   return elements;
 }; // parseItems
+
+SW.Figure.SunTime = function (f) {
+  var e = {};
+  f.textContent.split (/\s+/g).forEach (_ => {
+    var [n, v] = _.split (/=/);
+    e[n] = v;
+  });
+  f.textContent = '';
+
+  var match = (e.day || '').match (/([0-9]+)-([0-9]+)-([0-9]+)/);
+  if (!match) match = (new Date).toISOString ().match (/([0-9]+)-([0-9]+)-([0-9]+)/);
+  var y = parseInt (match[1]);
+  var m = parseInt (match[2]);
+  var d = parseInt (match[3]);
+
+  match = (e.tz || '').match (/([+-])([0-9]+):([0-9]+)(?::([0-9]+(?:\.[0-9]+|))|)/);
+  if (!match) match = [null, '+', 0, 0, 0];
+  var tz = (match[1] === "-" ? -1 : +1) * parseInt (match[2])*60*60 + parseInt (match[3])*60 + parseFloat (match[4] || 0);
+
+  var lat = parseFloat (e.lat || 0);
+  var lon = parseFloat (e.lon || 0);
+
+  match = (e.offsetbefore || '').match (/([0-9]+):([0-9]+)(?::([0-9]+(?:\.[0-9]+|))|)/);
+  var offsetBefore = (match ? parseInt (match[1])*60*60 + parseInt (match[2])*60 + parseFloat (match[3] || 0) : 0) * 1000;
+  match = (e.offsetafter || '').match (/([0-9]+):([0-9]+)(?::([0-9]+(?:\.[0-9]+|))|)/);
+  var offsetAfter = (match ? parseInt (match[1])*60*60 + parseInt (match[2])*60 + parseFloat (match[3] || 0) : 0) * 1000;
+
+  var dayStart = new Date (Date.UTC (y, m-1, d, 0, 0, 0, 0) - tz * 1000);
+  var dayEnd = new Date (dayStart.valueOf () + 24*60*60*1000);
+
+  var times = SunCalc.getTimes (new Date (y, m-1, d), lat, lon);
+  var prevTimes = SunCalc.getTimes (new Date (new Date (y, m-1, d).valueOf () - 24*60*60*1000), lat, lon);
+  var nextTimes = SunCalc.getTimes (new Date (new Date (y, m-1, d).valueOf () + 24*60*60*1000), lat, lon);
+  ['sunrise', 'solarNoon', 'sunset'].forEach ((_) => {
+    if (times[_].valueOf () < dayStart.valueOf ()) times[_] = nextTimes[_];
+    if (dayEnd.valueOf () < times[_].valueOf ()) times[_] = prevTimes[_];
+  });
+
+  var paddingTop = 5;
+  var paddingBottom = 5;
+  var paddingLeft = 20;
+  var paddingRight = 20;
+  var dayWidth = f.offsetWidth - paddingLeft - paddingRight;
+  var dayLength = 24*60*60*1000 + offsetBefore + offsetAfter;
+  var figHeight = 20;
+  var fontHeight = 10;
+  
+  var svg = document.createElementNS ("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute ('width', paddingLeft + dayWidth + paddingRight);
+  svg.setAttribute ('height', paddingTop + figHeight + fontHeight + paddingBottom);
+
+  var timeRangeRect = function (time1, time2, className) {
+    var delta1 = time1.valueOf () - dayStart.valueOf ();
+    var delta2 = time2.valueOf () - dayStart.valueOf ();
+    var x1 = paddingLeft + (offsetBefore + delta1) * dayWidth / dayLength;
+    var x2 = paddingLeft + (offsetBefore + delta2) * dayWidth / dayLength;
+
+      var rect = document.createElementNS (svg.namespaceURI, 'rect');
+      rect.setAttribute ('x', x1); rect.setAttribute ('width', x2 - x1);
+      rect.setAttribute ('y', paddingTop); rect.setAttribute ('height', figHeight);
+      rect.setAttribute ('class', className);
+      svg.appendChild (rect);
+
+  };
+  if (times.sunrise.valueOf () <= times.sunset.valueOf ()) {
+    timeRangeRect (dayStart, times.sunrise, "night");
+    timeRangeRect (times.sunrise, times.sunset, "day");
+    timeRangeRect (times.sunset, dayEnd, "night");
+  } else {
+    timeRangeRect (dayStart, times.sunset, "day");
+    timeRangeRect (times.sunset, times.sunrise, "night");
+    timeRangeRect (times.sunrise, dayEnd, "day");
+  }
+
+  var lineAtTime = function (time, className) {
+    var delta = time.valueOf () - dayStart.valueOf ();
+    var x = paddingLeft + (offsetBefore + delta) * dayWidth / dayLength;
+    var line = document.createElementNS (svg.namespaceURI, "line");
+    line.setAttribute ("x1", x); line.setAttribute ("y1", paddingTop);
+    line.setAttribute ("x2", x); line.setAttribute ("y2", paddingTop + figHeight);
+    line.setAttribute ('class', className);
+    var text = document.createElementNS (svg.namespaceURI, "text");
+    text.setAttribute ('x', x);
+    text.setAttribute ('y', paddingTop + figHeight);
+    text.setAttribute ('font-size', fontHeight);
+    text.setAttribute ('text-anchor', 'middle');
+    text.setAttribute ('dominant-baseline', 'text-before-edge');
+    var t = new Date (new Date (2000, 1-1, 1, 0, 0, 0).valueOf () + delta);
+    var z2 = (_) => _ < 10 ? '0' + _ : _;
+    text.textContent = z2 (t.getHours () + (t.getDate () === 2 ? 24 : 0)) + ':' + z2 (t.getMinutes ());
+    text.setAttribute ('class', className);
+    svg.appendChild (line);
+    svg.appendChild (text);
+  };
+  lineAtTime (dayStart, 'daystart time');
+  lineAtTime (times.sunrise, 'sunrise time');
+  lineAtTime (times.solarNoon, 'solarnoon time');
+  lineAtTime (times.sunset, 'sunset time');
+  lineAtTime (dayEnd, 'dayend time');
+  f.appendChild (svg);
+}; // SW.Figure.SunTime
 
 (function () {
   if (!self.SW) self.SW = {};
@@ -1961,6 +2066,10 @@ function initFigures (root) {
 
   Array.prototype.forEach.call (root.querySelectorAll ('figure.amazon'), function (a) {
     SW.Figure.Amazon.itemList (a);
+  });
+
+  Array.prototype.forEach.call (root.querySelectorAll ('figure.suntime'), function (a) {
+    SW.Figure.SunTime (a);
   });
 } // initFigures
 

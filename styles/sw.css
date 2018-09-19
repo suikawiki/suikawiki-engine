@@ -1386,6 +1386,29 @@ figure.packet table .continue-more {
   border-bottom: dashed 1px black;
 }
 
+figure.suntime {
+  display: inline-block;
+  min-width: 20em;
+  width: 30em;
+  max-width: 100%;
+  margin: 5px 0;
+  border: none;
+  padding: 0;
+  vertical-align: middle;
+}
+figure.suntime .day {
+  fill: #ffcf00;
+}
+figure.suntime .night {
+  fill: #ccc;
+}
+figure.suntime line.time {
+  stroke: black;
+}
+figure.suntime text.time {
+  fill: gray;
+}
+
 figure.bookmarklet .sw-anchor-external-container {
   display: block;
   overflow: hidden;
@@ -1722,6 +1745,7 @@ sw-see:not(:hover) {
 
 sw-see::before {
   content: "\01F449  ";
+  white-space: nowrap;
 }
 
 

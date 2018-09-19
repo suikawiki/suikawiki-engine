@@ -15,8 +15,19 @@ clean:
 
 build: scripts/time.js
 
-scripts/time.js:
+scripts/time.js: local/time.js local/suncalc.js local/suncalc-LICENSE
+	cat local/time.js > $@
+	cat local/suncalc.js >> $@
+	echo "/*" >> $@
+	cat local/suncalc-LICENSE >> $@
+	echo "*/" >> $@
+
+local/time.js:
 	$(WGET) -O $@ https://raw.githubusercontent.com/wakaba/timejs/master/src/time.js
+local/suncalc.js:
+	$(WGET) -O $@ https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js
+local/suncalc-LICENSE:
+	$(WGET) -O $@ https://raw.githubusercontent.com/mourner/suncalc/master/LICENSE
 
 ## ------ Setup ------
 
