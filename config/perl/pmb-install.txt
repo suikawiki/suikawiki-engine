@@ -41,12 +41,10 @@ HTTP::Cookies~6.04
 HTTP::Daemon~6.01
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
+HTTP::Headers~6.18
 HTTP::Headers::Fast~0.21
-HTTP::Headers::Util~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.18
-HTTP::Status~6.18
 Hash::MultiValue~0.16
 IO::HTML~1.001
 IO::Handle~1.39
@@ -67,7 +65,6 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20180117
 Net::HTTP~6.18
-Net::HTTPS~6.18
 Net::SSLeay~1.85
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
@@ -83,10 +80,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~4.06
-Test::Builder~1.302162
 Test::Class~0.50
 Test::Deep~1.128
 Test::Differences~0.64
+Test::More~1.302162
 Test::Requires~0.10
 Test::SharedFork~0.35
 Test::TCP~2.19
