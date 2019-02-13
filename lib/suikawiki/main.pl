@@ -298,6 +298,20 @@ if ($path[0] eq 'n' and @path == 2) {
 </script>
           });
           $body_el->insert_before ($ad2_el, $search_el);
+
+          my $grels_el = $html_doc->create_element ('div');
+          $grels_el->set_attribute (class => 'swe-ad swe-ad-google');
+          $grels_el->inner_html (q{
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-6943204637055835"
+     data-ad-slot="2239220532"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+          });
+          $body_el->append_child ($grels_el);
         } else {
           #my $sidebar_el = $html_doc->create_element ('aside');
           #my $ad_el = $html_doc->create_element ('aside');
