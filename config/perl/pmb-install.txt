@@ -10,7 +10,7 @@ Class::Accessor::Lite~0.08
 Class::Data::Inheritable~0.08
 Class::Inspector~1.32
 Cookie::Baker~0.10
-Cpanel::JSON::XS~4.10
+Cpanel::JSON::XS~4.11
 Crypt::SSLeay~0.72
 Data::Dumper~2.173
 Devel::CheckLib~1.13
@@ -42,10 +42,10 @@ HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
 HTTP::Headers::Fast~0.21
 HTTP::Headers::Util~6.18
-HTTP::Message~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~6.18
+HTTP::Request~6.18
+HTTP::Status~6.18
 Hash::MultiValue~0.16
 IO::Dir~1.39
 IO::HTML~1.001
@@ -66,6 +66,7 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20180117
 Net::HTTP~6.18
+Net::HTTPS~6.18
 Net::SSLeay~1.85
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
