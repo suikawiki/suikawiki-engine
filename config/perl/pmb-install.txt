@@ -46,8 +46,8 @@ HTTP::Negotiate~6.01
 HTTP::Response~6.18
 HTTP::Status~6.18
 Hash::MultiValue~0.16
-IO::File~1.39
 IO::HTML~1.001
+IO::Handle~1.39
 IO::Socket::SSL~2.066
 IPC::Signal~1.00
 JSON::MaybeXS~1.004000
@@ -80,10 +80,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~4.06
-Test::Builder~1.302164
 Test::Class~0.50
 Test::Deep~1.128
 Test::Differences~0.67
+Test::More~1.302164
 Test::Requires~0.10
 Test::SharedFork~0.35
 Test::TCP~2.19
