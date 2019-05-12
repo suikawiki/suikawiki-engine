@@ -44,9 +44,10 @@ HTTP::Headers::Fast~0.22
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.18
+HTTP::Response~6.18
 HTTP::Status~6.18
 Hash::MultiValue~0.16
-IO::File~1.39
+IO::Dir~1.39
 IO::HTML~1.001
 IO::Socket::SSL~2.066
 IPC::Signal~1.00
@@ -95,7 +96,6 @@ Time::Local~1.28
 Try::Tiny~0.30
 Types::Serialiser~1.0
 URI~1.76
-URI::Escape~3.31
 WWW::Form::UrlEncoded~0.25
 WWW::RobotRules~6.02
 common::sense~3.74
