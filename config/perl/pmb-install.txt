@@ -41,7 +41,7 @@ HTTP::Daemon~6.04
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
 HTTP::Headers::Fast~0.22
-HTTP::Headers::Util~6.18
+HTTP::Message~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.18
@@ -82,10 +82,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~4.06
+Test::Builder~1.302164
 Test::Class~0.50
 Test::Deep~1.128
 Test::Differences~0.67
-Test::More~1.302164
 Test::Requires~0.10
 Test::SharedFork~0.35
 Test::TCP~2.19
