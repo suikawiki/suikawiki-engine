@@ -1,6 +1,7 @@
 Algorithm::Diff~1.1903
 AnyEvent~7.15
 AnyEvent::HTTP~2.24
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.35
 Canary::Stability~2013
 Capture::Tiny~0.48
@@ -41,12 +42,11 @@ HTTP::Daemon~6.04
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
 HTTP::Headers::Fast~0.22
+HTTP::Headers::Util~6.18
 HTTP::Message~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request::Common~6.18
 HTTP::Response~6.18
-HTTP::Status~6.18
 Hash::MultiValue~0.16
 IO::File~1.39
 IO::HTML~1.001
@@ -97,7 +97,6 @@ Time::Local~1.28
 Try::Tiny~0.30
 Types::Serialiser~1.0
 URI~1.76
-URI::Escape~3.31
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.74
