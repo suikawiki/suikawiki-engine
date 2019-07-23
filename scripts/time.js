@@ -300,7 +300,8 @@ TER.prototype._initialize = function () {
     mo.observe (document, {childList: true, subtree: true});
     Array.prototype.forEach.call (document.querySelectorAll (selector), op);
 
-  }) (document.currentScript.getAttribute ('data-selector'));
+  }) (document.currentScript.getAttribute ('data-time-selector') ||
+      document.currentScript.getAttribute ('data-selector') /* backcompat */);
 }) ();
 
 TER.Delta.Text = {};
@@ -378,10 +379,10 @@ Usage:
 
 Just insert:
 
-  <script src="path/to/time.js" data-selector="time" async></script>
+  <script src="path/to/time.js" data-time-selector="time" async></script>
 
-... where the |data-selector| attribute value is a selector that only
-matches with |time| elements that should be processed.  Then any
+... where the |data-time-selector| attribute value is a selector that
+only matches with |time| elements that should be processed.  Then any
 |time| element matched with the selector when the script is executed,
 as well as any |time| element matched with the selector inserted after
 the script's execution, is processed appropriately.  E.g.:
@@ -412,14 +413,14 @@ value is changed, the element's content is updated appropriately.
 (Note that the element's content's mutation is ignored.)
 
 For backward compatibility with previous versions of this script, if
-there is no |data-selector| attribute, the script does nothing by
-default, except for defining the |TER| global property.  By invoking
-|new TER (/element/)| or |new TER.Delta (/element/)| constructor,
-where /element/ is an element node, any |time| element in the
-/element/ subtree (or /element/ itself if it is a |time| element) is
-processed appropriately.  The |TER| constructor is equivalent to no
-|data-format| attribute and the |TER.Delta| constructor is equivalent
-to |data-format=ambtime|.
+there is no |data-time-selector| or |data-selector| attribute, the
+script does nothing by default, except for defining the |TER| global
+property.  By invoking |new TER (/element/)| or |new TER.Delta
+(/element/)| constructor, where /element/ is an element node, any
+|time| element in the /element/ subtree (or /element/ itself if it is
+a |time| element) is processed appropriately.  The |TER| constructor
+is equivalent to no |data-format| attribute and the |TER.Delta|
+constructor is equivalent to |data-format=ambtime|.
 
 Repository:
 
