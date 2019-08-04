@@ -44,9 +44,9 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.18
+HTTP::Response~6.18
 Hash::MultiValue~0.16
-IO::File~1.39
+IO::Dir~1.39
 IO::HTML~1.001
 IO::Socket::SSL~2.066
 IPC::Signal~1.00
@@ -65,7 +65,6 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20180117
 Net::HTTP~6.19
-Net::HTTPS~6.19
 Net::SSLeay~1.88
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
@@ -87,7 +86,7 @@ Test::Deep~1.128
 Test::Differences~0.67
 Test::Requires~0.10
 Test::SharedFork~0.35
-Test::TCP~2.19
+Test::TCP~2.20
 Text::Diff~1.45
 Text::MeCab~0.20016
 Time::HiRes~1.9760
@@ -95,7 +94,6 @@ Time::Local~1.28
 Try::Tiny~0.30
 Types::Serialiser~1.0
 URI~1.76
-URI::Escape~3.31
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.74
