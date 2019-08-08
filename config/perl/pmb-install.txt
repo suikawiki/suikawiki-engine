@@ -40,7 +40,7 @@ HTTP::Daemon~6.05
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
 HTTP::Headers::Fast~0.22
-HTTP::Message~6.18
+HTTP::Headers::Util~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.18
@@ -65,6 +65,7 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20180117
 Net::HTTP~6.19
+Net::HTTPS~6.19
 Net::SSLeay~1.88
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
@@ -73,7 +74,7 @@ Path::Tiny~0.108
 Plack~1.0047
 Pod::Usage~1.69
 Proc::Wait3~0.05
-Scalar::Util~1.50
+Scalar::Util~1.51
 Scope::Guard~0.21
 Server::Starter~0.34
 Signal::Mask~0.008
