@@ -3,6 +3,7 @@
 
 html {
   padding: 0.5em;
+  --timejs-serialization: dtsjp1;
 }
 
 html, td {
