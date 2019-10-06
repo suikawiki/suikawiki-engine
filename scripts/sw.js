@@ -35,8 +35,7 @@ addEventListener ('DOMContentLoaded', function () {
   };
 
   initEditForm (document.body);
-  initTime ();
-  initFigures (document.body);
+  initTime ().then (() => initFigures (document.body));
   initHeadings (document.body);
   initTOC (document.body);
   initWarnings (document.body);
@@ -239,11 +238,15 @@ function createToolbar (root) {
 } // createToolbar
 
 function initTime () {
-  var timeScript = document.createElement ('script');
-  timeScript.async = true;
-  timeScript.src = '/scripts/time';
-  timeScript.setAttribute ('data-time-selector', 'time');
-  document.documentElement.lastChild.appendChild (timeScript);
+  return new Promise ((ok, ng) => {
+    var timeScript = document.createElement ('script');
+    timeScript.async = true;
+    timeScript.src = '/scripts/time';
+    timeScript.setAttribute ('data-time-selector', 'time');
+    timeScript.onload = ok;
+    timeScript.onerror = ng;
+    document.documentElement.lastChild.appendChild (timeScript);
+  });
 } // enableHTML5Support
 
 function enableMathMLSupport () {
