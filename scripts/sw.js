@@ -35,11 +35,8 @@ addEventListener ('DOMContentLoaded', function () {
   };
 
   initEditForm (document.body);
-  enableHTML5Support (function () {
-    setTimeout (function () {
-      initFigures (document.body);
-    }, 0);
-  });
+  initTime ();
+  initFigures (document.body);
   initHeadings (document.body);
   initTOC (document.body);
   initWarnings (document.body);
@@ -241,16 +238,11 @@ function createToolbar (root) {
   }
 } // createToolbar
 
-function enableHTML5Support (onload) {
-  window.TEROnLoad = function () {
-    new TER.Delta (document.body);
-    onload ();
-  }; // window.TEROnLoad
-
+function initTime () {
   var timeScript = document.createElement ('script');
-  timeScript.defer = true;
-  timeScript.charset = 'utf-8';
+  timeScript.async = true;
   timeScript.src = '/scripts/time';
+  timeScript.setAttribute ('data-time-selector', 'time');
   document.documentElement.lastChild.appendChild (timeScript);
 } // enableHTML5Support
 
