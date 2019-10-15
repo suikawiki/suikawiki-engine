@@ -11,7 +11,7 @@ Class::Accessor::Lite~0.08
 Class::Data::Inheritable~0.08
 Class::Inspector~1.36
 Cookie::Baker~0.11
-Cpanel::JSON::XS~4.13
+Cpanel::JSON::XS~4.14
 Crypt::SSLeay~0.72
 Data::Dumper~2.173
 Devel::CheckLib~1.13
@@ -43,14 +43,13 @@ HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
 HTTP::Headers::Fast~0.22
 HTTP::Headers::Util~6.18
+HTTP::Message~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request::Common~6.18
-HTTP::Response~6.18
 HTTP::Status~6.18
 Hash::MultiValue~0.16
+IO::File~1.39
 IO::HTML~1.001
-IO::Handle~1.39
 IO::Socket::SSL~2.066
 IPC::Signal~1.00
 JSON::MaybeXS~1.004000
