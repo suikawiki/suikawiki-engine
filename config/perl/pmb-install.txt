@@ -34,18 +34,17 @@ Filesys::Notify::Simple~0.13
 Filter::Util::Call~1.59
 Getopt::Long~2.51
 HTML::Entities~3.69
+HTML::HeadParser~3.71
 HTML::Tagset~3.20
 HTTP::Cookies~6.05
 HTTP::Daemon~6.06
 HTTP::Date~6.02
 HTTP::Entity::Parser~0.21
 HTTP::Headers::Fast~0.22
+HTTP::Headers::Util~6.18
 HTTP::Message~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.18
-HTTP::Request::Common~6.18
-HTTP::Response~6.18
 Hash::MultiValue~0.16
 IO::File~1.39
 IO::HTML~1.001
@@ -66,6 +65,7 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20180117
 Net::HTTP~6.19
+Net::HTTPS~6.19
 Net::SSLeay~1.88
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
@@ -95,6 +95,7 @@ Time::Local~1.28
 Try::Tiny~0.30
 Types::Serialiser~1.0
 URI~1.76
+URI::Escape~3.31
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.74
