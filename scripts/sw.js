@@ -446,7 +446,16 @@ function initTOC (root) {
   if (list) section.appendChild (list);
 
   sectionContainer.appendChild (section);
-  if (list) insertBeforeFirstSection (article, section.cloneNode (true));
+  if (list) {
+    var tocSection = section.cloneNode (true);
+    insertBeforeFirstSection (article, tocSection);
+    if (document.querySelector ('script[src*="adsbygoogle.js"]')) {
+      var div = document.createElement ('div');
+      div.innerHTML = '<ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-6943204637055835" data-ad-slot="9918587977"></ins>';
+      tocSection.appendChild (div.firstChild);
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    }
+  }
   section.id = 'side-toc';
 
   // Definitions
