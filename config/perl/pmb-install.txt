@@ -41,13 +41,12 @@ HTTP::Daemon~6.06
 HTTP::Date~6.05
 HTTP::Entity::Parser~0.22
 HTTP::Headers::Fast~0.22
-HTTP::Message~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request::Common~6.18
-HTTP::Status~6.18
+HTTP::Response~6.18
 Hash::MultiValue~0.16
-IO::File~1.39
+IO::Dir~1.39
 IO::HTML~1.001
 IO::Socket::SSL~2.066
 IPC::Signal~1.00
@@ -81,11 +80,11 @@ Server::Starter~0.35
 Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
-Term::ANSIColor~5.00
-Test::Builder~1.302171
+Term::ANSIColor~5.01
 Test::Class~0.50
 Test::Deep~1.128
 Test::Differences~0.67
+Test::More~1.302171
 Test::Requires~0.10
 Test::SharedFork~0.35
 Test::TCP~2.22
@@ -97,6 +96,7 @@ Time::Zone~2.24
 Try::Tiny~0.30
 Types::Serialiser~1.0
 URI~1.76
+URI::Escape~3.31
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.74
