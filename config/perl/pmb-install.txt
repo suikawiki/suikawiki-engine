@@ -1,6 +1,7 @@
 Algorithm::Diff~1.1903
 AnyEvent~7.17
 AnyEvent::HTTP~2.24
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 Canary::Stability~2013
 Capture::Tiny~0.48
@@ -44,7 +45,6 @@ HTTP::Headers::Fast~0.22
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.18
-HTTP::Response~6.18
 Hash::MultiValue~0.16
 IO::Dir~1.41
 IO::HTML~1.001
@@ -95,6 +95,7 @@ Time::Zone~2.24
 Try::Tiny~0.30
 Types::Serialiser~1.0
 URI~1.76
+URI::Escape~3.31
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.74
