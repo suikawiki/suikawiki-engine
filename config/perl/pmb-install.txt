@@ -65,7 +65,6 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20180117
 Net::HTTP~6.19
-Net::HTTPS~6.19
 Net::SSLeay~1.88
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
