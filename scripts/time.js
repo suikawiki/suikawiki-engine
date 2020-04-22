@@ -223,7 +223,7 @@ function TER (c) {
     _setDateTimeContent (el, usedDate);
   } // setDateTimeContent
 
-  function setAmbtimeContent (el, date) {
+  function setAmbtimeContent (el, date, opts) {
     if (!el.getAttribute ('title')) {
       el.setAttribute ('title', el.textContent);
     }
@@ -265,7 +265,7 @@ function TER (c) {
         } else {
           f = diff;
           diff = Math.floor (diff / 24);
-          if (diff < 100) {
+          if (diff < 100 || opts.deltaOnly) {
             v = text.day (diff);
             f -= diff * 24;
             if (f > 0) v += text.sep () + text.hour (f);
@@ -328,7 +328,7 @@ TER.prototype._initialize = function () {
     var date = parseTimeElement (el);
     if (isNaN (date.valueOf ())) return;
     if (date.hasTimezone) { /* full date */
-      setAmbtimeContent (el, date);
+      setAmbtimeContent (el, date, {});
     } else if (date.hasDate) {
       setDateContent (el, date);
     }
@@ -348,7 +348,9 @@ TER.prototype._initialize = function () {
       } else if (format === 'monthday') {
         setMonthDayDateContent (el, date);
       } else if (format === 'ambtime') {
-        setAmbtimeContent (el, date);
+        setAmbtimeContent (el, date, {});
+      } else if (format === 'deltatime') {
+        setAmbtimeContent (el, date, {deltaOnly: true});
       } else { // auto
         if (date.hasTimezone) { /* full date */
           setDateTimeContent (el, date);
@@ -489,6 +491,11 @@ the script's execution, is processed appropriately.  E.g.:
   <time data-format=ambtime>2008-12-20T23:27+09:00</time>
   <!-- Will be rendered as an "ambtime" in English or Japanese
        depending on the user's language preference, such as "2 hours
+       ago", if the date is within 100 days from "today" -->
+
+  <time data-format=deltatime>2008-12-20T23:27+09:00</time>
+  <!-- Will be rendered as an "ambtime" in English or Japanese
+       depending on the user's language preference, such as "2 hours
        ago" -->
 
 When the |time| element's |datetime| or |data-tzoffset| attribute
@@ -504,6 +511,7 @@ serializations:
   'auto' (default)   (platform dependent)
   'dtsjp1'           令和元(2019)年9月28日 1時23分45秒
   'dtsjp2'           R1(2019).9.28 1:23:45
+  'dtsjp3'           2019(R1).9.28 1:23:45
 
 For backward compatibility with previous versions of this script, if
 there is no |data-time-selector| or |data-selector| attribute, the
@@ -532,7 +540,7 @@ is a willful violation to the current HTML Living Standard.
 
 /* ***** BEGIN LICENSE BLOCK *****
  *
- * Copyright 2008-2019 Wakaba <wakaba@suikawiki.org>.  All rights reserved.
+ * Copyright 2008-2020 Wakaba <wakaba@suikawiki.org>.  All rights reserved.
  *
  * Copyright 2017 Hatena <http://hatenacorp.jp/>.  All rights reserved.
  *
