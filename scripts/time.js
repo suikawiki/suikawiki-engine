@@ -126,8 +126,10 @@ function TER (c) {
     dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
     if (dts === 'dtsjp1') {
       el.textContent = _year (date.valueOf (), date.getUTCFullYear (), dts) + '年' + (date.getUTCMonth () + 1) + '月' + date.getUTCDate () + '日(' + ['日','月','火','水','木','金','土'][date.getUTCDay ()] + ')';
-    } else if (dts === 'dtsjp2' || dts === 'dtsjp3') {
+    } else if (dts === 'dtsjp2') {
       el.textContent = _year (date.valueOf (), date.getUTCFullYear (), dts) + '.' + (date.getUTCMonth () + 1) + '.' + date.getUTCDate ();
+    } else if (dts === 'dtsjp3') {
+      el.textContent = _year (date.valueOf (), date.getUTCFullYear (), dts) + '/' + (date.getUTCMonth () + 1) + '/' + date.getUTCDate ();
     } else {
       el.textContent = date.toLocaleDateString (navigator.language, {
         "timeZone": "UTC",
@@ -140,8 +142,10 @@ function TER (c) {
     dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
     if (dts === 'dtsjp1') {
       el.textContent = (date.getUTCMonth () + 1) + '月' + date.getUTCDate () + '日(' + ['日','月','火','水','木','金','土'][date.getUTCDay ()] + ')';
-    } else if (dts === 'dtsjp2' || dts === 'dtsjp3') {
+    } else if (dts === 'dtsjp2') {
       el.textContent = (date.getUTCMonth () + 1) + '.' + date.getUTCDate ();
+    } else if (dts === 'dtsjp3') {
+      el.textContent = (date.getUTCMonth () + 1) + '/' + date.getUTCDate ();
     } else {
       el.textContent = date.toLocaleDateString (navigator.language, {
         "timeZone": "UTC",
@@ -151,13 +155,35 @@ function TER (c) {
     }
   } // _setMonthDayDateContent
 
+  function _setMonthDayTimeContent (el, date) {
+    var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
+    dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
+    if (dts === 'dtsjp1') {
+      el.textContent = (date.getMonth () + 1) + '月' + date.getDate () + '日(' + ['日','月','火','水','木','金','土'][date.getDay ()] + ') ' + date.getHours () + '時' + date.getMinutes () + '分' + date.getSeconds () + '秒';
+    } else if (dts === 'dtsjp2') {
+      el.textContent = (date.getMonth () + 1) + '.' + date.getDate () + ' ' + date.getHours () + ':' + _2digit (date.getMinutes ()) + ':' + _2digit (date.getSeconds ());
+    } else if (dts === 'dtsjp3') {
+      el.textContent = (date.getMonth () + 1) + '/' + date.getDate () + ' ' + date.getHours () + ':' + _2digit (date.getMinutes ()) + ':' + _2digit (date.getSeconds ());
+    } else {
+      el.textContent = date.toLocaleString (navigator.language, {
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+      });
+    }
+  } // _setMonthDayTimeContent
+
   function _setDateTimeContent (el, date) {
     var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
     dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
     if (dts === 'dtsjp1') {
       el.textContent = _year (date.valueOf () - date.getTimezoneOffset () * 60 * 1000, date.getFullYear (), dts) + '年' + (date.getMonth () + 1) + '月' + date.getDate () + '日(' + ['日','月','火','水','木','金','土'][date.getDay ()] + ') ' + date.getHours () + '時' + date.getMinutes () + '分' + date.getSeconds () + '秒';
-    } else if (dts === 'dtsjp2' || dts === 'dtsjp3') {
+    } else if (dts === 'dtsjp2') {
       el.textContent = _year (date.valueOf () - date.getTimezoneOffset () * 60 * 1000, date.getFullYear (), dts) + '.' + (date.getMonth () + 1) + '.' + date.getDate () + ' ' + date.getHours () + ':' + _2digit (date.getMinutes ()) + ':' + _2digit (date.getSeconds ());
+    } else if (dts === 'dtsjp3') {
+      el.textContent = _year (date.valueOf () - date.getTimezoneOffset () * 60 * 1000, date.getFullYear (), dts) + '/' + (date.getMonth () + 1) + '/' + date.getDate () + ' ' + date.getHours () + ':' + _2digit (date.getMinutes ()) + ':' + _2digit (date.getSeconds ());
     } else {
       el.textContent = date.toLocaleString (navigator.language, {
         year: "numeric",
@@ -204,6 +230,31 @@ function TER (c) {
       _setDateContent (el, date);
     }
   } // setMonthDayDateContent
+
+  function setMonthDayTimeContent (el, date) {
+    if (!el.getAttribute ('title')) {
+      el.setAttribute ('title', el.textContent);
+    }
+    if (!el.getAttribute ('datetime')) {
+      // XXX If year is outside of 1000-9999, ...
+      el.setAttribute ('datetime', date.toISOString ());
+    }
+
+    var tzoffset = el.getAttribute ('data-tzoffset');
+    var usedDate = date;
+    if (tzoffset !== null) {
+      tzoffset = parseFloat (tzoffset);
+      usedDate = new Date (date.valueOf () + date.getTimezoneOffset () * 60 * 1000 + tzoffset * 1000);
+    }
+    
+    var lang = navigator.language;
+    if (new Date ().toLocaleString (lang, {timeZone: 'UTC', year: "numeric"}) ===
+        usedDate.toLocaleString (lang, {timeZone: 'UTC', year: "numeric"})) {
+      _setMonthDayTimeContent (el, usedDate);
+    } else {
+      _setDateTimeContent (el, usedDate);
+    }
+  } // setMonthDayTimeContent
 
   function setDateTimeContent (el, date) {
     if (!el.getAttribute ('title')) {
@@ -347,6 +398,8 @@ TER.prototype._initialize = function () {
         setDateContent (el, date);
       } else if (format === 'monthday') {
         setMonthDayDateContent (el, date);
+      } else if (format === 'monthdaytime') {
+        setMonthDayTimeContent (el, date);
       } else if (format === 'ambtime') {
         setAmbtimeContent (el, date, {});
       } else if (format === 'deltatime') {
@@ -473,20 +526,24 @@ as well as any |time| element matched with the selector inserted after
 the script's execution, is processed appropriately.  E.g.:
 
   <time>2008-12-20T23:27+09:00</time>
-  <!-- Will be rendered as a date and time in the user's locale
-       dependent format, such as "20 December 2008 11:27 PM" -->
+  <!-- Will be rendered as a date and time, e.g.
+       "20 December 2008 11:27:00 PM" -->
 
   <time>2008-12-20</time>
   <time data-format=date>2008-12-20T23:27+09:00</time>
-  <!-- Will be rendered as a date in the user's locale dependent
-       format, such as "20 December 2008" -->
+  <!-- Will be rendered as a date, e.g. "20 December 2008" -->
 
-  <time>2008-12-20</time>
-  <time data-format=date>2008-12-20T23:27+09:00</time>
-  <!-- Will be rendered as a date in the user's locale dependent
-       format, such as "20 December 2008" but the year component is
-       omitted if it is same as this year, such as "December 20" in
-       case it's 2008. -->
+  <time data-format=monthday>2008-12-20</time>
+  <time data-format=monthday>2008-12-20T23:27+09:00</time>
+  <!-- Will be rendered as a date, e.g. "20 December 2008" but the
+       year component is omitted if it is same as this year, e.g.
+       "December 20" if it's 2008. -->
+
+  <time data-format=monthdaytime>2008-12-20T23:27+09:00</time>
+  <!-- Will be rendered as a date and time, e.g.
+       "20 December 2008 11:27:00 PM" but the year component is omitted
+       if it is same as this year, e.g. "December 20 11:27:00 PM" if
+       it's 2008. -->
 
   <time data-format=ambtime>2008-12-20T23:27+09:00</time>
   <!-- Will be rendered as an "ambtime" in English or Japanese
@@ -511,7 +568,7 @@ serializations:
   'auto' (default)   (platform dependent)
   'dtsjp1'           令和元(2019)年9月28日 1時23分45秒
   'dtsjp2'           R1(2019).9.28 1:23:45
-  'dtsjp3'           2019(R1).9.28 1:23:45
+  'dtsjp3'           2019(R1)/9/28 1:23:45
 
 For backward compatibility with previous versions of this script, if
 there is no |data-time-selector| or |data-selector| attribute, the
