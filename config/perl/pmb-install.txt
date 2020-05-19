@@ -45,10 +45,9 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~6.24
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.24
-HTTP::Request::Common~6.24
+HTTP::Response~6.24
 Hash::MultiValue~0.16
-IO::File~1.41
+IO::Dir~1.41
 IO::HTML~1.001
 IO::Socket::SSL~2.068
 IPC::Signal~1.00
@@ -67,7 +66,6 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20180117
 Net::HTTP~6.19
-Net::HTTPS~6.19
 Net::SSLeay~1.88
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
