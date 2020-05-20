@@ -46,9 +46,10 @@ HTTP::Message~6.24
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Response~6.24
+HTTP::Status~6.24
 Hash::MultiValue~0.16
-IO::Dir~1.41
 IO::HTML~1.001
+IO::Handle~1.42
 IO::Socket::SSL~2.068
 IPC::Signal~1.00
 JSON::MaybeXS~1.004002
@@ -64,7 +65,7 @@ MRO::Compat~0.13
 Module::Build~0.4231
 Module::Build::Tiny~0.039
 Module::Runtime~0.016
-Mozilla::CA~20180117
+Mozilla::CA~20200520
 Net::HTTP~6.19
 Net::SSLeay~1.88
 POSIX::strftime::Compiler~0.42
