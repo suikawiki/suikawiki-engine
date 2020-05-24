@@ -45,10 +45,11 @@ HTTP::Headers::Fast~0.22
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.24
+HTTP::Response~6.24
 HTTP::Status~6.24
 Hash::MultiValue~0.16
-IO::Dir~1.41
 IO::HTML~1.001
+IO::Handle~1.42
 IO::Socket::SSL~2.068
 IPC::Signal~1.00
 JSON::MaybeXS~1.004002
@@ -66,7 +67,6 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20200520
 Net::HTTP~6.19
-Net::HTTPS~6.19
 Net::SSLeay~1.88
 POSIX::strftime::Compiler~0.42
 Parallel::Prefork~0.18
@@ -97,7 +97,6 @@ Time::Zone~2.24
 Try::Tiny~0.30
 Types::Serialiser~1.0
 URI~1.76
-URI::Escape~3.31
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
