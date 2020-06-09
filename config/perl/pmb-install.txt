@@ -42,14 +42,13 @@ HTTP::Daemon~6.12
 HTTP::Date~6.05
 HTTP::Entity::Parser~0.22
 HTTP::Headers::Fast~0.22
-HTTP::Headers::Util~6.24
+HTTP::Message~6.24
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Response~6.24
-HTTP::Status~6.24
 Hash::MultiValue~0.16
-IO::File~1.41
 IO::HTML~1.001
+IO::Handle~1.42
 IO::Socket::SSL~2.068
 IPC::Signal~1.00
 JSON::MaybeXS~1.004002
@@ -98,7 +97,6 @@ Time::Zone~2.24
 Try::Tiny~0.30
 Types::Serialiser~1.0
 URI~1.76
-URI::Escape~3.31
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
