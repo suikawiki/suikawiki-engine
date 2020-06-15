@@ -41,14 +41,16 @@ HTTP::Cookies~6.08
 HTTP::Daemon~6.12
 HTTP::Date~6.05
 HTTP::Entity::Parser~0.22
+HTTP::Headers~6.24
 HTTP::Headers::Fast~0.22
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.24
 HTTP::Request::Common~6.24
+HTTP::Response~6.24
 Hash::MultiValue~0.16
+IO::Dir~1.41
 IO::HTML~1.001
-IO::Handle~1.42
 IO::Socket::SSL~2.068
 IPC::Signal~1.00
 JSON::MaybeXS~1.004002
