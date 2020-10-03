@@ -1,5 +1,6 @@
 package SWE::Lang::XML2HTML;
 use strict;
+use warnings;
 use Wanage::URL qw(percent_encode_c);
 
 our $ConverterVersion = 6;
@@ -432,6 +433,18 @@ $templates->{(SW09_NS)}->{'subsup'} = sub {
 
 $templates->{(SW09_NS)}->{'sw-see'} =
 $templates->{(SW09_NS)}->{'sw-macron'} =
+$templates->{(SW09_NS)}->{'sw-tate'} =
+$templates->{(SW09_NS)}->{'sw-v'} =
+$templates->{(SW09_NS)}->{'sw-l'} =
+$templates->{(SW09_NS)}->{'sw-r'} =
+$templates->{(SW09_NS)}->{'sw-vrl'} =
+$templates->{(SW09_NS)}->{'sw-vlr'} =
+$templates->{(SW09_NS)}->{'sw-left'} =
+$templates->{(SW09_NS)}->{'sw-right'} =
+$templates->{(SW09_NS)}->{'sw-vrlbox'} =
+$templates->{(SW09_NS)}->{'sw-vlrbox'} =
+$templates->{(SW09_NS)}->{'sw-leftbox'} =
+$templates->{(SW09_NS)}->{'sw-rightbox'} =
 $templates->{(SW09_NS)}->{'sw-cursive'} = sub {
   my ($items, $item) = @_;
 
@@ -1141,7 +1154,7 @@ sub convert ($$$$$$) {
 
 =head1 LICENSE
 
-Copyright 2008-2018 Wakaba <wakaba@suikawiki.org>.
+Copyright 2008-2020 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

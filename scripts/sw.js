@@ -2077,9 +2077,144 @@ function initFigures (root) {
   });
 } // initFigures
 
+(() => {
+
+  window.addEventListener ('resize', () => {
+    document.querySelectorAll ('sw-v, sw-vrl, sw-vlr, sw-left, sw-right').forEach (e => {
+      delete e._InlineSize;
+      if (e.reshadow) e.reshadow ();
+    });
+  });
+
+  class WMBoxElement extends HTMLElement {
+    connectedCallback () {
+      this.reshadow ();
+    };
+    reshadow () {
+      var outerWM = getComputedStyle (this).writingMode;
+      if (this.localName === 'sw-vrl' &&
+          outerWM !== 'horizontal-tb') {
+        this.style.writingMode = 'vertical-rl';
+        return;
+      } else if (this.localName === 'sw-vlr' &&
+                 outerWM !== 'horizontal-tb') {
+        this.style.writingMode = 'vertical-lr';
+        return;
+      } else if (this.localName === 'sw-left' &&
+                 outerWM === 'horizontal-tb') {
+        return;
+      } else if (this.localName === 'sw-right' &&
+                 outerWM === 'horizontal-tb') {
+        return;
+      }
+
+      var df = this.shadowRoot || this.attachShadow ({mode: 'open'});
+      df.textContent = '';
+      var isBlock = (this.localName === 'sw-left' || this.localName === 'sw-right' || this.hasAttribute ('block'));
+      if (isBlock) this.style.direction = 'ltr';
+      var mainContainer = document.createElement ('wm-container');
+      mainContainer.style.display = isBlock ? 'block' : 'inline-block';
+      if (isBlock) mainContainer.style.width = '100%';
+      mainContainer.style.verticalAlign = 'middle';
+      var mainBox = document.createElement ('wm-context');
+      if (this.localName === 'sw-right') mainBox.style.direction = 'rtl';
+      var mainWrapper = document.createElement ('wm-wrapper');
+      mainWrapper.style.display = 'block';
+      mainWrapper.style.textIndent = 0;
+      var mainSlot = document.createElement ('slot');
+      mainWrapper.appendChild (mainSlot);
+      mainBox.appendChild (mainWrapper);
+      mainContainer.appendChild (mainBox);
+      df.appendChild (mainContainer);
+
+      if (!this._InlineSize) {
+        var sizer = document.createElement ('wm-sizer');
+        sizer.style.display = 'block';
+        df.appendChild (sizer);
+        var sizerRect = sizer.getClientRects () [0]; // redraw!
+        sizer.remove ();
+        this._InlineSize = sizerRect.width || sizerRect.height; // zero or inline-size
+        this._InlineAxis = sizerRect.width ? 'height' : 'width';
+      }
+      var innerWM = 'vertical-rl';
+      if (/^vertical/.test (outerWM)) innerWM = 'horizontal-tb';
+      if (innerWM === 'vertical-rl' &&
+          this.localName === 'sw-vlr') innerWM = 'vertical-lr';
+      this.setAttribute ('dev-innerwm', innerWM);
+      this.setAttribute ('dev-outerwm', outerWM);
+      
+      var canvas = document.createElement ('wm-canvas');
+      canvas.style.position = 'absolute';
+      canvas.style.display = 'block';
+      canvas.style.textIndent = 0;
+      if (innerWM === 'horizontal-tb') {
+        canvas.style.width = this._InlineSize + 'px';
+      } else {
+        canvas.style.height = this._InlineSize + 'px';
+      }
+      canvas.style.background = 'rgba(0, 255, 0, 0.6)'; // for devs
+      var canvasContainer = document.createElement ('wm-container');
+      canvasContainer.style.display = isBlock ? 'block' : 'inline-block';
+      if (this.localName === 'sw-right') canvasContainer.style.direction = 'rtl';
+      if (isBlock) canvasContainer.style.width = '100%';
+      canvasContainer.style.writingMode = innerWM;
+      var canvasSlot = document.createElement ('slot');
+      canvasContainer.appendChild (canvasSlot);
+      canvas.appendChild (canvasContainer);
+      df.appendChild (canvas);
+      mainSlot.name = 'disabled';
+      var canvasContainerRect = canvasContainer.getClientRects () [0]; // redraw!
+
+      mainBox.style.writingMode = innerWM;
+      mainBox.style.display = 'block';
+      var ix = this._InlineAxis;
+      var bx = ix === 'width' ? 'height' : 'width';
+      if (innerWM === 'horizontal-tb') {
+        mainBox.style.transformOrigin = 'top left';
+        if (outerWM === 'vertical-lr') {
+          mainBox.style.transform = 'rotate(-90deg) translate(-100%, 0)';
+        } else {
+          mainBox.style.transform = 'translate(100%, 0) rotate(90deg)';
+        }
+        mainContainer.style[bx] = canvasContainerRect.width + 'px';
+        mainContainer.style[ix] = canvasContainerRect.height + 'px';
+        mainBox.style[ix] = canvasContainerRect.width + 'px';
+        mainBox.style[bx] = canvasContainerRect.height + 'px';
+      } else {
+        mainBox.style.transformOrigin = 'top right';
+        mainBox.style.transform = 'translate(-100%, 0) rotate(270deg)';
+        mainContainer.style[ix] = canvasContainerRect.width + 'px';
+        mainContainer.style[bx] = canvasContainerRect.height + 'px';
+        mainBox.style[bx] = canvasContainerRect.width + 'px';
+        mainBox.style[ix] = canvasContainerRect.height + 'px';
+      }
+      //return;
+      mainSlot.name = '';
+      canvas.remove ();
+
+      var reflowed = false;
+      var resizer = new ResizeObserver (() => {
+        if (!reflowed) {
+          reflowed = true;
+          return;
+        }
+        this.reshadow ();
+      });
+      resizer.observe (mainWrapper);
+    }; // reshadow
+  };
+
+  customElements.define ('sw-vrl', class extends WMBoxElement { });
+  customElements.define ('sw-vlr', class extends WMBoxElement { });
+  customElements.define ('sw-left', class extends WMBoxElement { });
+  customElements.define ('sw-right', class extends WMBoxElement { });
+  customElements.define ('sw-v', class extends WMBoxElement { });
+
+}) ();
+
 /* 
 
-Copyright 2002-2018 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2020 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

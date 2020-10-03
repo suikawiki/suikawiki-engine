@@ -345,13 +345,33 @@ sw-box.spacing1 {
   letter-spacing: 1em;
 }
 
-sw-box.vertical {
+sw-box.vertical,
+sw-vrlbox,
+sw-vlrbox {
   writing-mode: vertical-rl;
-  height: 20em;
-  min-height: 10em;
   max-height: 80vh;
   width: 100%;
   overflow: auto;
+}
+sw-vrlbox {
+  text-orientation: upright;
+  direction: ltr;
+}
+sw-vlrbox {
+  writing-mode: vertical-lr;
+  text-orientation: upright;
+}
+
+sw-leftbox,
+sw-rightbox {
+  writing-mode: horizontal-tb;
+  direction: ltr;
+  max-width: 80vw;
+  height: 100%;
+  overflow: auto;
+}
+sw-rightbox {
+  direction: rtl;
 }
 
 /* Sidebar menu */
@@ -1953,7 +1973,52 @@ sw-smallcaps {
 }
 
 sw-yoko {
-  text-combine-upright: all;
+  writing-mode: horizontal-tb;
+  line-height: 1.0;
+  text-indent: 0;
+}
+
+sw-tate {
+  writing-mode: vertical-rl;
+  line-height: 1.0;
+  text-indent: 0;
+  vertical-align: middle;
+  text-orientation: upright;
+}
+
+sw-l {
+  unicode-bidi: bidi-override;
+  direction: ltr;
+  text-orientation: sideways;
+}
+sw-r {
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  text-orientation: sideways;
+}
+
+sw-v {
+  text-orientation: upright;
+}
+
+sw-vrl:not([hidden]),
+sw-vlr:not([hidden]),
+sw-left:not([hidden]),
+sw-right:not([hidden]) {
+  display: block;
+}
+
+sw-vrl {
+  text-orientation: upright;
+}
+sw-vlr {
+  text-orientation: upright;
+}
+sw-left {
+  direction: ltr;
+}
+sw-right {
+  direction: rtl;
 }
 
 /* Other inlines */
@@ -2332,7 +2397,7 @@ aside .swe-ad {
 
 /* 
 
-Copyright 2002-2017 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2020 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
