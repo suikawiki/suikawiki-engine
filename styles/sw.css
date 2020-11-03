@@ -4,6 +4,7 @@
 html {
   padding: 0.5em;
   --timejs-serialization: dtsjp1;
+  --inline-mirroring: rotateY(180deg);
 }
 
 html, td {
@@ -329,6 +330,16 @@ sw-box.set > sw-box + sw-box + sw-box {
   order: 1;
 }
 
+sw-box.items:not([hidden]) {
+  display: flex;
+}
+
+sw-box.items > sw-vlrbox,
+sw-box.items > sw-vrlbox {
+  text-indent: 0;
+  width: auto;
+}
+
 sw-box.center {
   text-align: center;
 }
@@ -354,23 +365,33 @@ sw-vlrbox {
   overflow: auto;
 }
 sw-vrlbox {
-  text-orientation: upright;
+  text-orientation: mixed;
   direction: ltr;
 }
 sw-vlrbox {
   writing-mode: vertical-lr;
-  text-orientation: upright;
+  text-orientation: mixed;
 }
 
+sw-leftbox:not([hidden]),
+sw-rightbox:not([hidden]),
+sw-leftbtbox:not([hidden]),
+sw-rightbtbox:not([hidden]) {
+  display: block;
+}
 sw-leftbox,
-sw-rightbox {
+sw-rightbox,
+sw-leftbtbox,
+sw-rightbtbox {
   writing-mode: horizontal-tb;
   direction: ltr;
   max-width: 80vw;
   height: 100%;
   overflow: auto;
+  --inline-mirroring: rotateX(180deg);
 }
-sw-rightbox {
+sw-rightbox,
+sw-rightbtbox {
   direction: rtl;
 }
 
@@ -1976,30 +1997,59 @@ sw-yoko {
   writing-mode: horizontal-tb;
   line-height: 1.0;
   text-indent: 0;
+  --inline-mirroring: rotateY(180deg);
 }
 
 sw-tate {
   writing-mode: vertical-rl;
+  direction: ltr;
   line-height: 1.0;
   text-indent: 0;
   vertical-align: middle;
-  text-orientation: upright;
+  text-orientation: mixed;
+  --inline-mirroring: rotateX(180deg);
 }
 
-sw-l {
+sw-l,
+sw-lt {
   unicode-bidi: bidi-override;
   direction: ltr;
   text-orientation: sideways;
+  --inline-mirroring: rotateY(180deg);
 }
-sw-r {
+sw-r,
+sw-rt {
   unicode-bidi: bidi-override;
   direction: rtl;
   text-orientation: sideways;
+  --inline-mirroring: rotateY(180deg);
+}
+sw-v,
+sw-vt {
+  text-orientation: mixed;
+  --inline-mirroring: rotateX(180deg);
+}
+sw-vb,
+sw-vbt {
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  text-orientation: mixed;
+  --inline-mirroring: rotateX(180deg);
+}
+sw-lt:not([hidden]),
+sw-rt:not([hidden]),
+sw-vt:not([hidden]),
+sw-vbt:not([hidden]) {
+  display: inline-block;
+}
+sw-lt,
+sw-rt,
+sw-vt,
+sw-vbt {
+  text-indent: 0;
+  transform: rotate(180deg);
 }
 
-sw-v {
-  text-orientation: upright;
-}
 
 sw-vrl:not([hidden]),
 sw-vlr:not([hidden]),
@@ -2008,17 +2058,26 @@ sw-right:not([hidden]) {
   display: block;
 }
 
-sw-vrl {
-  text-orientation: upright;
-}
+sw-vrl,
 sw-vlr {
-  text-orientation: upright;
+  text-orientation: mixed;
+  --inline-mirroring: rotateY(180deg);
 }
 sw-left {
   direction: ltr;
+  --inline-mirroring: rotateX(180deg);
 }
 sw-right {
   direction: rtl;
+  --inline-mirroring: rotateX(180deg);
+}
+
+sw-mirrored:not([hidden]) {
+  display: inline-block;
+}
+sw-mirrored {
+  text-indent: 0;
+  transform: var(--inline-mirroring);
 }
 
 /* Other inlines */

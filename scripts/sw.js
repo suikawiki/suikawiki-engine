@@ -2079,12 +2079,13 @@ function initFigures (root) {
 
 (() => {
 
-  window.addEventListener ('resize', () => {
-    document.querySelectorAll ('sw-v, sw-vrl, sw-vlr, sw-left, sw-right').forEach (e => {
+  var redrawDescendants = r => {
+    r.querySelectorAll ('sw-v, sw-vb, sw-vt, sw-vbt, sw-vrl, sw-vlr, sw-left, sw-right, sw-leftbtbox, sw-rightbtbox').forEach (e => {
       delete e._InlineSize;
       if (e.reshadow) e.reshadow ();
     });
-  });
+  }; // redrawDescendants
+  window.addEventListener ('resize', () => redrawDescendants (document));
 
   class WMBoxElement extends HTMLElement {
     connectedCallback () {
@@ -2092,20 +2093,43 @@ function initFigures (root) {
     };
     reshadow () {
       var outerWM = getComputedStyle (this).writingMode;
-      if (this.localName === 'sw-vrl' &&
+      var outerDir = getComputedStyle (this).direction;
+      var nop = false;
+      if ((this.localName === 'sw-v' ||
+           this.localName === 'sw-vb' ||
+           this.localName === 'sw-vt' ||
+           this.localName === 'sw-vbt') &&
+          outerWM !== 'horizontal-tb') {
+        nop = true;
+      } else if (this.localName === 'sw-vrl' &&
           outerWM !== 'horizontal-tb') {
         this.style.writingMode = 'vertical-rl';
-        return;
+        nop = true;
       } else if (this.localName === 'sw-vlr' &&
                  outerWM !== 'horizontal-tb') {
         this.style.writingMode = 'vertical-lr';
-        return;
+        nop = true;
       } else if (this.localName === 'sw-left' &&
                  outerWM === 'horizontal-tb') {
-        return;
+        nop = true;
       } else if (this.localName === 'sw-right' &&
                  outerWM === 'horizontal-tb') {
+        nop = true;
+      }
+      if (nop) {
+        if (this.hasAttribute ('dev-outerwm')) {
+          this.removeAttribute ('dev-outerwm');
+          this.removeAttribute ('dev-innerwm');
+          this.removeAttribute ('dev-outerdir');
+          var sr = this.shadowRoot;
+          if (sr) {
+            while (sr.firstChild) sr.firstChild.remove ();
+            sr.appendChild (document.createElement ('slot'));
+          }
+        }
         return;
+      } else {
+        this.style.writingMode = '';
       }
 
       var df = this.shadowRoot || this.attachShadow ({mode: 'open'});
@@ -2121,6 +2145,8 @@ function initFigures (root) {
       var mainWrapper = document.createElement ('wm-wrapper');
       mainWrapper.style.display = 'block';
       mainWrapper.style.textIndent = 0;
+      if (this.localName === 'sw-vb' ||
+          this.localName === 'sw-vbt') mainWrapper.style.unicodeBidi = 'bidi-override';
       var mainSlot = document.createElement ('slot');
       mainWrapper.appendChild (mainSlot);
       mainBox.appendChild (mainWrapper);
@@ -2140,8 +2166,13 @@ function initFigures (root) {
       if (/^vertical/.test (outerWM)) innerWM = 'horizontal-tb';
       if (innerWM === 'vertical-rl' &&
           this.localName === 'sw-vlr') innerWM = 'vertical-lr';
+      if (this.localName === 'sw-leftbtbox' ||
+          this.localName === 'sw-rightbtbox') {
+        innerWM = 'vertical-lr';
+      }
       this.setAttribute ('dev-innerwm', innerWM);
       this.setAttribute ('dev-outerwm', outerWM);
+      this.setAttribute ('dev-outerdir', outerDir);
       
       var canvas = document.createElement ('wm-canvas');
       canvas.style.position = 'absolute';
@@ -2156,6 +2187,8 @@ function initFigures (root) {
       var canvasContainer = document.createElement ('wm-container');
       canvasContainer.style.display = isBlock ? 'block' : 'inline-block';
       if (this.localName === 'sw-right') canvasContainer.style.direction = 'rtl';
+      if (this.localName === 'sw-vb' ||
+          this.localName === 'sw-vbt') canvasContainer.style.unicodeBidi = 'bidi-override';
       if (isBlock) canvasContainer.style.width = '100%';
       canvasContainer.style.writingMode = innerWM;
       var canvasSlot = document.createElement ('slot');
@@ -2182,7 +2215,16 @@ function initFigures (root) {
         mainBox.style[bx] = canvasContainerRect.height + 'px';
       } else {
         mainBox.style.transformOrigin = 'top right';
-        mainBox.style.transform = 'translate(-100%, 0) rotate(270deg)';
+        if (this.localName === 'sw-vb' ||
+            this.localName === 'sw-vbt') {
+          mainBox.style.transform = 'rotate(270deg) translate(0, -100%)';
+        } else {
+          if (outerDir === 'rtl') {
+            mainBox.style.transform = 'rotate(270deg) translate(0, -100%)';
+          } else {
+            mainBox.style.transform = 'translate(-100%, 0) rotate(270deg)';
+          }
+        }
         mainContainer.style[ix] = canvasContainerRect.width + 'px';
         mainContainer.style[bx] = canvasContainerRect.height + 'px';
         mainBox.style[bx] = canvasContainerRect.width + 'px';
@@ -2191,6 +2233,11 @@ function initFigures (root) {
       //return;
       mainSlot.name = '';
       canvas.remove ();
+
+      if (this.localName === 'sw-leftbtbox' ||
+          this.localName === 'sw-rightbtbox') {
+        setTimeout (() => redrawDescendants (this), 0);
+      }
 
       var reflowed = false;
       var resizer = new ResizeObserver (() => {
@@ -2209,6 +2256,11 @@ function initFigures (root) {
   customElements.define ('sw-left', class extends WMBoxElement { });
   customElements.define ('sw-right', class extends WMBoxElement { });
   customElements.define ('sw-v', class extends WMBoxElement { });
+  customElements.define ('sw-vb', class extends WMBoxElement { });
+  customElements.define ('sw-vt', class extends WMBoxElement { });
+  customElements.define ('sw-vbt', class extends WMBoxElement { });
+  customElements.define ('sw-leftbtbox', class extends WMBoxElement { });
+  customElements.define ('sw-rightbtbox', class extends WMBoxElement { });
 
 }) ();
 
