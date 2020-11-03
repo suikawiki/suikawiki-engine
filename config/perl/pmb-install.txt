@@ -34,7 +34,6 @@ Filesys::Notify::Simple~0.14
 Filter::Util::Call~1.60
 Getopt::Long~2.52
 HTML::Entities~3.75
-HTML::HeadParser~3.75
 HTML::Tagset~3.20
 HTTP::Cookies~6.08
 HTTP::Daemon~6.12
@@ -44,8 +43,7 @@ HTTP::Headers~6.26
 HTTP::Headers::Fast~0.22
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.26
-HTTP::Status~6.26
+HTTP::Response~6.26
 Hash::MultiValue~0.16
 IO::Dir~1.41
 IO::HTML~1.004
@@ -54,7 +52,6 @@ IPC::Signal~1.00
 JSON::MaybeXS~1.004002
 JSON::XS~4.03
 LWP::MediaTypes~6.04
-LWP::Protocol::http~6.49
 LWP::Protocol::https~6.09
 LWP::UserAgent~6.49
 List::MoreUtils~0.430
