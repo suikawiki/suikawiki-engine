@@ -1,52 +1,56 @@
 [submodule "modules/charclass"]
 	path = modules/charclass
-	url = git://github.com/wakaba/perl-charclass
+	url = https://github.com/wakaba/perl-charclass
 	track = master
 [submodule "modules/web-dom"]
 	path = modules/web-dom
-	url = git://github.com/manakai/perl-web-dom
+	url = https://github.com/manakai/perl-web-dom
 	track = master
 [submodule "modules/web-markup"]
 	path = modules/web-markup
-	url = git://github.com/manakai/perl-web-markup
+	url = https://github.com/manakai/perl-web-markup
 	track = master
 [submodule "modules/web-url"]
 	path = modules/web-url
-	url = git://github.com/manakai/perl-web-url
+	url = https://github.com/manakai/perl-web-url
 	track = master
 [submodule "modules/web-encodings"]
 	path = modules/web-encodings
-	url = git://github.com/manakai/perl-web-encodings
+	url = https://github.com/manakai/perl-web-encodings
 	track = master
 [submodule "modules/wanage"]
 	path = modules/wanage
-	url = git://github.com/wakaba/wanage
+	url = https://github.com/wakaba/wanage
 	track = master
 [submodule "modules/ooutils"]
 	path = modules/ooutils
-	url = git://github.com/wakaba/perl-ooutils
+	url = https://github.com/wakaba/perl-ooutils
 	track = master
 [submodule "modules/swml-parser"]
 	path = modules/swml-parser
-	url = git://github.com/suikawiki/perl-swml-parser
+	url = https://github.com/suikawiki/perl-swml-parser
 	track = master
 [submodule "modules/json-functions-xs"]
 	path = modules/json-functions-xs
-	url = git://github.com/wakaba/perl-json-functions-xs
+	url = https://github.com/wakaba/perl-json-functions-xs
 	track = master
 [submodule "modules/karasuma-config"]
 	path = modules/karasuma-config
-	url = git://github.com/wakaba/karasuma-config
+	url = https://github.com/wakaba/karasuma-config
 	track = master
 [submodule "modules/vcutils"]
 	path = modules/vcutils
-	url = git://github.com/wakaba/perl-vcutils
+	url = https://github.com/wakaba/perl-vcutils
+	track = master
 [submodule "t_deps/modules/test-x1"]
 	path = t_deps/modules/test-x1
-	url = git://github.com/wakaba/perl-test-x1
+	url = https://github.com/wakaba/perl-test-x1
+	track = master
 [submodule "modules/web-css"]
 	path = modules/web-css
-	url = git://github.com/manakai/perl-web-css
+	url = https://github.com/manakai/perl-web-css
+	track = master
 [submodule "modules/web-ua"]
 	path = modules/web-ua
-	url = git://github.com/wakaba/perl-web-useragent-functions
+	url = https://github.com/wakaba/perl-web-useragent-functions
+	track = master
