@@ -3,8 +3,11 @@
 
 html {
   padding: 0.5em;
+}
+:root {
   --timejs-serialization: dtsjp1;
   --inline-mirroring: rotateY(180deg);
+  --btm-emulated: not-emulated;
 }
 
 html, td {
@@ -359,17 +362,18 @@ sw-box.spacing1 {
 sw-box.vertical,
 sw-vrlbox,
 sw-vlrbox {
-  writing-mode: vertical-rl;
   max-height: 80vh;
   width: 100%;
   overflow: auto;
+}
+sw-box.vertical {
+  writing-mode: vertical-rl;
 }
 sw-vrlbox {
   text-orientation: mixed;
   direction: ltr;
 }
 sw-vlrbox {
-  writing-mode: vertical-lr;
   text-orientation: mixed;
 }
 
@@ -383,7 +387,6 @@ sw-leftbox,
 sw-rightbox,
 sw-leftbtbox,
 sw-rightbtbox {
-  writing-mode: horizontal-tb;
   direction: ltr;
   max-width: 80vw;
   height: 100%;

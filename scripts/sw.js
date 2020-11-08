@@ -2080,7 +2080,7 @@ function initFigures (root) {
 (() => {
 
   var redrawDescendants = r => {
-    r.querySelectorAll ('sw-v, sw-vb, sw-vt, sw-vbt, sw-vrl, sw-vlr, sw-left, sw-right, sw-leftbtbox, sw-rightbtbox').forEach (e => {
+    r.querySelectorAll ('sw-v, sw-vb, sw-vt, sw-vbt, sw-vrl, sw-vlr, sw-left, sw-right, sw-leftbox, sw-rightbox, sw-leftbtbox, sw-rightbtbox, sw-vlrbox, sw-vrlbox').forEach (e => {
       delete e._InlineSize;
       if (e.reshadow) e.reshadow ();
     });
@@ -2092,9 +2092,14 @@ function initFigures (root) {
       this.reshadow ();
     };
     reshadow () {
-      var outerWM = getComputedStyle (this).writingMode;
-      var outerDir = getComputedStyle (this).direction;
+      var computed = getComputedStyle (this);
+      var outerWM = computed.writingMode;
+      var outerDir = computed.direction;
+      if (computed.getPropertyValue ('--btm-emulated') === 'emulated') {
+        outerWM = 'emulated-horizontal-bt';
+      }
       var nop = false;
+      var newWM = '';
       if ((this.localName === 'sw-v' ||
            this.localName === 'sw-vb' ||
            this.localName === 'sw-vt' ||
@@ -2103,29 +2108,45 @@ function initFigures (root) {
         nop = true;
       } else if (this.localName === 'sw-vrl' &&
           outerWM !== 'horizontal-tb') {
-        this.style.writingMode = 'vertical-rl';
+        newWM = 'vertical-rl';
         nop = true;
       } else if (this.localName === 'sw-vlr' &&
                  outerWM !== 'horizontal-tb') {
-        this.style.writingMode = 'vertical-lr';
+        newWM = 'vertical-lr';
         nop = true;
-      } else if (this.localName === 'sw-left' &&
+      } else if ((this.localName === 'sw-left' ||
+                  this.localName === 'sw-right') &&
                  outerWM === 'horizontal-tb') {
         nop = true;
-      } else if (this.localName === 'sw-right' &&
-                 outerWM === 'horizontal-tb') {
+      } else if ((this.localName === 'sw-leftbox' ||
+                  this.localName === 'sw-rightbox' ||
+                  this.localName === 'sw-vlrbox' ||
+                  this.localName === 'sw-vrlbox') &&
+                 (outerWM === 'horizontal-tb' ||
+                  outerWM === 'vertical-lr' ||
+                  outerWM === 'vertical-rl')) {
+        newWM = {
+          'sw-leftbox': 'horizontal-tb',
+          'sw-rightbox': 'horizontal-tb',
+          'sw-vlrbox': 'vertical-lr',
+          'sw-vrlbox': 'vertical-rl',
+        }[this.localName];
         nop = true;
       }
       if (nop) {
-        if (this.hasAttribute ('dev-outerwm')) {
-          this.removeAttribute ('dev-outerwm');
+        if (this.hasAttribute ('dev-innerwm')) {
           this.removeAttribute ('dev-innerwm');
-          this.removeAttribute ('dev-outerdir');
           var sr = this.shadowRoot;
           if (sr) {
             while (sr.firstChild) sr.firstChild.remove ();
             sr.appendChild (document.createElement ('slot'));
           }
+        }
+        this.setAttribute ('dev-outerwm', outerWM);
+        this.setAttribute ('dev-outerdir', outerDir);
+        if (this.style.writingMode !== newWM) {
+          this.style.writingMode = newWM;
+          setTimeout (() => redrawDescendants (this), 0);
         }
         return;
       } else {
@@ -2134,8 +2155,24 @@ function initFigures (root) {
 
       var df = this.shadowRoot || this.attachShadow ({mode: 'open'});
       df.textContent = '';
-      var isBlock = (this.localName === 'sw-left' || this.localName === 'sw-right' || this.hasAttribute ('block'));
-      if (isBlock) this.style.direction = 'ltr';
+      var isBlock = (this.localName === 'sw-left' ||
+                     this.localName === 'sw-right' ||
+                     this.localName === 'sw-vrl' ||
+                     this.localName === 'sw-vlr' ||
+                     this.localName === 'sw-leftbox' ||
+                     this.localName === 'sw-rightbox' ||
+                     this.localName === 'sw-leftbtbox' ||
+                     this.localName === 'sw-rightbtbox' ||
+                     this.localName === 'sw-vrlbox' ||
+                     this.localName === 'sw-vlrbox');
+      if (isBlock) {
+        if (this.localName === 'sw-rightbox' ||
+            this.localName === 'sw-rightbtbox') {
+          this.style.direction = 'rtl';
+        } else {
+          this.style.direction = 'ltr';
+        }
+      }
       var mainContainer = document.createElement ('wm-container');
       mainContainer.style.display = isBlock ? 'block' : 'inline-block';
       if (isBlock) mainContainer.style.width = '100%';
@@ -2158,14 +2195,26 @@ function initFigures (root) {
         sizer.style.display = 'block';
         df.appendChild (sizer);
         var sizerRect = sizer.getClientRects () [0]; // redraw!
-        sizer.remove ();
+        if (false) { // dev
+          sizer.style.blockSize = '1px';
+          sizer.style.background = 'yellow';
+        } else {
+          sizer.remove ();
+        }
         this._InlineSize = sizerRect.width || sizerRect.height; // zero or inline-size
         this._InlineAxis = sizerRect.width ? 'height' : 'width';
       }
       var innerWM = 'vertical-rl';
       if (/^vertical/.test (outerWM)) innerWM = 'horizontal-tb';
+      if (outerWM === 'emulated-horizontal-bt') {
+        if (this.localName === 'sw-left' ||
+            this.localName === 'sw-right' ||
+            this.localName === 'sw-leftbox' ||
+            this.localName === 'sw-rightbox') innerWM = 'horizontal-tb';
+      }
       if (innerWM === 'vertical-rl' &&
-          this.localName === 'sw-vlr') innerWM = 'vertical-lr';
+          (this.localName === 'sw-vlr' ||
+           this.localName === 'sw-vlrbox')) innerWM = 'vertical-lr';
       if (this.localName === 'sw-leftbtbox' ||
           this.localName === 'sw-rightbtbox') {
         innerWM = 'vertical-lr';
@@ -2189,8 +2238,28 @@ function initFigures (root) {
       if (this.localName === 'sw-right') canvasContainer.style.direction = 'rtl';
       if (this.localName === 'sw-vb' ||
           this.localName === 'sw-vbt') canvasContainer.style.unicodeBidi = 'bidi-override';
-      if (isBlock) canvasContainer.style.width = '100%';
+      if (isBlock) {
+        if (this.localName === 'sw-leftbtbox' ||
+            this.localName === 'sw-rightbtbox') {
+          canvasContainer.style.height = '100%';
+        } else {
+          canvasContainer.style.width = '100%';
+        }
+      }
+      if (outerWM === 'emulated-horizontal-bt' &&
+          (this.localName === 'sw-vrlbox' ||
+           this.localName === 'sw-vlrbox')) {
+        canvasContainer.style.height = 'fit-content';
+        canvas.style.width = this._InlineSize + 'px';
+        canvas.style.height = '';
+      }
       canvasContainer.style.writingMode = innerWM;
+      if (this.localName === 'sw-leftbtbox' ||
+          this.localName === 'sw-rightbtbox') {
+        canvasContainer.style.setProperty ('--btm-emulated', 'emulated');
+      } else {
+        canvasContainer.style.setProperty ('--btm-emulated', 'not-emulated');
+      }
       var canvasSlot = document.createElement ('slot');
       canvasContainer.appendChild (canvasSlot);
       canvas.appendChild (canvasContainer);
@@ -2200,12 +2269,25 @@ function initFigures (root) {
 
       mainBox.style.writingMode = innerWM;
       mainBox.style.display = 'block';
+      if (this.localName === 'sw-leftbtbox' ||
+          this.localName === 'sw-rightbtbox') {
+        mainBox.style.setProperty ('--btm-emulated', 'emulated');
+      } else {
+        mainBox.style.setProperty ('--btm-emulated', 'not-emulated');
+      }
       var ix = this._InlineAxis;
       var bx = ix === 'width' ? 'height' : 'width';
       if (innerWM === 'horizontal-tb') {
         mainBox.style.transformOrigin = 'top left';
         if (outerWM === 'vertical-lr') {
           mainBox.style.transform = 'rotate(-90deg) translate(-100%, 0)';
+        } else if (outerWM === 'emulated-horizontal-bt') {
+          if (this.localName === 'sw-rightbox') {
+            mainBox.style.transform = 'rotate(90deg) translate(-100%, 0)';
+            mainBox.style.transformOrigin = 'bottom left';
+          } else {
+            mainBox.style.transform = 'rotate(90deg) translate(0, -100%)';
+          }
         } else {
           mainBox.style.transform = 'translate(100%, 0) rotate(90deg)';
         }
@@ -2213,11 +2295,33 @@ function initFigures (root) {
         mainContainer.style[ix] = canvasContainerRect.height + 'px';
         mainBox.style[ix] = canvasContainerRect.width + 'px';
         mainBox.style[bx] = canvasContainerRect.height + 'px';
-      } else {
+      } else { // vertical
+        mainContainer.style[ix] = canvasContainerRect.width + 'px';
+        mainContainer.style[bx] = canvasContainerRect.height + 'px';
+        mainBox.style[bx] = canvasContainerRect.width + 'px';
+        mainBox.style[ix] = canvasContainerRect.height + 'px';
         mainBox.style.transformOrigin = 'top right';
         if (this.localName === 'sw-vb' ||
             this.localName === 'sw-vbt') {
           mainBox.style.transform = 'rotate(270deg) translate(0, -100%)';
+        } else if (outerWM === 'emulated-horizontal-bt') {
+          if (this.localName === 'sw-leftbtbox') {
+            mainBox.style.transform = 'rotate(0deg) translate(0,0)';
+            mainBox.style[ix] = canvasContainerRect.width + 'px';
+            mainBox.style[bx] = canvasContainerRect.height + 'px';
+          } else if (this.localName === 'sw-rightbtbox') {
+            mainBox.style.transform = 'rotate(0deg) translate(0,0)';
+            mainBox.style[ix] = canvasContainerRect.width + 'px';
+            mainBox.style[bx] = canvasContainerRect.height + 'px';
+          } else if (this.localName === 'sw-vrlbox' ||
+                     this.localName === 'sw-vlrbox') {
+            mainBox.style.transformOrigin = 'top left';
+            mainBox.style.transform = 'rotate(90deg) translate(0,-100%)';
+            mainBox.style[ix] = canvasContainerRect.width + 'px';
+            mainBox.style[bx] = canvasContainerRect.height + 'px';
+            mainContainer.style[bx] = canvasContainerRect.width + 'px';
+            mainContainer.style[ix] = canvasContainerRect.height + 'px';
+          }
         } else {
           if (outerDir === 'rtl') {
             mainBox.style.transform = 'rotate(270deg) translate(0, -100%)';
@@ -2225,10 +2329,6 @@ function initFigures (root) {
             mainBox.style.transform = 'translate(-100%, 0) rotate(270deg)';
           }
         }
-        mainContainer.style[ix] = canvasContainerRect.width + 'px';
-        mainContainer.style[bx] = canvasContainerRect.height + 'px';
-        mainBox.style[bx] = canvasContainerRect.width + 'px';
-        mainBox.style[ix] = canvasContainerRect.height + 'px';
       }
       //return;
       mainSlot.name = '';
@@ -2251,16 +2351,20 @@ function initFigures (root) {
     }; // reshadow
   };
 
-  customElements.define ('sw-vrl', class extends WMBoxElement { });
-  customElements.define ('sw-vlr', class extends WMBoxElement { });
   customElements.define ('sw-left', class extends WMBoxElement { });
   customElements.define ('sw-right', class extends WMBoxElement { });
+  customElements.define ('sw-vrl', class extends WMBoxElement { });
+  customElements.define ('sw-vlr', class extends WMBoxElement { });
   customElements.define ('sw-v', class extends WMBoxElement { });
   customElements.define ('sw-vb', class extends WMBoxElement { });
   customElements.define ('sw-vt', class extends WMBoxElement { });
   customElements.define ('sw-vbt', class extends WMBoxElement { });
+  customElements.define ('sw-leftbox', class extends WMBoxElement { });
+  customElements.define ('sw-rightbox', class extends WMBoxElement { });
   customElements.define ('sw-leftbtbox', class extends WMBoxElement { });
   customElements.define ('sw-rightbtbox', class extends WMBoxElement { });
+  customElements.define ('sw-vrlbox', class extends WMBoxElement { });
+  customElements.define ('sw-vlrbox', class extends WMBoxElement { });
 
 }) ();
 
