@@ -2246,9 +2246,13 @@ function initFigures (root) {
           this.style.writingMode = newWM;
           setTimeout (() => redrawDescendants (this), 0);
         }
+        if (def.isBlock && this.style.display !== 'block') {
+          this.style.display = 'block';
+        }
         return;
       } else {
         this.style.writingMode = '';
+        this.style.display = '';
       }
 
       var df = this.shadowRoot || this.attachShadow ({mode: 'open'});

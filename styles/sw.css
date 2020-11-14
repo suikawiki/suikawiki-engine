@@ -98,16 +98,19 @@ body {
 
   .footer menu > a {
     display: block;
-    margin-bottom: 0.3em;
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-    text-align: left;
+    margin-block-end: 0.3em;
+    margin-inline-start: 0.5em;
+    margin-inline-end: 0.5em;
+    text-align: start;
   }
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin: 0 0 0.5em 0;
-  padding: 0.1em 0.2em;
+  margin: 0;
+  margin-block-end: .5em;
+  padding: .1em;
+  padding-inline-start: .2em;
+  padding-inline-end: .2em;
   line-height: 1.5;
   color: #004000;
   background-color: transparent;
@@ -133,8 +136,8 @@ section h1 {
 h4,
 section section > h1 {
   font-size: 120%;
-  border-bottom: solid 1px;
-  padding-bottom: 0.1em;
+  border-block-end: solid 1px;
+  padding-block-end: 0.1em;
 }
 
 h5,
@@ -196,9 +199,11 @@ section[id$="\2028歴史"],
 }
 
 .sw-history {
-  margin-top: 1em;
-  margin-bottom: 1em;
-  padding: 0 0.8em;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  padding: 0;
+  padding-inline-start: .8em;
+  padding-inline-end: .8em;
 }
 
 .section > h1,
@@ -210,7 +215,7 @@ section[id$="\2028歴史"],
 .article > header > h1,
 .article > .article, .article > .section,
 .section > .article, .section > .section {
-  margin-left: -1rem;
+  margin-inline-start: -1rem;
 }
 
 .article > header > .breadcrumb {
@@ -226,13 +231,18 @@ section[id$="\2028歴史"],
 }
 
 .article:last-child, .section:last-child {
-  margin-bottom: 0.5em;
+  margin-block-end: 0.5em;
 }
 
 blockquote {
-  margin: 0.5em 0 0.5em 2em;
-  border-left: #004000 double 0.3em;
-  padding: 0.2em 0.5em;
+  margin-block-start: .5em;
+  margin-block-end: .5em;
+  margin-inline-start: 2em;
+  margin-inline-end: 0;
+  border-inline-start: #004000 double 0.3em;
+  padding: .2em;
+  padding-inline-start: .5em;
+  padding-inline-end: .5em;
   background-color: #f7fff7;
   color: black;
 }
@@ -261,8 +271,8 @@ hr.blank::after {
 
 sw-dialogue {
   display: table;
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
   width: 100%;
   background: rgb(255, 250, 250);
   color: black;
@@ -484,7 +494,7 @@ sw-rightbtbox {
 }
 
 .side-menu > nav a.active {
-  border-bottom-style: solid;
+  border-block-end-style: solid;
   font-weight: bolder;
 }
 
@@ -562,13 +572,15 @@ sw-rightbtbox {
 
 .toc a {
   display: block;
-  padding: 0.2em 0.5em;
+  padding: 0.2em;
+  padding-block-start: .5em;
+  padding-block-end: .5em;
   text-decoration: none;
   color: inherit;
 }
 
 .toc a:not(:hover) {
-  border-bottom-color: transparent;
+  border-block-end-color: transparent;
 }
 
 .toc code {
@@ -585,7 +597,7 @@ sw-rightbtbox {
 
 #side-defs ol > li > a {
   display: block;
-  border-bottom: none;
+  border-block-end: none;
   line-height: 1.5;
 }
 
@@ -707,12 +719,12 @@ th {
 }
 
 th[scope="row"], th[scope="rowgroup"] {
-  text-align: left;
-  border-right: 1px solid #C0C0C0;
+  text-align: start;
+  border-inline-end: 1px solid #C0C0C0;
 }
 th[scope="col"], th[scope="colgroup"] {
   text-align: center;
-  border-bottom: 1px solid #C0C0C0;
+  border-block-end: 1px solid #C0C0C0;
 }
 
 tr:hover {
@@ -729,8 +741,8 @@ th:hover, td:hover {
 /* Edits */
 
 ins {
-  border-bottom: solid 1px;
-  padding-bottom: 0.1em;
+  border-block-end: solid 1px;
+  padding-block-end: 0.1em;
   background-color: rgb(255, 255, 153);
   color: black;
   text-decoration: none;
@@ -757,13 +769,13 @@ blockquote > del {
 /* Anchors */
 
 :link, :visited {
-  border-bottom: solid 1px #babaff;
-  padding-bottom: 0.1em;
+  border-block-end: solid 1px #babaff;
+  padding-block-end: 0.1em;
   text-decoration: none;
 }
 
 .sw-anchor:link, .sw-anchor:visited {
-  border-bottom-style: dashed;
+  border-block-end-style: dashed;
   color: inherit;
   background-color: transparent;
 }
@@ -780,16 +792,16 @@ ins + em,
 ins + ins {
   margin-left: 0.3em;
 }
-*//* Split border-bottoms */
+*//* Split border-block-ends */
 
 .sw-anchor:visited {
-  border-bottom-color: #EE82EE;
+  border-block-end-color: #EE82EE;
 }
 
 .sw-anchor-internal {
 /*  color: inherit;
   background-color: transparent; */
-  border-bottom-style: none;
+  border-block-end-style: none;
 }
 
 .sw-anchor-external {
@@ -833,7 +845,7 @@ a:hover,
 .nav.tools > *:hover {
   background-color: #FFA;
   color: #000080;
-  border-bottom-style: solid;
+  border-block-end-style: solid;
 }
 
 :target > h1, :target > h2, :target > h3,
@@ -988,8 +1000,8 @@ figure.steps li > figure.list.members {
 }
 
 figure.list figure.list.members {
-  margin-top: 0.4em;
-  margin-bottom: 0.4em;
+  margin-block-start: 0.4em;
+  margin-block-end: 0.4em;
 }
 
 figure.list.members > figcaption {
@@ -1006,16 +1018,20 @@ figure.list.members > figcaption > p {
 }
 
 figure.quote {
-  margin: 0.5em 0 0.5em 0;
+  margin: 0;
+  margin-block-start: .5em;
+  margin-block-end: .5em;
   border-style: none;
-  border-left: #004000 double 0.3em;
-  padding: 0.2em 3em 0.2em 1em;
+  border-inline-start: #004000 double 0.3em;
+  padding: .2em;
+  padding-inline-start: 1em;
+  padding-inline-end: 3em;
   background-color: #f7fff7;
   color: black;
 }
 
 figure.quote > figcaption {
-  text-align: left;
+  text-align: start;
   font-weight: normal;
 }
 
@@ -1471,8 +1487,8 @@ figure.bookmarklet .sw-anchor-external-container::before {
 
 figure.bookmarklet .sw-anchor-external-container > a {
   white-space: nowrap;
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
+  padding-block-start: 0.5em;
+  padding-block-end: 0.5em;
   line-height: 2.0;
 }
 
@@ -1582,7 +1598,7 @@ var sub, var sup {
   background-color: #FDFDEC;
   line-height: 1.5;
   padding: 0.3em .8em;
-  margin-bottom: 0.5em;
+  margin-block-end: 0.5em;
 }
 
 .sw-refs > ul {
@@ -1611,7 +1627,7 @@ var sub, var sup {
 .sw-refs .sw-anchor-external-container a {
   display: block;
   border-style: none;
-  padding-bottom: 0;
+  padding-block-end: 0;
   min-height: 2em;
   text-decoration: none;
 }
@@ -1624,6 +1640,7 @@ var sub, var sup {
 
 cite {
   font-style: normal;
+  unicode-bidi: isolate;
 }
 
 cite:before {
@@ -1702,8 +1719,8 @@ strong {
 
 em {
 /*
-  border-bottom: solid 0.1em;
-  padding-bottom: 0.1em;
+  border-block-end: solid 0.1em;
+  padding-block-end: 0.1em;
 */
   font-style: normal;
   -webkit-text-emphasis: sesame;
@@ -2347,7 +2364,7 @@ aside .swe-ad {
 
 #cse-search-form .gsc-webResult .gsc-result {
   padding: 0;
-  border-bottom: none;
+  border-block-end: none;
 }
 
 #cse-search-form .gsc-webResult .gsc-result td {
