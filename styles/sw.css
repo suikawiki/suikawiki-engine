@@ -1723,14 +1723,12 @@ em {
   padding-block-end: 0.1em;
 */
   font-style: normal;
-  -webkit-text-emphasis: sesame;
-  text-emphasis: sesame;
+  -webkit-text-emphasis: dot;
 }
 
 em:lang(en) {
   font-style: italic;
   -webkit-text-emphasis: none;
-  text-emphasis: none;
 }
 
 .rfc2119 {
@@ -1813,6 +1811,10 @@ sw-see::before {
 
 /* Inline structures */
 
+sub, sup, rt {
+  font-size: 50%;
+}
+
 ruby {
   -webkit-ruby-position: before;
   ruby-position: before;
@@ -1847,7 +1849,6 @@ rt {
 
 ruby.sw-ruby > rt,
 ruby.sw-rubyb > rt {
-  line-height: 2;
 }
 
 rt ~ rt {
@@ -1871,6 +1872,11 @@ ruby.sw-okuri.sw-ruby-both > rt:last-of-type {
   -webkit-margin-before: 1em;
 }
 
+math {
+  display: inline;
+  text-indent: 0;
+}
+
 math[class~=sw-frac],
 math[class~=sw-root],
 math[class~=sw-sqrt],
@@ -1881,16 +1887,41 @@ math[class~=sw-underover] {
 }
 
 mfrac {
-  line-height: 1.0;
+  display: inline-block;
   text-align: center;
+  vertical-align: -50%;
+  border-collapse: collapse;
 }
 
-msqrt::before {
-  line-height: 1;
+mfrac > *:nth-child(1) {
+  display: block;
+  border-block-end: solid thin;
 }
 
+mfrac > *:nth-child(2) {
+  display: inline-block;
+  vertical-align: top;
+}
+
+msqrt, mroot {
+  display: inline-flex;
+  margin-inline-start: .5em;
+  border-block-start: solid thin;
+  vertical-align: middle;
+}
+
+msqrt::before,
 mroot::before {
+  margin-inline-start: -0.5em;
   line-height: 1;
+  content: "\221A";
+}
+
+mroot > *:nth-child(2) {
+  margin-inline-start: -0.75em;
+  margin-inline-end: -0.25em;
+  font-size: 80%;
+  order: -1;
 }
 
 mtext {
@@ -1907,8 +1938,30 @@ mroot > mtext:nth-child(2) {
 }
 
 mtext > span {
-  font-style: normal;
-  font-size: smaller;
+}
+
+munder, munderover {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+munder {
+  vertical-align: text-top;
+}
+
+munderover {
+  vertical-align: middle;
+}
+
+munder > *:nth-child(2),
+munderover > *:nth-child(2) {
+  order: +1;
+  font-size: 80%;
+}
+
+munderover > *:nth-child(3) {
+  order: -1;
+  font-size: 80%;
 }
 
 math[class~=sw-under] > munder > mtext:first-child > span,
@@ -2098,6 +2151,11 @@ sw-mirrored:not([hidden]) {
 sw-mirrored {
   text-indent: 0;
   transform: var(--inline-mirroring);
+}
+
+sw-mirrored.rtl {
+  direction: ltr;
+  unicode-bidi: bidi-override;
 }
 
 /* Other inlines */
@@ -2480,5 +2538,10 @@ Copyright 2002-2020 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
+
+Acknowledgements:
+
+  This style sheet is partially inspired by
+  <https://fred-wang.github.io/mathml.css/mathml.css>.
 
 */
