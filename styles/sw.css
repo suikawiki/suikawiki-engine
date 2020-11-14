@@ -154,7 +154,8 @@ section section section section h1 {
 .sw-heading-link {
   display: none;
   float: right;
-  min-width: 1em;
+  writing-mode: horizontal-tb;
+  min-width: 1.5em;
   border-style: none;
   padding: 0.1em;
   font-size: 80%;
@@ -168,7 +169,7 @@ section section section section h1 {
 :target > * > .sw-heading-anchor,
 :target > * > .sw-heading-link {
   display: block;
-  border-style: none;
+  border-block-end-style: none;
 }
 
 .article, .section, section:not([hidden]) {
@@ -375,6 +376,7 @@ sw-vlrbox {
   max-height: 80vh;
   width: 100%;
   overflow: auto;
+  --inline-mirroring: rotateX(180deg);
 }
 sw-box.vertical {
   writing-mode: vertical-rl;
@@ -401,7 +403,7 @@ sw-rightbtbox {
   max-width: 80vw;
   height: 100%;
   overflow: auto;
-  --inline-mirroring: rotateX(180deg);
+  --inline-mirroring: rotateY(180deg);
 }
 sw-rightbox,
 sw-rightbtbox {
