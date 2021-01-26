@@ -38,12 +38,11 @@ HTTP::Cookies~6.10
 HTTP::Daemon~6.12
 HTTP::Date~6.05
 HTTP::Entity::Parser~0.25
+HTTP::Headers~6.27
 HTTP::Headers::Fast~0.22
-HTTP::Message~6.27
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.27
-HTTP::Status~6.27
 Hash::MultiValue~0.16
 IO::File~1.45
 IO::HTML~1.004
@@ -65,7 +64,6 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20200520
 Net::HTTP~6.20
-Net::HTTPS~6.20
 Net::SSLeay~1.90
 POSIX::strftime::Compiler~0.44
 Parallel::Prefork~0.18
@@ -96,7 +94,6 @@ Time::Zone~2.24
 Try::Tiny~0.30
 Types::Serialiser~1.01
 URI~5.06
-URI::Escape~5.06
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
