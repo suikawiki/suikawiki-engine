@@ -713,7 +713,8 @@ for my $x (
 $templates->{$x->[0]}->{$x->[1]} = sub {
   my ($items, $item) = @_;
 
-  my $name = $item->{node}->get_attribute ('data-title');
+  my $name = $item->{node}->get_attribute ('data-title') // '';
+  my $has_text = !! length $name;
   $name = $item->{node}->text_content unless length $name;
 
   my $el_name = 'data';
@@ -751,6 +752,7 @@ $templates->{$x->[0]}->{$x->[1]} = sub {
   my $class = $item->{node}->get_attribute ('class');
   $class //= '';
   $class .= ' sw-'.$x->[1];
+  $class .= ' sw-has-text' if $has_text;
   $el->set_attribute (class => $class);
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');

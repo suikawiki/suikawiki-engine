@@ -241,12 +241,12 @@ function initTime () {
     var timeScript = document.createElement ('script');
     timeScript.async = true;
     timeScript.src = '/scripts/time';
-    timeScript.setAttribute ('data-time-selector', 'time');
+    timeScript.setAttribute ('data-time-selector', 'time:not(.sw-has-text)');
     timeScript.onload = ok;
     timeScript.onerror = ng;
     document.documentElement.lastChild.appendChild (timeScript);
   });
-} // enableHTML5Support
+} // initTime
 
 function addGoogleSearch () {
   var placeholder = document.getElementById ('cse-search-form');
@@ -2392,7 +2392,7 @@ function initFigures (root) {
 
 /* 
 
-Copyright 2002-2020 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2021 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
