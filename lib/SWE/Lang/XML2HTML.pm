@@ -111,11 +111,11 @@ $templates->{(HTML_NS)}->{$_} = sub {
   $el->set_attribute (lang => $lang) if defined $lang;
 
   my $parent = $el;
-  my $ilink = $item->{node}->get_attribute ('data-implicit-link');
-  if (defined $ilink) {
+  if ($item->{node}->has_attribute ('data-implicit-link')) {
     $parent = $item->{doc}->create_element ('a');
     $parent->set_attribute (class => 'sw-anchor');
-    my $name = length $ilink ? $ilink : $item->{node}->text_content;
+    my $name = $item->{node}->get_attribute ('data-title');
+    $name = $item->{node}->text_content unless length $name;
     my $url = $item->{name_to_url}->($name);
     $parent->href ($url);
     if ($item->{node}->local_name eq 'cite') {
@@ -557,11 +557,11 @@ $templates->{(SW10_NS)}->{key} = sub {
   $el->set_attribute (lang => $lang) if defined $lang;
 
   my $parent = $el;
-  my $ilink = $item->{node}->get_attribute ('data-implicit-link');
-  if (defined $ilink) {
+  if ($item->{node}->has_attribute ('data-implicit-link')) {
     $parent = $item->{doc}->create_element ('a');
     $parent->set_attribute (class => 'sw-anchor');
-    my $name = length $ilink ? $ilink : $item->{node}->text_content;
+    my $name = $item->{node}->get_attribute ('data-title');
+    $name = $item->{node}->text_content unless length $name;
     my $url = $item->{name_to_url}->($name);
     $parent->href ($url);
     $el->append_child ($parent);
@@ -687,11 +687,11 @@ $templates->{(SW09_NS)}->{f} = sub {
   $el->set_attribute (lang => $lang) if defined $lang;
 
   my $parent = $el;
-  my $ilink = $item->{node}->get_attribute ('data-implicit-link');
-  if (defined $ilink) {
+  if ($item->{node}->has_attribute ('data-implicit-link')) {
     $parent = $item->{doc}->create_element ('a');
     $parent->set_attribute (class => 'sw-anchor');
-    my $name = length $ilink ? $ilink : $item->{node}->text_content;
+    my $name = $item->{node}->get_attribute ('data-title');
+    $name = $item->{node}->text_content unless length $name;
     my $url = $item->{name_to_url}->($name);
     $parent->href ($url);
     $el->append_child ($parent);
@@ -713,9 +713,41 @@ for my $x (
 $templates->{$x->[0]}->{$x->[1]} = sub {
   my ($items, $item) = @_;
 
-  my $el = $item->{doc}->create_element_ns
-      (HTML_NS, $x->[1] eq 'time' ? 'time' : 'data');
+  my $name = $item->{node}->get_attribute ('data-title');
+  $name = $item->{node}->text_content unless length $name;
 
+  my $el_name = 'data';
+  my $url_prefix = $x->[2];
+  my $url_suffix = '';
+  if ($x->[1] eq 'time') {
+    if ($name =~ /\Aunix:([0-9]+)\z/) {
+      $name = $1;
+    } elsif ($name =~ /^[a-zA-Z_-]+:/) {
+      #
+    } elsif ($name eq '0') {
+      $name = '0';
+    } elsif ($name =~ /\A(?:year:|)(-?[0-9]+)\z/) {
+      $url_prefix = 'https://data.suikawiki.org/y/' . $1 . '/';
+      undef $url_suffix;
+      $el_name = 'time';
+    } elsif ($name =~ /\Ay~([0-9]+)\z/) {
+      $url_prefix = 'https://data.suikawiki.org/e/' . $1 . '/';
+      undef $url_suffix;
+    } else {
+      $el_name = 'time';
+    }
+  } elsif ($x->[1] eq 'tz') {
+    $el_name = 'time';
+  }
+  
+  my $el = $item->{doc}->create_element_ns (HTML_NS, $el_name);
+
+  if ($el_name eq 'time') {
+    $el->set_attribute ('datetime', $name);
+  } else {
+    $el->set_attribute ('value', $name);
+  }
+  
   my $class = $item->{node}->get_attribute ('class');
   $class //= '';
   $class .= ' sw-'.$x->[1];
@@ -724,15 +756,13 @@ $templates->{$x->[0]}->{$x->[1]} = sub {
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
-  my $ilink = $item->{node}->get_attribute ('data-implicit-link');
-  if (defined $ilink) {
+  if ($item->{node}->has_attribute ('data-implicit-link')) {
     my $link = $item->{doc}->create_element ('a');
     $link->set_attribute (class => 'sw-anchor');
-    my $name = length $ilink ? $ilink : $item->{node}->text_content;
-    if (ref $x->[2]) {
-      $link->href ($x->[2]->($name));
+    if (not defined $url_suffix) {
+      $link->href ($url_prefix);
     } else {
-      $link->href ($x->[2] . percent_encode_c $name);
+      $link->href ($url_prefix . (percent_encode_c $name) . $url_suffix);
     }
     $link->append_child ($el);
     $item->{parent}->append_child ($link);
@@ -1113,10 +1143,12 @@ sub convert ($$$$$$) {
   while (@node) {
     my ($node, $flags) = @{shift @node};
     if (not defined $node) {
-      unless ($flags->{has_link}) {
-        $flags->{end_of}->set_attribute
-            ('data-implicit-link', $flags->{title} // '');
+      if (not $flags->{has_link} and not $flags->{in_link}) {
+        $flags->{end_of}->set_attribute ('data-implicit-link', '');
         $flags->{parent_flags}->{has_link} = 1;
+      }
+      if (defined $flags->{end_of} and defined $flags->{title}) {
+        $flags->{end_of}->set_attribute ('data-title', $flags->{title});
       }
       next;
     }
@@ -1128,8 +1160,13 @@ sub convert ($$$$$$) {
            $ln eq 'SHOULD' or
            $ln eq 'MAY') and $node->namespace_uri eq SW09_NS) {
         $flags->{has_link} = 1;
+        my $f = {end_of => $node, parent_flags => $flags,
+                 in_link => 1};
+        unshift @node, [undef, $f];
+        unshift @node, map { [$_, $f] } $node->child_nodes->to_list;
       } elsif ($IsImplicitLinkElement->{$node->namespace_uri}->{$ln}) {
-        my $f = {end_of => $node, parent_flags => $flags};
+        my $f = {end_of => $node, parent_flags => $flags,
+                 in_link => $flags->{in_link}};
         unshift @node, [undef, $f];
         unshift @node, map { [$_, $f] } $node->child_nodes->to_list;
       } elsif (($ln eq 'title' or
@@ -1162,7 +1199,7 @@ sub convert ($$$$$$) {
 
 =head1 LICENSE
 
-Copyright 2008-2020 Wakaba <wakaba@suikawiki.org>.
+Copyright 2008-2021 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
