@@ -1776,6 +1776,7 @@ mark.sw-asis::after {
   background: transparent;
   font-size: 30%;
   text-align: right;
+  font-weight: normal;
 }
 
 mark.sw-asis:lang(en)::after {
@@ -2376,6 +2377,10 @@ aside .swe-ad {
   padding: 0;
 }
 
+.swe-ad > ins[style*="height: 0px"] {
+  display: none ! important;
+}
+
 .swe-ad-amazon {
 }
 
@@ -2536,7 +2541,7 @@ aside .swe-ad {
 
 /* 
 
-Copyright 2002-2020 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2021 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
