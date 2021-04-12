@@ -1758,6 +1758,7 @@ mark.sw-asis:not([hidden]) {
   color: inherit;
   text-indent: 0;
   vertical-align: var(--valign);
+  text-align: center;
 }
 
 mark.sw-asis:not(.sw-asis-has-base) {
@@ -2391,7 +2392,7 @@ aside .swe-ad {
   padding: 0;
 }
 
-#toc > ins[style*="height: 0px"] {
+#toc > ins[style*="height: 0px"],
 .swe-ad > ins[style*="height: 0px"] {
   display: none ! important;
 }
