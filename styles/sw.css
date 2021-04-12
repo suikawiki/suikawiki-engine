@@ -8,6 +8,7 @@ html {
   --timejs-serialization: dtsjp1;
   --inline-mirroring: rotateY(180deg);
   --btm-emulated: not-emulated;
+  --valign: baseline;
 }
 
 html, td {
@@ -377,6 +378,7 @@ sw-vlrbox {
   width: 100%;
   overflow: auto;
   --inline-mirroring: rotateX(180deg);
+  --valign: middle;
 }
 sw-box.vertical {
   writing-mode: vertical-rl;
@@ -832,7 +834,6 @@ ins + ins {
   font-weight: normal;
   font-style: normal;
   text-decoration: none;
-  text-combine-upright: all;
 }
 
 figure .sw-anchor-end {
@@ -1756,6 +1757,10 @@ mark.sw-asis:not([hidden]) {
   background: transparent;
   color: inherit;
   text-indent: 0;
+  vertical-align: var(--valign);
+}
+
+mark.sw-asis:not(.sw-asis-has-base) {
   line-height: 1.0;
 }
 
@@ -1768,9 +1773,12 @@ mark.sw-asis:hover {
   color: black;
 }
 
+sw-asis-base {
+  line-height: 1.0;
+}
+
+sw-asis-title,
 mark.sw-asis::after {
-  display: block;
-  content: "(ママ)";
   line-height: 1.0;
   color: #f72121;
   background: transparent;
@@ -1779,11 +1787,16 @@ mark.sw-asis::after {
   font-weight: normal;
 }
 
-mark.sw-asis:lang(en)::after {
+mark.sw-asis:not(.sw-asis-has-title)::after {
+  display: block;
+  content: "(ママ)";
+}
+
+mark.sw-asis:not(.sw-asis-has-title):lang(en)::after {
   content: "(sic)";
 }
 
-mark.sw-asis[title]::after {
+mark.sw-asis:not(.sw-asis-has-title)[title]::after {
   content: attr(title);
 }
 
@@ -2138,6 +2151,7 @@ sw-vrl,
 sw-vlr {
   text-orientation: mixed;
   --inline-mirroring: rotateY(180deg);
+  --valign: middle;
 }
 sw-left {
   direction: ltr;
@@ -2377,6 +2391,7 @@ aside .swe-ad {
   padding: 0;
 }
 
+#toc > ins[style*="height: 0px"] {
 .swe-ad > ins[style*="height: 0px"] {
   display: none ! important;
 }

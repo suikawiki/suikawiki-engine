@@ -140,16 +140,31 @@ $templates->{(SW09_NS)}->{asis} = sub {
   my $el = $item->{doc}->create_element_ns (HTML_NS, 'mark');
   $item->{parent}->append_child ($el);
 
-  my $class = $item->{node}->get_attribute ('class');
-  $class = defined $class ? 'sw-asis ' . $class : 'sw-asis';
-  $el->set_attribute (class => $class);
-
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
-  unshift @$items,
-      map {{%$item, node => $_, parent => $el}}
-      @{$item->{node}->child_nodes};
+  my $new_items = [];
+  my $has_title = 0;
+
+  my $base = $item->{doc}->create_element ('sw-asis-base');
+  $el->append_child ($base);
+  my $parent = $base;
+  for (@{$item->{node}->child_nodes}) {
+    if (($_->local_name // '') eq 'title') {
+      $parent = $el;
+      $has_title = 1;
+    }
+    push @$new_items, {%$item, node => $_, parent => $parent,
+                       parent_is_asis => 1};
+  }
+
+  my $class = $item->{node}->get_attribute ('class');
+  $class = join ' ', 'sw-asis', 'sw-asis-has-base',
+      ($has_title ? 'sw-asis-has-title' : ()),
+      (defined $class ? $class : ());
+  $el->set_attribute (class => $class);
+
+  unshift @$items, @$new_items;
 }; # asis
 
 $templates->{(SW09_NS)}->{dotabove} = sub {
@@ -806,10 +821,25 @@ for my $kwd (qw(MUST SHOULD MAY)) {$templates->{(SW09_NS)}->{$kwd} = sub {
 
 $templates->{(SW10_NS)}->{title} = sub {
   my ($items, $item) = @_;
-  unless ($item->{parent}->has_attribute ('title')) {
-    $item->{parent}->set_attribute (title => $item->{node}->text_content);
+  if ($item->{parent_is_asis}) {
+    my $el = $item->{doc}->create_element ('sw-asis-title');
+    $item->{parent}->append_child ($el);
+
+    my $class = $item->{node}->get_attribute ('class');
+    $el->set_attribute (class => $class) if defined $class;
+
+    my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+    $el->set_attribute (lang => $lang) if defined $lang;
+    
+    unshift @$items,
+        map {{%$item, node => $_, parent => $el}}
+        @{$item->{node}->child_nodes};
+  } else {
+    unless ($item->{parent}->has_attribute ('title')) {
+      $item->{parent}->set_attribute (title => $item->{node}->text_content);
+    }
   }
-};
+}; # title
 
 $templates->{(SW10_NS)}->{attrvalue} = sub {
   my ($items, $item) = @_;
