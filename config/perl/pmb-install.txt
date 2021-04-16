@@ -10,7 +10,7 @@ Class::Accessor::Lite~0.08
 Class::Data::Inheritable~0.08
 Class::Inspector~1.36
 Cookie::Baker~0.11
-Cpanel::JSON::XS~4.25
+Cpanel::JSON::XS~4.26
 Crypt::SSLeay~0.72
 Devel::CheckLib~1.14
 Devel::StackTrace~2.04
@@ -40,12 +40,13 @@ HTTP::Date~6.05
 HTTP::Entity::Parser~0.25
 HTTP::Headers~6.29
 HTTP::Headers::Fast~0.22
-HTTP::Message~6.29
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.29
+HTTP::Request::Common~6.29
+HTTP::Status~6.29
 Hash::MultiValue~0.16
-IO::File~1.45
+IO::Dir~1.45
 IO::HTML~1.004
 IO::Socket::SSL~2.070
 IPC::Signal~1.00
@@ -65,6 +66,7 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20200520
 Net::HTTP~6.21
+Net::HTTPS~6.21
 Net::SSLeay~1.90
 POSIX::strftime::Compiler~0.44
 Parallel::Prefork~0.18
@@ -80,10 +82,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~5.01
+Test::Builder~1.302183
 Test::Class~0.52
 Test::Deep~1.130
 Test::Differences~0.67
-Test::More~1.302183
 Test::Requires~0.11
 Test::SharedFork~0.35
 Test::TCP~2.22
