@@ -1,6 +1,7 @@
 Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 Canary::Stability~2013
 Capture::Tiny~0.48
@@ -42,18 +43,14 @@ HTTP::Headers~6.29
 HTTP::Headers::Fast~0.22
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.29
-HTTP::Request::Common~6.29
-HTTP::Status~6.29
 Hash::MultiValue~0.16
-IO::Dir~1.45
+IO::File~1.45
 IO::HTML~1.004
 IO::Socket::SSL~2.070
 IPC::Signal~1.00
 JSON::MaybeXS~1.004003
 JSON::XS~4.03
 LWP::MediaTypes~6.04
-LWP::Protocol::http~6.53
 LWP::Protocol::https~6.10
 LWP::UserAgent~6.53
 List::MoreUtils~0.430
