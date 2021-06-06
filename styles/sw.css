@@ -9,6 +9,13 @@ html {
   --inline-mirroring: rotateY(180deg);
   --btm-emulated: not-emulated;
   --valign: baseline;
+
+  --annotation-inline-font: 70%/1.0 normal;
+  --annotation-side-font: 30%/1.0 normal;
+  --annotation-color: #f72121;
+  --annotation-background-color: transparent;
+  --annotation-hover-color: red;
+  --annotation-hover-background-color: transparent;
 }
 
 html, td {
@@ -1780,12 +1787,10 @@ sw-asis-base {
 
 sw-asis-title,
 mark.sw-asis::after {
-  line-height: 1.0;
-  color: #f72121;
-  background: transparent;
-  font-size: 30%;
   text-align: right;
-  font-weight: normal;
+  font: var(--annotation-side-font);
+  color: var(--annotation-color);
+  background-color: var(--annotation-background-color);
 }
 
 mark.sw-asis:not(.sw-asis-has-title)::after {
@@ -1802,8 +1807,8 @@ mark.sw-asis:not(.sw-asis-has-title)[title]::after {
 }
 
 mark.sw-asis:hover::after {
-  color: red;
-  background: transparent;
+  color: var(--annotation-hover-color);
+  background: var(--annotation-hover-background-color);
 }
 
 sw-cursive {
@@ -1825,6 +1830,20 @@ sw-see::before {
   white-space: nowrap;
 }
 
+sw-see .sw-anchor:not([hidden]) {
+  display: inline-block;
+}
+
+sw-see .sw-anchor:link,
+sw-see .sw-anchor:visited {
+  min-width: 5em;
+  text-align: center;
+  font-size: 120%;
+  line-height: 1.4;
+  font-weight: bolder;
+  border-block-end-style: solid;
+  text-indent: 0;
+}
 
 /* Inline structures */
 
@@ -2174,6 +2193,18 @@ sw-mirrored {
 sw-mirrored.rtl {
   direction: ltr;
   unicode-bidi: bidi-override;
+}
+
+sw-br-newline {
+  white-space: pre;
+}
+
+sw-br-hyphen::after {
+  content: "\23CE";
+  font: var(--annotation-inline-font);
+  color: var(--annotation-color);
+  background-color: var(--annotation-background-color);
+  vertical-align: middle;
 }
 
 /* Other inlines */

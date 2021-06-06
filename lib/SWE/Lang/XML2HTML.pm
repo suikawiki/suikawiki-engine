@@ -485,6 +485,30 @@ $templates->{(SW09_NS)}->{'sw-cursive'} = sub {
       @{$item->{node}->child_nodes};
 }; # sw-see
 
+$templates->{(SW09_NS)}->{'sw-br'} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, $item->{node}->local_name);
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $el->set_attribute (class => $class) if defined $class;
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  my $e2 = $item->{doc}->create_element ('sw-br-hyphen');
+  $el->append_child ($e2);
+
+  my $br = $item->{doc}->create_element ('sw-br-newline');
+  $br->text_content ("\x0A");
+  $el->append_child ($br);
+  
+  unshift @$items,
+      map {{%$item, node => $_, parent => $e2}}
+      @{$item->{node}->child_nodes};
+}; # sw-br
+
 $templates->{(SW09_NS)}->{'fenced'} = sub {
   my ($items, $item) = @_;
 
