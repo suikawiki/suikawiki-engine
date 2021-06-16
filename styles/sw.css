@@ -413,7 +413,7 @@ sw-rightbtbox {
   height: 100%;
   overflow: auto;
   --inline-mirroring: rotateY(180deg);
-  --valign: middle;
+  --valign: baseline;
 }
 sw-rightbox,
 sw-rightbtbox {
@@ -2188,12 +2188,12 @@ sw-vlr {
 sw-left {
   direction: ltr;
   --inline-mirroring: rotateX(180deg);
-  --valign: middle;
+  --valign: baseline;
 }
 sw-right {
   direction: rtl;
   --inline-mirroring: rotateX(180deg);
-  --valign: middle;
+  --valign: baseline;
 }
 
 sw-mirrored:not([hidden]) {
