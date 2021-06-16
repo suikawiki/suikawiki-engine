@@ -2370,7 +2370,9 @@ function initFigures (root) {
       canvas.remove ();
 
       if (this.localName === 'sw-leftbtbox' ||
-          this.localName === 'sw-rightbtbox') {
+          this.localName === 'sw-rightbtbox' ||
+          this.localName === 'sw-vrl' ||
+          this.localName === 'sw-vlr') {
         setTimeout (() => redrawDescendants (this), 0);
       }
 

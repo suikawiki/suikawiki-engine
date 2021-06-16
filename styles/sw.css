@@ -385,7 +385,7 @@ sw-vlrbox {
   width: 100%;
   overflow: auto;
   --inline-mirroring: rotateX(180deg);
-  --valign: middle;
+  --valign: baseline;
 }
 sw-box.vertical {
   writing-mode: vertical-rl;
@@ -413,6 +413,7 @@ sw-rightbtbox {
   height: 100%;
   overflow: auto;
   --inline-mirroring: rotateY(180deg);
+  --valign: middle;
 }
 sw-rightbox,
 sw-rightbtbox {
@@ -2052,12 +2053,16 @@ sw-subsup > sup {
 
 sw-lines:not([hidden]) {
   display: inline-block;
+}
+sw-lines {
   vertical-align: middle;
   text-indent: 0;
 }
 
 sw-lines > sw-line:not([hidden]) {
   display: block;
+}
+sw-lines > sw-line {
   line-height: 1.4;
 }
 
@@ -2107,6 +2112,7 @@ sw-yoko {
   line-height: 1.0;
   text-indent: 0;
   --inline-mirroring: rotateY(180deg);
+  --valign: middle;
 }
 
 sw-tate {
@@ -2117,6 +2123,7 @@ sw-tate {
   vertical-align: middle;
   text-orientation: mixed;
   --inline-mirroring: rotateX(180deg);
+  --valign: baseline;
 }
 
 sw-l,
@@ -2158,6 +2165,11 @@ sw-vbt {
   text-indent: 0;
   transform: rotate(180deg);
 }
+:-webkit-any(sw-vrl, sw-vlr, sw-vrlbox, sw-vlrbox)
+:-webkit-any(sw-l, sw-lt, sw-r, sw-rt) {
+  --valign: middle;
+  --inline-mirroring: rotateX(180deg);
+}
 
 
 sw-vrl:not([hidden]),
@@ -2171,15 +2183,17 @@ sw-vrl,
 sw-vlr {
   text-orientation: mixed;
   --inline-mirroring: rotateY(180deg);
-  --valign: middle;
+  --valign: baseline;
 }
 sw-left {
   direction: ltr;
   --inline-mirroring: rotateX(180deg);
+  --valign: middle;
 }
 sw-right {
   direction: rtl;
   --inline-mirroring: rotateX(180deg);
+  --valign: middle;
 }
 
 sw-mirrored:not([hidden]) {
@@ -2188,6 +2202,7 @@ sw-mirrored:not([hidden]) {
 sw-mirrored {
   text-indent: 0;
   transform: var(--inline-mirroring);
+  vertical-align: bottom;
 }
 
 sw-mirrored.rtl {
@@ -2195,7 +2210,7 @@ sw-mirrored.rtl {
   unicode-bidi: bidi-override;
 }
 
-sw-br-newline {
+sw-br {
   white-space: pre;
 }
 

@@ -1,3 +1,63 @@
+/* Font sizes */
+
+.normal,
+.sw-weak.normal {
+  font-size: 100%;
+  vertical-align: var(--valign);
+}
+
+.smaller,
+.sw-weak.smaller {
+  font-size: 80%;
+  vertical-align: var(--valign);
+}
+
+.quarter,
+.sw-weak.quarter {
+  font-size: 50%;
+  vertical-align: var(--valign);
+}
+
+.sw-weak.smaller,
+.sw-weak.quarter {
+  color: inherit;
+  background: transparent;
+}
+
+sw-lines.normal,
+sw-lines.smaller,
+sw-lines.quarter {
+  vertical-align: -0.5em;
+}
+
+sw-lines.normal > sw-line,
+sw-lines.smaller > sw-line,
+sw-lines.quarter > sw-line {
+  line-height: 1.0;
+}
+
+sup.normal,
+sup.smaller,
+sup.quarter {
+  vertical-align: 0.5em;
+  line-height: 1.0;
+}
+
+sub.normal,
+sub.smaller,
+sub.quarter {
+  vertical-align: -0.5em;
+  line-height: 1.0;
+}
+
+sup.inline.smaller {
+  vertical-align: 0.2em;
+}
+
+sub.inline.smaller {
+  vertical-align: -0.2em;
+}
+
 /* Emphasis styles */
 
 em.sesame {
@@ -195,7 +255,7 @@ pre.continue.deprecated.example:before {
 Partially taken from
 <https://suika.suikawiki.org/~wakaba/wiki/sw/n/Wiki++Style++SuikaWiki++HTML++Semantic>.
 
-Copyright 2002-2018 Authors.
+Copyright 2002-2021 Authors.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.1 or
