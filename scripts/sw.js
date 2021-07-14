@@ -846,7 +846,7 @@ SW.Figure.SunTime = function (f) {
 
   match = (e.tz || '').match (/([+-])([0-9]+):([0-9]+)(?::([0-9]+(?:\.[0-9]+|))|)/);
   if (!match) match = [null, '+', 0, 0, 0];
-  var tz = (match[1] === "-" ? -1 : +1) * parseInt (match[2])*60*60 + parseInt (match[3])*60 + parseFloat (match[4] || 0);
+  var tz = (match[1] === "-" ? -1 : +1) * (parseInt (match[2])*60*60 + parseInt (match[3])*60 + parseFloat (match[4] || 0));
 
   var lat = parseFloat (e.lat || 0);
   var lon = parseFloat (e.lon || 0);
