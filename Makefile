@@ -38,7 +38,7 @@ git-submodules:
 
 local/bin/pmbp.pl:
 	mkdir -p local/bin
-	$(WGET) -O $@ https://raw.github.com/wakaba/perl-setupenv/master/bin/pmbp.pl
+	$(WGET) -O $@ https://raw.githubusercontent.com/wakaba/perl-setupenv/master/bin/pmbp.pl
 pmbp-upgrade: local/bin/pmbp.pl
 	perl local/bin/pmbp.pl --update-pmbp-pl
 pmbp-update: git-submodules pmbp-upgrade
@@ -50,7 +50,7 @@ pmbp-install: pmbp-upgrade
 ## ------ Server configuration ------
 
 # Need SERVER_ENV!
-server-config: daemontools-config batch-server
+server-config: daemontools-config
 
 # Need SERVER_ENV!
 install-server-config: install-daemontools-config
@@ -78,12 +78,6 @@ install-daemontools-config:
 	chown wakaba.wakaba /var/log/app
 	$(MAKE) --makefile=Makefile.service install $(SERVER_ARGS) SERVER_TYPE=web
 
-# Need SERVER_ENV!
-batch-server:
-	mkdir -p local/config/cron.d
-	cd config/cron.d.in && ls *-cron | \
-            xargs -l1 -i% -- sh -c "cat % | sed 's/@@ROOT@@/$(subst /,\/,$(abspath .))/g' > ../../local/config/cron.d/$(SERVER_ENV)-%"
-
 ## ------ Tests ------
 
 PROVE = ./prove
@@ -97,7 +91,7 @@ test-main:
 
 ## ------ Deployment ------
 
-CINNAMON_GIT_REPOSITORY = git://github.com/wakaba/cinnamon.git
+CINNAMON_GIT_REPOSITORY = https://github.com/wakaba/cinnamon.git
 
 cinnamon:
 	mkdir -p local
@@ -105,3 +99,5 @@ cinnamon:
 	echo "#!/bin/sh" > ./cin
 	echo "exec $(abspath local/cinnamon/perl) $(abspath local/cinnamon/bin/cinnamon) \"\$$@\"" >> ./cin
 	chmod ugo+x ./cin
+
+## License: Public Domain.

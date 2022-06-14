@@ -2,11 +2,10 @@ use strict;
 use warnings;
 use Cinnamon::DSL;
 use Cinnamon::Task::Git;
-use Cinnamon::Task::Cron;
 use Cinnamon::Task::Daemontools;
 
 set application => 'suikawiki';
-set git_repository => 'git://github.com/suikawiki/suikawiki-engine.git';
+set git_repository => 'https://github.com/suikawiki/suikawiki-engine.git';
 set deploy_dir => '/home/wakaba/server/suikawiki';
 set daemontools_service_dir => '/service';
 set get_daemontools_service_name => sub {
@@ -43,7 +42,6 @@ task tail => sub {
 task update => sub {
   my ($host, @args) = @_;
   call 'git:update', $host, @args;
-  call 'keys:update', $host, @args;
 };
 
 task setup => sub {
@@ -54,25 +52,11 @@ task setup => sub {
 task install => sub {
   my ($host, @args) = @_;
   call 'app:install', $host, @args;
-  call 'cron:install', $host, @args;
 };
 
 task restart => sub {
   my ($host, @args) = @_;
   call 'web:restart', $host, @args;
-  call 'cron:reload', $host, @args;
-};
-
-task keys => {
-  update => sub {
-    my ($host, @args) = @_;
-    my $dir = get 'deploy_dir';
-    my $env = get 'server_env';
-    remote {
-      run 'mkdir', '-p', "$dir/local/keys/$env";
-    } $host;
-    run 'rsync', '-av', "local/keys/$env" => "$host:$dir/local/keys/";
-  },
 };
 
 task app => {
