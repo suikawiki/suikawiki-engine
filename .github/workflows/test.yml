@@ -1,0 +1,98 @@
+{
+   "jobs" : {
+      "deploy_github_nightly" : {
+         "if" : "${{ github.ref == 'refs/heads/nightly' }}",
+         "needs" : [
+            "test"
+         ],
+         "permissions" : {
+            "contents" : "write"
+         },
+         "runs-on" : "ubuntu-latest",
+         "steps" : [
+            {
+               "env" : {
+                  "GITHUB_TOKEN" : "${{ secrets.GITHUB_TOKEN }}"
+               },
+               "run" : "curl -f -s -S --request POST --header \u0022Authorization:token $GITHUB_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022$GITHUB_SHA\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $GITHUB_REF into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$GITHUB_REPOSITORY/merges\u0022"
+            },
+            {
+               "env" : {
+                  "BWALL_HOST" : "${{ secrets.BWALL_HOST }}",
+                  "BWALL_TOKEN" : "${{ secrets.BWALL_TOKEN }}"
+               },
+               "run" : "curl -f https://$BWALL_TOKEN:@$BWALL_HOST/ping/merger.${GITHUB_REF/refs\u005C/heads\u005C//}/${GITHUB_REPOSITORY/\u005C//%2F} -X POST"
+            }
+         ]
+      },
+      "deploy_github_staging" : {
+         "if" : "${{ github.ref == 'refs/heads/staging' }}",
+         "needs" : [
+            "test"
+         ],
+         "permissions" : {
+            "contents" : "write"
+         },
+         "runs-on" : "ubuntu-latest",
+         "steps" : [
+            {
+               "env" : {
+                  "GITHUB_TOKEN" : "${{ secrets.GITHUB_TOKEN }}"
+               },
+               "run" : "curl -f -s -S --request POST --header \u0022Authorization:token $GITHUB_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022$GITHUB_SHA\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $GITHUB_REF into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$GITHUB_REPOSITORY/merges\u0022"
+            },
+            {
+               "env" : {
+                  "BWALL_HOST" : "${{ secrets.BWALL_HOST }}",
+                  "BWALL_TOKEN" : "${{ secrets.BWALL_TOKEN }}"
+               },
+               "run" : "curl -f https://$BWALL_TOKEN:@$BWALL_HOST/ping/merger.${GITHUB_REF/refs\u005C/heads\u005C//}/${GITHUB_REPOSITORY/\u005C//%2F} -X POST"
+            }
+         ]
+      },
+      "test" : {
+         "continue-on-error" : "${{ matrix.experimental }}",
+         "env" : {
+            "CIRCLE_ARTIFACTS" : "/tmp/circle-artifacts/test",
+            "PMBP_PERL_VERSION" : "${{ matrix.perl_version }}"
+         },
+         "runs-on" : "ubuntu-latest",
+         "steps" : [
+            {
+               "uses" : "actions/checkout@v2"
+            },
+            {
+               "run" : "mkdir -p $CIRCLE_ARTIFACTS"
+            },
+            {
+               "run" : "make test-deps"
+            },
+            {
+               "run" : "make test"
+            },
+            {
+               "uses" : "actions/upload-artifact@v3",
+               "with" : {
+                  "path" : "/tmp/circle-artifacts/test"
+               }
+            }
+         ],
+         "strategy" : {
+            "fail-fast" : false,
+            "matrix" : {
+               "include" : [
+                  {
+                     "experimental" : false,
+                     "perl_version" : "latest"
+                  }
+               ]
+            }
+         }
+      }
+   },
+   "name" : "test",
+   "on" : {
+      "push" : {
+      }
+   }
+}
