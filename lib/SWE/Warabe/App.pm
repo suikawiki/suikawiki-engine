@@ -117,12 +117,12 @@ sub id_rev_url ($$$;$) {
         $id / 1000,
         $id % 1000;
   } elsif ($rev =~ /^4:(.+)$/) {
-    return sprintf q<http://suika.suikawiki.org/gate/cvs/melon/pub/suikawiki/sw4data/ids/%d/%d.txt?revision=%s>,
+    return sprintf q<https://suika.suikawiki.org/gate/cvs/melon/pub/suikawiki/sw4data/ids/%d/%d.txt?revision=%s>,
         $id / 1000,
         $id % 1000,
         $1;
   } elsif ($rev =~ /^3:(.+)$/) {
-    return sprintf q<http://suika.suikawiki.org/gate/cvs/melon/pub/suikawiki/wikidata/page/%s?revision=%s>,
+    return sprintf q<https://suika.suikawiki.org/gate/cvs/melon/pub/suikawiki/wikidata/page/%s?revision=%s>,
         $sw3_name,
         $1;
   } else {
@@ -181,7 +181,7 @@ sub throw_manual_redirect ($$;%) {
 
 =head1 LICENSE
 
-Copyright 2002-2017 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2022 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
