@@ -26,17 +26,14 @@ sub get_data ($$) {
     my $log = <$log_file>;
     my $data = {revs => $self->_log_from_git ($log)};
 
-    my $sw4_log_path = $root_path->child
-        (sprintf 'sw4cvs/ids/%d/%d.txt,v', $id / 1000, $id % 1000);
-    push @{$data->{revs}}, @{$self->_log_from_rcs_path ('4', $sw4_log_path)};
+    my $sw4_log_name = sprintf 'sw4cvs/ids/%d/%d.txt,v', $id / 1000, $id % 1000;
+    push @{$data->{revs}}, @{$self->_log_from_rcs ('4', $sw4_log_name)};
 
     if (@{$data->{revs}} and defined $data->{revs}->[-1]->{sw3_name}) {
       my $sw3_name = delete $data->{revs}->[-1]->{sw3_name};
       $data->{sw3_name} = $sw3_name;
-      my $sw3_log_path = $root_path->child
-          (sprintf 'sw3cvs/page/%s,v', $sw3_name);
-      push @{$data->{revs}},
-          @{$self->_log_from_rcs_path ('3', $sw3_log_path)};
+      my $sw3_log_name = sprintf 'sw3cvs/page/%s,v', $sw3_name;
+      push @{$data->{revs}}, @{$self->_log_from_rcs ('3', $sw3_log_name)};
     }
 
     return {data => $data,
@@ -68,11 +65,16 @@ sub _log_from_git ($$) {
   return $data;
 } # _log_from_git
 
-sub _log_from_rcs_path ($$$) {
-  my $prefix = $_[1];
-  my $path = $_[2];
-  return [] unless $path->is_file;
-  my $rcs = RCSFormat::File->new_from_stringref (\($path->slurp));
+sub _log_from_rcs ($$$) {
+  my ($self, $prefix, $name) = @_;
+  my $root_path = $self->{root_path};
+  open my $file, '-|', "cd \Q$root_path\E && git show HEAD:\Q$name\E"
+      or return [];
+  local $/ = undef;
+  my $bytes = <$file>;
+  close $file;
+  
+  my $rcs = RCSFormat::File->new_from_stringref (\$bytes);
   my $data = [];
   for (@{$rcs->revision_numbers_sorted_by_date}) {
     my $rev = $rcs->get_revision_by_number ($_);
