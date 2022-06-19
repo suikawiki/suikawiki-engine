@@ -87,7 +87,7 @@ sub commit_changes ($$) {
       if ($r == 0) {
         last;
       } else {
-        die $? if $loop++ > 10;
+        die $? if $loop++ > 20;
       }
       sleep 10;
     }

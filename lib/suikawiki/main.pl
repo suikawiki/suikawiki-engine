@@ -1212,7 +1212,7 @@ if ($path[0] eq 'n' and @path == 2) {
       $app->http->add_response_header ('X-SW-Hash' => $id_prop->{hash});
       
       my $post_url = $app->http->url->resolve_string ("i/$id");
-      $app->http->add_response_header ('X-SW-Post-URL' => $post_url);
+      $app->http->add_response_header ('X-SW-Post-URL' => $post_url->stringify);
 
       my $url = $app->name_url ([keys %$new_names]->[0], $id);
       if ($app->bare_param ('no-redirect')) {
