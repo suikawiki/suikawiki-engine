@@ -80,8 +80,17 @@ sub commit_changes ($$) {
   if (@file) {
     my $dir_path = $self->root_path;
     local $ENV{HOME} = ''.$dir_path->absolute;
-    (system "cd \Q$dir_path\E && " . join ' ', map { quotemeta $_ } 'git', 'add', map { path ($_)->relative ($dir_path) } @file) == 0 or die $?;
-    #system "cd \Q$dir_path\E && git commit -m \Q$msg\E";
+    my $loop = 0;
+    while (1) {
+      my $r = (system "cd \Q$dir_path\E && " . join ' ', map { quotemeta $_ } 'git', 'add', map { path ($_)->relative ($dir_path) } @file);
+      #system "cd \Q$dir_path\E && git commit -m \Q$msg\E";
+      if ($r == 0) {
+        last;
+      } else {
+        die $? if $loop++ > 10;
+      }
+      sleep 10;
+    }
   }
 } # commit_changes
 
@@ -89,7 +98,7 @@ sub commit_changes ($$) {
 
 =head1 LICENSE
 
-Copyright 2002-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2022 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
