@@ -26,7 +26,7 @@ ExtUtils::Helpers~0.026
 ExtUtils::InstallPaths~0.012
 File::Listing~6.15
 File::ShareDir~1.118
-File::ShareDir::Install~0.13
+File::ShareDir::Install~0.14
 File::Temp~0.2311
 Filesys::Notify::Simple~0.14
 Filter::Util::Call~1.61
@@ -39,13 +39,13 @@ HTTP::Date~6.05
 HTTP::Entity::Parser~0.25
 HTTP::Headers~6.37
 HTTP::Headers::Fast~0.22
-HTTP::Message~6.37
+HTTP::Headers::Util~6.37
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~6.37
+HTTP::Request~6.37
 Hash::MultiValue~0.16
-IO::Dir~1.49
 IO::HTML~1.004
+IO::Handle~1.48
 IO::Socket::SSL~2.074
 IPC::Signal~1.00
 JSON::MaybeXS~1.004003
