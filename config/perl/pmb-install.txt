@@ -1,6 +1,7 @@
 Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 Canary::Stability~2013
 Capture::Tiny~0.48
@@ -31,7 +32,6 @@ File::Temp~0.2311
 Filesys::Notify::Simple~0.14
 Filter::Util::Call~1.61
 Getopt::Long~2.52
-HTML::Entities~3.78
 HTML::HeadParser~3.78
 HTML::Tagset~3.20
 HTTP::Cookies~6.10
@@ -42,6 +42,7 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~6.37
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
+HTTP::Request~6.37
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.48
@@ -81,7 +82,7 @@ Term::ANSIColor~5.01
 Test::Class~0.52
 Test::Deep~1.130
 Test::Differences~0.69
-Test::More~1.302190
+Test::More~1.302191
 Test::Requires~0.11
 Test::SharedFork~0.35
 Test::TCP~2.22
