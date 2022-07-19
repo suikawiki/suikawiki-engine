@@ -39,7 +39,6 @@ HTTP::Entity::Parser~0.25
 HTTP::Headers::Fast~0.22
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.37
 HTTP::Request::Common~6.37
 HTTP::Response~6.37
 Hash::MultiValue~0.16
@@ -91,7 +90,6 @@ Time::Zone~2.24
 Try::Tiny~0.31
 Types::Serialiser~1.01
 URI~5.12
-URI::Escape~5.12
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
