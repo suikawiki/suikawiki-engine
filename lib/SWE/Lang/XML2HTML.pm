@@ -1178,10 +1178,20 @@ $templates->{(SW09_NS)}->{image} = sub {
 
 $templates->{(SW09_NS)}->{replace} = sub {
   my ($items, $item) = @_;
-
+  my $by = $item->{node}->get_attribute ('by') // '';
+  if ($by =~ /\A((?:swc|sandbox)[1-9][0-9]*)(?:\(([^()]*)\))?\z/) {
+    my $id = $1;
+    my $alt = $2;
+    my $img_el = $item->{doc}->create_element ('img');
+    $img_el->alt ($alt // $id);
+    $img_el->src ("https://fonts.suikawiki.org/images/glyphs/$id.svg");
+    $img_el->class_name ('sw-char-glyph');
+    $item->{parent}->append_child ($img_el);
+    return;
+  }
   my $el = $item->{doc}->create_element_ns (HTML_NS, 'span');
   $el->set_attribute (class => 'sw-replace');
-  $el->text_content ($item->{node}->get_attribute ('by') // '');
+  $el->text_content ($by);
   $item->{parent}->append_child ($el);
 };
 
@@ -1255,7 +1265,7 @@ sub convert ($$$$$$) {
 
 =head1 LICENSE
 
-Copyright 2008-2021 Wakaba <wakaba@suikawiki.org>.
+Copyright 2008-2022 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

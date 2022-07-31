@@ -2244,6 +2244,15 @@ h1 rt, h2 rt, h3 rt, h4 rt, h5 rt, h6 rt {
   content: " ";
 }
 
+.sw-char-glyph {
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  
+  /* alt */
+  color: red;
+}
+
 /* Edit forms */
 
 form {
@@ -2603,7 +2612,9 @@ aside .swe-ad {
 
 /* 
 
-Copyright 2002-2021 Wakaba <wakaba@suikawiki.org>.
+License:
+
+Copyright 2002-2022 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
