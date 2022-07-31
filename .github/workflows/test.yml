@@ -12,9 +12,9 @@
          "steps" : [
             {
                "env" : {
-                  "GITHUB_TOKEN" : "${{ secrets.GITHUB_TOKEN }}"
+                  "GH_ACCESS_TOKEN" : "${{ secrets.GH_ACCESS_TOKEN }}"
                },
-               "run" : "curl -f -s -S --request POST --header \u0022Authorization:token $GITHUB_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022$GITHUB_SHA\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $GITHUB_REF into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$GITHUB_REPOSITORY/merges\u0022"
+               "run" : "curl -f -s -S --request POST --header \u0022Authorization:token $GH_ACCESS_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022$GITHUB_SHA\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $GITHUB_REF into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$GITHUB_REPOSITORY/merges\u0022"
             },
             {
                "env" : {
@@ -37,9 +37,9 @@
          "steps" : [
             {
                "env" : {
-                  "GITHUB_TOKEN" : "${{ secrets.GITHUB_TOKEN }}"
+                  "GH_ACCESS_TOKEN" : "${{ secrets.GH_ACCESS_TOKEN }}"
                },
-               "run" : "curl -f -s -S --request POST --header \u0022Authorization:token $GITHUB_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022$GITHUB_SHA\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $GITHUB_REF into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$GITHUB_REPOSITORY/merges\u0022"
+               "run" : "curl -f -s -S --request POST --header \u0022Authorization:token $GH_ACCESS_TOKEN\u0022 --header \u0022Content-Type:application/json\u0022 --data-binary \u0022{\u005C\u0022base\u005C\u0022:\u005C\u0022master\u005C\u0022,\u005C\u0022head\u005C\u0022:\u005C\u0022$GITHUB_SHA\u005C\u0022,\u005C\u0022commit_message\u005C\u0022:\u005C\u0022auto-merge $GITHUB_REF into master\u005C\u0022}\u0022 \u0022https://api.github.com/repos/$GITHUB_REPOSITORY/merges\u0022"
             },
             {
                "env" : {
