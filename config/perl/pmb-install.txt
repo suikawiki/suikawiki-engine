@@ -11,7 +11,7 @@ Class::Accessor::Lite~0.08
 Class::Data::Inheritable~0.09
 Class::Inspector~1.36
 Cookie::Baker~0.11
-Cpanel::JSON::XS~4.31
+Cpanel::JSON::XS~4.32
 Devel::CheckLib~1.16
 Devel::StackTrace~2.04
 Devel::StackTrace::AsHTML~0.15
@@ -30,7 +30,7 @@ File::ShareDir~1.118
 File::ShareDir::Install~0.14
 File::Temp~0.2311
 Filesys::Notify::Simple~0.14
-Filter::Util::Call~1.62
+Filter::Util::Call~1.63
 Getopt::Long~2.52
 HTML::Entities~3.78
 HTML::HeadParser~3.78
@@ -40,9 +40,10 @@ HTTP::Date~6.05
 HTTP::Entity::Parser~0.25
 HTTP::Headers~6.37
 HTTP::Headers::Fast~0.22
+HTTP::Message~6.37
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Status~6.37
+HTTP::Request~6.37
 Hash::MultiValue~0.16
 IO::File~1.48
 IO::HTML~1.004
@@ -51,7 +52,6 @@ IPC::Signal~1.00
 JSON::MaybeXS~1.004003
 JSON::XS~4.03
 LWP::MediaTypes~6.04
-LWP::Protocol::http~6.67
 LWP::Protocol::https~6.10
 LWP::UserAgent~6.67
 List::MoreUtils~0.430
@@ -64,7 +64,6 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20211001
 Net::HTTP~6.22
-Net::HTTPS~6.22
 POSIX::strftime::Compiler~0.44
 Parallel::Prefork~0.18
 Path::Class~0.37
@@ -94,6 +93,7 @@ Time::Zone~2.24
 Try::Tiny~0.31
 Types::Serialiser~1.01
 URI~5.12
+URI::Escape~5.12
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
