@@ -1566,6 +1566,7 @@ figure.math {
 code, samp, pre.code {
   color: #800000;
   font-family: "Courier New", monospace;
+  white-space: pre-wrap;
 }
 
 .short code {
