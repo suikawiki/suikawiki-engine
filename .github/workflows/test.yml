@@ -18,10 +18,9 @@
             },
             {
                "env" : {
-                  "BWALL_HOST" : "${{ secrets.BWALL_HOST }}",
-                  "BWALL_TOKEN" : "${{ secrets.BWALL_TOKEN }}"
+                  "BWALLER_URL" : "${{ secrets.BWALLER_URL }}"
                },
-               "run" : "curl -f https://$BWALL_TOKEN:@$BWALL_HOST/ping/merger.${GITHUB_REF/refs\u005C/heads\u005C//}/${GITHUB_REPOSITORY/\u005C//%2F} -X POST"
+               "run" : "curl -sSf $BWALLER_URL | BWALL_GROUP=merger.${GITHUB_REF/refs\u005C/heads\u005C//} BWALL_NAME=${GITHUB_REPOSITORY} bash"
             }
          ]
       },
@@ -43,10 +42,9 @@
             },
             {
                "env" : {
-                  "BWALL_HOST" : "${{ secrets.BWALL_HOST }}",
-                  "BWALL_TOKEN" : "${{ secrets.BWALL_TOKEN }}"
+                  "BWALLER_URL" : "${{ secrets.BWALLER_URL }}"
                },
-               "run" : "curl -f https://$BWALL_TOKEN:@$BWALL_HOST/ping/merger.${GITHUB_REF/refs\u005C/heads\u005C//}/${GITHUB_REPOSITORY/\u005C//%2F} -X POST"
+               "run" : "curl -sSf $BWALLER_URL | BWALL_GROUP=merger.${GITHUB_REF/refs\u005C/heads\u005C//} BWALL_NAME=${GITHUB_REPOSITORY} bash"
             }
          ]
       },
