@@ -1,6 +1,7 @@
 Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 Canary::Stability~2013
 Capture::Tiny~0.48
@@ -31,7 +32,8 @@ File::ShareDir::Install~0.14
 File::Temp~0.2311
 Filesys::Notify::Simple~0.14
 Filter::Util::Call~1.64
-Getopt::Long~2.52
+Getopt::Long~2.53
+HTML::Entities~3.80
 HTML::HeadParser~3.80
 HTML::Tagset~3.20
 HTTP::Cookies~6.10
@@ -39,9 +41,10 @@ HTTP::Date~6.05
 HTTP::Entity::Parser~0.25
 HTTP::Headers~6.44
 HTTP::Headers::Fast~0.22
-HTTP::Headers::Util~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
+HTTP::Request~6.44
+HTTP::Status~6.44
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.48
@@ -50,6 +53,7 @@ IPC::Signal~1.00
 JSON::MaybeXS~1.004004
 JSON::XS~4.03
 LWP::MediaTypes~6.04
+LWP::Protocol::http~6.67
 LWP::Protocol::https~6.10
 LWP::UserAgent~6.67
 List::MoreUtils~0.430
