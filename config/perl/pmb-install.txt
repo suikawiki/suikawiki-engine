@@ -41,10 +41,9 @@ HTTP::Date~6.05
 HTTP::Entity::Parser~0.25
 HTTP::Headers~6.44
 HTTP::Headers::Fast~0.22
-HTTP::Message~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~6.44
+HTTP::Request::Common~6.44
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.48
