@@ -64,6 +64,7 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20221114
 Net::HTTP~6.22
+Net::HTTPS~6.22
 POSIX::strftime::Compiler~0.44
 Parallel::Prefork~0.18
 Path::Class~0.37
@@ -78,10 +79,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~5.01
+Test::Builder~1.302191
 Test::Class~0.52
 Test::Deep~1.204
 Test::Differences~0.69
-Test::More~1.302191
 Test::Requires~0.11
 Test::SharedFork~0.35
 Test::TCP~2.22
@@ -93,6 +94,7 @@ Time::Zone~2.24
 Try::Tiny~0.31
 Types::Serialiser~1.01
 URI~5.17
+URI::URL~5.17
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
