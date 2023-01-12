@@ -250,12 +250,16 @@ pre.continue.deprecated.example:before {
   content: "非推奨の例 (続き): ";
 }
 
+li[itemtype~="日時事例"] data[itemprop=text] {
+  font-size: 160%;
+}
+
 /*
 
 Partially taken from
 <https://suika.suikawiki.org/~wakaba/wiki/sw/n/Wiki++Style++SuikaWiki++HTML++Semantic>.
 
-Copyright 2002-2021 Authors.
+Copyright 2002-2023 Authors.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.1 or

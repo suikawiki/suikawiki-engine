@@ -85,6 +85,9 @@ $templates->{(HTML_NS)}->{$_} = sub {
   my $class = $item->{node}->get_attribute ('class');
   $el->set_attribute (class => $class) if defined $class;
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -92,10 +95,39 @@ $templates->{(HTML_NS)}->{$_} = sub {
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
 } for qw/
-  p ul ol dl li dt dd table tbody tr blockquote pre
+  p ul ol dl dt dd table tbody tr blockquote pre
   dfn samp span sub sup var em strong
   b i u
+  data
 /;
+
+$templates->{(HTML_NS)}->{li} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns
+      (HTML_NS, $item->{node}->manakai_local_name);
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class');
+  $el->set_attribute (class => $class) if defined $class;
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  if ($item->{in_items}) {
+    $el->set_attribute (itemprop => 'child') if $item->{is_nested};
+    $el->set_attribute (itemscope => '');
+    $el->set_attribute (itemtype => join ' ', @{$item->{item_types}})
+        if @{$item->{item_types} or []};
+  }
+  
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el, is_nested => 1}}
+      @{$item->{node}->child_nodes};
+};
 
 $templates->{(HTML_NS)}->{$_} = sub {
   my ($items, $item) = @_;
@@ -106,6 +138,9 @@ $templates->{(HTML_NS)}->{$_} = sub {
 
   my $class = $item->{node}->get_attribute ('class');
   $el->set_attribute (class => $class) if defined $class;
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -139,6 +174,9 @@ $templates->{(SW09_NS)}->{asis} = sub {
 
   my $el = $item->{doc}->create_element_ns (HTML_NS, 'mark');
   $item->{parent}->append_child ($el);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -177,6 +215,9 @@ $templates->{(SW09_NS)}->{dotabove} = sub {
   $class = defined $class ? 'sw-dotabove ' . $class : 'sw-dotabove';
   $el->set_attribute (class => $class);
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -197,6 +238,9 @@ $templates->{(SW09_NS)}->{vector} = sub {
   my $class = $item->{node}->get_attribute ('class');
   $class = defined $class ? 'sw-vector ' . $class : 'sw-vector';
   $el->set_attribute (class => $class);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -219,6 +263,9 @@ $templates->{(SW09_NS)}->{snip} = sub {
   $class = defined $class ? 'sw-snip ' . $class : 'sw-snip';
   $el->set_attribute (class => $class);
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -235,6 +282,9 @@ $templates->{(SW09_NS)}->{emph} = sub {
 
   my $class = $item->{node}->get_attribute ('class');
   $el->set_attribute (class => $class) if defined $class;
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -253,6 +303,9 @@ $templates->{(HTML_NS)}->{$_} = sub {
 
   my $class = $item->{node}->get_attribute ('class');
   $el->set_attribute (class => $class) if defined $class;
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -297,6 +350,9 @@ $templates->{(SW09_NS)}->{insert} = sub {
   my $class = $item->{node}->get_attribute ('class');
   $el->set_attribute (class => $class) if defined $class;
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -313,6 +369,9 @@ $templates->{(SW09_NS)}->{delete} = sub {
 
   my $class = $item->{node}->get_attribute ('class');
   $el->set_attribute (class => $class) if defined $class;
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -331,6 +390,9 @@ $templates->{(SW09_NS)}->{example} = sub {
 
   my $class = $item->{node}->get_attribute ('class') // '';
   $el->set_attribute (class => $class . ' sw-' . $item->{node}->manakai_local_name);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -351,6 +413,9 @@ $templates->{(HTML_NS)}->{figcaption} = sub {
   my $class = $item->{node}->get_attribute ('class');
   $el->set_attribute (class => $class) if defined $class;
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -368,6 +433,9 @@ $templates->{(SW09_NS)}->{history} = sub {
   my $class = $item->{node}->get_attribute ('class') // '';
   $class .= ' sw-history';
   $el->set_attribute (class => $class);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -391,6 +459,9 @@ $templates->{(SW10_NS)}->{'ed'} = sub {
   $class .= ' sw-note-block sw-' . $item->{node}->local_name;
   $el->set_attribute (class => $class);
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   unshift @$items,
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
@@ -405,6 +476,9 @@ $templates->{(SW09_NS)}->{'talk'} = sub {
 
   my $class = $item->{node}->get_attribute ('class') // '';
   $el->set_attribute (class => $class);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my @child = @{$item->{node}->child_nodes};
   my $has_speaker = 0;
@@ -437,6 +511,9 @@ $templates->{(SW09_NS)}->{'subsup'} = sub {
 
   my $class = $item->{node}->get_attribute ('class') // '';
   $el->set_attribute (class => $class);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -477,6 +554,9 @@ $templates->{(SW09_NS)}->{'sw-cursive'} = sub {
   my $class = $item->{node}->get_attribute ('class');
   $el->set_attribute (class => $class) if defined $class;
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -484,6 +564,50 @@ $templates->{(SW09_NS)}->{'sw-cursive'} = sub {
       map {{%$item, node => $_, parent => $el}}
       @{$item->{node}->child_nodes};
 }; # sw-see
+
+$templates->{(SW09_NS)}->{'sw-items'} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'figure');
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class') // '';
+  $class .= ' sw-items';
+  $el->set_attribute (class => $class);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  my $it = [];
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el,
+            in_items => 1, item_types => $it}}
+      @{$item->{node}->child_nodes};
+}; # sw-items
+
+$templates->{(SW09_NS)}->{'sw-itemtypes'} = sub {
+  my ($items, $item) = @_;
+
+  my $el = $item->{doc}->create_element_ns (HTML_NS, 'figcaption');
+  $item->{parent}->append_child ($el);
+
+  my $class = $item->{node}->get_attribute ('class') // '';
+  $class .= ' sw-itemtypes';
+  $el->set_attribute (class => $class);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
+  my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
+  $el->set_attribute (lang => $lang) if defined $lang;
+
+  unshift @$items,
+      map {{%$item, node => $_, parent => $el, in_itemtypes => 1}}
+      @{$item->{node}->child_nodes};
+}; # sw-itemtypes
 
 $templates->{(SW09_NS)}->{'sw-br'} = sub {
   my ($items, $item) = @_;
@@ -493,6 +617,9 @@ $templates->{(SW09_NS)}->{'sw-br'} = sub {
 
   my $class = $item->{node}->get_attribute ('class');
   $el->set_attribute (class => $class) if defined $class;
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -535,6 +662,9 @@ $templates->{(SW09_NS)}->{'fenced'} = sub {
   my $class = $item->{node}->get_attribute ('class') // '';
   $el->set_attribute (class => $class);
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -552,6 +682,9 @@ $templates->{(AA_NS)}->{aa} = sub {
   $class //= '';
   $class .= ' sw-aa';
   $el->set_attribute (class => $class);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -572,6 +705,9 @@ $templates->{(SW10_NS)}->{csection} = sub {
   $class .= ' sw-csection';
   $el->set_attribute (class => $class);
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -591,6 +727,9 @@ $templates->{(SW10_NS)}->{key} = sub {
 
   my $class = $item->{node}->get_attribute ('class');
   $el->set_attribute (class => $class) if defined $class;
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -622,6 +761,9 @@ $templates->{(SW10_NS)}->{qn} = sub {
   $class //= '';
   $class .= ' sw-qn';
   $el->set_attribute (class => $class);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -656,6 +798,9 @@ $templates->{(SW10_NS)}->{src} = sub {
   $class .= ' sw-src';
   $el->set_attribute (class => $class);
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -674,6 +819,9 @@ $templates->{(SW09_NS)}->{weak} = sub {
   $class //= '';
   $class .= ' sw-weak';
   $el->set_attribute (class => $class);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -721,6 +869,9 @@ $templates->{(SW09_NS)}->{f} = sub {
   $class //= '';
   $class .= ' sw-f';
   $el->set_attribute (class => $class);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -794,6 +945,9 @@ $templates->{$x->[0]}->{$x->[1]} = sub {
   $class .= ' sw-has-text' if $has_text;
   $el->set_attribute (class => $class);
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -830,6 +984,9 @@ for my $kwd (qw(MUST SHOULD MAY)) {$templates->{(SW09_NS)}->{$kwd} = sub {
   $class .= ' rfc2119 sw-'.$kwd;
   $el->set_attribute (class => $class);
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -851,6 +1008,9 @@ $templates->{(SW10_NS)}->{title} = sub {
 
     my $class = $item->{node}->get_attribute ('class');
     $el->set_attribute (class => $class) if defined $class;
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
     my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
     $el->set_attribute (lang => $lang) if defined $lang;
@@ -882,6 +1042,15 @@ $templates->{(SW10_NS)}->{attrvalue} = sub {
   }
 };
 
+$templates->{(HTML_NS)}->{'sw-value'} = sub {
+  my ($items, $item) = @_;
+
+  unless ($item->{parent}->has_attribute ('value')) {
+    $item->{parent}->set_attribute
+        (value => $item->{node}->text_content);
+  }
+};
+
 $templates->{(SW10_NS)}->{nsuri} = sub {
   my ($items, $item) = @_;
 
@@ -900,6 +1069,9 @@ $templates->{(HTML_NS)}->{q} = sub {
 
   my $class = $item->{node}->get_attribute ('class');
   $el->set_attribute (class => $class) if defined $class;
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -931,6 +1103,9 @@ $templates->{(HTML_NS)}->{ruby} = sub {
   $class .= ' sw-ruby-both' if $both;
   $el->set_attribute (class => $class);
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -948,6 +1123,9 @@ $templates->{(SW09_NS)}->{rubyb} = sub {
   $class //= '';
   $class .= ' sw-rubyb';
   $el->set_attribute (class => $class);
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
@@ -973,6 +1151,9 @@ $templates->{(SW09_NS)}->{okuri} = sub {
   $class .= ' sw-ruby-both' if $both;
   $el->set_attribute (class => $class);
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
 
@@ -993,6 +1174,9 @@ $templates->{(MATH_NS)}->{$_} = sub {
   my $class = $item->{node}->get_attribute ('class');
   $el2->set_attribute (class => $class) if defined $class;
 
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
+
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el2->set_attribute (lang => $lang) if defined $lang;
 
@@ -1009,6 +1193,9 @@ $templates->{(MATH_NS)}->{mtext} = sub {
 
   my $lang = $item->{node}->get_attribute_ns (XML_NS, 'lang');
   $el->set_attribute (lang => $lang) if defined $lang;
+
+  my $itemprop = $item->{node}->get_attribute ('itemprop');
+  $el->set_attribute (itemprop => $itemprop) if defined $itemprop;
 
   my $el2 = $item->{doc}->create_element_ns (HTML_NS, 'span');
   $el->append_child ($el2);
@@ -1066,9 +1253,13 @@ $templates->{(SW09_NS)}->{anchor} = sub {
   
   $el->set_attribute (href => $url);
 
+  if ($item->{in_itemtypes} and defined $item->{item_types}) {
+    push @{$item->{item_types}}, $name;
+  }
+
   unshift @$items,
       map {{%$item, node => $_, parent => $el}} @child;
-};
+}; # anchor
 
 $templates->{(SW09_NS)}->{'anchor-internal'} = sub {
   my ($items, $item) = @_;
@@ -1096,6 +1287,11 @@ $templates->{(SW09_NS)}->{'anchor-end'} = sub {
   $el->set_attribute (id => 'anchor-' . $id);
   $el->set_attribute (href => '#anchor-' . $id);
   $el->set_attribute (rel => 'bookmark');
+
+  if ($item->{parent}->itemscope and
+      not $item->{parent}->has_attribute ('itemid')) {
+    $item->{parent}->set_attribute ('itemid', '#anchor-' . $id);
+  }
 
   unshift @$items,
       map {{%$item, node => $_, parent => $el}}
@@ -1265,7 +1461,7 @@ sub convert ($$$$$$) {
 
 =head1 LICENSE
 
-Copyright 2008-2022 Wakaba <wakaba@suikawiki.org>.
+Copyright 2008-2023 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

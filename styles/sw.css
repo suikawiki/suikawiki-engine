@@ -1517,6 +1517,20 @@ figure.math {
   text-align: center;
 }
 
+figure.sw-items {
+  margin: 1em 0em;
+  border: none;
+  padding: 0.3em 0.8em;
+  background: #f0fff9;
+  color: black;
+}
+
+figcaption.sw-itemtypes {
+  font-size: 80%;
+  font-weight: normal;
+  text-align: end;
+}
+
 .amazon-item {
   display: block;
   cursor: pointer;
@@ -2203,7 +2217,6 @@ sw-mirrored:not([hidden]) {
 sw-mirrored {
   text-indent: 0;
   transform: var(--inline-mirroring);
-  vertical-align: bottom;
 }
 
 sw-mirrored.rtl {
@@ -2615,7 +2628,7 @@ aside .swe-ad {
 
 License:
 
-Copyright 2002-2022 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2023 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
