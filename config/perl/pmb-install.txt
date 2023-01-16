@@ -1,7 +1,6 @@
 Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
-AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 Canary::Stability~2013
 Capture::Tiny~0.48
@@ -33,6 +32,7 @@ File::Temp~0.2311
 Filesys::Notify::Simple~0.14
 Filter::Util::Call~1.64
 Getopt::Long~2.54
+HTML::Entities~3.80
 HTML::HeadParser~3.80
 HTML::Tagset~3.20
 HTTP::Cookies~6.10
@@ -43,11 +43,12 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~6.44
+HTTP::Request::Common~6.44
+HTTP::Status~6.44
 Hash::MultiValue~0.16
 IO::File~1.48
 IO::HTML~1.004
-IO::Socket::SSL~2.078
+IO::Socket::SSL~2.079
 IPC::Signal~1.00
 JSON::MaybeXS~1.004004
 JSON::XS~4.03
@@ -80,10 +81,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~5.01
+Test::Builder~1.302191
 Test::Class~0.52
 Test::Deep~1.204
 Test::Differences~0.69
-Test::More~1.302191
 Test::Requires~0.11
 Test::SharedFork~0.35
 Test::TCP~2.22
