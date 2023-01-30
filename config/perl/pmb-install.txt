@@ -43,7 +43,7 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.44
+HTTP::Request::Common~6.44
 HTTP::Response~6.44
 Hash::MultiValue~0.16
 IO::Dir~1.51
@@ -53,6 +53,7 @@ IPC::Signal~1.00
 JSON::MaybeXS~1.004004
 JSON::XS~4.03
 LWP::MediaTypes~6.04
+LWP::Protocol::http~6.67
 LWP::Protocol::https~6.10
 LWP::UserAgent~6.67
 List::MoreUtils~0.430
@@ -94,6 +95,7 @@ Time::Zone~2.24
 Try::Tiny~0.31
 Types::Serialiser~1.01
 URI~5.17
+URI::Escape~5.17
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
