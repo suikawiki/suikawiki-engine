@@ -43,10 +43,10 @@ HTTP::Headers::Util~6.44
 HTTP::Message~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.44
+HTTP::Request::Common~6.44
 Hash::MultiValue~0.16
+IO::File~1.51
 IO::HTML~1.004
-IO::Handle~1.51
 IO::Socket::SSL~2.081
 IPC::Signal~1.00
 JSON::MaybeXS~1.004004
