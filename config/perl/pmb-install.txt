@@ -1,7 +1,6 @@
 Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
-AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 Canary::Stability~2013
 Capture::Tiny~0.48
@@ -12,7 +11,7 @@ Class::Data::Inheritable~0.09
 Class::Inspector~1.36
 Clone~0.46
 Cookie::Baker~0.11
-Cpanel::JSON::XS~4.34
+Cpanel::JSON::XS~4.35
 Devel::CheckLib~1.16
 Devel::StackTrace~2.04
 Devel::StackTrace::AsHTML~0.15
@@ -43,6 +42,7 @@ HTTP::Headers::Util~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request::Common~6.44
+HTTP::Status~6.44
 Hash::MultiValue~0.16
 IO::Dir~1.51
 IO::HTML~1.004
@@ -64,6 +64,7 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20221114
 Net::HTTP~6.22
+Net::HTTPS~6.22
 POSIX::strftime::Compiler~0.44
 Parallel::Prefork~0.18
 Path::Class~0.37
