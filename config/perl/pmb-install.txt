@@ -1,6 +1,7 @@
 Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 Canary::Stability~2013
 Capture::Tiny~0.48
@@ -21,7 +22,7 @@ Encode~3.19
 Encode::Locale~1.05
 Exporter~5.77
 Exporter::Lite~0.09
-Exporter::Tiny~1.006000
+Exporter::Tiny~1.006001
 ExtUtils::Config~0.008
 ExtUtils::Helpers~0.026
 ExtUtils::InstallPaths~0.012
@@ -64,6 +65,7 @@ Module::Build::Tiny~0.039
 Module::Runtime~0.016
 Mozilla::CA~20221114
 Net::HTTP~6.22
+Net::HTTPS~6.22
 POSIX::strftime::Compiler~0.44
 Parallel::Prefork~0.18
 Path::Class~0.37
