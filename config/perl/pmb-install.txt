@@ -85,7 +85,6 @@ Test::Requires~0.11
 Test::SharedFork~0.35
 Test::TCP~2.22
 Text::Diff~1.45
-Text::MeCab~0.20016
 Time::HiRes~1.9764
 Time::Local~1.30
 Time::Zone~2.24

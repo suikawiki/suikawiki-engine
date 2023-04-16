@@ -1076,6 +1076,7 @@ if ($path[0] eq 'n' and @path == 2) {
 <tr><th scope=col>Revision<th scope=col>Time<th scope=col>Change
 
 <tbody></table></div>]);
+            $doc->title ('History of article #' . $id);
             my $h1_el = $doc->get_elements_by_tag_name ('h1')->[0];
             $h1_el->text_content ('#' . $id);
             my $links = [];

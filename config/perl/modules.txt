@@ -8,4 +8,3 @@ Exporter::Lite
 Fcntl
 Path::Tiny
 Scalar::Util
-Text::MeCab

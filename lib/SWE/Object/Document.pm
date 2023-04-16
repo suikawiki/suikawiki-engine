@@ -140,65 +140,6 @@ sub name ($) {
   return [keys %{$prop->{name}}]->[0] // ''; ## XXXTODO: title-type
 } # name
 
-## ------ Indexing ------
-
-# XXX obsolete
-sub update_tfidf ($$) {
-return; # XXX
-
-  my ($self, $doc) = @_; ## TODO: $doc should not be an argument
-
-  ## It is REQUIRED to lock the $id before the invocation of this
-  ## method to keep the consistency of tfidf data for the $id.
-
-  my $id = $self->id;
-
-  my $tfidf_db = $self->db->id_tfidf;
-
-  require SWE::Data::FeatureVector;
-
-  my $deleted_terms = SWE::Data::FeatureVector->parse_stringref
-      ($tfidf_db->get_data ($id))->as_key_hashref;
-
-  my $tc = $doc->document_element->text_content;
-
-  ## TODO: use element semantics...
-
-  my $orig_tfs = {};
-  my $all_terms = 0;
-  for_unique_words {
-    $orig_tfs->{$_[0]} = $_[1];
-    $all_terms += $_[1];
-  } $tc;
-
-  my $names_index_db = $self->db->name_inverted_index;
-  $names_index_db->lock;
-
-  my $idgen = $self->db->id;
-  my $doc_number = $idgen->get_last_id;
-  
-  my $terms = SWE::Data::FeatureVector->new;
-  for my $term (keys %$orig_tfs) {
-    my $n_tf = $orig_tfs->{$term} / $all_terms;
-    
-    my $df = $names_index_db->get_count ($term);
-    my $idf = log ($doc_number / ($df + 1));
-      
-    my $tfidf = $n_tf * $idf;
-    
-    $terms->set_tfidf ($term, $tfidf);
-    $names_index_db->add_data ($term => $id => $tfidf);
-
-    delete $deleted_terms->{$term};
-  }
-
-  for my $term (keys %$deleted_terms) {
-    $names_index_db->delete_data ($term, $id);
-  }
-  
-  $tfidf_db->set_data ($id => \( $terms->stringify ));
-} # update_tfidf
-
 # ------ Locking ------
 
 sub lock ($) {
