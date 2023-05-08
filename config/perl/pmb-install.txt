@@ -38,10 +38,11 @@ HTTP::Cookies~6.10
 HTTP::Date~6.05
 HTTP::Entity::Parser~0.25
 HTTP::Headers::Fast~0.22
-HTTP::Message~6.44
+HTTP::Headers::Util~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.44
+HTTP::Response~6.44
+HTTP::Status~6.44
 Hash::MultiValue~0.16
 IO::File~1.51
 IO::HTML~1.004
@@ -50,7 +51,6 @@ IPC::Signal~1.00
 JSON::MaybeXS~1.004005
 JSON::XS~4.03
 LWP::MediaTypes~6.04
-LWP::Protocol::http~6.70
 LWP::Protocol::https~6.10
 LWP::UserAgent~6.70
 List::MoreUtils~0.430
