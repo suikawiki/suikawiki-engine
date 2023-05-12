@@ -30,7 +30,6 @@ File::Temp~0.2311
 Filesys::Notify::Simple~0.14
 Filter::Util::Call~1.64
 Getopt::Long~2.54
-HTML::Entities~3.81
 HTML::HeadParser~3.81
 HTML::Tagset~3.20
 HTTP::CookieJar::LWP~0.014
@@ -42,9 +41,9 @@ HTTP::Message~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.44
-HTTP::Status~6.44
+HTTP::Request::Common~6.44
 Hash::MultiValue~0.16
-IO::File~1.51
+IO::Dir~1.51
 IO::HTML~1.004
 IO::Socket::SSL~2.081
 IPC::Signal~1.00
