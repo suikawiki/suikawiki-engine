@@ -2141,6 +2141,12 @@ sw-tate {
   --valign: baseline;
 }
 
+sw-l, sw-lt, sw-r, sw-rt, sw-v, sw-vt, sw-vb, sw-vbt,
+sw-left, sw-right, sw-vrl, sw-vlr,
+sw-leftbox, sw-rightbox, sw-leftbtbox, sw-rightbtbox, sw-vrlbox, sw-vlrbox {
+  font-family: var(--suikawiki-composed-font-family);
+}
+
 sw-l,
 sw-lt {
   unicode-bidi: bidi-override;
