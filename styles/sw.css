@@ -2255,6 +2255,59 @@ h1 rt, h2 rt, h3 rt, h4 rt, h5 rt, h6 rt {
   font-weight: normal;
 }
 
+/* ------ Characters ------ */
+
+.sw-sw-cc {
+  background-color: transparent;
+  color: inherit;
+  font-family: ui-monospace;
+  letter-spacing: 0.1em;
+}
+
+/* ISO/IEC 10646 style character names */
+.sw-sw-cn, .charname {
+  background-color: transparent;
+  color: inherit;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-family: ui-monospace;
+  letter-spacing: 0.1em;
+}
+
+.charname var {
+  text-transform: none;
+  font-variant: normal;
+}
+
+.sw-sw-ch:not([hidden]) {
+  display: inline-block;
+}
+.sw-sw-ch {
+  min-width: 1em;
+  margin: 0;
+  border: 1px solid #ccc;
+  padding: 0;
+  line-height: 1;
+  vertical-align: bottom;
+  text-align: center;
+  font-size: 300%;
+  font-family: var(--suikawiki-composed-font-family);
+  background-color: transparent;
+  color: inherit;
+  text-indent: 0;
+}
+
+.sw-sw-ch-anchor:not([hidden]) {
+  display: inline-block;
+}
+.sw-sw-ch-anchor {
+  margin: 0 .5em;
+  padding: .2em;
+  text-align: center;
+  text-indent: 0;
+  vertical-align: middle;
+}
+
 /* Entity references (obsolete) */
 .sw-replace {
   color: red;

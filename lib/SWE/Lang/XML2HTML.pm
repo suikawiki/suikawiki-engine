@@ -899,39 +899,57 @@ for my $x (
   [SW09_NS, 'lat', 'https://data.suikawiki.org/lat/'],
   [SW09_NS, 'lon', 'https://data.suikawiki.org/lon/'],
   [HTML_NS, 'time', 'https://data.suikawiki.org/datetime/'],
+  [SW09_NS, 'sw-ch', 'https://data.suikawiki.org/char/'],
+  [SW09_NS, 'sw-cn', ''],
+  [SW09_NS, 'sw-cc', 'https://data.suikawiki.org/char/'],
 ) {
-$templates->{$x->[0]}->{$x->[1]} = sub {
-  my ($items, $item) = @_;
+  $templates->{$x->[0]}->{$x->[1]} = sub {
+    my ($items, $item) = @_;
 
-  my $name = $item->{node}->get_attribute ('data-title') // '';
-  my $has_text = !! length $name;
-  $name = $item->{node}->text_content unless length $name;
+    my $name = $item->{node}->get_attribute ('data-title') // '';
+    my $has_text = !! length $name;
+    $name = $item->{node}->text_content unless length $name;
 
-  my $el_name = 'data';
-  my $url_prefix = $x->[2];
-  my $url_suffix = '';
-  if ($x->[1] eq 'time') {
-    if ($name =~ /\Aunix:([0-9]+)\z/) {
-      $name = $1;
-    } elsif ($name =~ /^[a-zA-Z_-]+:/) {
-      #
-    } elsif ($name eq '0') {
-      $name = '0';
-    } elsif ($name =~ /\A(?:year:|)(-?[0-9]+)\z/) {
-      $url_prefix = 'https://data.suikawiki.org/y/' . $1 . '/';
-      undef $url_suffix;
+    my $el_name = 'data';
+    my $url_prefix = $x->[2];
+    my $url_suffix = '';
+    if ($x->[1] eq 'time') {
+      if ($name =~ /\Aunix:([0-9]+)\z/) {
+        $name = $1;
+      } elsif ($name =~ /^[a-zA-Z_-]+:/) {
+        #
+      } elsif ($name eq '0') {
+        $name = '0';
+      } elsif ($name =~ /\A(?:year:|)(-?[0-9]+)\z/) {
+        $url_prefix = 'https://data.suikawiki.org/y/' . $1 . '/';
+        undef $url_suffix;
+        $el_name = 'time';
+      } elsif ($name =~ /\Ay~([0-9]+)\z/) {
+        $url_prefix = 'https://data.suikawiki.org/e/' . $1 . '/';
+        undef $url_suffix;
+      } else {
+        $el_name = 'time';
+      }
+    } elsif ($x->[1] eq 'tz') {
       $el_name = 'time';
-    } elsif ($name =~ /\Ay~([0-9]+)\z/) {
-      $url_prefix = 'https://data.suikawiki.org/e/' . $1 . '/';
+    } elsif ($x->[1] eq 'sw-cc') {
+      $el_name = 'code';
+      my $n = $name;
+      $n =~ s/^<//;
+      $n =~ s/>$//;
+      $url_prefix = $x->[2] . join ':', map { s/^U\+//; sprintf '%04X', hex $_ } split /[\x09\x0A\x0D\x20]*,[\x09\x0A\x0D\x20]*/, $n;
       undef $url_suffix;
-    } else {
-      $el_name = 'time';
+    } elsif ($x->[1] eq 'sw-ch') {
+      $el_name = 'code';
+      $url_prefix = $x->[2] . join ':', map { s/^U\+//; sprintf '%04X', ord $_ } split //, $name;
+      undef $url_suffix;
+    } elsif ($x->[1] eq 'sw-cn') {
+      $el_name = 'code';
+      $url_prefix = $x->[2] . $item->{name_to_url}->($name);
+      undef $url_suffix;
     }
-  } elsif ($x->[1] eq 'tz') {
-    $el_name = 'time';
-  }
-  
-  my $el = $item->{doc}->create_element_ns (HTML_NS, $el_name);
+    
+    my $el = $item->{doc}->create_element_ns (HTML_NS, $el_name);
 
   if ($el_name eq 'time') {
     $el->set_attribute ('datetime', $name);
@@ -953,7 +971,7 @@ $templates->{$x->[0]}->{$x->[1]} = sub {
 
   if ($item->{node}->has_attribute ('data-implicit-link')) {
     my $link = $item->{doc}->create_element ('a');
-    $link->set_attribute (class => 'sw-anchor');
+    $link->set_attribute (class => 'sw-anchor sw-' . $x->[1] . '-anchor');
     if (not defined $url_suffix) {
       $link->href ($url_prefix);
     } else {
@@ -1042,7 +1060,7 @@ $templates->{(SW10_NS)}->{attrvalue} = sub {
   }
 };
 
-$templates->{(HTML_NS)}->{'sw-value'} = sub {
+$templates->{(SW09_NS)}->{'sw-value'} = sub {
   my ($items, $item) = @_;
 
   unless ($item->{parent}->has_attribute ('value')) {

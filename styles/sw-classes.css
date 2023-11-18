@@ -137,21 +137,6 @@ pre.code {
   font-family: "Courier New", monospace;
 }
 
-/* ISO/IEC 10646 style character names */
-.charname {
-  background-color: transparent;
-  color: inherit;
-  text-transform: lowercase;
-  font-variant: small-caps;
-  font-family: "Courier New", monospace;
-  letter-spacing: 0.2em;
-}
-
-.charname var {
-  text-transform: none;
-  font-variant: normal;
-}
-
 .comment {
   color: green;
   background-color: transparent;
@@ -250,7 +235,9 @@ pre.continue.deprecated.example:before {
   content: "非推奨の例 (続き): ";
 }
 
-li[itemtype~="日時事例"] data[itemprop=text] {
+li[itemtype~="日時事例"] data[itemprop=text],
+li[itemtype~="日時事例"] code[itemprop=text],
+li[itemtype~="日時事例"] cite[itemprop=text] {
   font-size: 160%;
 }
 
