@@ -5,16 +5,18 @@
          "runs-on" : "ubuntu-latest",
          "steps" : [
             {
-               "uses" : "actions/checkout@v3",
+               "uses" : "actions/checkout@v2",
                "with" : {
-                  "token" : "${{ secrets.GH_ACCESS_TOKEN }}"
+                  "fetch-depth" : 0,
+                  "ref" : "master",
+                  "ssh-key" : "${{ secrets.GH_GIT_KEY }}"
                }
             },
             {
-               "run" : "git config --global user.email \u0022temp@github.test\u0022"
+               "run" : "git config --global user.name \u0022GitHub Actions\u0022"
             },
             {
-               "run" : "git config --global user.name \u0022GitHub Actions\u0022"
+               "run" : "git config --global user.email \u0022temp@github.test\u0022"
             },
             {
                "run" : "make deps"
@@ -35,7 +37,7 @@
    "on" : {
       "schedule" : [
          {
-            "cron" : "41 13 * * *"
+            "cron" : "3 20 * * *"
          }
       ]
    }
