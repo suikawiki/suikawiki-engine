@@ -1,6 +1,0 @@
-#!/bin/sh
-[ -e "@@SYSCONFIG@@" ] && source "@@SYSCONFIG@@"
-export PLACK_COMMAND_LINE_ARGS="\
-  -s Starlet \
-"
-exec @@LOCAL@@/bin/@@INSTANCENAME@@-web.sh
