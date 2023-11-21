@@ -30,6 +30,7 @@ File::Temp~0.2311
 Filesys::Notify::Simple~0.14
 Filter::Util::Call~1.64
 Getopt::Long~2.57
+HTML::Entities~3.81
 HTML::HeadParser~3.81
 HTML::Tagset~3.20
 HTTP::CookieJar::LWP~0.014
@@ -38,8 +39,6 @@ HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers~6.45
 HTTP::Headers::Fast~0.22
-HTTP::Headers::Util~6.45
-HTTP::Message~6.45
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.45
@@ -92,6 +91,7 @@ Time::Zone~2.24
 Try::Tiny~0.31
 Types::Serialiser~1.01
 URI~5.21
+URI::Escape~5.21
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
