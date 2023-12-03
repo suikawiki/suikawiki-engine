@@ -10,6 +10,13 @@ html {
   --btm-emulated: not-emulated;
   --valign: baseline;
 
+  --quote-color: black;
+  --quote-background-color: #f1edff;
+  --quote-main-color: black;
+  --quote-main-background-color: #f9f7ff;
+  --note-color: black;
+  --note-background-color: #F5FFF5;
+  --note-border-color: #CCFFCC;
   --annotation-inline-font: 70%/1.0 normal;
   --annotation-side-font: 30%/1.0 normal;
   --annotation-color: #f72121;
@@ -252,8 +259,8 @@ blockquote {
   padding: .2em;
   padding-inline-start: .5em;
   padding-inline-end: .5em;
-  background-color: #f7fff7;
-  color: black;
+  background-color: var(--quote-main-background-color);
+  color: var(--quote-main-color);
 }
 
 hr:not(.blank) {
@@ -366,8 +373,28 @@ sw-box.center {
   text-align: center;
 }
 
+sw-box.center table {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: start;
+}
+
+sw-box.left {
+  text-align: left;
+}
+
+sw-box.left table {
+  margin-left: 0;
+  margin-right: auto;
+}
+
 sw-box.right {
   text-align: right;
+}
+
+sw-box.right table {
+  margin-right: 0;
+  margin-left: auto;
 }
 
 sw-box.indent {
@@ -386,6 +413,7 @@ sw-vlrbox {
   overflow: auto;
   --inline-mirroring: rotateX(180deg);
   --valign: baseline;
+  position: relative;
 }
 sw-box.vertical {
   writing-mode: vertical-rl;
@@ -617,14 +645,34 @@ sw-rightbtbox {
 
 .sw-note-block {
   display: block;
-  margin: 1em 0 1em 5em;
-  padding: 0.5em 1.3em;
-  color: black;
-  background-color: #F5FFF5;
+  margin-block: 1em;
+  margin-inline: 5em 0;
+  padding-block: 0.5em;
+  padding-inline: 1.3em;
+  color: var(--note-color);
+  background-color: var(--note-background-color);
   text-indent: 0;
   font-size: 90%;
   line-height: 2.2;
   column-span: all;
+}
+
+.sw-note-block::before {
+  display: block;
+  content: "# ";
+  font-size: 300%;
+  float: inline-start;
+  margin-inline-start: -2em;
+  inline-size: 1.7em;
+  box-sizing: border-box;
+  padding-inline-end: 0.3em;
+  text-align: end;
+  line-height: 1.0;
+  color: var(--note-border-color);
+  background: transparent;
+  font-weight: bolder;
+  font-family: sans-serif;
+  text-orientation: upright;
 }
 
 .sw-preamble {
@@ -641,8 +689,16 @@ sw-rightbtbox {
 
 @media (max-width: 30em) {
   .sw-note-block {
-    margin-left: 1em;
-    margin-right: 1em;
+    margin-inline: 1em 0;
+  }
+
+  sw-vrlbox .sw-note-block,
+  sw-vlrbox .sw-note-block {
+    margin-inline: 3em 0;
+  }
+
+  .sw-note-block::before {
+    font-size: 250%;
   }
 }
 
@@ -831,8 +887,8 @@ ins + ins {
 .sw-anchor-end {
   display: block;
   position: absolute;
-  left: 0.4em;
-  top: auto;
+  inset-inline-start: 0.4em;
+  inset-block-start: auto;
   border-style: none;
   color: gray;
   background: white;
@@ -1037,8 +1093,8 @@ figure.quote {
   padding: .2em;
   padding-inline-start: 1em;
   padding-inline-end: 3em;
-  background-color: #f7fff7;
-  color: black;
+  background-color: var(--quote-background-color);
+  color: var(--quote-color);
 }
 
 figure.quote > figcaption {
