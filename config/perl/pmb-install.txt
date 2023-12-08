@@ -38,14 +38,15 @@ HTTP::Cookies~6.11
 HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers::Fast~0.22
-HTTP::Message~6.45
+HTTP::Headers::Util~6.45
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
+HTTP::Request~6.45
 HTTP::Response~6.45
 HTTP::Status~6.45
 Hash::MultiValue~0.16
-IO::Dir~1.51
 IO::HTML~1.004
+IO::Handle~1.51
 IO::Socket::SSL~2.084
 IPC::Signal~1.00
 JSON::MaybeXS~1.004005
@@ -93,7 +94,6 @@ Time::Zone~2.24
 Try::Tiny~0.31
 Types::Serialiser~1.01
 URI~5.21
-URI::Escape~5.21
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
