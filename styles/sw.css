@@ -494,8 +494,8 @@ sw-rightbtbox {
   }
 
   .side-menu {
-    position: absolute;
-    top: 7em;
+    position: fixed;
+    top: 0;
     left: 0;
     width: 15em;
     height: 100vh;

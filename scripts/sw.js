@@ -548,30 +548,6 @@ function initTOC (root) {
   showButton.textContent = '三';
   showButton.title = '目次を表示';
   document.body.appendChild (showButton);
-
-  setTimeout (function () {
-    var originalTop;
-    var resize = function (ev) {
-      var delta = document.body.getClientRects () [0].top + document.body.scrollTop;
-      var top = document.body.scrollTop - delta;
-      if (top < originalTop) top = originalTop;
-      container.style.top = top + "px";
-      container.style.height = innerHeight - top - delta + document.body.scrollTop + "px";
-    }; // resize
-    var match = matchMedia ('(min-width: 80em)');
-    var install = function () {
-      container.style.top = '';
-      if (match.matches) {
-        originalTop = container.offsetTop;
-        window.addEventListener ('scroll', resize);
-        resize ();
-      } else {
-        window.removeEventListener ('scroll', resize);
-      }
-    }; // install
-    match.addListener (install);
-    install ();
-  }, 0);
 } // initTOC
 
 function initWarnings (root) {
@@ -2392,9 +2368,11 @@ function initFigures (root) {
 
 }) ();
 
-/* 
+/*
 
-Copyright 2002-2021 Wakaba <wakaba@suikawiki.org>.
+License:
+
+Copyright 2002-2023 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
