@@ -2353,12 +2353,13 @@ function initFigures (root) {
       }
 
       var reflowed = false;
-      var resizer = new ResizeObserver (() => {
+      var resizer = new ResizeObserver ((x) => {
         if (!reflowed) {
           reflowed = true;
           return;
         }
         this.reshadow ();
+        resizer.disconnect ();
       });
       resizer.observe (mainWrapper);
     }; // reshadow
