@@ -30,7 +30,6 @@ File::Temp~0.2311
 Filesys::Notify::Simple~0.14
 Filter::Util::Call~1.64
 Getopt::Long~2.57
-HTML::Entities~3.81
 HTML::HeadParser~3.81
 HTML::Tagset~3.20
 HTTP::CookieJar::LWP~0.014
@@ -39,13 +38,13 @@ HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers~6.45
 HTTP::Headers::Fast~0.22
-HTTP::Headers::Util~6.45
+HTTP::Message~6.45
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Status~6.45
+HTTP::Response~6.45
 Hash::MultiValue~0.16
-IO::File~1.51
 IO::HTML~1.004
+IO::Handle~1.51
 IO::Socket::SSL~2.084
 IPC::Signal~1.00
 JSON::MaybeXS~1.004005
@@ -64,6 +63,7 @@ Module::Build::Tiny~0.047
 Module::Runtime~0.016
 Mozilla::CA~20231213
 Net::HTTP~6.23
+Net::HTTPS~6.23
 POSIX::strftime::Compiler~0.45
 Parallel::Prefork~0.18
 Path::Class~0.37
@@ -78,10 +78,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~5.01
-Test::Builder~1.302198
 Test::Class~0.52
 Test::Deep~1.204
 Test::Differences~0.71
+Test::More~1.302198
 Test::Requires~0.11
 Test::SharedFork~0.35
 Test::TCP~2.22
