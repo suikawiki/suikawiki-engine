@@ -2352,8 +2352,8 @@ function initFigures (root) {
         setTimeout (() => redrawDescendants (this), 0);
       }
 
-      var reflowed = false;
-      var resizer = new ResizeObserver ((x) => {
+      let reflowed = false;
+      let resizer = new ResizeObserver ((x) => {
         if (!reflowed) {
           reflowed = true;
           return;
@@ -2362,6 +2362,9 @@ function initFigures (root) {
         resizer.disconnect ();
       });
       resizer.observe (mainWrapper);
+
+      clearTimeout (this.wmTimer);
+      this.wmTimer = setTimeout (() => this.reshadow (), 100);
     }; // reshadow
   };
 
