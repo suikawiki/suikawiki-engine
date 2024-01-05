@@ -1,6 +1,7 @@
 Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 Canary::Stability~2013
 Capture::Tiny~0.48
@@ -9,7 +10,7 @@ Class::Accessor::Lite~0.08
 Class::Data::Inheritable~0.09
 Class::Inspector~1.36
 Clone~0.46
-Cookie::Baker~0.11
+Cookie::Baker~0.12
 Cpanel::JSON::XS~4.37
 Devel::StackTrace~2.04
 Devel::StackTrace::AsHTML~0.15
@@ -39,12 +40,12 @@ HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers~6.45
 HTTP::Headers::Fast~0.22
+HTTP::Message~6.45
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.45
 Hash::MultiValue~0.16
-IO::File~1.55
 IO::HTML~1.004
+IO::Handle~1.55
 IO::Socket::SSL~2.084
 IPC::Signal~1.00
 JSON::MaybeXS~1.004005
@@ -64,7 +65,7 @@ Module::Runtime~0.016
 Mozilla::CA~20231213
 Net::HTTP~6.23
 Net::HTTPS~6.23
-POSIX::strftime::Compiler~0.45
+POSIX::strftime::Compiler~0.46
 Parallel::Prefork~0.18
 Path::Class~0.37
 Path::Tiny~0.144
@@ -92,6 +93,7 @@ Time::Zone~2.24
 Try::Tiny~0.31
 Types::Serialiser~1.01
 URI~5.21
+URI::Escape~5.21
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
