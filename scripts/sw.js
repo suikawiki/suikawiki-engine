@@ -2363,8 +2363,14 @@ function initFigures (root) {
       });
       resizer.observe (mainWrapper);
 
-      clearTimeout (this.wmTimer);
-      this.wmTimer = setTimeout (() => this.reshadow (), 100);
+      if (!this.wmTimer) {
+        this.wmTimer = setTimeout (() => {
+          this.reshadow ();
+          setTimeout (() => {
+            delete this.wmTimer;
+          }, 100);
+        }, 100);
+      }
     }; // reshadow
   };
 

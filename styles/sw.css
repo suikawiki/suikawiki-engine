@@ -8,7 +8,7 @@ html {
   --timejs-serialization: dtsjp1;
   --inline-mirroring: rotateY(180deg);
   --btm-emulated: not-emulated;
-  --valign: baseline;
+  --valign: 50%;
 
   --quote-color: black;
   --quote-background-color: #f1edff;
@@ -412,7 +412,7 @@ sw-vlrbox {
   width: 100%;
   overflow: auto;
   --inline-mirroring: rotateX(180deg);
-  --valign: baseline;
+  --valign: middle;
   position: relative;
 }
 sw-box.vertical {
@@ -441,7 +441,7 @@ sw-rightbtbox {
   height: 100%;
   overflow: auto;
   --inline-mirroring: rotateY(180deg);
-  --valign: baseline;
+  --valign: 50%;
 }
 sw-rightbox,
 sw-rightbtbox {
@@ -2183,7 +2183,7 @@ sw-yoko {
   line-height: 1.0;
   text-indent: 0;
   --inline-mirroring: rotateY(180deg);
-  --valign: middle;
+  --valign: 50%;
 }
 
 sw-tate {
@@ -2194,7 +2194,7 @@ sw-tate {
   vertical-align: middle;
   text-orientation: mixed;
   --inline-mirroring: rotateX(180deg);
-  --valign: baseline;
+  --valign: middle;
 }
 
 sw-l, sw-lt, sw-r, sw-rt, sw-v, sw-vt, sw-vb, sw-vbt,
@@ -2260,17 +2260,17 @@ sw-vrl,
 sw-vlr {
   text-orientation: mixed;
   --inline-mirroring: rotateY(180deg);
-  --valign: baseline;
+  --valign: middle;
 }
 sw-left {
   direction: ltr;
   --inline-mirroring: rotateX(180deg);
-  --valign: baseline;
+  --valign: 50%;
 }
 sw-right {
   direction: rtl;
   --inline-mirroring: rotateX(180deg);
-  --valign: baseline;
+  --valign: 50%;
 }
 
 sw-mirrored:not([hidden]) {
