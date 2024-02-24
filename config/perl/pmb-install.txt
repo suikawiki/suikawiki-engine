@@ -30,7 +30,6 @@ File::Temp~0.2311
 Filesys::Notify::Simple~0.14
 Filter::Util::Call~1.64
 Getopt::Long~2.57
-HTML::Entities~3.81
 HTML::HeadParser~3.81
 HTML::Tagset~3.20
 HTTP::Cookies~6.11
@@ -41,15 +40,15 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~6.45
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
+HTTP::Response~6.45
 Hash::MultiValue~0.16
-IO::File~1.55
 IO::HTML~1.004
+IO::Handle~1.55
 IO::Socket::SSL~2.085
 IPC::Signal~1.00
 JSON::MaybeXS~1.004005
 JSON::XS~4.03
 LWP::MediaTypes~6.04
-LWP::Protocol::http~6.76
 LWP::Protocol::https~6.13
 LWP::UserAgent~6.76
 List::MoreUtils~0.430
@@ -62,6 +61,7 @@ Module::Build::Tiny~0.047
 Module::Runtime~0.016
 Mozilla::CA~20231213
 Net::HTTP~6.23
+Net::HTTPS~6.23
 POSIX::strftime::Compiler~0.46
 Parallel::Prefork~0.18
 Path::Class~0.37
