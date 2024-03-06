@@ -27,6 +27,12 @@ the script's execution, is processed appropriately.  E.g.:
        year component is omitted if it is same as this year, e.g.
        "December 20" if it's 2008. -->
 
+  <time data-format=monthdayhm>2008-12-20T23:27+09:00</time>
+  <!-- Will be rendered as a date, hour, and minute, e.g.
+       "20 December 2008 11:27 PM" but the year component is omitted
+       if it is same as this year, e.g. "December 20 11:27 PM" if
+       it's 2008. -->
+
   <time data-format=monthdaytime>2008-12-20T23:27+09:00</time>
   <!-- Will be rendered as a date and time, e.g.
        "20 December 2008 11:27:00 PM" but the year component is omitted
@@ -45,6 +51,33 @@ the script's execution, is processed appropriately.  E.g.:
 
   <time data-format=time>2008-12-20T23:27+09:00</time>
   <!-- Will be rendered as a time, e.g. "11:27:00 PM" -->
+
+Attributes.
+
+  datetime=""
+
+    The machine readable date and/or time string, as specified by the
+    HTML Standard.  Can be omitted if the text content of the element
+    is a machine readable date and/or time string.
+
+  data-format=""
+
+    The format of the date/time text.  See the examples above.
+
+  data-reftime=""
+
+    The reference time used to create the date/time text
+    (e.g. |data-format=ambtime| or |data-format=monthday|).  The value
+    must be a global date and time string as specified by the HTML
+    Standard.  Defaulted to the current time.
+
+  data-tzoffset=""
+
+    The time-zone offset used to create the date/time text.  The value
+    must be a positive, zero, or negative integer in seconds,
+    representing the time difference from the UTC (positive for
+    eastern hemisphere).  Defaulted to the platform's time-zone
+    offset.
 
 When the |time| element's |datetime| or |data-tzoffset| attribute
 value is changed, the element's content is updated appropriately.
@@ -164,6 +197,15 @@ function TER (c) {
     }
   } // parseTimeElement
 
+  function _getNow (el) {
+    let ref = el.getAttribute ('data-reftime');
+    if (ref !== null) {
+      return parseTimeElement ({getAttribute: () => ref}); // or invalid date
+    } else {
+      return new Date;
+    }
+  } // _getNow
+
   function _2digit (i) {
     return i < 10 ? '0' + i : i;
   } // _2digit
@@ -243,6 +285,25 @@ function TER (c) {
     }
   } // _setMonthDayDateContent
 
+  function _setMonthDayHMContent (el, date) {
+    var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
+    dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
+    if (dts === 'dtsjp1') {
+      el.textContent = (date.getMonth () + 1) + '月' + date.getDate () + '日(' + ['日','月','火','水','木','金','土'][date.getDay ()] + ') ' + date.getHours () + '時' + date.getMinutes () + '分';
+    } else if (dts === 'dtsjp2') {
+      el.textContent = (date.getMonth () + 1) + '.' + date.getDate () + ' ' + date.getHours () + ':' + _2digit (date.getMinutes ());
+    } else if (dts === 'dtsjp3') {
+      el.textContent = (date.getMonth () + 1) + '/' + date.getDate () + ' ' + date.getHours () + ':' + _2digit (date.getMinutes ());
+    } else {
+      el.textContent = date.toLocaleString (navigator.language, {
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      });
+    }
+  } // _setMonthDayHMContent
+
   function _setMonthDayTimeContent (el, date) {
     var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
     dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
@@ -282,6 +343,25 @@ function TER (c) {
     _setTimeContent (el, usedDate);
   } // setTimeContent
 
+  function setHMContent (el, date) {
+    if (!el.getAttribute ('title')) {
+      el.setAttribute ('title', el.textContent);
+    }
+    if (!el.getAttribute ('datetime')) {
+      // XXX If year is outside of 1000-9999, ...
+      el.setAttribute ('datetime', date.toISOString ());
+    }
+
+    var tzoffset = el.getAttribute ('data-tzoffset');
+    var usedDate = date;
+    if (tzoffset !== null) {
+      tzoffset = parseFloat (tzoffset);
+      usedDate = new Date (date.valueOf () + date.getTimezoneOffset () * 60 * 1000 + tzoffset * 1000);
+    }
+
+    _setHMContent (el, usedDate);
+  } // setHMContent
+
   function _setTimeContent (el, date) {
     var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
     dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
@@ -299,6 +379,23 @@ function TER (c) {
       });
     }
   } // _setTimeContent
+
+  function _setHMContent (el, date) {
+    var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
+    dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
+    if (dts === 'dtsjp1') {
+      el.textContent = date.getHours () + '時' + date.getMinutes () + '分';
+    } else if (dts === 'dtsjp2') {
+      el.textContent = date.getHours () + ':' + _2digit (date.getMinutes ());
+    } else if (dts === 'dtsjp3') {
+      el.textContent = date.getHours () + ':' + _2digit (date.getMinutes ());
+    } else {
+      el.textContent = date.toLocaleString (navigator.language, {
+        hour: "numeric",
+        minute: "numeric",
+      });
+    }
+  } // _setHMContent
 
   function _setDateTimeContent (el, date) {
     var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
@@ -320,6 +417,26 @@ function TER (c) {
       });
     }
   } // _setDateTimeContent
+
+  function _setDateHMContent (el, date) {
+    var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
+    dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
+    if (dts === 'dtsjp1') {
+      el.textContent = _year (date.valueOf () - date.getTimezoneOffset () * 60 * 1000, date.getFullYear (), dts) + '年' + (date.getMonth () + 1) + '月' + date.getDate () + '日(' + ['日','月','火','水','木','金','土'][date.getDay ()] + ') ' + date.getHours () + '時' + date.getMinutes () + '分';
+    } else if (dts === 'dtsjp2') {
+      el.textContent = _year (date.valueOf () - date.getTimezoneOffset () * 60 * 1000, date.getFullYear (), dts) + '.' + (date.getMonth () + 1) + '.' + date.getDate () + ' ' + date.getHours () + ':' + _2digit (date.getMinutes ());
+    } else if (dts === 'dtsjp3') {
+      el.textContent = _year (date.valueOf () - date.getTimezoneOffset () * 60 * 1000, date.getFullYear (), dts) + '/' + (date.getMonth () + 1) + '/' + date.getDate () + ' ' + date.getHours () + ':' + _2digit (date.getMinutes ());
+    } else {
+      el.textContent = date.toLocaleString (navigator.language, {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      });
+    }
+  } // _setDateHMContent
   
   function setDateContent (el, date) {
     if (!el.getAttribute ('title')) {
@@ -348,13 +465,38 @@ function TER (c) {
     }
 
     var lang = navigator.language;
-    if (new Date ().toLocaleString (lang, {timeZone: 'UTC', year: "numeric"}) ===
+    if (_getNow (el).toLocaleString (lang, {timeZone: 'UTC', year: "numeric"}) ===
         date.toLocaleString (lang, {timeZone: 'UTC', year: "numeric"})) {
       _setMonthDayDateContent (el, date);
     } else {
       _setDateContent (el, date);
     }
   } // setMonthDayDateContent
+
+  function setMonthDayHMContent (el, date) {
+    if (!el.getAttribute ('title')) {
+      el.setAttribute ('title', el.textContent);
+    }
+    if (!el.getAttribute ('datetime')) {
+      // XXX If year is outside of 1000-9999, ...
+      el.setAttribute ('datetime', date.toISOString ());
+    }
+
+    var tzoffset = el.getAttribute ('data-tzoffset');
+    var usedDate = date;
+    if (tzoffset !== null) {
+      tzoffset = parseFloat (tzoffset);
+      usedDate = new Date (date.valueOf () + date.getTimezoneOffset () * 60 * 1000 + tzoffset * 1000);
+    }
+    
+    var lang = navigator.language;
+    if (_getNow (el).toLocaleString (lang, {timeZone: 'UTC', year: "numeric"}) ===
+        usedDate.toLocaleString (lang, {timeZone: 'UTC', year: "numeric"})) {
+      _setMonthDayHMContent (el, usedDate);
+    } else {
+      _setDateHMContent (el, usedDate);
+    }
+  } // setMonthDayHMContent
 
   function setMonthDayTimeContent (el, date) {
     if (!el.getAttribute ('title')) {
@@ -373,13 +515,31 @@ function TER (c) {
     }
     
     var lang = navigator.language;
-    if (new Date ().toLocaleString (lang, {timeZone: 'UTC', year: "numeric"}) ===
+    if (_getNow (el).toLocaleString (lang, {timeZone: 'UTC', year: "numeric"}) ===
         usedDate.toLocaleString (lang, {timeZone: 'UTC', year: "numeric"})) {
       _setMonthDayTimeContent (el, usedDate);
     } else {
       _setDateTimeContent (el, usedDate);
     }
   } // setMonthDayTimeContent
+
+  function setDateHMContent (el, date) {
+    if (!el.getAttribute ('title')) {
+      el.setAttribute ('title', el.textContent);
+    }
+    if (!el.getAttribute ('datetime')) {
+      // XXX If year is outside of 1000-9999, ...
+      el.setAttribute ('datetime', date.toISOString ());
+    }
+
+    var tzoffset = el.getAttribute ('data-tzoffset');
+    var usedDate = date;
+    if (tzoffset !== null) {
+      tzoffset = parseFloat (tzoffset);
+      usedDate = new Date (date.valueOf () + date.getTimezoneOffset () * 60 * 1000 + tzoffset * 1000);
+    }
+    _setDateHMContent (el, usedDate);
+  } // setDateHMContent
 
   function setDateTimeContent (el, date) {
     if (!el.getAttribute ('title')) {
@@ -410,7 +570,7 @@ function TER (c) {
 
     var text = TER.Delta.prototype.text;
     var dateValue = date.valueOf ();
-    var nowValue = new Date ().valueOf ();
+    var nowValue = _getNow (el).valueOf ();
 
     var diff = dateValue - nowValue;
     if (diff < 0) diff = -diff;
@@ -525,8 +685,12 @@ TER.prototype._initialize = function () {
         setDateTimeContent (el, date);
       } else if (format === 'date') {
         setDateContent (el, date);
+      } else if (format === 'datehm') {
+        setDateHMContent (el, date);
       } else if (format === 'monthday') {
         setMonthDayDateContent (el, date);
+      } else if (format === 'monthdayhm') {
+        setMonthDayHMContent (el, date);
       } else if (format === 'monthdaytime') {
         setMonthDayTimeContent (el, date);
       } else if (format === 'ambtime' || format === 'ambdate') {
@@ -535,6 +699,8 @@ TER.prototype._initialize = function () {
         setAmbtimeContent (el, date, {deltaOnly: true});
       } else if (format === 'time') {
         setTimeContent (el, date);
+      } else if (format === 'hm') {
+        setHMContent (el, date);
       } else { // auto
         if (date.hasTimezone) { /* full date */
           setDateTimeContent (el, date);
@@ -645,7 +811,7 @@ if (window.TEROnLoad) {
 
 /* ***** BEGIN LICENSE BLOCK *****
  *
- * Copyright 2008-2020 Wakaba <wakaba@suikawiki.org>.  All rights reserved.
+ * Copyright 2008-2024 Wakaba <wakaba@suikawiki.org>.  All rights reserved.
  *
  * Copyright 2017 Hatena <http://hatenacorp.jp/>.  All rights reserved.
  *
