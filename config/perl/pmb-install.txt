@@ -39,11 +39,11 @@ HTML::Tagset~3.24
 HTTP::Cookies~6.11
 HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
-HTTP::Headers~6.46
 HTTP::Headers::Fast~0.22
+HTTP::Message~6.46
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~6.46
+HTTP::Request~6.46
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.55
@@ -64,7 +64,6 @@ Module::Build::Tiny~0.048
 Module::Runtime~0.016
 Mozilla::CA~20240313
 Net::HTTP~6.23
-Net::HTTPS~6.23
 POSIX::strftime::Compiler~0.46
 Parallel::Prefork~0.18
 Path::Class~0.37
@@ -93,7 +92,6 @@ Time::Zone~2.24
 Try::Tiny~0.31
 Types::Serialiser~1.01
 URI~5.28
-URI::URL~5.28
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
