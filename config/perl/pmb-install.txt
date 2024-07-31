@@ -40,7 +40,7 @@ HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers~6.46
 HTTP::Headers::Fast~0.22
-HTTP::Headers::Util~6.46
+HTTP::Message~6.46
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.46
