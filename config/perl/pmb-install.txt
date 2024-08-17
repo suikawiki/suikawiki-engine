@@ -10,7 +10,7 @@ Carp~1.50
 Class::Accessor::Lite~0.08
 Class::Data::Inheritable~0.09
 Class::Inspector~1.36
-Clone~0.46
+Clone~0.47
 Cookie::Baker~0.12
 Cpanel::JSON::XS~4.38
 Devel::StackTrace~2.05
@@ -40,11 +40,10 @@ HTTP::Cookies~6.11
 HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers::Fast~0.22
+HTTP::Message~6.46
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.46
-HTTP::Request::Common~6.46
-HTTP::Response~6.46
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.55
@@ -53,7 +52,6 @@ IPC::Signal~1.00
 JSON::MaybeXS~1.004008
 JSON::XS~4.03
 LWP::MediaTypes~6.04
-LWP::Protocol::http~6.77
 LWP::Protocol::https~6.14
 LWP::UserAgent~6.77
 List::MoreUtils~0.430
@@ -91,9 +89,10 @@ Text::Diff~1.45
 Time::HiRes~1.9764
 Time::Local~1.35
 Time::Zone~2.24
-Try::Tiny~0.31
+Try::Tiny~0.32
 Types::Serialiser~1.01
 URI~5.28
+URI::Escape~5.28
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
