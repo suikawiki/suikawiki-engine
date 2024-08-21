@@ -1,7 +1,6 @@
 Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
-AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 CPAN::Requirements::Dynamic~0.001
 Canary::Stability~2013
@@ -40,13 +39,11 @@ HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers~6.46
 HTTP::Headers::Fast~0.22
-HTTP::Message~6.46
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~6.46
 Hash::MultiValue~0.16
-IO::File~1.55
 IO::HTML~1.004
+IO::Handle~1.55
 IO::Socket::SSL~2.088
 IPC::Signal~1.00
 JSON::MaybeXS~1.004008
@@ -65,6 +62,7 @@ Module::Build::Tiny~0.048
 Module::Runtime~0.016
 Mozilla::CA~20240730
 Net::HTTP~6.23
+Net::HTTPS~6.23
 POSIX::strftime::Compiler~0.46
 Parallel::Prefork~0.18
 Path::Class~0.37
@@ -93,7 +91,6 @@ Time::Zone~2.24
 Try::Tiny~0.32
 Types::Serialiser~1.01
 URI~5.28
-URI::Escape~5.28
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
