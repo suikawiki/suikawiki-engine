@@ -39,10 +39,10 @@ HTTP::Cookies~6.11
 HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers::Fast~0.22
-HTTP::Message~6.46
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~6.46
+HTTP::Request~6.46
+HTTP::Status~6.46
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.55
@@ -77,10 +77,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~5.01
+Test::Builder~1.302201
 Test::Class~0.52
 Test::Deep~1.204
 Test::Differences~0.71
-Test::More~1.302201
 Test::Requires~0.11
 Test::SharedFork~0.35
 Test::TCP~2.22
