@@ -1,8 +1,8 @@
 Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
-CPAN::Requirements::Dynamic~0.001
 Canary::Stability~2013
 Capture::Tiny~0.48
 Carp~1.50
@@ -22,8 +22,7 @@ Exporter~5.78
 Exporter::Lite~0.09
 Exporter::Tiny~1.006002
 ExtUtils::Config~0.010
-ExtUtils::HasCompiler~0.025
-ExtUtils::Helpers~0.027
+ExtUtils::Helpers~0.028
 ExtUtils::InstallPaths~0.013
 File::Listing~6.16
 File::ShareDir~1.118
@@ -42,10 +41,10 @@ HTTP::Headers::Fast~0.22
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.46
-HTTP::Status~6.46
+HTTP::Response~6.46
 Hash::MultiValue~0.16
+IO::Dir~1.55
 IO::HTML~1.004
-IO::Handle~1.55
 IO::Socket::SSL~2.089
 IPC::Signal~1.00
 JSON::MaybeXS~1.004008
@@ -59,7 +58,7 @@ List::Rubyish~0.03
 MIME::Base64~3.16
 MRO::Compat~0.15
 Module::Build~0.4234
-Module::Build::Tiny~0.048
+Module::Build::Tiny~0.049
 Module::Runtime~0.016
 Mozilla::CA~20240730
 Net::HTTP~6.23
@@ -77,10 +76,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~5.01
-Test::Builder~1.302201
 Test::Class~0.52
 Test::Deep~1.204
 Test::Differences~0.71
+Test::More~1.302202
 Test::Requires~0.11
 Test::SharedFork~0.35
 Test::TCP~2.22
