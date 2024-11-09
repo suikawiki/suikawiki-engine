@@ -2369,7 +2369,7 @@ function initFigures (root) {
           setTimeout (() => {
             delete this.wmTimer;
           }, 100);
-        }, 1000);
+        }, 3000);
       }
     }; // reshadow
   };

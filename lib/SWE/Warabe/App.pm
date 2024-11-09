@@ -94,6 +94,11 @@ sub home_page_url ($) {
   return $self->name_url ($self->config->get_text ('wiki_page_home'));
 } # home_page_url
 
+sub about_page_url ($) {
+  my $self = $_[0];
+  return $self->name_url ($self->config->get_text ('wiki_page_about'));
+} # about_page_url
+
 sub license_page_url ($) {
   my $self = $_[0];
   return $self->name_url ($self->config->get_text ('wiki_page_license'));

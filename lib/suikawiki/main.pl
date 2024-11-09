@@ -349,13 +349,16 @@ if ($path[0] eq 'n' and @path == 2) {
       $footer_el->set_attribute (lang => 'en');
       $footer_el->inner_html (q[
         <p class=copyright><small>&copy; Authors.  See <a rel=license>license terms (CC BY-SA / GFDL)</a>.  There might also be additional terms applied for this page.</small>
-        <menu><a href="" rel=index>Home</a> <a href="" rel=help>Help</a> <a href="">Contact</a></menu>
+        <menu><a href="" rel=index>Home</a>
+        <a href="">About</a>
+        <a href="" rel=help>Help</a> <a href="">Contact</a></menu>
       ]);
       $body_el->append_child ($footer_el);
 
       my $as = $footer_el->get_elements_by_tag_name ('a');
       $as->[0]->set_attribute (href => $app->license_page_url);
       $as->[1]->set_attribute (href => $app->home_page_url);
+      $as->[1]->set_attribute (href => $app->about_page_url);
       $as->[2]->set_attribute (href => $app->help_page_url);
       $as->[3]->set_attribute (href => $app->contact_page_url);
 
@@ -873,8 +876,7 @@ if ($path[0] eq 'n' and @path == 2) {
            $form_el->get_elements_by_tag_name ('select')->[0] => $ct);
 
       my $a_el = $form_el->get_elements_by_tag_name ('a')->[0];
-      my $help_page_name = $app->config->get_text ('wiki_page_home');
-      $a_el->set_attribute (href => $app->name_url ($help_page_name));
+      $a_el->set_attribute (href => $app->help_page_url);
 
       $a_el = $form_el->get_elements_by_tag_name ('a')->[1];
       $a_el->set_attribute (href => $app->license_page_url);
@@ -1405,6 +1407,7 @@ sub set_head_content ($$$;$$$) {
   my $script_el = $doc->create_element ('script');
   $script_el->set_attribute (src => "https://fonts.suikawiki.org/swcf/composite.js");
   $script_el->set_attribute ('data-install', '');
+  $script_el->set_attribute ('async', '');
   $head_el->append_child ($script_el);
 } # set_head_content
 
