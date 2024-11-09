@@ -358,9 +358,9 @@ if ($path[0] eq 'n' and @path == 2) {
       my $as = $footer_el->get_elements_by_tag_name ('a');
       $as->[0]->set_attribute (href => $app->license_page_url);
       $as->[1]->set_attribute (href => $app->home_page_url);
-      $as->[1]->set_attribute (href => $app->about_page_url);
-      $as->[2]->set_attribute (href => $app->help_page_url);
-      $as->[3]->set_attribute (href => $app->contact_page_url);
+      $as->[2]->set_attribute (href => $app->about_page_url);
+      $as->[3]->set_attribute (href => $app->help_page_url);
+      $as->[4]->set_attribute (href => $app->contact_page_url);
 
       set_foot_content ($app, $html_doc);
 
