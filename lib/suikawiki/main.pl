@@ -508,7 +508,7 @@ if ($path[0] eq 'n' and @path == 2) {
 
       $app->http->close_response_body;
       return $app->throw;
-    } elsif ($param eq 'posturl') {
+    } elsif ($param eq 'posturl' or $param eq 'postpara') {
       my ($id, undef) = prepare_by_name ($db, $name, $app->path_dollar);
 
       if (defined $app->path_dollar and not defined $id) {
@@ -518,8 +518,10 @@ if ($path[0] eq 'n' and @path == 2) {
       $app->requires_request_method ({POST => 1});
       $app->requires_editable;
       my $user = '(anon)'; #$cgi->remote_user // '(anon)';
-      my $added_text = '<' . ($app->text_param ('url') // '') . '>';
-      {
+      my $added_text;
+      if ($param eq 'posturl') {
+        $added_text = '<' . ($app->text_param ('url') // '') . '>';
+
         my $credit = $app->text_param ('credit') // '';
         $added_text = '(' . $credit . ")\n" . $added_text if length $credit;
 
@@ -539,8 +541,7 @@ if ($path[0] eq 'n' and @path == 2) {
           }
           $added_text = $title . "\n" . $added_text;
         }
-      }
-      {
+
         my $quote = $app->text_param ('quote') // '';
         if (length $quote) {
           $quote =~ s/[\x0D\x0A]+/\n> /g;
@@ -548,6 +549,10 @@ if ($path[0] eq 'n' and @path == 2) {
         } else {
           $added_text = "[%%] $added_text";
         }
+      } elsif ($param eq 'postpara') {
+        $added_text = $app->text_param ('text') // '';
+      } else {
+        die "Bad param |$param|";
       }
       normalize_content (\$added_text);
 
