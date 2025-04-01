@@ -41,6 +41,8 @@ HTTP::Headers~7.00
 HTTP::Headers::Fast~0.22
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
+HTTP::Response~7.00
+HTTP::Status~7.00
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.55
@@ -63,7 +65,6 @@ Module::Build::Tiny~0.051
 Module::Runtime~0.016
 Mozilla::CA~20250202
 Net::HTTP~6.23
-Net::HTTPS~6.23
 POSIX::strftime::Compiler~0.46
 Parallel::Prefork~0.18
 Path::Class~0.37
@@ -80,7 +81,7 @@ Stream::Buffered~0.03
 Term::ANSIColor~5.01
 Test::Builder~1.302210
 Test::Class~0.52
-Test::Deep~1.204
+Test::Deep~1.205
 Test::Differences~0.71
 Test::Requires~0.11
 Test::SharedFork~0.35
