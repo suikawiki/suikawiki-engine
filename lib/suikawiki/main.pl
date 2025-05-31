@@ -800,6 +800,8 @@ if ($path[0] eq 'n' and @path == 2) {
       if (defined $textref) {
         $app->http->add_response_header
             ('Content-Type' => 'text/html; charset=utf-8');
+        $app->http->add_response_header
+            ('Cache-Control' => 'must-revalidate');
 
       require SWE::Object::Document;
       my $doc = SWE::Object::Document->new (db => $db, id => $id);
