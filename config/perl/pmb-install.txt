@@ -38,14 +38,13 @@ HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers~7.00
 HTTP::Headers::Fast~0.22
+HTTP::Message~7.00
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~7.00
-HTTP::Status~7.00
 Hash::MultiValue~0.16
-IO::File~1.55
 IO::HTML~1.004
-IO::Socket::SSL~2.093
+IO::Handle~1.55
+IO::Socket::SSL~2.094
 IPC::Signal~1.00
 JSON::MaybeXS~1.004008
 JSON::XS~4.03
