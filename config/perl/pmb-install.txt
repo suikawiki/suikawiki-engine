@@ -43,7 +43,7 @@ HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Response~7.00
 Hash::MultiValue~0.16
-IO::File~1.55
+IO::Dir~1.55
 IO::HTML~1.004
 IO::Socket::SSL~2.095
 IPC::Signal~1.00
@@ -64,6 +64,7 @@ Module::Build::Tiny~0.052
 Module::Runtime~0.018
 Mozilla::CA~20250602
 Net::HTTP~6.23
+Net::HTTPS~6.23
 POSIX::strftime::Compiler~0.46
 Parallel::Prefork~0.18
 Path::Class~0.37
