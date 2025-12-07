@@ -19,7 +19,7 @@ Encode~3.21
 Encode::Locale~1.05
 Exporter~5.78
 Exporter::Lite~0.09
-Exporter::Tiny~1.006002
+Exporter::Tiny~1.006003
 ExtUtils::Config~0.010
 ExtUtils::Helpers~0.028
 ExtUtils::InstallPaths~0.015
@@ -37,10 +37,10 @@ HTTP::Cookies~6.11
 HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers::Fast~0.22
-HTTP::Message~7.01
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~7.01
+HTTP::Request~7.01
+HTTP::Request::Common~7.01
 Hash::MultiValue~0.16
 IO::File~1.55
 IO::HTML~1.004
@@ -49,6 +49,7 @@ IPC::Signal~1.00
 JSON::MaybeXS~1.004008
 JSON::XS~4.04
 LWP::MediaTypes~6.04
+LWP::Protocol::http~6.81
 LWP::Protocol::https~6.14
 LWP::UserAgent~6.81
 List::MoreUtils~0.430
@@ -76,10 +77,10 @@ Signal::Mask~0.008
 Starlet~0.31
 Stream::Buffered~0.03
 Term::ANSIColor~5.01
+Test::Builder~1.302216
 Test::Class~0.52
 Test::Deep~1.205
 Test::Differences~0.72
-Test::More~1.302216
 Test::Requires~0.11
 Test::SharedFork~0.35
 Test::TCP~2.22
@@ -90,7 +91,6 @@ Time::Zone~2.24
 Try::Tiny~0.32
 Types::Serialiser~1.01
 URI~5.34
-URI::Escape~5.34
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 common::sense~3.75
