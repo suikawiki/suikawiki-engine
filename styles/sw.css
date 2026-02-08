@@ -1644,6 +1644,13 @@ code, samp, pre.code {
 }
 
 
+kbd kbd {
+  border: 3px outset #eee;
+  padding: .3em;
+  margin: .3em;
+  border-radius: 5px;
+}
+
 var {
   margin: 0 0.25em;
   padding: 0.2em 0.25em;
@@ -2743,7 +2750,7 @@ aside .swe-ad {
 
 License:
 
-Copyright 2002-2023 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2026 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
