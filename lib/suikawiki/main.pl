@@ -1411,11 +1411,19 @@ sub set_head_content ($$$;$$$) {
     $head_el->append_child ($meta_el);
   }
 
-  my $script_el = $doc->create_element ('script');
-  $script_el->set_attribute (src => "https://fonts.suikawiki.org/swcf/composite.js");
-  $script_el->set_attribute ('data-install', '');
-  $script_el->set_attribute ('async', '');
-  $head_el->append_child ($script_el);
+  {
+    my $script_el = $doc->create_element ('script');
+    $script_el->set_attribute (src => "https://fonts.suikawiki.org/swcf/composite.js");
+    $script_el->set_attribute ('data-install', '');
+    $script_el->set_attribute ('async', '');
+    $head_el->append_child ($script_el);
+  }
+  {
+    my $script_el = $doc->create_element ('script');
+    $script_el->set_attribute (src => "https://fonts.suikawiki.org/swcf/kana/swcfk.js");
+    $script_el->set_attribute ('async', '');
+    $head_el->append_child ($script_el);
+  }
 } # set_head_content
 
 sub set_foot_content ($$) {
@@ -1430,7 +1438,7 @@ sub set_foot_content ($$) {
 
 =head1 LICENSE
 
-Copyright 2002-2023 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2026 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

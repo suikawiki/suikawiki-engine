@@ -1402,6 +1402,15 @@ $templates->{(SW09_NS)}->{replace} = sub {
     $img_el->class_name ('sw-char-glyph');
     $item->{parent}->append_child ($img_el);
     return;
+  } elsif ($by =~ /\Aswk:([^.]+)\.(.+)\z/) {
+    my $text = $1;
+    my $features = $2;
+    $text =~ s/u([0-9a-f]+)/chr hex $1/ge;
+    my $el = $item->{doc}->create_element_ns (HTML_NS, 'swcf-k');
+    $el->set_attribute (features => $features);
+    $el->text_content ($text);
+    $item->{parent}->append_child ($el);
+    return;
   }
   my $el = $item->{doc}->create_element_ns (HTML_NS, 'span');
   $el->set_attribute (class => 'sw-replace');
@@ -1479,7 +1488,7 @@ sub convert ($$$$$$) {
 
 =head1 LICENSE
 
-Copyright 2008-2023 Wakaba <wakaba@suikawiki.org>.
+Copyright 2008-2026 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
