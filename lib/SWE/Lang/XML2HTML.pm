@@ -941,7 +941,25 @@ for my $x (
       undef $url_suffix;
     } elsif ($x->[1] eq 'sw-ch') {
       $el_name = 'code';
-      $url_prefix = $x->[2] . join ':', map { s/^U\+//; sprintf '%04X', ord $_ } split //, $name;
+      my @c = $item->{node}->child_nodes->to_list;
+      undef $url_prefix;
+      if (@c == 1) {
+        my $ln = $c[0]->local_name;
+        if ($ln eq 'replace') {
+          my $ref = $c[0]->get_attribute ('by');
+          if ($ref =~ /^(swc[0-9]+)(?:\(([^()]*)\)|)$/) {
+            $url_prefix = $x->[2] . 'char::' . $1;
+          } elsif ($ref =~ /^swk:([^.]+)\.(.+)$/) {
+            my $char = $1;
+            my $features = $2;
+            $char =~ s/u([0-9a-f]+)/chr hex $1/ge;
+            $url_prefix = $x->[2] . 'char::u-swk-' . join '-',
+                (map { sprintf '%04x', ord $_ } split //, $char),
+                (split /\./, $features);
+          }
+        }
+      }
+      $url_prefix //= $x->[2] . join ':', map { s/^U\+//; sprintf '%04X', ord $_ } split //, $name;
       undef $url_suffix;
     } elsif ($x->[1] eq 'sw-cn') {
       $el_name = 'code';
