@@ -26,9 +26,9 @@ scripts/time.js: local/time.js local/suncalc.js local/suncalc-LICENSE
 local/time.js:
 	$(WGET) -O $@ https://raw.githubusercontent.com/wakaba/timejs/master/src/time.js
 local/suncalc.js:
-	$(WGET) -O $@ https://raw.githubusercontent.com/mourner/suncalc/master/suncalc.js
+	$(WGET) -O $@ https://raw.githubusercontent.com/mourner/suncalc/6bc2757074c1e5eaa2389aa2ab36806f04c6d2a0/suncalc.js
 local/suncalc-LICENSE:
-	$(WGET) -O $@ https://raw.githubusercontent.com/mourner/suncalc/master/LICENSE
+	$(WGET) -O $@ https://raw.githubusercontent.com/mourner/suncalc/6bc2757074c1e5eaa2389aa2ab36806f04c6d2a0/LICENSE
 
 ## ------ Setup ------
 
