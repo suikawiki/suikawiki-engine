@@ -71,6 +71,7 @@ sub requires_allowed_origin ($) {
     }
   }
 
+  $app->http->add_response_header ('vary', 'origin');
   my $allowed = $app->config->get_file_json ('allowed_origins');
   if ($allowed->{$origin}) {
     $app->http->set_response_header ('access-control-allow-origin' => $origin);
@@ -84,6 +85,7 @@ sub requires_allowed_origin ($) {
 sub expose_to_allowed_origin ($) {
   my $app = $_[0];
   my $origin = $app->http->get_request_header ('Origin');
+  $app->http->add_response_header ('vary', 'origin');
   if (defined $origin and not $origin eq 'null') {
     my $allowed = $app->config->get_file_json ('allowed_origins');
     if ($allowed->{$origin}) {
