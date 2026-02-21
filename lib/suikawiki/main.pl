@@ -12,22 +12,25 @@ sub main ($$) {
   my @path = @{$app->path_segments};
   my $db = $app->db;
 
-if ($path[0] eq 'n' and @path == 2) {
-  my $name = normalize_name ($path[1]);
-  
-  unless (length $name) {
-    return $app->throw_redirect ($app->home_page_url, status => 303);
-  }
-
-  my $param = $app->path_param;
-  unless (defined $param) {
-    my ($id, $ids) = prepare_by_name ($db, $name, $app->path_dollar);
-
-    if (defined $app->path_dollar and not defined $id) {
-      return $app->throw_redirect
-          ($app->name_url ($name),
-           status => 301, reason_phrase => 'Not found');
+  if ($path[0] eq 'n' and @path == 2) {
+    # /n/{};{}
+    my $name = normalize_name ($path[1]);
+    unless (length $name) {
+      return $app->throw_redirect ($app->home_page_url, status => 303);
     }
+
+    my $param = $app->path_param;
+    unless (defined $param) {
+      # /n/{}
+      my ($id, $ids) = prepare_by_name ($db, $name, $app->path_dollar);
+
+      if (defined $app->path_dollar and not defined $id) {
+        return $app->throw_redirect
+            ($app->name_url ($name),
+             status => 301, reason_phrase => 'Not found');
+      }
+
+      $app->expose_to_allowed_origin;
 
     my $format = $app->bare_param ('format') // 'html';
     
@@ -374,9 +377,10 @@ if ($path[0] eq 'n' and @path == 2) {
       return $app->throw;
     }
 
-  } elsif ($param eq 'history' and not defined $app->path_dollar) {
-    my $name_history_db = $db->name_history;
-    my $history = $name_history_db->get_data ($name);
+    } elsif ($param eq 'history' and not defined $app->path_dollar) {
+      # /n/{};history
+      my $name_history_db = $db->name_history;
+      my $history = $name_history_db->get_data ($name);
 
     $app->http->add_response_header
         ('Content-Type' => 'text/html; charset=utf-8');
@@ -454,11 +458,12 @@ if ($path[0] eq 'n' and @path == 2) {
     $app->http->send_response_body_as_text ($doc->inner_html);
     $app->http->close_response_body;
     return $app->throw;
-  } elsif ($param eq 'search' and not defined $app->path_dollar) {
-    my $names = [];
-    for_unique_words {
-      push @$names, $_[0];
-    } $name;
+    } elsif ($param eq 'search' and not defined $app->path_dollar) {
+      # /n/{};search
+      my $names = [];
+      for_unique_words {
+        push @$names, $_[0];
+      } $name;
 
     my $names_index_db = $db->name_inverted_index;
     my $index = {};
@@ -508,7 +513,11 @@ if ($path[0] eq 'n' and @path == 2) {
 
       $app->http->close_response_body;
       return $app->throw;
-    } elsif ($param eq 'posturl' or $param eq 'postpara') {
+    } elsif ($param eq 'posturl' or $param eq 'postpara' or
+             $param eq 'putdata') {
+      # /n/{};posturl
+      # /n/{};postpara
+      # /n/{};putdata
       my ($id, undef) = prepare_by_name ($db, $name, $app->path_dollar);
 
       if (defined $app->path_dollar and not defined $id) {
@@ -519,6 +528,8 @@ if ($path[0] eq 'n' and @path == 2) {
       $app->requires_editable;
       my $user = '(anon)'; #$cgi->remote_user // '(anon)';
       my $added_text;
+      my $mime = 'text/x-suikawiki';
+      my $op = 'append';
       if ($param eq 'posturl') {
         $added_text = '<' . ($app->text_param ('url') // '') . '>';
 
@@ -551,6 +562,10 @@ if ($path[0] eq 'n' and @path == 2) {
         }
       } elsif ($param eq 'postpara') {
         $added_text = $app->text_param ('text') // '';
+      } elsif ($param eq 'putdata') {
+        $added_text = $app->text_param ('text') // '';
+        $mime = get_content_type_parameter ($app) or return; # thrown
+        $op = 'replace';
       } else {
         die "Bad param |$param|";
       }
@@ -566,16 +581,33 @@ if ($path[0] eq 'n' and @path == 2) {
         
         my $id_prop = $db->id_prop->get_data ($id);
         last APPEND unless $id_prop;
-        last APPEND if $id_prop->{'content-type'} ne 'text/x-suikawiki';
-        
-        my $textref = $db->id_content->get_data ($id);
-        my $has_id = {};
-        while ($$textref =~ /\[([0-9]+)\]/g) {
-          $has_id->{0+$1} = 1;
+        if ($id_prop->{'content-type'} ne $mime) {
+          if ($op eq 'replace') {
+            return $app->throw_error
+                (409, reason_phrase => 'Inconsistent MIME type');
+          } else {
+            last APPEND;
+          }
         }
-        $next_id++ while $has_id->{$next_id};
-        $added_text =~ s/\[%%\]/[$next_id]/;
-        $$textref .= "\n\n" . $added_text;
+
+        my $textref;
+        if ($op eq 'replace') {
+          $textref = \$added_text;
+        } else { # append
+          $textref = $db->id_content->get_data ($id);
+          if ($mime eq 'text/x-suikawiki') {
+            my $has_id = {};
+            while ($$textref =~ /\[([0-9]+)\]/g) {
+              $has_id->{0+$1} = 1;
+            }
+            $next_id++ while $has_id->{$next_id};
+            $added_text =~ s/\[%%\]/[$next_id]/;
+            $$textref .= "\n\n" . $added_text;
+          } else {
+            return $app->throw_error
+                (409, reason_phrase => 'Inconsistent MIME type');
+          }
+        }
         
         $id_prop->{modified} = time;
         $id_prop->{hash} = string_hash $$textref;
@@ -590,20 +622,23 @@ if ($path[0] eq 'n' and @path == 2) {
         $vc->commit_changes ("updated by $user");
 
         ## TODO: non-default content-type support
-        my $cache_prop = $db->id_cache_prop->get_data ($id);
-        my $doc = $id_prop ? get_xml_data ($db, $id, $id_prop, $cache_prop) : undef;
-        if (defined $doc) {
+        #my $cache_prop = $db->id_cache_prop->get_data ($id);
+        #my $doc = $id_prop ? get_xml_data ($db, $id, $id_prop, $cache_prop) : undef;
+        #if (defined $doc) {
           #require SWE::Object::Document;
           #my $document = SWE::Object::Document->new (db => $db, id => $id);
           #$document->{name_prop_db} = $db->name_prop;
           #$document->update_tfidf ($doc);
-          $db->es->update ($id, $id_prop->{title}, $doc);
+        #
+        #  $db->es->update ($id, $id_prop->{title}, $doc);
+        #}
 
+        if ($mime eq 'text/x-suikawiki') {
           my $url = $app->name_url ($name, $id);
           $db->feed->post
               ($app->http->url->resolve_string ($url)->stringify, $name);
         }
-
+        
         return $app->throw_manual_redirect
             ($app->name_url ($name, $id, anchor => $next_id),
              status => 303, reason_phrase => 'Appended');
@@ -611,7 +646,9 @@ if ($path[0] eq 'n' and @path == 2) {
 
       { ## New document
         my $new_names = {$name => 1};
-        $added_text =~ s/\[%%\]/[$next_id]/;
+        if ($mime eq 'text/x-suikawiki') {
+          $added_text =~ s/\[%%\]/[$next_id]/;
+        }
 
         $db->names_lock->lock;
         my $time = time;
@@ -649,20 +686,19 @@ if ($path[0] eq 'n' and @path == 2) {
             $id_history_db->append_data ($id => [$time, 'a', $_]);
           }
           
-          $id_props->{'content-type'} = 'text/x-suikawiki';
+          $id_props->{'content-type'} = $mime;
           $id_props->{hash} = string_hash $added_text;
           $db->id_prop->set_data ($id => $id_props);
           
           $vc->commit_changes ("created by $user");
           
           ## TODO: non-default content-type support
-          my $cache_prop = $db->id_cache_prop->get_data ($id);
-          my $doc = $id_props ? get_xml_data ($db, $id, $id_props, $cache_prop) : undef;
-          
-          if (defined $doc) {
+          #my $cache_prop = $db->id_cache_prop->get_data ($id);
+          #my $doc = $id_props ? get_xml_data ($db, $id, $id_props, $cache_prop) : undef;
+          #if (defined $doc) {
             #$document->update_tfidf ($doc);
-            $db->es->update ($id, $id_props->{title}, $doc);
-          }
+          #  $db->es->update ($id, $id_props->{title}, $doc);
+          #}
           
           $id_lock->unlock;
         }
@@ -674,6 +710,7 @@ if ($path[0] eq 'n' and @path == 2) {
              status => 303, reason_phrase => 'Appended');
       }
     } else {
+      # /n/{};{unknown}
       $name .= '$' . $app->path_dollar if defined $app->path_dollar;
       $name .= ';' . $param;
       return $app->throw_redirect

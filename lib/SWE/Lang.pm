@@ -16,7 +16,17 @@ our @ContentMediaType =
    module => 'SWE::Object::Document::CanvasInstructions',
    label => 'Drawing'},
   {type => 'text/css', label => 'CSS'},
+  {type => 'application/swir+json', label => 'SWIR'},
 );
 our %ContentMediaType = map { $_->{type} => $_ } @ContentMediaType;
 
 1;
+
+=head1 LICENSE
+
+Copyright 2002-2026 Wakaba <wakaba@suikawiki.org>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

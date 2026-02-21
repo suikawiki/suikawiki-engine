@@ -53,6 +53,46 @@ sub parse_path ($) {
   $self->{path_segments} = \@path;
 } # parse_path
 
+sub requires_allowed_origin ($) {
+  my $app = $_[0];
+  
+  my $url_origin = $app->http->url->ascii_origin;
+  return $app->throw_error (400, reason_phrase => 'Bad origin')
+      unless defined $url_origin;
+
+  my $origin = $app->http->get_request_header ('Origin');
+  if (defined $origin) {
+    if ($origin eq 'null' or $origin =~ /,/) {
+      return $app->throw_error (400, reason_phrase => 'Bad origin');
+    } elsif ($origin ne $url_origin) {
+      #
+    } else { # same origin
+      return;
+    }
+  }
+
+  my $allowed = $app->config->get_file_json ('allowed_origins');
+  if ($allowed->{$origin}) {
+    $app->http->set_response_header ('access-control-allow-origin' => $origin);
+    $app->http->set_response_header ('Access-Control-Allow-Credentials' => 'true');
+    return;
+  }
+
+  return $app->throw_error (400, reason_phrase => 'Bad origin');
+} # requires_allowed_origin
+
+sub expose_to_allowed_origin ($) {
+  my $app = $_[0];
+  my $origin = $app->http->get_request_header ('Origin');
+  if (defined $origin and not $origin eq 'null') {
+    my $allowed = $app->config->get_file_json ('allowed_origins');
+    if ($allowed->{$origin}) {
+      $app->http->set_response_header ('access-control-allow-origin' => $origin);
+      return;
+    }
+  }
+} # expose_to_allowed_origin
+
 sub requires_editable ($) {
   my $app = $_[0];
   my $allowed = $app->config->get_file_json ('edit_basic_auth');
@@ -186,7 +226,7 @@ sub throw_manual_redirect ($$;%) {
 
 =head1 LICENSE
 
-Copyright 2002-2022 Wakaba <wakaba@suikawiki.org>.
+Copyright 2002-2026 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

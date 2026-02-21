@@ -6,6 +6,7 @@
   "wiki_page_contact": "ContactPage",
 
   "edit_basic_auth": "editors.json",
+  "allowed_origins": "allowedorigins.json",
 
   "es_index_url": "es_index_url.txt",
   "es_user": "es_user.txt",
@@ -13,5 +14,7 @@
 
   "feed_url": "feed_url.txt",
   "feed_user": "feed_user.txt",
-  "feed_password": "feed_password.txt"
+  "feed_password": "feed_password.txt",
+  
+  "web_has_reverse_proxy": true
 }
