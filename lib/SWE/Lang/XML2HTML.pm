@@ -954,7 +954,7 @@ for my $x (
             my $features = $2;
             $char =~ s/u([0-9a-f]+)/chr hex $1/ge;
             $url_prefix = $x->[2] . 'char::u-swk-' . join '-',
-                (map { sprintf '%04x', ord $_ } split //, $char),
+                (map { sprintf '%x', ord $_ } split //, $char),
                 (split /\./, $features);
           }
         }
