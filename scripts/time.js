@@ -52,6 +52,9 @@ the script's execution, is processed appropriately.  E.g.:
   <time data-format=time>2008-12-20T23:27+09:00</time>
   <!-- Will be rendered as a time, e.g. "11:27:00 PM" -->
 
+  <time data-format=hm>2008-12-20T23:27+09:00</time>
+  <!-- Will be rendered as a time, e.g. "11:27 PM" -->
+
 Attributes.
 
   datetime=""
@@ -267,6 +270,24 @@ function TER (c) {
     }
   } // _setDateContent
 
+  function _setDateZonedContent (el, date) {
+    var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
+    dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
+    if (dts === 'dtsjp1') {
+      el.textContent = _year (date.valueOf () - date.getTimezoneOffset () * 60 * 1000, date.getFullYear (), dts) + '年' + (date.getMonth () + 1) + '月' + date.getDate () + '日(' + ['日','月','火','水','木','金','土'][date.getDay ()] + ')';
+    } else if (dts === 'dtsjp2') {
+      el.textContent = _year (date.valueOf () - date.getTimezoneOffset () * 60 * 1000, date.getFullYear (), dts) + '.' + (date.getMonth () + 1) + '.' + date.getDate ();
+    } else if (dts === 'dtsjp3') {
+      el.textContent = _year (date.valueOf () - date.getTimezoneOffset () * 60 * 1000, date.getFullYear (), dts) + '/' + (date.getMonth () + 1) + '/' + date.getDate ();
+    } else {
+      el.textContent = date.toLocaleString (navigator.language, {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      });
+    }
+  } // _setDateZonedContent
+
   function _setMonthDayDateContent (el, date) {
     var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
     dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
@@ -284,6 +305,23 @@ function TER (c) {
       });
     }
   } // _setMonthDayDateContent
+
+  function _setMonthDayDateZonedContent (el, date) {
+    var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
+    dts = dts.replace (/^\s+/, '').replace (/\s+$/, '');
+    if (dts === 'dtsjp1') {
+      el.textContent = (date.getMonth () + 1) + '月' + date.getDate () + '日(' + ['日','月','火','水','木','金','土'][date.getDay ()] + ')';
+    } else if (dts === 'dtsjp2') {
+      el.textContent = (date.getMonth () + 1) + '.' + date.getDate ();
+    } else if (dts === 'dtsjp3') {
+      el.textContent = (date.getMonth () + 1) + '/' + date.getDate ();
+    } else {
+      el.textContent = date.toLocaleDateString (navigator.language, {
+        month: "numeric",
+        day: "numeric",
+      });
+    }
+  } // _setMonthDayDateZonedContent
 
   function _setMonthDayHMContent (el, date) {
     var dts = getComputedStyle (el).getPropertyValue ('--timejs-serialization');
@@ -451,6 +489,28 @@ function TER (c) {
     }
     _setDateContent (el, date);
   } // setDateContent
+  
+  function setDateZonedContent (el, date) {
+    if (!el.getAttribute ('title')) {
+      el.setAttribute ('title', el.textContent);
+    }
+    if (!el.getAttribute ('datetime')) {
+      var r = '';
+      r = date.getFullYear (); // JS does not support years 0001-0999
+      r += '-' + ('0' + (date.getMonth () + 1)).slice (-2);
+      r += '-' + ('0' + date.getDate ()).slice (-2);
+      el.setAttribute ('datetime', r);
+    }
+
+    var tzoffset = el.getAttribute ('data-tzoffset');
+    var usedDate = date;
+    if (tzoffset !== null) {
+      tzoffset = parseFloat (tzoffset);
+      usedDate = new Date (date.valueOf () + date.getTimezoneOffset () * 60 * 1000 + tzoffset * 1000);
+      // XXX This strategy is bad for local DST boundaries...
+    }
+    _setDateZonedContent (el, usedDate);
+  } // setDateZonedContent
 
   function setMonthDayDateContent (el, date) {
     if (!el.getAttribute ('title')) {
@@ -472,6 +532,34 @@ function TER (c) {
       _setDateContent (el, date);
     }
   } // setMonthDayDateContent
+
+  function setMonthDayDateZonedContent (el, date) {
+    if (!el.getAttribute ('title')) {
+      el.setAttribute ('title', el.textContent);
+    }
+    if (!el.getAttribute ('datetime')) {
+      var r = '';
+      r = date.getFullYear (); // JS does not support years 0001-0999
+      r += '-' + ('0' + (date.getMonth () + 1)).slice (-2);
+      r += '-' + ('0' + date.getDate ()).slice (-2);
+      el.setAttribute ('datetime', r);
+    }
+
+    var tzoffset = el.getAttribute ('data-tzoffset');
+    var usedDate = date;
+    if (tzoffset !== null) {
+      tzoffset = parseFloat (tzoffset);
+      usedDate = new Date (date.valueOf () + date.getTimezoneOffset () * 60 * 1000 + tzoffset * 1000);
+      // XXX This strategy is bad for local DST boundaries...
+    }
+    var lang = navigator.language;
+    if (_getNow (el).toLocaleString (lang, {year: "numeric"}) ===
+        usedDate.toLocaleString (lang, {year: "numeric"})) {
+      _setMonthDayDateZonedContent (el, usedDate);
+    } else {
+      _setDateZonedContent (el, usedDate);
+    }
+  } // setMonthDayDateZonedContent
 
   function setMonthDayHMContent (el, date) {
     if (!el.getAttribute ('title')) {
@@ -555,6 +643,7 @@ function TER (c) {
     if (tzoffset !== null) {
       tzoffset = parseFloat (tzoffset);
       usedDate = new Date (date.valueOf () + date.getTimezoneOffset () * 60 * 1000 + tzoffset * 1000);
+      // XXX This strategy is bad for local DST boundaries...
     }
     _setDateTimeContent (el, usedDate);
   } // setDateTimeContent
@@ -607,7 +696,7 @@ function TER (c) {
             if (f > 0) v += text.sep () + text.hour (f);
           } else {
             if (opts.format === 'ambdate') {
-              return setDateContent (el, date);
+              return setDateZonedContent (el, date);
             } else {
               return setDateTimeContent (el, date);
             }
@@ -684,11 +773,19 @@ TER.prototype._initialize = function () {
       if (format === 'datetime') {
         setDateTimeContent (el, date);
       } else if (format === 'date') {
-        setDateContent (el, date);
+        if (date.hasTimezone) { /* full date */
+          setDateZonedContent (el, date);
+        } else {
+          setDateContent (el, date);
+        }
       } else if (format === 'datehm') {
         setDateHMContent (el, date);
       } else if (format === 'monthday') {
-        setMonthDayDateContent (el, date);
+        if (date.hasTimezone) { /* full date */
+          setMonthDayDateZonedContent (el, date);
+        } else {
+          setMonthDayDateContent (el, date);
+        }
       } else if (format === 'monthdayhm') {
         setMonthDayHMContent (el, date);
       } else if (format === 'monthdaytime') {
@@ -811,7 +908,7 @@ if (window.TEROnLoad) {
 
 /* ***** BEGIN LICENSE BLOCK *****
  *
- * Copyright 2008-2024 Wakaba <wakaba@suikawiki.org>.  All rights reserved.
+ * Copyright 2008-2026 Wakaba <wakaba@suikawiki.org>.  All rights reserved.
  *
  * Copyright 2017 Hatena <http://hatenacorp.jp/>.  All rights reserved.
  *
