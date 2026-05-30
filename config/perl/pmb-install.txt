@@ -42,10 +42,10 @@ HTTP::Message~7.01
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~7.01
-HTTP::Status~7.01
+HTTP::Request::Common~7.01
 Hash::MultiValue~0.16
+IO::Dir~1.55
 IO::HTML~1.004
-IO::Handle~1.55
 IO::Socket::SSL~2.098
 IPC::Signal~1.00
 JSON::MaybeXS~1.004008
@@ -92,6 +92,7 @@ Time::Zone~2.35
 Try::Tiny~0.32
 Types::Serialiser~1.01
 URI~5.34
+URI::Escape~5.34
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.03
 common::sense~3.75
