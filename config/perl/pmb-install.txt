@@ -1,7 +1,6 @@
 Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
-AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 Canary::Stability~2013
 Capture::Tiny~0.50
@@ -39,10 +38,11 @@ HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers~7.02
 HTTP::Headers::Fast~0.22
+HTTP::Headers::Util~7.02
+HTTP::Message~7.02
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~7.02
-HTTP::Status~7.02
 Hash::MultiValue~0.16
 IO::Dir~1.55
 IO::HTML~1.004
@@ -79,7 +79,7 @@ Signal::Mask~0.009
 Starlet~0.32
 Stream::Buffered~0.03
 Term::ANSIColor~5.01
-Test::Builder~1.302220
+Test::Builder~1.302221
 Test::Class~0.52
 Test::Deep~1.205
 Test::Differences~0.72
