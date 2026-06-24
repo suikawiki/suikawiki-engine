@@ -41,7 +41,6 @@ HTTP::Message~7.02
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~7.02
-HTTP::Status~7.02
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.55
