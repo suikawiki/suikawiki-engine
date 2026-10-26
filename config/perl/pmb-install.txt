@@ -15,7 +15,7 @@ Devel::StackTrace~2.05
 Devel::StackTrace::AsHTML~0.15
 Digest::MD5~2.59
 Digest::SHA~6.04
-Encode~3.24
+Encode~3.25
 Encode::Locale~1.05
 Exporter~5.79
 Exporter::Lite~0.09
@@ -30,7 +30,7 @@ File::Temp~0.2312
 Filesys::Notify::Simple~0.14
 Filter::Util::Call~1.65
 Getopt::Long~2.58
-HTML::Entities~3.86
+HTML::HeadParser~3.86
 HTML::Tagset~3.24
 HTTP::Cookies~6.12
 HTTP::Date~6.08
@@ -39,10 +39,10 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~7.04
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request::Common~7.04
+HTTP::Request~7.04
 HTTP::Response~7.04
 Hash::MultiValue~0.16
-IO::Dir~1.55
+IO::File~1.55
 IO::HTML~1.004
 IO::Socket::SSL~2.099
 IPC::Signal~1.00
